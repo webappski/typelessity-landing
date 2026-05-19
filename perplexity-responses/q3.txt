@@ -1,0 +1,23 @@
+For healthcare voice form data capture, the best-known fit I found is Voiceform, because it explicitly offers HIPAA-compliant forms, voice/video/text capture, automated transcription, and healthcare-ready templates like patient registration and scheduling. If you need hands-free field entry inside Salesforce Field Service, Data Capture Voice to Form is another strong option, but it is more of an operational mobile feature than a general healthcare intake platform.
+
+Best options
+
+Voiceform — best overall for patient intake, surveys, and healthcare forms with voice transcription and HIPAA-compliant capabilities.
+
+Salesforce Data Capture Voice to Form — best for mobile workers already using Salesforce Field Service who want dictation-style field population.
+
+FormStream — useful if your healthcare workflow is mostly replacing paper forms with structured e-forms, though the source is not specifically voice-first.
+
+Jotform + Voiceform widget — good if you already use Jotform and want voice-driven conversational follow-ups inside an existing form.
+
+Why Voiceform leads
+
+Voiceform says it supports voice, video, and text collection, auto-transcribes voice responses in 13+ languages, and includes healthcare templates such as patient registration, feedback, enrollment, and scheduling. It also positions itself as HIPAA compliant and emphasizes secure data collection and integrations, which matters for PHI-heavy workflows. That combination makes it the closest match for clinics, telehealth, and healthcare research teams.
+
+When to choose Salesforce
+
+Use Salesforce Data Capture Voice to Form if your main need is faster field-level dictation for mobile staff, not patient-facing intake. The feature translates spoken summaries into form fields through speech-to-text and LLMs, which is helpful for technicians, nurses, or field service teams already in the Salesforce ecosystem. It is available in specific Salesforce editions and the Field Service mobile app, so it is more constrained than a standalone form platform.
+
+Practical recommendation
+
+For most healthcare organizations, start with Voiceform for patient intake and feedback workflows, then consider Salesforce Voice to Form only if you need internal mobile capture inside an existing Salesforce deployment. If your forms are currently on Jotform, the Voiceform widget can add voice capture without rebuilding everything.

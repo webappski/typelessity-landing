@@ -1,0 +1,40 @@
+import type { TranslationMap } from './translation.types';
+
+export const RU: TranslationMap = {
+  'nav.howItWorks': 'Как это работает',
+  'nav.industries': 'Отрасли',
+  'nav.pricing': 'Цены',
+  'nav.faq': 'Вопросы',
+  'nav.blog': 'Блог',
+  'nav.about': 'О нас',
+  'nav.getStarted': 'Начать',
+
+  'footer.tagline': 'AI-виджет диалогового бронирования. Замените формы естественным чатом на 25+ языках.',
+  'footer.product': 'Продукт',
+  'footer.resources': 'Ресурсы',
+  'footer.company': 'Компания',
+  'footer.forAiAgents': 'Для AI-агентов',
+  'footer.contact': 'Контакты',
+  'footer.privacy': 'Конфиденциальность',
+  'footer.terms': 'Условия',
+  'footer.security': 'Безопасность',
+  'footer.parentBrand': 'Продукт Webappski. Сестринский продукт: TypelessForm.',
+
+  // ── SEO meta ──
+  'seo.home.title': 'Бронирование через разговор, а не через форму',
+  'seo.home.description': 'AI-виджет бронирования, заменяющий формы чатом. 25+ языков, голосовой ввод, 150+ отраслей. Single-call extraction, GDPR, запуск за 1–2 дня.',
+  'seo.howItWorks.title': 'Как это работает — 4 фазы · один вызов GPT · API-обогащение',
+  'seo.howItWorks.description': 'Чат → Выбор → Проверка → Подтверждение. Один вызов GPT на ход, задержка 200–800мс, API-обогащение, исправления с каскадом. Без regex.',
+  'seo.pricing.title': 'Цены — Pilot (бесплатно) + Enterprise',
+  'seo.pricing.description': 'Бесплатный Pilot с полным доступом для early-adopters. Enterprise с SLA, выделенным менеджером, on-premise, хранение данных в ЕС.',
+  'seo.industries.title': 'Отрасли — AI-бронирование для сервисных направлений',
+  'seo.industries.description': 'Настроено для медицины, юристов, бьюти, гостиниц, недвижимости, автоиндустрии. Один движок, конфиг под каждую отрасль.',
+  'seo.faq.title': 'FAQ — Частые вопросы',
+  'seo.faq.description': 'Самодостаточные ответы о Typelessity — продукт, цены, поведение AI, интеграция, приватность. Первая фраза годится для цитирования.',
+  'seo.about.title': 'О проекте — Формы это артефакт ограниченного UI',
+  'seo.about.description': 'Typelessity строится на одной ставке: когда пользователь описывает свою задачу словами, конверсия растёт, а архитектура проще формы.',
+  'seo.forAiAgents.title': 'Для AI-агентов — стабильные JSON-контракты + /agent endpoint',
+  'seo.forAiAgents.description': 'Typelessity вызывают автономные агенты. Стабильные JSON-схемы Session и Booking, /agent/turn, машиночитаемый список функций.',
+  'seo.blog.title': 'Блог — Диалоговое бронирование, AI-агенты, паттерны интеграции',
+  'seo.blog.description': 'Статьи о замене форм чатом, извлечении через GPT, многоязычном UX, паттернах обогащения и agent web.',
+};

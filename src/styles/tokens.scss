@@ -1,0 +1,49 @@
+// Variant C — Premium monochrome + electric tangerine
+// Source: variant-c-warm.jsx (vC_styles, post-redesign)
+
+:root {
+  // Surfaces
+  --bg: #f3ede2;
+  --bg-soft: #f8f3e9;
+  --paper: #fdfbf6;
+
+  // Ink
+  --ink: #14110d;
+  --ink2: #5a544c;
+  --ink3: #8a8278;
+
+  // Lines
+  --line: rgba(20, 17, 13, 0.10);
+  --line2: rgba(20, 17, 13, 0.05);
+
+  // Accent — the ONLY chromatic color, used sparingly
+  --accent: #ff5b1f;
+  --accent-soft: rgba(255, 91, 31, 0.10);
+
+  // Type
+  --font-sans: 'Geist Variable', 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-serif: 'Newsreader Variable', 'Newsreader', ui-serif, 'Iowan Old Style', 'Charter', Georgia, serif;
+  --font-display-italic: 'Instrument Serif', 'Newsreader Variable', ui-serif, Georgia, serif;
+
+  // Gradients (single tangerine halo for mesh + CTA)
+  --gradient-mesh-hero:
+    radial-gradient(ellipse 900px 600px at 85% 0%, rgba(255, 91, 31, 0.13), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 5% 35%, rgba(255, 91, 31, 0.05), transparent 60%);
+  --gradient-cta-glow: radial-gradient(ellipse 900px 500px at 50% 60%, rgba(255, 91, 31, 0.16), transparent 70%);
+
+  // Layout
+  --container: 1240px;
+  --container-pad: 36px;
+
+  color-scheme: light;
+}
+
+// Responsive container padding — applied globally on every .vc-wrap.
+// Project breakpoints: 860 (tablet) → 540 (phone).
+@media (max-width: 860px) {
+  :root { --container-pad: 24px; }
+}
+@media (max-width: 540px) {
+  :root { --container-pad: 18px; }
+}

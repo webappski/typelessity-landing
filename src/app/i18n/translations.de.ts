@@ -1,0 +1,40 @@
+import type { TranslationMap } from './translation.types';
+
+export const DE: TranslationMap = {
+  'nav.howItWorks': 'So funktioniert es',
+  'nav.industries': 'Branchen',
+  'nav.pricing': 'Preise',
+  'nav.faq': 'FAQ',
+  'nav.blog': 'Blog',
+  'nav.about': 'Über uns',
+  'nav.getStarted': 'Jetzt starten',
+
+  'footer.tagline': 'KI-Konversations-Buchungswidget. Ersetzen Sie Formulare durch natürlichen Chat in 25+ Sprachen.',
+  'footer.product': 'Produkt',
+  'footer.resources': 'Ressourcen',
+  'footer.company': 'Unternehmen',
+  'footer.forAiAgents': 'Für KI-Agenten',
+  'footer.contact': 'Kontakt',
+  'footer.privacy': 'Datenschutz',
+  'footer.terms': 'AGB',
+  'footer.security': 'Sicherheit',
+  'footer.parentBrand': 'Ein Produkt von Webappski. Schwesterprodukt: TypelessForm.',
+
+  // ── SEO meta ──
+  'seo.home.title': 'Buchungen per Konversation statt Formular',
+  'seo.home.description': 'KI-Buchungswidget, das Formulare durch Chat ersetzt. 25+ Sprachen, Spracheingabe, 150+ Branchen. Single-Call-Extraktion, DSGVO-konform, live in 1–2 Tagen.',
+  'seo.howItWorks.title': 'So funktioniert es — 4 Phasen · ein GPT-Aufruf · Enrichment-APIs',
+  'seo.howItWorks.description': 'Chat → Auswahl → Prüfung → Bestätigung. Ein GPT-Aufruf pro Schritt, 200–800 ms Latenz, Enrichment-APIs, Cascade-Korrekturen. Kein Regex.',
+  'seo.pricing.title': 'Preise — Pilot (gratis) + Enterprise',
+  'seo.pricing.description': 'Kostenloser Pilot mit vollem Funktionsumfang für Early Adopters. Enterprise mit SLA, dediziertem Account Manager, On-Premise, EU-Datenhaltung.',
+  'seo.industries.title': 'Branchen — KI-Buchung für Service-Verticals',
+  'seo.industries.description': 'Konfiguriert für Medizin, Recht, Beauty, Hotellerie, Immobilien, Automotive. Gleiche Engine, eigene Konfiguration pro Branche.',
+  'seo.faq.title': 'FAQ — Häufige Fragen',
+  'seo.faq.description': 'Eigenständige Antworten zu Typelessity — Produkt, Preise, KI-Verhalten, Integration, Datenschutz. Erster Satz ist zitierbar.',
+  'seo.about.title': 'Über uns — Formulare sind ein Artefakt eingeschränkter UI',
+  'seo.about.description': 'Typelessity setzt auf eine These: Wenn Nutzer ihre Anfrage frei formulieren, steigt die Conversion — und die Architektur wird einfacher.',
+  'seo.forAiAgents.title': 'Für KI-Agenten — stabile JSON-Verträge + /agent-Endpoint',
+  'seo.forAiAgents.description': 'Typelessity ist von autonomen Agenten aufrufbar. Stabile Session- und Booking-JSON, /agent/turn-Endpoint, maschinenlesbare Feature-Liste.',
+  'seo.blog.title': 'Blog — Konversations-Buchung, KI-Agenten, Integrationsmuster',
+  'seo.blog.description': 'Artikel über Formulare durch Chat ersetzen, GPT-Extraktion, mehrsprachiges UX, Enrichment-Muster und das Agent Web.',
+};

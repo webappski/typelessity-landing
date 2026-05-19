@@ -1,0 +1,103 @@
+---
+title: "Whisper vs Web Speech API: why Typelessity uses Whisper for voice booking"
+description: "The Web Speech API is built into every Chromium browser and free at the point of use. Typelessity still uses OpenAI Whisper for booking voice input. Here is the accuracy, vocabulary-biasing, and confidence-scoring math behind that choice."
+publishedAt: "2025-03-04"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "Engineering"
+tags: ["voice", "whisper", "ux", "speech-recognition"]
+faqs:
+  - q: "What is the difference between Whisper and the Web Speech API for booking voice input?"
+    a: "OpenAI Whisper is a server-side speech-to-text model with multilingual training, vocabulary biasing via `initial_prompt`, and per-segment confidence scores. The Web Speech API is a browser-native interface optimized for English with US/UK accents and offers no domain-vocabulary biasing. Typelessity uses Whisper because booking voice input requires accuracy on rare names, addresses, and non-English locales."
+  - q: "Why does the Web Speech API fail on non-English booking input?"
+    a: "The Web Speech API is biased toward US/UK English. Non-English accented input — Russian, German, Polish, Arabic, Japanese — is transcribed with substantially lower accuracy. Typelessity routinely sees the API mistranscribe domain terms in the user's native language, which then forces a slower extraction pipeline downstream."
+  - q: "How does Typelessity handle the Whisper latency cost?"
+    a: "Whisper adds roughly 600–900 ms over Web Speech. Typelessity offsets this with three techniques: streaming audio chunks while the user is still speaking (most of the transcript is ready before mic release), an optimistic 'Got it, processing...' UI state, and a Web Speech fallback if Whisper exceeds 2 s. The result keeps voice input inside the latency budget for booking surfaces."
+  - q: "What does vocabulary biasing in Whisper actually do?"
+    a: "Whisper accepts an `initial_prompt` string that biases the model toward expected vocabulary. Typelessity injects the clinic's doctor list, the top specialty terms in the user's language, and street names for transfer services. Recognition accuracy on rare proper nouns improves substantially — the difference between 'Dr Schmidt' transcribed correctly and a phone call from a confused receptionist."
+  - q: "When would Typelessity reconsider the Web Speech API?"
+    a: "If the Web Speech API gained vocabulary biasing and per-utterance confidence scores, it could run as a fast-path for short, simple bookings while Whisper handled high-stakes or non-English ones. Neither feature is in the spec today. A self-hosted whisper-large-v3-turbo on a GPU is also being evaluated for Enterprise customers needing on-premise deployment."
+---
+
+<strong>OpenAI Whisper is Typelessity's default speech-to-text engine for voice booking, despite costing ~600–900 ms more than the browser's Web Speech API. The reasons are accuracy on non-English input, vocabulary biasing via `initial_prompt`, and per-segment confidence scores. The latency is hidden by streaming and an optimistic UI. A wrong booking is more expensive than a slow one.</strong>
+
+The Web Speech API ships in every Chromium browser. It is free at the point of use. It returns a transcript in roughly 50 ms. And it is wrong often enough on real booking input that Typelessity replaces it with OpenAI Whisper — which costs money per minute and adds 600–900 ms of latency.
+
+The trade is intentional. Booking voice input is a high-cost-of-error surface; the failure modes of Web Speech destroy the booking flow before the extraction pipeline ever sees the text.
+
+## What is the Web Speech API and what is Whisper?
+
+**The Web Speech API** is a browser-native interface (`SpeechRecognition`) that exposes platform speech recognition — primarily Google's English-optimized recognizer in Chromium. It is fast (~50 ms for an interim result), free, and offline-capable on some platforms. It exposes a single language tag and returns the final transcript string.
+
+**Whisper** is OpenAI's multilingual speech-to-text model, accessible via API. It was trained on 680,000 hours of multilingual audio. It accepts a vocabulary-biasing `initial_prompt`, returns word-level timestamps, alternative hypotheses, and per-segment confidence scores. It is server-side; latency is 600–900 ms for a typical booking utterance.
+
+**Bottom line:** Web Speech is a browser primitive optimized for short English commands. Whisper is a domain-tunable multilingual transcription service.
+
+## Why does the Web Speech API fail on non-English booking input?
+
+The Typelessity user base spans 25+ languages. The Web Speech API is biased toward US/UK English; accuracy on non-English accented input drops substantially. A Russian user saying *"стоматолог"* gets transcribed in Latin letters, which the extraction prompt then has to interpret. Sometimes that works. Sometimes a "Schmidt" becomes a "Smith" and the booking goes to the wrong doctor.
+
+The deeper limitation is **no per-utterance configuration**. You can set the `lang` tag, but you cannot bias toward domain vocabulary — medical terms, doctor names, street names. Whisper's `initial_prompt` accepts a freeform string that nudges the model toward the expected vocabulary; Typelessity injects the clinic's doctor list and the top specialty terms in the user's language, and recognition accuracy on rare proper nouns rises sharply.
+
+The Web Speech API also returns no per-segment confidence — only the final string. Whisper returns confidence scores; Typelessity's UI uses them to surface a *"did you mean…"* prompt for any segment under 0.7 confidence, instead of silently extracting the wrong booking.
+
+## How does Typelessity handle the Whisper latency cost?
+
+Whisper is 600–900 ms slower than Web Speech. Users notice that. Typelessity hides the cost with three techniques:
+
+1. **Streaming audio chunks.** The widget POSTs audio chunks as they are recorded, not after the user stops. By the time the user releases the mic, most of the transcript is already on the server.
+2. **Optimistic UI.** The widget shows *"Got it, processing..."* immediately on mic release. Perceived latency is shorter than measured latency.
+3. **Web Speech fallback.** If Whisper exceeds 2 s, the widget falls back to Web Speech and warns the user the transcript may need review. The fallback is rare in production but bounds the worst case.
+
+The end result keeps voice input inside the same 1-second p95 budget the rest of the booking flow operates under. Latency budgeting is described in /blog/latency-budgets.
+
+**Bottom line:** raw API latency is the wrong metric. User-perceived latency, gated by streaming and optimistic UI, is the one that matters.
+
+## Direct comparison summary
+
+Web Speech API vs Whisper for booking voice input:
+
+- **Latency** → Web Speech (~50 ms vs 600–900 ms)
+- **Multilingual accuracy** → Whisper (substantial gap on non-English)
+- **Domain vocabulary biasing** → Whisper (`initial_prompt`)
+- **Confidence scores per segment** → Whisper
+- **Cost at the point of use** → Web Speech (free)
+- **Hostability / on-premise** → Whisper (self-hosted variant available)
+- **Booking-flow correctness** → Whisper
+
+For booking surfaces, accuracy and confidence dominate the trade-off. For voice command interfaces (search, dictation), Web Speech is often the right call.
+
+## When would Typelessity reconsider the Web Speech API?
+
+If the Web Speech API gained vocabulary biasing and per-utterance confidence, Typelessity would run it as a fast-path for short, simple, English-dominant bookings, and use Whisper as the careful-path for long-form, multilingual, or high-stakes ones. Neither feature is in the spec at the time of writing.
+
+A separate evaluation is `whisper-large-v3-turbo` self-hosted on a GPU. Latency drops to roughly 200 ms, sovereignty stays inside the customer's perimeter, cost shifts from per-minute to amortized GPU. Relevant for Enterprise customers needing on-premise deployment — the same path described in /blog/gdpr-compliance for EU sovereignty constraints.
+
+## When the wrong booking is more expensive than a slow one
+
+A booking made with the wrong doctor name produces a phone call from a confused receptionist. The cost is human time, customer trust, and the credibility of the entire conversational booking surface. A booking that takes 800 ms longer to transcribe produces a slightly delayed confirmation. The cost is patience.
+
+The user-facing rule: **optimize for correctness, not speed, when the cost of a mistake is a phone call from a confused receptionist.**
+
+## FAQ
+
+**What is the difference between Whisper and the Web Speech API for booking voice input?**
+Whisper is a server-side multilingual model with vocabulary biasing and confidence scores. The Web Speech API is a browser primitive optimized for English. Typelessity uses Whisper because booking accuracy matters more than transcript latency.
+
+**Why does the Web Speech API fail on non-English booking input?**
+Bias toward US/UK English produces substantially lower accuracy on Russian, German, Polish, Arabic, Japanese and other locales. Domain proper nouns suffer most.
+
+**How does Typelessity handle the Whisper latency cost?**
+Streaming audio chunks while the user is still speaking, optimistic UI on mic release, and a Web Speech fallback if Whisper exceeds 2 s.
+
+**What does vocabulary biasing in Whisper actually do?**
+The `initial_prompt` field nudges the model toward expected terms — doctor names, specialty terms, street names. Recognition accuracy on rare proper nouns improves sharply.
+
+**When would Typelessity reconsider the Web Speech API?**
+If it gained vocabulary biasing and per-segment confidence scores. A self-hosted Whisper variant on a GPU is also under evaluation for Enterprise on-premise deployments.
+
+---
+
+For the extraction pipeline that consumes the transcript, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the multilingual prompt, see [25 languages, one prompt](/blog/25-languages-one-prompt). For the latency budget that wraps voice input, see [Latency budgets](/blog/latency-budgets).
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

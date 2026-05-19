@@ -1,0 +1,223 @@
+// ══════════════════════════════════════
+//  Typelessity Landing — Global Styles
+//  Theme: Variant C — Cream paper + graphite + electric tangerine
+//  Source: variant-c-warm.jsx → vC_styles (post-redesign)
+// ══════════════════════════════════════
+
+@use './styles/reset.scss';
+@use './styles/tokens.scss';
+@use './styles/typography.scss';
+
+// ── A11y: skip-link ──
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 1000;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 16px;
+  border-radius: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  transition: top 0.15s;
+
+  &:focus-visible {
+    top: 0;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+// ── Global focus-visible ──
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+main:focus { outline: none; }
+
+// ── Layout ──
+.vc-wrap {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad);
+}
+
+.vc-mesh {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: var(--gradient-mesh-hero);
+  mask-image: linear-gradient(to bottom, black, black 70%, transparent 95%);
+}
+
+// ── Grain overlay (subtle paper texture) ──
+.vc-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.05 0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+// ── Buttons ──
+.vc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.15s;
+  border: 1px solid transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.vc-btn-lg { padding: 14px 24px; font-size: 15px; }
+.vc-btn-block { width: 100%; justify-content: center; }
+
+// Primary — solid graphite (used in navbar, neutral CTAs)
+.vc-btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 6px 20px -8px rgba(20, 17, 13, 0.4);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 32px -10px rgba(20, 17, 13, 0.45);
+    background: #000;
+  }
+}
+
+// Accent — solid tangerine (used in hero CTA + bottom CTA)
+.vc-btn-accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 24px -8px rgba(255, 91, 31, 0.55);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 32px -10px rgba(255, 91, 31, 0.6);
+    background: #ff4a08;
+  }
+}
+
+.vc-btn-ghost {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--line);
+
+  &:hover {
+    background: var(--bg-soft);
+    border-color: rgba(20, 17, 13, 0.18);
+  }
+}
+
+// ── Eyebrow / Kicker ──
+.vc-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink2);
+  padding: 7px 14px 7px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+// Live status dot — tangerine (one of 10 allowed accent spots)
+.vc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 91, 31, 0.18);
+}
+
+.vc-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink2);
+  margin-bottom: 22px;
+  text-transform: uppercase;
+}
+
+.vc-kicker-bar {
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ink);
+}
+
+.vc-accent-magenta .vc-kicker-bar { background: var(--ink2); }
+
+// ── H1 highlighted word — tangerine slanted underbar ──
+.vc-h1-grad {
+  color: var(--ink);
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    bottom: 6%;
+    height: 14%;
+    background: var(--accent);
+    z-index: -1;
+    opacity: 0.95;
+    transform: skewX(-6deg);
+  }
+}
+
+// Editorial serif italic for the closing word
+.vc-h1-em {
+  font-style: italic;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--ink2);
+  letter-spacing: -0.035em;
+}
+
+// ── Section header ──
+.vc-section-h {
+  max-width: 760px;
+  margin-bottom: 70px;
+}
+
+.vc-section-sub {
+  font-size: 17.5px;
+  color: var(--ink2);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 620px;
+  text-wrap: pretty;
+}
+
+// ── Scrollbar ──
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--ink3);
+  border-radius: 3px;
+  opacity: 0.4;
+}

@@ -1,0 +1,40 @@
+import type { TranslationMap } from './translation.types';
+
+export const PL: TranslationMap = {
+  'nav.howItWorks': 'Jak to działa',
+  'nav.industries': 'Branże',
+  'nav.pricing': 'Cennik',
+  'nav.faq': 'FAQ',
+  'nav.blog': 'Blog',
+  'nav.about': 'O nas',
+  'nav.getStarted': 'Rozpocznij',
+
+  'footer.tagline': 'Konwersacyjny widget rezerwacji AI. Zastąp formularze naturalnym czatem w 25+ językach.',
+  'footer.product': 'Produkt',
+  'footer.resources': 'Zasoby',
+  'footer.company': 'Firma',
+  'footer.forAiAgents': 'Dla agentów AI',
+  'footer.contact': 'Kontakt',
+  'footer.privacy': 'Prywatność',
+  'footer.terms': 'Regulamin',
+  'footer.security': 'Bezpieczeństwo',
+  'footer.parentBrand': 'Produkt Webappski. Produkt siostrzany: TypelessForm.',
+
+  // ── SEO meta ──
+  'seo.home.title': 'Rezerwacje przez rozmowę, a nie formularz',
+  'seo.home.description': 'Widget rezerwacji AI zastępujący formularze czatem. 25+ języków, głos, 150+ branż. Single-call extraction, zgodność z RODO, start w 1–2 dni.',
+  'seo.howItWorks.title': 'Jak to działa — 4 fazy · jedno wywołanie GPT · API wzbogacania',
+  'seo.howItWorks.description': 'Czat → Wybór → Przegląd → Potwierdzenie. Jedno wywołanie GPT na turę, 200–800 ms, API wzbogacania, korekty kaskadowe. Bez regex.',
+  'seo.pricing.title': 'Cennik — Pilot (gratis) + Enterprise',
+  'seo.pricing.description': 'Darmowy Pilot z pełnym dostępem dla early-adopterów. Enterprise z SLA, dedykowanym opiekunem, on-premise, przechowywanie danych w UE.',
+  'seo.industries.title': 'Branże — rezerwacje AI dla sektora usług',
+  'seo.industries.description': 'Skonfigurowane dla medycyny, prawa, beauty, hoteli, nieruchomości, motoryzacji. Jeden silnik, konfiguracja per branża.',
+  'seo.faq.title': 'FAQ — Częste pytania',
+  'seo.faq.description': 'Samodzielne odpowiedzi o Typelessity — produkt, cennik, zachowanie AI, integracja, prywatność. Pierwsze zdanie nadaje się do cytatu.',
+  'seo.about.title': 'O nas — Formularze to artefakt ograniczonego UI',
+  'seo.about.description': 'Typelessity opiera się na jednej tezie: gdy użytkownicy opisują potrzebę własnymi słowami, konwersja rośnie, a architektura jest prostsza.',
+  'seo.forAiAgents.title': 'Dla agentów AI — stabilne kontrakty JSON + endpoint /agent',
+  'seo.forAiAgents.description': 'Typelessity wywoływany przez autonomicznych agentów. Stabilne JSON-y Session i Booking, /agent/turn, maszynowo czytelna lista funkcji.',
+  'seo.blog.title': 'Blog — Rezerwacja konwersacyjna, agenci AI, wzorce integracji',
+  'seo.blog.description': 'Artykuły o zastępowaniu formularzy czatem, ekstrakcji GPT, wielojęzycznym UX, wzorcach wzbogacania i agent web.',
+};

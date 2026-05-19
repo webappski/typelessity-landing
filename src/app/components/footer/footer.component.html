@@ -1,0 +1,51 @@
+@let lang = t.lang();
+<footer class="vc-footer">
+  <div class="vc-wrap vc-footer-grid">
+    <div class="vc-footer-brand">
+      <a class="vc-logo" [routerLink]="'/' + lang">
+        <span class="vc-logo-text">Typelessity</span>
+      </a>
+      <p>{{ t.t('footer.tagline') }}</p>
+      <div class="vc-footer-meta">© {{ year }} Typelessity</div>
+      <p class="vc-footer-parent">
+        {{ t.t('footer.parentBrand') }}
+        <span class="vc-footer-parent-links">
+          <a href="https://webappski.com" rel="noopener">webappski.com</a>
+          ·
+          <a href="https://typelessform.com" rel="noopener">typelessform.com</a>
+        </span>
+      </p>
+    </div>
+
+    <div>
+      <h4 class="vc-footer-h">{{ t.t('footer.product') }}</h4>
+      <ul class="vc-footer-links">
+        <li><a [routerLink]="'/' + lang + '/how-it-works'">{{ t.t('nav.howItWorks') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/pricing'">{{ t.t('nav.pricing') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/industries'">{{ t.t('nav.industries') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/for-ai-agents'">{{ t.t('footer.forAiAgents') }}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="vc-footer-h">{{ t.t('footer.resources') }}</h4>
+      <ul class="vc-footer-links">
+        <li><a [routerLink]="'/' + lang + '/blog'">{{ t.t('nav.blog') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/faq'">{{ t.t('nav.faq') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/about'">{{ t.t('nav.about') }}</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="vc-footer-h">{{ t.t('footer.company') }}</h4>
+      <ul class="vc-footer-links">
+        <li><a [routerLink]="'/' + lang + '/legal/privacy'">{{ t.t('footer.privacy') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/legal/terms'">{{ t.t('footer.terms') }}</a></li>
+        <li><a [routerLink]="'/' + lang + '/legal/dpa'">DPA</a></li>
+        <li><a [routerLink]="'/' + lang + '/legal/security'">{{ t.t('footer.security') }}</a></li>
+        <li><a href="mailto:hello&#64;typelessity.com">{{ t.t('footer.contact') }}</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

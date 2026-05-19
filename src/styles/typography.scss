@@ -1,0 +1,48 @@
+// Geist Variable + Geist Mono via @fontsource (self-hosted, font-display: swap)
+@use '@fontsource-variable/geist' as geist;
+@use '@fontsource/geist-mono/400.css' as mono400;
+@use '@fontsource/geist-mono/500.css' as mono500;
+
+// Editorial serif system for blog (longform reading + display italic)
+// Newsreader — variable opsz/wght for body serif and FAQ answers
+// Instrument Serif — italic display for drop caps, callout labels, pull quotes
+@use '@fontsource-variable/newsreader/opsz.css' as newsreader-opsz;
+@use '@fontsource-variable/newsreader/opsz-italic.css' as newsreader-opsz-italic;
+@use '@fontsource/instrument-serif/400.css' as instrument-400;
+@use '@fontsource/instrument-serif/400-italic.css' as instrument-400-italic;
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-feature-settings: 'ss01', 'cv11';
+  letter-spacing: -0.011em;
+  line-height: 1.55;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+// Mobile-friendly defaults: clamp min-values reduced for ≤480px viewports;
+// upper bounds preserve desktop typography. line-height gentler on small sizes.
+h1 { font-size: clamp(36px, 7vw, 98px); line-height: 1; letter-spacing: -0.04em; }
+h2 { font-size: clamp(28px, 4.6vw, 60px); line-height: 1.08; letter-spacing: -0.032em; }
+h3 { font-size: clamp(19px, 2vw, 22px); letter-spacing: -0.022em; }
+h4 { font-size: 17px; letter-spacing: -0.022em; }
+
+p { margin: 0; text-wrap: pretty; }
+
+code, pre, kbd, samp { font-family: var(--font-mono); }

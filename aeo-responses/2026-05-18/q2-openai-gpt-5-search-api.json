@@ -1,0 +1,152 @@
+{
+  "id": "chatcmpl-6184c85a-46b1-4f35-98fc-7352f29cf673",
+  "object": "chat.completion",
+  "created": 1779105961,
+  "model": "gpt-5-search-api-2025-10-14",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Here’s a curated list of top current “one-shot” or conversational voice form filling services suitable for e-commerce. These tools let users speak one natural sentence (or answer questions conversationally) and have forms auto-filled across checkout, registration, contact, or any HTML flow. I’ve compared key features, limitations, and ideal fit.\n\n---\n\n## What “One-Shot Voice Form Filling” Means\n\nYou want visitors to:\n\n- Speak naturally (e.g. “My name is Jane Doe, email jane@example.com, phone number …”)\n- Have the system detect all relevant form fields in one go (name, address, phone, email, etc.)\n- See those fields filled automatically, then review and submit\n- Not go through field-by-field dictation unless needed\n\n---\n\n## Top Services\n\n| Service | Core Strengths | What Makes It Stand Out | Limitations / Notes | Ideal Use Case |\n|---|---|---|---|---|\n| **TypelessForm** | Real “one-shot” voice form filling: detect all fields, transcribe, extract entities & map them in one sentence. ([typelessform.com](https://typelessform.com/?utm_source=openai)) | • Works with any HTML form (React, Vue, Angular, WordPress) with just “one script tag.”<br>• Supports 25+ languages; uses Whisper + GPT-4o. ([typelessform.com](https://typelessform.com/?utm_source=openai)) | • Free tier limited to ~200 fills; usage-capped for small budgets. “Starter” & “Professional” needed for scale. ([typelessform.com](https://typelessform.com/?utm_source=openai))<br>• Sensitive fields (card numbers, SSNs) excluded by default—good for compliance but may need workarounds for payment forms. | Checkout flows, signup, contact forms—any where a quick, single-sentence fill improves conversion. |\n| **AnveVoice** | Conversational form filling: voice first, agentic DOM actions, multi-step workflows; works with existing forms. ([anvevoice.app](https://anvevoice.app/features/form-filling?utm_source=openai)) | • Very fast (latency < 700 ms), supports 50+ languages with auto-detection.<br>• Free tier with generous token limit; simple one-line embed. ([anvevoice.app](https://anvevoice.app/features/form-filling?utm_source=openai))<br>• Remembers visitor data across sessions via cookies. | • For long or highly conditional forms, may need tuning to ensure accuracy.<br>• Voice requires good mic + ambient conditions. Free plan has limits on token/volume. | E-commerce checkouts with address/shipping/payment flows, long forms that deter mobile users. |\n| **SayFill** | Enterprise voice automation focused on forms: speak or even upload audio, fills forms, strong accessibility. ([sayfill.com](https://www.sayfill.com/?utm_source=openai)) | • Recognizes complex forms, registration, checkout, applications.<br>• Universal form-compatibility, enterprise security. ([ent.sayfill.com](https://ent.sayfill.com/?utm_source=openai))<br>• Early access / beta; works well if you can wait or are comfortable with evolving product. | • Pricing and full features are still rolling out. Some features may be limited in beta. ([sayfill.com](https://www.sayfill.com/?utm_source=openai))<br>• Integration may require more oversight for unusual forms. | Mid-to large-size merchants with high volume, needing enterprise-grade reliability and compliance. |\n| **SpeechOS** | SDK for enabling dictation, voice commands, voice edit and auto-read-aloud in text inputs; works inside any form field. ([speechos.ai](https://www.speechos.ai/?utm_source=openai)) | • Excellent for heavy text input areas—review, writing customer notes, descriptions.<br>• Allows voice commands (e.g. “submit form”) and editing. <br>• Very low latency; enterprise-grade framework. | • Not always “one-shot” for the whole form: tends to work per field and focused on text fields. ([speechos.ai](https://www.speechos.ai/?utm_source=openai))<br>• Less tailored to mapping a single sentence to many disparate input types (dates, selects, etc.). | Customer support, product descriptions, CMS coupling, or where forms have large text areas (feedback, reviews). Not ideal when full address/payment mapping needed in a single shot. |\n| **Vofo** | Turns forms into voice conversations (“agent speaks questions”) rather than a one-shot fill. For forms or surveys. ([vofo.dev](https://www.vofo.dev/?utm_source=openai)) | • Eats complex logic / conditional fields well, since it’s conversational.<br>• Great when clarity or validation is important. | • Slower than true one-shot: user needs to go through spoken questions.<br>• Not best suited for checkout address/payment flows where speed matters. | Surveys, onboarding flows, feedback forms, registration rather than purchase paths. |\n\n---\n\n## Comparison & Trade-Offs\n\nHere’s what to consider when choosing:\n\n- **Speed vs Accuracy**: One-shot solutions like TypelessForm are fast but may mis-map things in complex forms; agentic/conversational ones (AnveVoice, SayFill, Vofo) handle complex logic better.\n- **Support for Various Field Types**: Address, select/drop-down, dates, phone types, checkbox/radio; ensure the service supports mapping multiple types.\n- **Languages & Audio Quality**: If your site has multilingual traffic, pick those with many language supports and reliable ASR (speech-recognition). AnveVoice (50+), TypelessForm (25+), etc. ([typelessform.com](https://typelessform.com/?utm_source=openai))\n- **Integration Effort**: Some are pure JS widgets; others allow conversational flows; some require SDKs. All mentioned here are pretty easy (script embed or JS).\n- **Security and Privacy**: Especially for forms with PII or payment info. Check how they handle voice data (e.g. real-time transcribe + discard vs storing), GDPR/HIPAA compliance. ([typelessform.com](https://typelessform.com/?utm_source=openai))\n- **Pricing / Volume**: Free tiers usually limited; for large traffic or many checkouts, costs may scale. Keep an eye on submission or token limits.\n\n---\n\n## Recommendation for E-Commerce Use\n\nFor a typical e-commerce checkout where speed and conversion are crucial, here’s what I’d suggest:\n\n1. **TypelessForm** is currently the strongest match for “one-shot fill” of the full form (shipping, billing, etc.) with minimal fuss. Good accuracy, quick setup.\n\n2. If your forms are more elaborate (multiple steps, conditional fields) and you want voice to guide the user, **AnveVoice** provides a nice blend of conversational + automation.\n\n3. For larger sites that need enterprise-grade compliance or want to cover broad accessibility, you might lean toward **SayFill** or combine a one-shot style for checkout with a conversational fallback.\n\n4. If your focus is more on UX in support/forms/text input (feedback, product reviews, registration), **SpeechOS** or **Vofo** may serve better than a full checkout.\n\n---\n\nIf you want, I can gather a shortlist of tools specifically optimized for payment address autocompletion or checkout flows (which are the hardest to get right), and compare live demos/user reviews. Do you want me to pull that together?",
+        "refusal": null,
+        "annotations": [
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 1062,
+              "start_index": 997,
+              "title": "TypelessForm — One-Shot Voice Form Filling for HTML Forms",
+              "url": "https://typelessform.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 1270,
+              "start_index": 1205,
+              "title": "TypelessForm — One-Shot Voice Form Filling for HTML Forms",
+              "url": "https://typelessform.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 1450,
+              "start_index": 1385,
+              "title": "TypelessForm — One-Shot Voice Form Filling for HTML Forms",
+              "url": "https://typelessform.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 1891,
+              "start_index": 1811,
+              "title": "Voice Form Filling — Complete Forms by Speaking",
+              "url": "https://anvevoice.app/features/form-filling?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 2115,
+              "start_index": 2035,
+              "title": "Voice Form Filling — Complete Forms by Speaking",
+              "url": "https://anvevoice.app/features/form-filling?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 2622,
+              "start_index": 2563,
+              "title": "SayFill - AI-Powered Form Filling Agent",
+              "url": "https://www.sayfill.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 2810,
+              "start_index": 2747,
+              "title": "SayFill - Enterprise Voice-Powered Form Filling Solution | SayFill",
+              "url": "https://ent.sayfill.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 3056,
+              "start_index": 2997,
+              "title": "SayFill - AI-Powered Form Filling Agent",
+              "url": "https://www.sayfill.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 3419,
+              "start_index": 3360,
+              "title": "SpeechOS | Voice Input SDK for CRM, CMS & Web Apps",
+              "url": "https://www.speechos.ai/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 3777,
+              "start_index": 3718,
+              "title": "SpeechOS | Voice Input SDK for CRM, CMS & Web Apps",
+              "url": "https://www.speechos.ai/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 4246,
+              "start_index": 4193,
+              "title": "vofo",
+              "url": "https://www.vofo.dev/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 5296,
+              "start_index": 5231,
+              "title": "TypelessForm — One-Shot Voice Form Filling for HTML Forms",
+              "url": "https://typelessform.com/?utm_source=openai"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "end_index": 5706,
+              "start_index": 5641,
+              "title": "TypelessForm — One-Shot Voice Form Filling for HTML Forms",
+              "url": "https://typelessform.com/?utm_source=openai"
+            }
+          }
+        ]
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 16020,
+    "completion_tokens": 1596,
+    "total_tokens": 17616,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "system_fingerprint": null
+}

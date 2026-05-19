@@ -1,0 +1,140 @@
+---
+title: "Pricing AI products in 2026: why Typelessity makes the pilot free"
+description: "Most AI booking tools default to a $99/mo subscription. Typelessity makes the pilot free with no time limit and prices Enterprise to outcome. Here is the math behind that choice — and where it is the wrong choice."
+publishedAt: "2025-04-01"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "Business"
+tags: ["pricing", "go-to-market", "saas", "b2b-ai"]
+faqs:
+  - q: "Why does Typelessity offer a free pilot instead of a $99/mo subscription?"
+    a: "AI products in B2B fail the standard SaaS pricing assumptions. Marginal cost per user is real (model inference fees), value depends on how the model performs on the customer's specific data (which a screenshot cannot prove), and procurement involves legal and IT review (credit-card PLG is dead). A free pilot is procurement-compatible. A $99/mo subscription is not."
+  - q: "What does a 'free pilot' actually include?"
+    a: "The entire product, deployed to a real customer-facing surface, with engineering support during integration. Not a sandbox. Not a demo. Real users booking real appointments, processed by Typelessity's infrastructure, at Typelessity's cost. The pilot has no time limit; the customer commits to paying when value is proven."
+  - q: "How does Typelessity make the unit economics work on free pilots?"
+    a: "Per-pilot marginal cost (OpenAI fees + infrastructure) is small relative to the cost of an Enterprise sales call. The constraint is engineering attention per pilot, not compute. Pilots that take roughly 5 hours of integration over 2 months scale; pilots that take 50 hours each do not. The model breaks for high-touch customers above a certain count."
+  - q: "Why is there no published Enterprise price?"
+    a: "Enterprise pricing depends on volume, languages, compliance requirements, SLA tier, and the custom enrichment APIs Typelessity has to build for the client. A single published price would either overcharge low-volume customers or undercharge high-volume ones. The Enterprise tier is quoted after the pilot data shows the actual usage shape."
+  - q: "When is the free-pilot model the wrong choice for an AI product?"
+    a: "When marginal cost per user is high (GPU-heavy generative video), when the customer base is huge and pilot-quality support cannot scale, or when the product is naturally self-serve and metered (per-API-call, per-token). For lower-touch products, publish a free tier with usage metering. The free-pilot model fits white-glove B2B AI specifically."
+---
+
+<strong>Typelessity prices the pilot free with no time limit and quotes Enterprise to outcome — not as a freemium tier, not as a free trial, but as a deferred-payment partnership. The reasoning: standard SaaS pricing assumes zero marginal cost, screenshot-proven value, and credit-card procurement. None of those hold for B2B AI in 2026. The pilot is procurement-compatible; a $99/mo subscription is not. Read /pricing for tier shape.</strong>
+
+The conventional SaaS pricing playbook says: low free tier, $49/mo starter, $199/mo growth, custom Enterprise. Typelessity tried it. Conversion from signup to paid was small enough to make the model unworkable. The pilot was then made completely free — full features, no time limit, no credit card — and conversion to a paid Enterprise contract rose sharply. This article explains why.
+
+## What does "free pilot" actually mean at Typelessity?
+
+A Typelessity pilot is the entire product, deployed to a real customer-facing surface, with engineering support during integration. Not a sandbox. Not a demo. Real users booking real appointments, processed by Typelessity's infrastructure, at Typelessity's cost.
+
+The pilot has **no time limit**. The customer commits to paying when value is proven on their specific data. The risk sits on the vendor side. That is the feature, not a side-effect.
+
+**Bottom line:** the pilot is the entire product, not a watered-down preview. A pilot that hides features is a free trial pretending to be a partnership.
+
+## Why does this work for B2B AI specifically?
+
+The historical SaaS pricing model assumes:
+
+1. **Marginal cost of serving one more user is approximately zero.** Cloud infrastructure plus storage; pennies per user.
+2. **The product's value is obvious from a screenshot.** A user can evaluate it in a minute.
+3. **Procurement decisions are made by individual users with credit cards.** PLG fits.
+
+None of this is true for AI products in B2B:
+
+1. **Marginal cost is real.** Model inference fees per request; thousands of bookings per month per customer.
+2. **Value depends on how the model performs on the customer's specific data.** Doctor names, specialty terminology, address formats, language mix — none of which can be screenshot-tested.
+3. **B2B AI procurement involves legal review, data residency questions, IT security questionnaires, and DPA negotiation.** Credit-card PLG is dead in this segment.
+
+So the customer has to be allowed to prove value before procurement. A free pilot is procurement-compatible — it slots into the existing evaluation framework. A $99/mo subscription is not — it requires a procurement decision *before* value is proven, and that decision will not be made.
+
+## How does the unit economics math actually work?
+
+Per-pilot marginal cost is dominated by model inference fees plus infrastructure. For a typical Typelessity pilot processing some thousands of bookings per month, that cost is small compared to the cost of a single Enterprise sales call, let alone a full procurement cycle.
+
+The real constraint is **engineering attention per pilot**, not compute. A pilot that takes roughly 5 hours of integration over 2 months scales — Typelessity can run many in parallel. A pilot that takes 50 hours each does not — the team would be bankrupt before the first conversion.
+
+The model fits Typelessity because:
+
+- The widget is a single embed.
+- The config is JSON, generated by a builder.
+- The backend integration is a webhook or REST POST to the customer's existing booking system.
+
+If the integration cost per customer were higher, the pilot model would not work.
+
+**Bottom line:** the constraint is human time, not money. Free pilots scale only when integration is cheap.
+
+## What is the Enterprise tier?
+
+Pilots that work convert to Enterprise. Published pricing on Enterprise would either overcharge low-volume customers or undercharge high-volume ones, because pricing depends on:
+
+- **Volume** — bookings per month.
+- **Languages** — single-language is cheaper than 25-language.
+- **Compliance requirements** — standard EU vs on-premise sovereign deployment (see /blog/gdpr-compliance).
+- **SLA tier** — best-effort vs 99.9% with credits.
+- **Custom enrichment APIs** Typelessity builds for the client.
+
+The Enterprise tier is quoted after pilot data reveals the actual usage shape. For tier-shape, see /pricing.
+
+## Why "no time limit" specifically?
+
+A 60-day free pilot reads as a discounted subscription. The customer treats it as such, and the conversion is small.
+
+A pilot with no time limit reads as a partnership. The customer treats it as such, and the conversion rises significantly. Two reasons:
+
+1. **Trust.** "Free for 60 days" is a deadline imposed by the vendor. "Free pilot, pay when you are ready" is a commitment imposed by the customer. Different procurement category.
+2. **Fiscal-quarter alignment.** When the deadline is removed, customers convert when *their* internal budget cycle allows. Conversion timing aligns to fiscal quarter ends, not to arbitrary calendar cutoffs imposed by the vendor's marketing team.
+
+**Bottom line:** the deadline is the friction. Removing it surfaces the customer's *actual* readiness signal.
+
+## What this is and is not
+
+It is **not freemium.** Freemium has a feature-gated free tier and a paid tier. Typelessity has one tier (the full product) and a pricing negotiation that happens later. The pilot is not a lesser version.
+
+It is **not a free trial.** A trial expires. The Typelessity pilot does not.
+
+It **is a deferred-payment model.** The customer commits to paying when value is proven. The risk sits on the vendor. That is the structural feature.
+
+## Direct comparison summary
+
+Pricing models for B2B AI products, ranked by procurement compatibility:
+
+- **Free pilot, no time limit, Enterprise quote** → highest procurement compatibility
+- **Annual Enterprise contract with proof-of-concept clause** → strong; legal-friendly
+- **Time-boxed free trial (30-90 days)** → medium; reads as discount, not partnership
+- **Freemium (feature-gated free tier)** → weak for B2B AI; the gating creates the wrong evaluation signal
+- **Per-seat monthly subscription** → fails procurement gate for AI products
+- **Pure usage-based (per-token / per-call)** → works for self-serve developer tools, not for AI booking
+
+For a self-serve developer tool, usage-based is the right call. For white-glove B2B AI booking, the deferred-payment pilot wins.
+
+## When the free-pilot model is the wrong choice
+
+- **Marginal cost per user is high** (GPU-heavy video generation, frontier-model agents). Pilots eat the budget.
+- **Customer base is huge** and pilot-quality support cannot scale. Self-serve metering is the right primitive.
+- **The product is naturally usage-priced** (per-API-call, per-token). Publish a free tier and meter usage from day one.
+- **Sales cycle is short and credit-card-driven** (consumer SaaS). The deferred model adds friction with no gain.
+
+For lower-touch products, publish a free tier and meter usage. For mid-market B2B AI with model inference at the core, deferred-payment pilots fit the customer's procurement reality.
+
+## FAQ
+
+**Why does Typelessity offer a free pilot instead of a $99/mo subscription?**
+B2B AI procurement requires value to be proven on the customer's specific data before a price decision. A subscription forces the price decision before value is proven; a free pilot does not.
+
+**What does a "free pilot" actually include?**
+The entire product, deployed to a real customer-facing surface, with engineering support during integration. No time limit. The customer commits to paying when value is proven.
+
+**How does Typelessity make the unit economics work on free pilots?**
+Per-pilot marginal cost is small relative to the cost of a sales call. The real constraint is engineering attention per pilot, not compute. Cheap integration is the prerequisite.
+
+**Why is there no published Enterprise price?**
+Pricing depends on volume, languages, compliance, SLA, and custom enrichment APIs. Published pricing would mis-price both ends of the customer distribution.
+
+**When is the free-pilot model the wrong choice?**
+High marginal cost per user, huge customer base, or natively usage-priced products. Publish a metered free tier instead.
+
+---
+
+For the architectural reason single-call extraction makes pilots cheap, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the EU compliance contour that affects Enterprise pricing, see [GDPR-compliant AI booking](/blog/gdpr-compliance). For the GTM mistakes that motivated the deferred-payment pilot, see [What we got wrong](/blog/what-we-got-wrong). For tier shape, see [Pricing](/pricing).
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

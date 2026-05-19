@@ -1,0 +1,119 @@
+:host { display: block; }
+
+// FAQ-page eyebrow tag — tangerine (one of 10 allowed accent spots)
+.faq-eyebrow {
+  color: var(--accent);
+  .vc-kicker-bar { background: var(--accent); }
+}
+
+.faq-hero {
+  padding: 70px 0 24px;
+
+  h1 {
+    font-size: clamp(30px, 5vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 18px 0 16px;
+  }
+}
+
+.faq-cat {
+  padding: 32px 0;
+
+  h2 {
+    font-size: 26px;
+    letter-spacing: -0.025em;
+    margin: 0 0 18px;
+  }
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 920px;
+
+  details {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    scroll-margin-top: 80px;
+
+    &[open] {
+      border-color: rgba(20, 17, 13, 0.25);
+      box-shadow: 0 6px 20px -8px rgba(20, 17, 13, 0.15);
+
+      .faq-list__toggle { transform: rotate(180deg); color: var(--ink); }
+    }
+  }
+
+  summary {
+    padding: 22px 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    list-style: none;
+    font-size: 15.5px;
+    font-weight: 500;
+
+    &::-webkit-details-marker { display: none; }
+  }
+
+  &__q { flex: 1; }
+
+  &__toggle {
+    color: var(--ink3);
+    transition: transform 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+
+  &__a {
+    padding: 4px 26px 26px;
+    color: var(--ink2);
+    font-size: 15px;
+    line-height: 1.65;
+    margin: 0;
+    text-wrap: pretty;
+  }
+}
+
+.faq-todo {
+  padding: 32px 0 80px;
+
+  p {
+    font-size: 14px;
+    color: var(--ink3);
+    a { color: var(--ink); border-bottom: 1px solid rgba(20, 17, 13, 0.3); }
+  }
+}
+
+// ── Category jump nav (deep page added value) ──
+.faq-jump {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.faq-jump a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e8e3da;
+  font-size: 0.85rem;
+  color: var(--vc-graphite, #1a1a1a);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+.faq-jump a:hover { border-color: var(--vc-accent, #ff5b1f); }
+.faq-jump__count {
+  font-size: 0.78rem;
+  color: var(--vc-muted, #777);
+  background: #f3f0eb;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+}

@@ -1,0 +1,129 @@
+---
+title: "Latency budgets for conversational AI booking: how to stay under one second"
+description: "GPT calls, enrichment APIs, render time — added together naively, that is three seconds. Typelessity targets a 1-second p95 user-perceived round-trip. Here is the budget, what stays inside, what gets cut, and what is honestly outside the budget."
+publishedAt: "2025-03-25"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "Engineering"
+tags: ["performance", "latency", "architecture", "gpt-4.1-nano"]
+faqs:
+  - q: "What is a latency budget for an AI booking widget?"
+    a: "A latency budget is a hard upper bound on the user-perceived round-trip from action to first visible response, allocated across each phase that contributes to it. Typelessity's budget is 1 second at p95 for the booking flow, split across network, GPT extraction, enrichment APIs, and first paint. Anything that pushes p95 above 1 second is treated as a regression."
+  - q: "Why does Typelessity treat latency as architectural, not as an optimization pass?"
+    a: "Two model calls in series cannot be optimized into one model call retroactively. If the architecture says 'extract, then clarify with another model call', no amount of caching or streaming gets the round-trip under a second. Latency choices made at architecture time — single-call extraction, parallel enrichment, no re-prompting — are what makes the budget achievable."
+  - q: "How does Typelessity hide GPT latency from the user?"
+    a: "Three techniques: streaming response tokens (first paint at ~150 ms even if the full response takes 600 ms), parallel enrichment (kicking off downstream API calls while the response renders), and optimistic UI states ('Got it, looking for dentists...'). The user reads acknowledgement copy while the data is already loading underneath."
+  - q: "What is deliberately outside the Typelessity latency budget?"
+    a: "Voice transcription via Whisper (~700 ms additional, surfaced as a 'transcribing...' state), and cascade re-extraction after a mid-edit (up to 1.5 s, hidden behind a skeleton UI). These are user-tolerated because they have legible causes — the user understands voice is harder, and they expect a re-edit to take a moment. The booking happy path stays inside 1 second."
+  - q: "What is cut to stay inside the latency budget?"
+    a: "No second-pass clarification model call. No vector-DB lookup pre-prompt (~100 ms cost, replaced by inlining the top vocabulary in the prompt itself). No third-party analytics SDKs in the widget — Typelessity ships an in-house edge endpoint at ~15 ms instead of PostHog or Mixpanel, which would each cost 90–120 ms."
+---
+
+<strong>A latency budget for conversational AI booking is a hard upper bound on user-perceived round-trip time, split across network, model call, enrichment APIs, and first paint. Typelessity targets 1 second at p95. Hitting that requires architectural choices — single-call extraction, parallel enrichment, streaming UI — not post-hoc optimization. Anything over budget is rolled back. Read /blog/single-gpt-call for the architecture and /blog/forms-vs-conversation-study for the conversion math.</strong>
+
+The AI-product latency death spiral: call a model, then call an enrichment API, then call another model to interpret the result, then re-render. Every hop is 200–400 ms. Three hops and the user starts wondering if the page is broken.
+
+Typelessity has a hard 1-second p95 budget on the user-perceived round-trip from "send" to "first response visible." Hitting it required treating latency as a first-class architectural constraint, not an optimization pass.
+
+## What is a latency budget?
+
+A latency budget is a hard upper bound on user-perceived round-trip time, allocated across the phases that contribute to it. The budget is the architectural constraint; the architecture must fit inside it. The Typelessity allocation:
+
+```
+Total budget:          1000 ms
+  Network round-trip:   100 ms (user ↔ edge)
+  GPT-4.1-nano call:    600 ms (p95, with input tokens 200–800)
+  Enrichment APIs:      200 ms (parallel, capped)
+  Render and paint:     100 ms
+                       --------
+                       1000 ms
+```
+
+Anything over 1000 ms p95 is treated as a regression and rolled back.
+
+**Bottom line:** pick the budget first; architect to fit. The order matters.
+
+## What stays inside the budget?
+
+**Single GPT call.** Every required field is extracted in one model round-trip, not one-per-field. This is the largest contributor to staying under budget. Architecture detailed in /blog/single-gpt-call.
+
+**Parallel enrichment.** When the GPT call returns `{specialty: "dentistry"}`, the system kicks off `GET /doctors?specialty=dentistry` in parallel with the streamed response render. By the time the user finishes reading *"Got it, looking for dentists..."*, the doctor list is already in client state.
+
+**Streaming UI.** The model response streams. Tokens render as they arrive. First-paint is at ~150 ms even when the full response takes 600 ms. The user feels acknowledged before the model is finished.
+
+## What is cut to stay inside?
+
+**No re-prompting.** The first model call has to be right. There is no time for a second-pass clarification call. If the first call returns ambiguous output, the system asks the *user*, not the model. The `_meta.mf` anti-hallucination guard in /blog/single-gpt-call is the structural alternative to a second model call.
+
+**No vector-DB lookup pre-prompt.** Tempting, but costs 80–150 ms. Instead, vocabulary ships inside the prompt itself — top 50 terms per industry, ~400 tokens. Static, cheap, in-budget.
+
+**No third-party analytics SDKs in the widget.** PostHog adds roughly 90 ms. Mixpanel adds roughly 120 ms. Typelessity logs to an in-house edge endpoint at ~15 ms. The widget that hits a customer's website cannot afford to be the page's slowest script.
+
+**Bottom line:** the things you remove to stay in budget tell you more about the architecture than the things you keep.
+
+## What is honestly outside the budget?
+
+**Voice transcription (Whisper).** ~700 ms additional. Surfaced as a *"transcribing..."* state and hidden by streaming partial results. Users tolerate it because they understand voice is harder than typing. Architecture detailed in /blog/whisper-vs-webspeech.
+
+**Cascade re-extraction.** When a user edits a field and dependent fields need refetching, total delay can reach 1.5 s. The widget shows a skeleton state. Acceptable because it is a rare path and the user just initiated the edit, so the cause is legible. Mechanics in /blog/cascade-corrections.
+
+These are not violations of the budget; they are documented exceptions with user-facing affordances. The budget rule is not *"every interaction must be under 1 second"* — it is *"the booking happy path must be under 1 second, and every exception must be legible to the user."*
+
+## How does Typelessity measure?
+
+Real User Monitoring (Cloudflare Analytics + an in-house probe). p50, p95, p99 are logged per phase. Anomalies page on-call.
+
+The numbers from a representative production window:
+
+| Phase | p50 | p95 | p99 |
+|---|---|---|---|
+| Total round-trip | 540 ms | 920 ms | 1.4 s |
+| GPT call | 320 ms | 780 ms | 1.1 s |
+| Enrichment | 120 ms | 280 ms | 480 ms |
+| First paint | 145 ms | 220 ms | 310 ms |
+
+p95 sits at 920 ms — 80 ms of headroom against the 1000 ms budget. That headroom is watched weekly.
+
+## Direct comparison summary
+
+Sources of latency in conversational AI booking, ranked by typical contribution:
+
+- **Model call** → largest single phase (300–800 ms p95)
+- **Enrichment APIs** → second largest if serial; small if parallel
+- **Network round-trip** → 50–150 ms depending on edge proximity
+- **Render and paint** → small if streaming, large if blocking
+- **Third-party SDKs** → cumulative; one analytics SDK can blow the budget alone
+- **Re-prompting / second model call** → fatal; cannot fit in budget
+
+Architectural choices that hold the budget: single-call extraction, parallel enrichment, streaming UI, in-house analytics. Architectural choices that break it: chained model calls, serial enrichment, blocking renders, vendor SDKs.
+
+## When the 1-second budget is the wrong target
+
+- **Long-form generation** (drafting an email, writing a contract clause) tolerates 5–10 s round-trips. Streaming is the user-facing affordance.
+- **Voice-only interfaces** (Alexa, Google Home) often run on 2–3 s budgets because the user has nothing else to do during the wait.
+- **Agent flows with explicit "thinking" UI** can run multi-second model calls if the affordance is loud enough.
+
+For booking surfaces — where the user is at a customer-facing site and a slow widget reflects on the customer's brand — sub-second is the bar. For chat with a financial advisor — multi-second is fine.
+
+## FAQ
+
+**What is a latency budget for an AI booking widget?**
+A hard upper bound on the user-perceived round-trip, split across phases. Typelessity's budget is 1 second at p95.
+
+**Why does Typelessity treat latency as architectural?**
+Because two model calls in series cannot be optimized into one retroactively. The architecture must fit the budget at design time.
+
+**How does Typelessity hide GPT latency from the user?**
+Streaming response tokens, parallel enrichment, and optimistic acknowledgement copy that appears before the data finishes loading.
+
+**What is deliberately outside the latency budget?**
+Voice transcription (~700 ms over) and cascade re-extraction after a mid-edit (up to 1.5 s). Both are surfaced with explicit UI states.
+
+**What is cut to stay inside the budget?**
+No second-pass clarification model call, no vector-DB lookup pre-prompt, no third-party analytics SDKs.
+
+---
+
+For the single-call extraction architecture, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the cascade exception, see [Cascade-aware corrections](/blog/cascade-corrections). For the voice-input exception, see [Whisper vs Web Speech](/blog/whisper-vs-webspeech). For the multilingual prompt that fits the budget, see [25 languages, one prompt](/blog/25-languages-one-prompt).
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

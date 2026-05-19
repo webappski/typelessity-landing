@@ -1,0 +1,301 @@
+// Pricing page — Variant C — reuses .home-tiers / .tier / .vc-* tokens
+
+:host { display: block; }
+
+.pricing-hero {
+  padding: 70px 0 24px;
+
+  h1 {
+    font-size: clamp(30px, 5vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 18px 0 16px;
+  }
+}
+
+.pricing-tiers { padding: 30px 0 60px; }
+
+// Reuse .home-tiers / .tier styles defined in home.component.scss?
+// Per surgical guideline: those styles are scoped to home component (ViewEncapsulation default).
+// Duplicate the minimal pricing tier styling here as Variant C.
+.home-tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.tier {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  &--featured {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    box-shadow: 0 24px 60px -24px rgba(20, 17, 13, 0.2);
+
+    .tier__price { color: var(--ink); }
+  }
+
+  // Featured tier badge — tangerine (one of 10 accent spots)
+  &__badge {
+    position: absolute;
+    top: -12px;
+    left: 36px;
+    background: var(--accent);
+    color: #fff;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    font-size: 14px;
+    color: var(--ink2);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  &__price {
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  &__sub {
+    color: var(--ink3);
+    font-size: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  &__bullets {
+    margin: 0 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    li {
+      font-size: 14.5px;
+      color: var(--ink);
+      padding-left: 22px;
+      position: relative;
+
+      &::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--ink);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// ── Onboarding 4-step ──────────────────────────
+.pricing-onboarding { padding: 60px 0; }
+
+.onboarding {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  counter-reset: onboarding;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+
+  li {
+    counter-increment: onboarding;
+    padding: 24px 26px 26px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    position: relative;
+
+    &::before {
+      content: counter(onboarding, decimal-leading-zero);
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink3);
+      letter-spacing: 0.06em;
+    }
+
+    strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink2);
+      margin: 0;
+    }
+  }
+
+  &__day {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    padding: 3px 8px;
+    background: rgba(20, 17, 13, 0.06);
+    border-radius: 6px;
+  }
+}
+
+// ── ROI ────────────────────────────────────────
+.pricing-roi { padding: 60px 0; }
+
+.roi {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 8px 0;
+  max-width: 640px;
+  margin-bottom: 18px;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16px 26px;
+    border-bottom: 1px solid var(--line2);
+
+    &:last-child { border-bottom: 0; }
+
+    &--accent {
+      background: var(--accent-soft);
+      border-radius: 0 0 16px 16px;
+
+      .roi__value { color: var(--accent); }
+    }
+  }
+
+  &__label { font-size: 14.5px; color: var(--ink2); }
+  &__value { font-size: 22px; font-weight: 600; letter-spacing: -0.025em; }
+
+  &__note {
+    font-size: 13px;
+    color: var(--ink3);
+    line-height: 1.55;
+    max-width: 640px;
+    margin: 16px 0 0;
+  }
+}
+
+// ── FAQ ────────────────────────────────────────
+.pricing-faq { padding: 60px 0; }
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 920px;
+
+  details {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+
+    &[open] {
+      border-color: rgba(20, 17, 13, 0.25);
+      box-shadow: 0 6px 20px -8px rgba(20, 17, 13, 0.15);
+    }
+
+    summary {
+      padding: 22px 26px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      list-style: none;
+      font-size: 15.5px;
+      font-weight: 500;
+
+      &::-webkit-details-marker { display: none; }
+    }
+  }
+
+  &__i {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink3);
+    min-width: 28px;
+  }
+
+  &__q { flex: 1; }
+
+  &__a {
+    padding: 4px 26px 26px 72px;
+    color: var(--ink2);
+    font-size: 14.5px;
+    line-height: 1.65;
+    margin: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-tiers, .onboarding { grid-template-columns: 1fr; }
+}
+
+// ── Pilot vs Enterprise diff table ──
+.pricing-diff {
+  padding: 4rem 0;
+}
+.pricing-diff__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e8e3da;
+  font-size: 0.92rem;
+  th, td {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #f0ece4;
+  }
+  th {
+    background: #f7f3ec;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  th:nth-child(2), td:nth-child(2),
+  th:nth-child(3), td:nth-child(3) {
+    text-align: center;
+    width: 6rem;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+}
+.pricing-diff__note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--vc-muted, #555);
+}

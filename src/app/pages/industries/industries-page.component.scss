@@ -1,0 +1,62 @@
+:host { display: block; }
+
+.industries-hero {
+  padding: 80px 0 28px;
+
+  h1 {
+    font-size: clamp(30px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    margin: 18px 0 16px;
+  }
+}
+
+.industries-cat {
+  padding: 32px 0 12px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin: 0 0 20px;
+    color: var(--ink);
+  }
+}
+
+.industries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.industry-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--ink);
+  transition: transform 0.15s, box-shadow 0.2s, border-color 0.15s;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(20, 17, 13, 0.3);
+    box-shadow: 0 6px 16px -8px rgba(20, 17, 13, 0.2);
+  }
+
+  &__name {
+    font-weight: 500;
+    font-size: 14.5px;
+  }
+
+  &__sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}

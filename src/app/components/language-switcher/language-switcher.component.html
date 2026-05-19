@@ -1,0 +1,28 @@
+<div class="lang-dropdown">
+  <button class="lang-trigger" (click)="toggle()" aria-label="Switch language">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span class="lang-current">{{ currentLang().toUpperCase() }}</span>
+  </button>
+
+  @if (open()) {
+    <ul class="lang-menu">
+      @for (lang of availableLangs(); track lang) {
+        <li>
+          <button class="lang-option" (click)="changeLang(lang)">
+            {{ langMeta[lang].nativeName }}
+            <span class="lang-code">{{ lang.toUpperCase() }}</span>
+          </button>
+        </li>
+      }
+      <li class="lang-divider"></li>
+      <li class="lang-active">
+        {{ langMeta[currentLang()].nativeName }}
+        <span class="lang-code">{{ currentLang().toUpperCase() }}</span>
+      </li>
+    </ul>
+  }
+</div>

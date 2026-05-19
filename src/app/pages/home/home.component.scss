@@ -1,0 +1,630 @@
+// Home page — Variant C redesign (cream + graphite + single tangerine accent)
+
+:host { display: block; }
+
+// ── Hero ─────────────────────────────────────────
+.home-hero {
+  position: relative;
+  padding: 60px 0 70px;
+  overflow: hidden;
+
+  .vc-mesh, .vc-grain { z-index: 0; }
+  > .vc-wrap { position: relative; z-index: 1; }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 70px;
+    align-items: center;
+  }
+
+  &__h1 {
+    font-size: clamp(36px, 7vw, 98px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    margin: 22px 0 24px;
+    text-wrap: balance;
+  }
+
+  &__sub {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink2);
+    max-width: 540px;
+    margin: 0 0 32px;
+  }
+
+  &__cta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  &__trust {
+    font-size: 13px;
+    color: var(--ink3);
+  }
+
+  &__right {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// ── TL;DR ────────────────────────────────────────
+.home-answer {
+  padding: 55px 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  &__lede {
+    font-size: 22px;
+    line-height: 1.45;
+    margin: 0;
+    letter-spacing: -0.018em;
+    font-weight: 450;
+    color: var(--ink);
+  }
+}
+
+.home-facts {
+  margin: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  &__row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 16px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--line2);
+    font-size: 14px;
+
+    &:last-child { border-bottom: 0; }
+  }
+
+  dt { color: var(--ink3); font-weight: 500; font-size: 13px; }
+  dd { margin: 0; color: var(--ink); }
+}
+
+// ── Stats ────────────────────────────────────────
+.home-stats {
+  padding: 28px 0;
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px -20px rgba(20, 17, 13, 0.1);
+  }
+}
+
+.home-stat {
+  padding: 26px 22px;
+  border-right: 1px solid var(--line2);
+
+  &:last-child { border-right: 0; }
+
+  &__n {
+    font-size: clamp(26px, 4.4vw, 36px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  &__l {
+    font-size: 12.5px;
+    color: var(--ink3);
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+}
+
+// ── How ──────────────────────────────────────────
+.home-how { padding: 60px 0; }
+
+.home-phases {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.phase {
+  padding: 32px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  &__head {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  &__num {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--ink);
+    color: var(--paper);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin: 0 0 6px;
+    line-height: 1.15;
+  }
+
+  &__one { font-size: 14.5px; color: var(--ink2); margin: 0; font-weight: 500; }
+  &__body { font-size: 14.5px; color: var(--ink2); line-height: 1.6; margin: 0 0 18px; }
+
+  &__example {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  &__example-l {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-right: 10px;
+  }
+
+  &__example-t { color: var(--ink); }
+
+  &__ext {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    li {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink2);
+      padding: 4px 10px;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+  }
+}
+
+// ── Architecture ─────────────────────────────────
+.home-arch {
+  padding: 60px 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+.pillar {
+  padding: 28px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -16px rgba(20, 17, 13, 0.15);
+    border-color: rgba(20, 17, 13, 0.18);
+  }
+
+  &__num {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink);
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 3px 8px;
+    background: rgba(20, 17, 13, 0.06);
+    border-radius: 6px;
+  }
+
+  &__h {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    margin: 0 0 8px;
+  }
+
+  &__b {
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.55;
+    margin: 0;
+  }
+}
+
+// ── Industries grid ──────────────────────────────
+.home-industries {
+  padding: 60px 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    padding: 16px 18px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.15s;
+
+    &:hover {
+      border-color: rgba(20, 17, 13, 0.18);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px -8px rgba(20, 17, 13, 0.12);
+    }
+
+    // "More" tile — solid graphite invert
+    &--more {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--paper);
+      font-weight: 500;
+
+      a { color: var(--paper); opacity: 0.92; }
+    }
+  }
+}
+
+// ── Compare ──────────────────────────────────────
+.home-compare {
+  padding: 60px 0;
+
+  &__wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px -20px rgba(0, 0, 0, 0.08);
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+
+    th, td {
+      padding: 16px 22px;
+      text-align: left;
+      border-bottom: 1px solid var(--line2);
+    }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink3);
+      background: var(--bg-soft);
+      font-weight: 500;
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+  }
+
+  &__us { background: rgba(20, 17, 13, 0.04); }
+  th.home-compare__us { background: rgba(20, 17, 13, 0.07); color: var(--ink); }
+
+  &__key { color: var(--ink); font-weight: 500; }
+
+  // Verdict — solid graphite invert with tangerine tag (one of 10 accent spots)
+  &__verdict {
+    margin-top: 32px;
+    padding: 28px 32px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 16px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+
+    p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--paper); }
+  }
+
+  &__verdict-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 2px;
+    font-weight: 700;
+  }
+}
+
+// ── Pricing tiers ───────────────────────────────
+.home-pricing { padding: 60px 0; }
+
+.home-tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.tier {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  &--featured {
+    border: 1.5px solid var(--ink);
+    box-shadow: 0 24px 60px -24px rgba(20, 17, 13, 0.2);
+  }
+
+  // Tier badge — tangerine (one of 10 accent spots)
+  &__badge {
+    position: absolute;
+    top: -12px;
+    left: 36px;
+    background: var(--accent);
+    color: #fff;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    font-size: 14px;
+    color: var(--ink2);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  &__price {
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  &__sub {
+    color: var(--ink3);
+    font-size: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  &__bullets {
+    margin: 0 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    li {
+      font-size: 14.5px;
+      color: var(--ink);
+      padding-left: 22px;
+      position: relative;
+
+      &::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--ink);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// ── FAQ ──────────────────────────────────────────
+.home-faq { padding: 60px 0; }
+
+.home-faq__list {
+  max-width: 920px;
+
+  details {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+
+    &[open] {
+      border-color: rgba(20, 17, 13, 0.18);
+      box-shadow: 0 6px 20px -8px rgba(20, 17, 13, 0.1);
+
+      .home-faq__toggle { transform: rotate(180deg); color: var(--ink); }
+    }
+  }
+
+  summary {
+    padding: 22px 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    list-style: none;
+    font-size: 15.5px;
+    font-weight: 500;
+
+    &::-webkit-details-marker { display: none; }
+  }
+}
+
+.home-faq__i {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink3);
+  min-width: 28px;
+}
+
+.home-faq__q { flex: 1; }
+
+.home-faq__toggle {
+  color: var(--ink3);
+  transition: transform 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.home-faq__a {
+  padding: 4px 26px 26px 72px;
+  color: var(--ink2);
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+// ── CTA — single tangerine glow (one of 10 accent spots) ──────────
+.home-cta {
+  padding: 65px 0;
+  position: relative;
+  overflow: hidden;
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-cta-glow);
+    pointer-events: none;
+  }
+
+  &__inner {
+    text-align: center;
+    max-width: 800px;
+    position: relative;
+  }
+
+  &__eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 22px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    background: var(--accent-soft);
+    border-radius: 999px;
+  }
+
+  &__h {
+    font-size: clamp(30px, 6vw, 76px);
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+
+  &__sub {
+    font-size: 17.5px;
+    color: var(--ink2);
+    margin: 0 0 36px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 44px;
+    flex-wrap: wrap;
+  }
+
+  &__snippet {
+    background: var(--ink);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 22px 26px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--paper);
+    text-align: left;
+    line-height: 1.7;
+    margin: 0;
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.3);
+    white-space: pre;
+    overflow-x: auto;
+  }
+}
+
+// ── Responsive ──────────────────────────────────
+@media (max-width: 980px) {
+  .home-hero__grid { grid-template-columns: 1fr; gap: 40px; }
+  .home-hero__right { min-height: auto; }
+  .home-answer__grid { grid-template-columns: 1fr; gap: 28px; }
+  .home-stats__row { grid-template-columns: repeat(3, 1fr); }
+  .home-phases { grid-template-columns: 1fr; }
+  .home-arch__grid { grid-template-columns: repeat(2, 1fr); }
+  .home-industries__grid { grid-template-columns: repeat(2, 1fr); }
+  .home-tiers { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .home-stats__row { grid-template-columns: repeat(2, 1fr); }
+  .home-arch__grid { grid-template-columns: 1fr; }
+  .home-industries__grid { grid-template-columns: 1fr; }
+  .home-compare { font-size: 12px; }
+  .home-compare__table th, .home-compare__table td { padding: 10px 12px; }
+}
+
+// ── Trim hints (compact phase / tier + see-more links) ──
+.phase--compact {
+  padding-bottom: 1.25rem;
+  .phase__head { margin-bottom: 0; }
+}
+
+.tier--compact .tier__name + .tier__price + .tier__sub { margin-bottom: 1.25rem; }
+
+.home-how__more,
+.home-pricing__more {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  a { color: var(--vc-accent, #ff5b1f); text-decoration: none; border-bottom: 1px solid currentColor; }
+  a:hover { opacity: 0.8; }
+}

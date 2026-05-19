@@ -1,0 +1,373 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "For enterprises seeking to automate data capture and streamline customer interactions through voice, a growing number of vendors offer sophisticated voice AI solutions often referred to as \"voice form filling.\" These platforms leverage advanced speech recognition, natural language understanding (NLU), and generative AI to handle routine and complex conversations, collect information, and integrate with existing business systems.\n\nHere are some of the prominent voice form-filling vendors for enterprises:\n\n**Leading Enterprise Voice AI Vendors:**\n\n*   **Retell AI** offers enterprise-ready voice agents with a focus on security, scalability, and high uptime (99.99%). It's designed for businesses looking to convert existing Large Language Models (LLMs) into low-latency voice agents for customer service, lead qualification, and scheduling.\n*   **Synthflow** is highlighted as an end-to-end Voice AI platform for enterprise call automation. It emphasizes a no-code visual builder, fast deployment (under three weeks), and compliance with standards like SOC 2, HIPAA, GDPR, and ISO 27001. Synthflow supports over 30 languages and offers realistic voice cloning. Use cases include customer support, appointment booking, and lead qualification.\n*   **Google Contact Center AI (Dialogflow CX)** is a conversational AI platform built for enterprises within the Google Cloud ecosystem. It's designed for structured, flow-based automation across voice and digital channels, suitable for predictable, process-driven conversations in customer support and internal help desks.\n*   **IBM Watson Assistant for Voice Interaction** provides AI voice capabilities, often integrated into existing contact center platforms.\n*   **Amazon Connect with Lex** combines Amazon's contact center service with its conversational AI capabilities for building voice agents.\n*   **NICE CXone with Enlighten AI** is an established contact center provider that incorporates AI voice capabilities into its platform, focusing on enhancing customer experience through intelligent automation.\n*   **Five9** is another established contact center provider with built-in AI voice capabilities for enterprise use.\n*   **Kore.ai** is an enterprise conversational AI platform for structured automation across voice and digital channels at scale, prioritizing governance, analytics, and control for large contact centers and IT-led teams.\n*   **Bland AI** focuses on handling both inbound and outbound phone interactions with realistic conversational AI. It provides programmable call flows and integration hooks for automating complex telephony use cases like sales outreach, customer support, and appointment reminders.\n*   **Goodcall** offers an AI-powered voice agent and virtual receptionist to automate customer calls, lead capture, and appointment scheduling with human-like conversations. It aims for quick setup and customizable AI phone agents without requiring extensive engineering expertise.\n*   **Telnyx** provides a full-stack platform that unifies carrier-grade telephony, a global private IP network, and co-located GPU infrastructure for low-latency AI voice interactions. It emphasizes infrastructure ownership, compliance (GDPR, CCPA, PCI, SOC 2, HIPAA), and cost transparency for enterprises.\n*   **Genesys AI** integrates AI into its contact center solutions to enhance customer interactions.\n*   **Twilio Flex with Voice Intelligence** offers a flexible contact center platform with integrated voice AI capabilities.\n*   **Nuance Mix** provides conversational AI solutions for various enterprise needs.\n\n**Key Features and Enterprise Considerations:**\n\nWhen evaluating voice form-filling vendors, enterprises should prioritize the following:\n\n*   **Conversation Quality & Intelligence:** Solutions should manage complex interactions, understand context, handle interruptions, and maintain natural-sounding dialogue.\n*   **Integration Depth:** Seamless integration with existing technology stacks, including CRM platforms, ticketing systems, telephony providers, and backend services, is crucial for comprehensive call handling and data flow.\n*   **Security and Compliance:** Enterprise-grade solutions must adhere to industry-specific security and compliance frameworks such as HIPAA, GDPR, SOC 2, ISO 27001, and PCI, especially for regulated sectors like finance and healthcare.\n*   **Scalability and Reliability:** The ability to handle high volumes of calls, provide 24/7 coverage, and ensure high uptime (e.g., 99.99%) with robust fallback mechanisms is essential for large organizations.\n*   **Low Latency:** Real-time conversational AI requires ultra-low latency inference to ensure natural and responsive interactions, often achieved by co-locating GPUs near telephony points of presence.\n*   **Customization and Flexibility:** The platform should allow for highly customizable conversation flows, voice customization to reflect brand personality, and multilingual support.\n*   **Deployment and ROI:** Enterprises seek solutions that can be deployed efficiently, ideally within weeks, and demonstrate clear operational and financial outcomes such as reduced costs, improved efficiency, and enhanced customer experience, with many reporting ROI within 90 days.\n*   **Data-Driven Insights:** The ability to generate valuable data from every conversation for strategic analysis, product improvements, and customer engagement initiatives.\n*   **Developer-Friendliness vs. No-Code:** Some platforms cater to developers with APIs and webhooks (e.g., Bland AI, Vapi, Retell AI), while others offer no-code visual builders for faster deployment by non-technical teams (e.g., Synthflow).\n\nThe adoption of AI voice agents is rapidly accelerating, with projections indicating significant market growth and a substantial impact on customer service operations by reducing costs and enhancing customer experiences."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "groundingMetadata": {
+        "searchEntryPoint": {
+          "renderedContent": "<style>\n.container {\n  align-items: center;\n  border-radius: 8px;\n  display: flex;\n  font-family: Google Sans, Roboto, sans-serif;\n  font-size: 14px;\n  line-height: 20px;\n  padding: 8px 12px;\n}\n.chip {\n  display: inline-block;\n  border: solid 1px;\n  border-radius: 16px;\n  min-width: 14px;\n  padding: 5px 16px;\n  text-align: center;\n  user-select: none;\n  margin: 0 8px;\n  -webkit-tap-highlight-color: transparent;\n}\n.carousel {\n  overflow: auto;\n  scrollbar-width: none;\n  white-space: nowrap;\n  margin-right: -12px;\n}\n.headline {\n  display: flex;\n  margin-right: 4px;\n}\n.gradient-container {\n  position: relative;\n}\n.gradient {\n  position: absolute;\n  transform: translate(3px, -9px);\n  height: 36px;\n  width: 9px;\n}\n@media (prefers-color-scheme: light) {\n  .container {\n    background-color: #fafafa;\n    box-shadow: 0 0 0 1px #0000000f;\n  }\n  .headline-label {\n    color: #1f1f1f;\n  }\n  .chip {\n    background-color: #ffffff;\n    border-color: #d2d2d2;\n    color: #5e5e5e;\n    text-decoration: none;\n  }\n  .chip:hover {\n    background-color: #f2f2f2;\n  }\n  .chip:focus {\n    background-color: #f2f2f2;\n  }\n  .chip:active {\n    background-color: #d8d8d8;\n    border-color: #b6b6b6;\n  }\n  .logo-dark {\n    display: none;\n  }\n  .gradient {\n    background: linear-gradient(90deg, #fafafa 15%, #fafafa00 100%);\n  }\n}\n@media (prefers-color-scheme: dark) {\n  .container {\n    background-color: #1f1f1f;\n    box-shadow: 0 0 0 1px #ffffff26;\n  }\n  .headline-label {\n    color: #fff;\n  }\n  .chip {\n    background-color: #2c2c2c;\n    border-color: #3c4043;\n    color: #fff;\n    text-decoration: none;\n  }\n  .chip:hover {\n    background-color: #353536;\n  }\n  .chip:focus {\n    background-color: #353536;\n  }\n  .chip:active {\n    background-color: #464849;\n    border-color: #53575b;\n  }\n  .logo-light {\n    display: none;\n  }\n  .gradient {\n    background: linear-gradient(90deg, #1f1f1f 15%, #1f1f1f00 100%);\n  }\n}\n</style>\n<div class=\"container\">\n  <div class=\"headline\">\n    <svg class=\"logo-light\" width=\"18\" height=\"18\" viewBox=\"9 9 35 35\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n      <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M42.8622 27.0064C42.8622 25.7839 42.7525 24.6084 42.5487 23.4799H26.3109V30.1568H35.5897C35.1821 32.3041 33.9596 34.1222 32.1258 35.3448V39.6864H37.7213C40.9814 36.677 42.8622 32.2571 42.8622 27.0064V27.0064Z\" fill=\"#4285F4\"/>\n      <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M26.3109 43.8555C30.9659 43.8555 34.8687 42.3195 37.7213 39.6863L32.1258 35.3447C30.5898 36.3792 28.6306 37.0061 26.3109 37.0061C21.8282 37.0061 18.0195 33.9811 16.6559 29.906H10.9194V34.3573C13.7563 39.9841 19.5712 43.8555 26.3109 43.8555V43.8555Z\" fill=\"#34A853\"/>\n      <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16.6559 29.8904C16.3111 28.8559 16.1074 27.7588 16.1074 26.6146C16.1074 25.4704 16.3111 24.3733 16.6559 23.3388V18.8875H10.9194C9.74388 21.2072 9.06992 23.8247 9.06992 26.6146C9.06992 29.4045 9.74388 32.022 10.9194 34.3417L15.3864 30.8621L16.6559 29.8904V29.8904Z\" fill=\"#FBBC05\"/>\n      <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M26.3109 16.2386C28.85 16.2386 31.107 17.1164 32.9095 18.8091L37.8466 13.8719C34.853 11.082 30.9659 9.3736 26.3109 9.3736C19.5712 9.3736 13.7563 13.245 10.9194 18.8875L16.6559 23.3388C18.0195 19.2636 21.8282 16.2386 26.3109 16.2386V16.2386Z\" fill=\"#EA4335\"/>\n    </svg>\n    <svg class=\"logo-dark\" width=\"18\" height=\"18\" viewBox=\"0 0 48 48\" xmlns=\"http://www.w3.org/2000/svg\">\n      <circle cx=\"24\" cy=\"23\" fill=\"#FFF\" r=\"22\"/>\n      <path d=\"M33.76 34.26c2.75-2.56 4.49-6.37 4.49-11.26 0-.89-.08-1.84-.29-3H24.01v5.99h8.03c-.4 2.02-1.5 3.56-3.07 4.56v.75l3.91 2.97h.88z\" fill=\"#4285F4\"/>\n      <path d=\"M15.58 25.77A8.845 8.845 0 0 0 24 31.86c1.92 0 3.62-.46 4.97-1.31l4.79 3.71C31.14 36.7 27.65 38 24 38c-5.93 0-11.01-3.4-13.45-8.36l.17-1.01 4.06-2.85h.8z\" fill=\"#34A853\"/>\n      <path d=\"M15.59 20.21a8.864 8.864 0 0 0 0 5.58l-5.03 3.86c-.98-2-1.53-4.25-1.53-6.64 0-2.39.55-4.64 1.53-6.64l1-.22 3.81 2.98.22 1.08z\" fill=\"#FBBC05\"/>\n      <path d=\"M24 14.14c2.11 0 4.02.75 5.52 1.98l4.36-4.36C31.22 9.43 27.81 8 24 8c-5.93 0-11.01 3.4-13.45 8.36l5.03 3.85A8.86 8.86 0 0 1 24 14.14z\" fill=\"#EA4335\"/>\n    </svg>\n    <div class=\"gradient-container\"><div class=\"gradient\"></div></div>\n  </div>\n  <div class=\"carousel\">\n    <a class=\"chip\" href=\"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF5db_iPEZpSDB2MNfzC3J4XZUmCu5_3usIT37QoNjvabAHyNKs6k4TENwWmesA5OkLSLiV1d5QzRonC_PsH8NBTZPXOhNw61r-Kfd0C4qhGB7G2iu5XN83X40sUI_jkLI_HY8lMQz2-CyycZeA1ZRGt2XkISOl7s5e_kD5GGzscpqXtrgWVBiXOrO6MZSRwHgpewND183oQiSCnGhgIrjYQvhQ7FM4w8FC-g==\">AI voice form automation for businesses</a>\n    <a class=\"chip\" href=\"https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHTHrMoxXzsprbQS4_dNP98pBL6_E7mcd9X1DuANWggwLrJoLdBn4wZYfuA1VhoiQGpet55Ve0K9nDxRK8Mbs-k42KrjNr6ZonEIHsqzLWiUL4XOq6i0qeXeXk0m7btlMXLFfCFLyqPGAdnz5Cpb4wD_fdwARSPyhDTETO3AZj2GZkPxzKQbm0VOpiIv0bVxezgNf8UieMrMnfuKOYLRl7YaO87ivHyaxk=\">enterprise voice form filling vendors</a>\n  </div>\n</div>\n"
+        },
+        "groundingChunks": [
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHMurCXUCJ5iYqKfkgPYnHyyaywZ5myMhXs-FHQp6wXnE1ez2AqfWc9h3lfMTqpCsZ46NGcOQQAHwlWmuls0CBLJWwgJcSmO-Q55cId37m07w4zEsfDO-pr-NbLG_0WNLWsu_b9tKhaYUWCJgon3jduUVt7_Yi6VAx0nwKl26945ZMKQGZwrvQTbwkGWdBBBHc=",
+              "title": "retellai.com"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHzornFSAivHMYAkG5V7j84eo1V2cDzD2LAAODD3tI9T6V9SmLy3WU-qyU5s20zk2QSH9DGIDsTSUGCWafsG4EJrTco3c4rIrgUQukYoe5NbQpusrIBWz1_bkjcVRdvTIhRmm2xPYS4MDcrQaCpATxVmpwCwxeOQLVL",
+              "title": "plivo.com"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHV-cf7V_xyXjbyqgTlRSDzPOziJfxMXtK3FVfb-vZv-SuDmsgGRH4hOHl2rC-Puv-h0qG0bDoaUfwtwq1xJB0NKkbIMpe-8bbBkpnuzdEvdHKnR7T3b8SjaQPz2YzKClryOomM8cOtZEtfp7gFH53bJxxj",
+              "title": "goodcall.com"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEI1MNdWDaHE_LKoVtzGW6lTr-MWz3ahaWwT4dYAFafDfvRSLxiLSI8MaJf41tIoUD5YL8yyTs7ifHgPnJqpYgSgFNfUJOHitprkdFz8oNgrVgPaI4bblPO3z_Qr0XWcdJKPym7hLkbFwlPen6HsqOQBY40VgjOdYELuVOuTA==",
+              "title": "retellai.com"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQERyXavkrbQD0TTV2abfqF2Z2HAD4WiJsLM7REbmqffqJqqp2LG5xYgoTp8N_rNc_qRSnpsuHpp1BRzYaxFUaFADee5Eg7Ruo-v4Dlrihhai5qPYT8hji3roJIRXXKOnR8oiOaXxg7lfO7gjvYZ8xI5V7LbILfoQzd7cpZ7dCn41AoUPPYixz42IXSGW34tCMovsgodcnw1L1Q=",
+              "title": "synthflow.ai"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF7UDLtGUI32J-yt8sx-6EWgj7fq937URPX_muLM502OcTEV2DE9MDci3JMdn9MzCjzBNY_ZmX131ah9__OG3ul4VX1zIBSO_HyAIqB-ZHzag==",
+              "title": "synthflow.ai"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQElk-F7HR5Q4chK4nY9OxiES2mL247SYYQi-NNK0DQTmK7Mikl155l0jz5S2EKIOhy_Rf95rtXd4cRurWFKj6Q3Jom8l0lxJvw_fMYiwZDEIcRL82QL2pAtxIZU1oBr0iua_eaj4eE2SGlEH_wt5tDKRMdo",
+              "title": "voice.ai"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF67i2AQhCJYpVLxf4vvlf6JiriEd0YLBupcHxdWtKlG4-7oG5J-WQfthAgyR1tBzBm0m1FffB9VgzncHuqv-B6oSmwDqINHlyFHJiTvdzrVNuo0GlR62HxOn9cSgzIXsoxRpatAkToF2INg00_rQs-_JWk6Uhp2N8xIA==",
+              "title": "telnyx.com"
+            }
+          },
+          {
+            "web": {
+              "uri": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF7UNogjMLp9Cw1g6-rv2yHZnkHH4vMIukf4sWEIojwtGuWPckWCFQII8w9ykHH3hE7otUexAXT07oGSyci5px4OU2bRm1aIETkpChT08Y7R1CyHDVhW5r3PTsI0k-RA-x5yo8504Pt14HRs8L_2SjpRwNrWh059g_vn-mBKES2EEc=",
+              "title": "kagen.ai"
+            }
+          }
+        ],
+        "groundingSupports": [
+          {
+            "segment": {
+              "startIndex": 672,
+              "endIndex": 844,
+              "text": "It's designed for businesses looking to convert existing Large Language Models (LLMs) into low-latency voice agents for customer service, lead qualification, and scheduling"
+            },
+            "groundingChunkIndices": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 1166,
+              "endIndex": 1245,
+              "text": "Use cases include customer support, appointment booking, and lead qualification"
+            },
+            "groundingChunkIndices": [
+              3,
+              1,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 1385,
+              "endIndex": 1570,
+              "text": "It's designed for structured, flow-based automation across voice and digital channels, suitable for predictable, process-driven conversations in customer support and internal help desks"
+            },
+            "groundingChunkIndices": [
+              0,
+              3
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 1572,
+              "endIndex": 1710,
+              "text": "*   **IBM Watson Assistant for Voice Interaction** provides AI voice capabilities, often integrated into existing contact center platforms"
+            },
+            "groundingChunkIndices": [
+              0
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 1712,
+              "endIndex": 1850,
+              "text": "*   **Amazon Connect with Lex** combines Amazon's contact center service with its conversational AI capabilities for building voice agents"
+            },
+            "groundingChunkIndices": [
+              0,
+              4
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 1852,
+              "endIndex": 2062,
+              "text": "*   **NICE CXone with Enlighten AI** is an established contact center provider that incorporates AI voice capabilities into its platform, focusing on enhancing customer experience through intelligent automation"
+            },
+            "groundingChunkIndices": [
+              0,
+              4
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 2064,
+              "endIndex": 2179,
+              "text": "*   **Five9** is another established contact center provider with built-in AI voice capabilities for enterprise use"
+            },
+            "groundingChunkIndices": [
+              0,
+              4
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 2181,
+              "endIndex": 2401,
+              "text": "*   **Kore.ai** is an enterprise conversational AI platform for structured automation across voice and digital channels at scale, prioritizing governance, analytics, and control for large contact centers and IT-led teams"
+            },
+            "groundingChunkIndices": [
+              3
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 2519,
+              "endIndex": 2684,
+              "text": "It provides programmable call flows and integration hooks for automating complex telephony use cases like sales outreach, customer support, and appointment reminders"
+            },
+            "groundingChunkIndices": [
+              1,
+              2
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 2861,
+              "endIndex": 2967,
+              "text": "It aims for quick setup and customizable AI phone agents without requiring extensive engineering expertise"
+            },
+            "groundingChunkIndices": [
+              2
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 3155,
+              "endIndex": 3276,
+              "text": "It emphasizes infrastructure ownership, compliance (GDPR, CCPA, PCI, SOC 2, HIPAA), and cost transparency for enterprises"
+            },
+            "groundingChunkIndices": [
+              7
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 3278,
+              "endIndex": 3377,
+              "text": "*   **Genesys AI** integrates AI into its contact center solutions to enhance customer interactions"
+            },
+            "groundingChunkIndices": [
+              0
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 3379,
+              "endIndex": 3502,
+              "text": "*   **Twilio Flex with Voice Intelligence** offers a flexible contact center platform with integrated voice AI capabilities"
+            },
+            "groundingChunkIndices": [
+              0
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 3504,
+              "endIndex": 3588,
+              "text": "*   **Nuance Mix** provides conversational AI solutions for various enterprise needs"
+            },
+            "groundingChunkIndices": [
+              0
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 3730,
+              "endIndex": 3901,
+              "text": "*   **Conversation Quality & Intelligence:** Solutions should manage complex interactions, understand context, handle interruptions, and maintain natural-sounding dialogue"
+            },
+            "groundingChunkIndices": [
+              0,
+              3
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 3903,
+              "endIndex": 4127,
+              "text": "*   **Integration Depth:** Seamless integration with existing technology stacks, including CRM platforms, ticketing systems, telephony providers, and backend services, is crucial for comprehensive call handling and data flow"
+            },
+            "groundingChunkIndices": [
+              0,
+              3,
+              4
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 4129,
+              "endIndex": 4365,
+              "text": "*   **Security and Compliance:** Enterprise-grade solutions must adhere to industry-specific security and compliance frameworks such as HIPAA, GDPR, SOC 2, ISO 27001, and PCI, especially for regulated sectors like finance and healthcare"
+            },
+            "groundingChunkIndices": [
+              0,
+              4,
+              7
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 4367,
+              "endIndex": 4578,
+              "text": "*   **Scalability and Reliability:** The ability to handle high volumes of calls, provide 24/7 coverage, and ensure high uptime (e.g., 99.99%) with robust fallback mechanisms is essential for large organizations"
+            },
+            "groundingChunkIndices": [
+              0,
+              4
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 4580,
+              "endIndex": 4781,
+              "text": "*   **Low Latency:** Real-time conversational AI requires ultra-low latency inference to ensure natural and responsive interactions, often achieved by co-locating GPUs near telephony points of presence"
+            },
+            "groundingChunkIndices": [
+              4,
+              7
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 4783,
+              "endIndex": 4966,
+              "text": "*   **Customization and Flexibility:** The platform should allow for highly customizable conversation flows, voice customization to reflect brand personality, and multilingual support"
+            },
+            "groundingChunkIndices": [
+              0,
+              2,
+              4
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 4968,
+              "endIndex": 5252,
+              "text": "*   **Deployment and ROI:** Enterprises seek solutions that can be deployed efficiently, ideally within weeks, and demonstrate clear operational and financial outcomes such as reduced costs, improved efficiency, and enhanced customer experience, with many reporting ROI within 90 days"
+            },
+            "groundingChunkIndices": [
+              0,
+              4,
+              8,
+              7
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 5254,
+              "endIndex": 5427,
+              "text": "*   **Data-Driven Insights:** The ability to generate valuable data from every conversation for strategic analysis, product improvements, and customer engagement initiatives"
+            },
+            "groundingChunkIndices": [
+              8
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 5462,
+              "endIndex": 5671,
+              "text": "No-Code:** Some platforms cater to developers with APIs and webhooks (e.g., Bland AI, Vapi, Retell AI), while others offer no-code visual builders for faster deployment by non-technical teams (e.g., Synthflow)"
+            },
+            "groundingChunkIndices": [
+              3,
+              1,
+              2,
+              6
+            ]
+          },
+          {
+            "segment": {
+              "startIndex": 5674,
+              "endIndex": 5893,
+              "text": "The adoption of AI voice agents is rapidly accelerating, with projections indicating significant market growth and a substantial impact on customer service operations by reducing costs and enhancing customer experiences"
+            },
+            "groundingChunkIndices": [
+              0,
+              4,
+              8
+            ]
+          }
+        ],
+        "webSearchQueries": [
+          "enterprise voice form filling vendors",
+          "AI voice form automation for businesses"
+        ]
+      }
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 6,
+    "candidatesTokenCount": 1148,
+    "totalTokenCount": 1740,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 6
+      }
+    ],
+    "toolUsePromptTokenCount": 166,
+    "toolUsePromptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 166
+      }
+    ],
+    "thoughtsTokenCount": 420,
+    "serviceTier": "standard"
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "svQKapueBpzlxN8PyZX5iA0"
+}

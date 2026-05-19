@@ -1,0 +1,205 @@
+// Live demo — Variant C redesign port of LiveDemoC + .vC-demo styles
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.ld {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(20, 17, 13, 0.04), rgba(20, 17, 13, 0.02));
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 80px -32px rgba(20, 17, 13, 0.18);
+
+  &__glow {
+    position: absolute;
+    inset: -20px;
+    pointer-events: none;
+    background: radial-gradient(ellipse 500px 320px at 70% 0%, rgba(255, 91, 31, 0.18), transparent 70%);
+    z-index: -1;
+    filter: blur(20px);
+  }
+
+  &__left, &__right {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  &__h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    &-l { color: var(--ink3); letter-spacing: 0; }
+    &-t { font-weight: 500; }
+  }
+
+  &__chat { padding-bottom: 14px; }
+
+  &__bubble {
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    max-width: 75%;
+    background: var(--bg-soft);
+    color: var(--ink);
+    border: 1px solid var(--line2);
+  }
+
+  &__input {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 14px;
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.4;
+    min-height: 52px;
+    box-shadow: 0 0 0 4px rgba(20, 17, 13, 0.06);
+  }
+
+  &__typed { font-feature-settings: 'ss01'; }
+
+  // Caret — tangerine (one of 10 allowed accent spots)
+  &__caret {
+    display: inline-block;
+    width: 2px;
+    height: 18px;
+    background: var(--accent);
+    margin-left: 1px;
+    align-self: center;
+    animation: ld-caret 0.9s steps(2) infinite;
+  }
+
+  &__mic {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    // Mic icon — tangerine (one of 10 allowed accent spots)
+    svg { color: var(--accent); }
+  }
+
+  &__extract,
+  &__api {
+    transition: opacity 0.4s, transform 0.4s;
+    opacity: 0.35;
+    transform: translateY(2px);
+
+    &.is-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Pulse dot — tangerine (one of 10 allowed accent spots)
+  &__pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(255, 91, 31, 0.2);
+    animation: ld-pulse 1.6s ease-in-out infinite;
+  }
+
+  &__code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.55;
+    margin: 0;
+    color: var(--ink);
+    white-space: pre;
+  }
+
+  &__tag {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink);
+    padding: 7px 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+  }
+
+  &__row-d {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ink);
+    flex-shrink: 0;
+  }
+
+  &__row:nth-child(2) .ld__row-d { background: var(--ink2); }
+  &__row:nth-child(3) .ld__row-d { background: var(--ink3); }
+
+  &__arrow {
+    display: grid;
+    place-items: center;
+    color: var(--ink3);
+    padding: 4px 0;
+  }
+}
+
+@keyframes ld-caret {
+  50% { opacity: 0; }
+}
+
+@keyframes ld-pulse {
+  50% { box-shadow: 0 0 0 8px rgba(255, 91, 31, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld__caret, .ld__pulse, .ld__extract, .ld__api { animation: none; transition: none; }
+  .ld__extract, .ld__api { opacity: 1; transform: none; }
+}

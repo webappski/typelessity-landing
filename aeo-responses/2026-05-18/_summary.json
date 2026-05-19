@@ -1,0 +1,1742 @@
+{
+  "date": "2026-05-18",
+  "brand": "typelessform",
+  "domain": "typelessform.com",
+  "score": 42,
+  "mentions": 5,
+  "total": 12,
+  "errors": 0,
+  "regressionThreshold": 10,
+  "results": [
+    {
+      "query": "Q1",
+      "queryText": "best voice form filling tools 2026",
+      "provider": "openai",
+      "label": "ChatGPT",
+      "model": "gpt-5-search-api",
+      "mode": "web",
+      "mention": "yes",
+      "position": null,
+      "citationCount": 24,
+      "canonicalCitations": [
+        "https://typelessform.com/?utm_source=openai",
+        "https://formbuddy.ai/?utm_source=openai",
+        "https://say2form.com/?utm_source=openai",
+        "https://talktofill.com/?utm_source=openai",
+        "https://www.voizreport.com/?utm_source=openai",
+        "https://www.concicares.com/?utm_source=openai"
+      ],
+      "competitors": [
+        "Vocale.ai"
+      ],
+      "competitorsUnverified": [
+        "Say2Form",
+        "AgentFillAI"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "Say2Form",
+            "Vocale.ai",
+            "AgentFillAI"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "Vocale.ai"
+          ]
+        }
+      },
+      "sentiment": {
+        "label": "positive",
+        "confidence": "high",
+        "rationale": "Listed as a top recommended tool and praised for speed, language support, and one-shot form filling."
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": true,
+      "responseExcerpt": "Here’s a look at some of the best voice-based form-filling tools available in **2026**, including key features, strengths, limitations, and ideal use cases to help you choose what fits your needs best.\n\n---\n\n## 🔍 Top Voice Form Filling Tools (as of May 2026)\n\n| Tool | What It Does Best | Key Strengths | Potential Drawbacks |\n|---|---|---|---|\n| **TypelessForm** | One-shot voice form filling for HTML/web forms. Say a single sentence and it fills every field. ([typelessform.com](https://typelessform.com/?utm_source=openai)) | Super fast; works across React, Vue, Angular, plain HTML; supports 25+ languages; reviews before submission. ([typelessform.com](https://typelessform.com/?utm_source=openai)) | Web-form only; not suitable for scanned or paper documents; pricing limits for high fill volumes. ([typelessform.com](https://typelessform.com/?utm_source=openai)) |\n| **FormBuddy** | Fill any PDF or government form via voice or profile-auto-fill. ([formbuddy.ai](https://formbuddy.ai/?utm_source=openai)) | Massive template library (50,000+); voice mode works in 11+ languages; stores data securely on device; supportive for legal and medical use cases. ([formbuddy.ai](https://formbuddy.ai/?utm_source=openai)) | Voice mode still in beta; mobile-first so desktop/web version limited; some features locked behind paid tiers. ([formbuddy.ai](https://formbuddy.ai/?utm_source=openai)) |\n| **Say2Form** | Fully voice-based or document/PDF-based form creation and filling. Aimed at business/heal",
+      "elapsedMs": 9486,
+      "inputTokens": 16298,
+      "outputTokens": 1384,
+      "costUsd": 0.042106
+    },
+    {
+      "query": "Q2",
+      "queryText": "top one-shot voice form filling services for e-commerce",
+      "provider": "openai",
+      "label": "ChatGPT",
+      "model": "gpt-5-search-api",
+      "mode": "web",
+      "mention": "yes",
+      "position": null,
+      "citationCount": 13,
+      "canonicalCitations": [
+        "https://typelessform.com/?utm_source=openai",
+        "https://anvevoice.app/features/form-filling?utm_source=openai",
+        "https://www.sayfill.com/?utm_source=openai",
+        "https://ent.sayfill.com/?utm_source=openai",
+        "https://www.speechos.ai/?utm_source=openai",
+        "https://www.vofo.dev/?utm_source=openai"
+      ],
+      "competitors": [],
+      "competitorsUnverified": [
+        "AnveVoice",
+        "SayFill"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "AnveVoice",
+            "SayFill"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": []
+        }
+      },
+      "sentiment": {
+        "label": "positive",
+        "confidence": "high",
+        "rationale": "Praised as the strongest match for one-shot form filling, recommended for e-commerce checkout due to accuracy and quick setup."
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": true,
+      "responseExcerpt": "Here’s a curated list of top current “one-shot” or conversational voice form filling services suitable for e-commerce. These tools let users speak one natural sentence (or answer questions conversationally) and have forms auto-filled across checkout, registration, contact, or any HTML flow. I’ve compared key features, limitations, and ideal fit.\n\n---\n\n## What “One-Shot Voice Form Filling” Means\n\nYou want visitors to:\n\n- Speak naturally (e.g. “My name is Jane Doe, email jane@example.com, phone number …”)\n- Have the system detect all relevant form fields in one go (name, address, phone, email, etc.)\n- See those fields filled automatically, then review and submit\n- Not go through field-by-field dictation unless needed\n\n---\n\n## Top Services\n\n| Service | Core Strengths | What Makes It Stand Out | Limitations / Notes | Ideal Use Case |\n|---|---|---|---|---|\n| **TypelessForm** | Real “one-shot” voice form filling: detect all fields, transcribe, extract entities & map them in one sentence. ([typelessform.com](https://typelessform.com/?utm_source=openai)) | • Works with any HTML form (React, Vue, Angular, WordPress) with just “one script tag.”<br>• Supports 25+ languages; uses Whisper + GPT-4o. ([typelessform.com](https://typelessform.com/?utm_source=openai)) | • Free tier limited to ~200 fills; usage-capped for small budgets. “Starter” & “Professional” needed for scale. ([typelessform.com](https://typelessform.com/?utm_source=openai))<br>• Sensitive fields (card numbers, SSNs) exclud",
+      "elapsedMs": 12117,
+      "inputTokens": 16020,
+      "outputTokens": 1596,
+      "costUsd": 0.042993
+    },
+    {
+      "query": "Q3",
+      "queryText": "voice form data capture tools for healthcare forms",
+      "provider": "openai",
+      "label": "ChatGPT",
+      "model": "gpt-5-search-api",
+      "mode": "web",
+      "mention": "no",
+      "position": null,
+      "citationCount": 10,
+      "canonicalCitations": [
+        "https://rechotechnologies.com/?utm_source=openai",
+        "https://voiceboxmd.com/?utm_source=openai",
+        "https://www.omivoice.com/?utm_source=openai",
+        "https://www.vehrdict.com/?utm_source=openai",
+        "https://www.agyle.health/intelliform?utm_source=openai",
+        "https://intrihealth.com/intrivoice/?utm_source=openai",
+        "https://www.puzzle-ai.com/en?utm_source=openai",
+        "https://www.dragonmedical.one/?utm_source=openai",
+        "https://www.sentryvoice.net/?utm_source=openai",
+        "https://www.concicares.com/?utm_source=openai"
+      ],
+      "competitors": [],
+      "competitorsUnverified": [
+        "Recho",
+        "Agyle Intelliform",
+        "IntriVOICE",
+        "Puzzle AI",
+        "SentryVoice",
+        "Concicares"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "Recho",
+            "Agyle Intelliform",
+            "IntriVOICE",
+            "Puzzle AI",
+            "SentryVoice",
+            "Concicares"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": []
+        }
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "responseExcerpt": "Here’s an overview of voice-based data capture tools and solutions used for healthcare forms and clinical documentation, including whether they’re suitable for different scenarios, their capabilities, and key considerations.\n\n---\n\n## What to Look for in Voice-Form Tools (Healthcare-Specific)\n\nWhen evaluating voice capture tools for healthcare forms, you’ll want features such as:\n\n- HIPAA compliance + Business Associate Agreements (BAA)\n- Accuracy with medical vocabulary and terminology\n- Integration with existing EHR/RIS/systems (HL7, FHIR, etc.)\n- Structured output (fields filled, checkboxes, conditional logic)\n- Support for real-time and ambient capture\n- Security, data retention, access control, audit trails\n\n---\n\n## Top Tools & Platforms\n\nHere's a curated list of voice-form and dictation tools tailored for medical settings, and what they excel at.\n\n| Tool | Primary Use Case / What They Do Well | Key Features & Trade-offs |\n|---|-----------------------------------------|-----------------------------|\n| **Recho** | For hospitals or wards capturing staff’s real-time voice logs instead of typing. | Devices + AI that structure spoken phrases into fields (vitals, med events, timestamps). Minimal set-up, built for hands-free; doesn’t fill patient-facing forms but logs clinical action. ([rechotechnologies.com](https://rechotechnologies.com/?utm_source=openai)) |\n| **VoiceboxMD** | Physician dictation of clinical notes into EHRs. | Real-time speech-to-text, tailored to medical voc",
+      "elapsedMs": 70443,
+      "inputTokens": 16305,
+      "outputTokens": 1274,
+      "costUsd": 0.041561
+    },
+    {
+      "query": "Q1",
+      "queryText": "top voice form filling services for ecommerce",
+      "provider": "gemini",
+      "label": "Gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "web",
+      "mention": "no",
+      "position": null,
+      "citationCount": 7,
+      "canonicalCitations": [
+        "https://anvevoice.app",
+        "https://dialzara.com",
+        "https://salesix.ai",
+        "https://plivo.com",
+        "https://goodcall.com",
+        "https://itransition.com"
+      ],
+      "competitors": [
+        "AnveVoice"
+      ],
+      "competitorsUnverified": [
+        "Shopdev Shopping Assistant"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "AnveVoice",
+            "Shopdev Shopping Assistant"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "AnveVoice"
+          ]
+        }
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "responseExcerpt": "Voice-enabled form filling services are emerging as a crucial tool for e-commerce, streamlining customer interactions and improving the shopping experience. These services leverage artificial intelligence (AI) and natural language processing (NLP) to allow customers to input information, navigate websites, and complete transactions using voice commands.\n\nHere are some of the top voice form filling services and broader AI voice solutions that can facilitate form filling in e-commerce:\n\n*   **AnveVoice:** This platform is specifically highlighted for its ability to \"fill checkout forms and apply discount codes by voice\" and perform \"agentic DOM actions (navigate pages, fill forms, click buttons)\". It supports over 50 languages and integrates with platforms like Shopify and WooCommerce, making it suitable for online stores seeking voice-powered product discovery and checkout. AnveVoice also offers \"VoiceForms,\" which are voice-based conversational forms with drop-off tracking and link analytics.\n*   **Google Assistant:** While a broad platform, Google Assistant offers extensive integration capabilities with major retailers and supports over 95 languages, suggesting its potential for facilitating voice-guided data input within integrated e-commerce experiences.\n*   **Shopdev Shopping Assistant:** Geared towards enterprise-grade e-commerce, Shopdev provides advanced NLP for product navigation and could be instrumental in guiding customers through complex data entry processes via v",
+      "elapsedMs": 8090,
+      "inputTokens": 7,
+      "outputTokens": 784,
+      "costUsd": 0.001962
+    },
+    {
+      "query": "Q2",
+      "queryText": "voice form filling vendors for enterprise",
+      "provider": "gemini",
+      "label": "Gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "web",
+      "mention": "no",
+      "position": null,
+      "citationCount": 9,
+      "canonicalCitations": [
+        "https://retellai.com",
+        "https://plivo.com",
+        "https://goodcall.com",
+        "https://synthflow.ai",
+        "https://voice.ai",
+        "https://telnyx.com",
+        "https://kagen.ai"
+      ],
+      "competitors": [],
+      "competitorsUnverified": [],
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "responseExcerpt": "For enterprises seeking to automate data capture and streamline customer interactions through voice, a growing number of vendors offer sophisticated voice AI solutions often referred to as \"voice form filling.\" These platforms leverage advanced speech recognition, natural language understanding (NLU), and generative AI to handle routine and complex conversations, collect information, and integrate with existing business systems.\n\nHere are some of the prominent voice form-filling vendors for enterprises:\n\n**Leading Enterprise Voice AI Vendors:**\n\n*   **Retell AI** offers enterprise-ready voice agents with a focus on security, scalability, and high uptime (99.99%). It's designed for businesses looking to convert existing Large Language Models (LLMs) into low-latency voice agents for customer service, lead qualification, and scheduling.\n*   **Synthflow** is highlighted as an end-to-end Voice AI platform for enterprise call automation. It emphasizes a no-code visual builder, fast deployment (under three weeks), and compliance with standards like SOC 2, HIPAA, GDPR, and ISO 27001. Synthflow supports over 30 languages and offers realistic voice cloning. Use cases include customer support, appointment booking, and lead qualification.\n*   **Google Contact Center AI (Dialogflow CX)** is a conversational AI platform built for enterprises within the Google Cloud ecosystem. It's designed for structured, flow-based automation across voice and digital channels, suitable for predictable, pr",
+      "elapsedMs": 9833,
+      "inputTokens": 6,
+      "outputTokens": 1148,
+      "costUsd": 0.002872
+    },
+    {
+      "query": "Q3",
+      "queryText": "best voice form filling tools 2026",
+      "provider": "gemini",
+      "label": "Gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "web",
+      "mention": "yes",
+      "position": 2,
+      "citationCount": 13,
+      "canonicalCitations": [
+        "https://anvevoice.app",
+        "https://typelessform.com",
+        "https://voiceos.com",
+        "https://zapier.com",
+        "https://zackproser.com",
+        "https://usevoicy.com",
+        "https://sonix.ai",
+        "https://pcmag.com",
+        "https://augustinfotech.com",
+        "https://heygennie.com",
+        "https://heysadie.ai",
+        "https://kardome.com",
+        "https://parloa.com"
+      ],
+      "competitors": [
+        "AnveVoice",
+        "FillApp",
+        "AI Form Fill"
+      ],
+      "competitorsUnverified": [],
+      "sentiment": {
+        "label": "neutral",
+        "confidence": "low",
+        "rationale": "Models disagreed (neutral vs positive); Mentioned factually as an AI form-filling widget ideal for mobile users, without evaluation or recommendation."
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": true,
+      "responseExcerpt": "The landscape of voice form-filling tools is rapidly evolving, with several advanced solutions emerging as top contenders for 2026. These tools leverage artificial intelligence and sophisticated speech recognition to offer hands-free, efficient, and accurate data entry.\n\nHere are some of the best voice form-filling tools and related voice AI platforms for 2026:\n\n**Dedicated Voice Form Filling & Automation:**\n\n*   **AnveVoice** is highlighted as a top pick for 2026, particularly for its \"VoiceForms\" feature. It's lauded for being the only voice AI with agentic DOM actions, meaning it can navigate pages, fill forms, and click buttons autonomously. AnveVoice supports over 50 languages with low latency and offers a generous free plan.\n*   **TypelessForm** is an AI form-filling website widget that allows visitors to fill forms using their voice without needing to install an extension. It's considered ideal for mobile users as voice input is native to mobile browsers.\n*   **FillApp** is a Chrome extension that acts as an AI browser agent, capable of filling forms, clicking buttons, and automating multi-step browser workflows.\n*   **AI Form Fill** is another straightforward Chrome extension that utilizes OpenAI models to auto-fill web forms, including Google Forms, Microsoft Forms, and standard web forms.\n\n**General Dictation & Voice-to-Text Software with Form-Filling Capabilities:**\n\nMany general dictation tools can also be effectively used for form filling due to their high accura",
+      "elapsedMs": 15904,
+      "inputTokens": 10,
+      "outputTokens": 960,
+      "costUsd": 0.002403
+    },
+    {
+      "query": "Q2",
+      "queryText": "voice form filling vendors for enterprise",
+      "provider": "anthropic",
+      "label": "Claude",
+      "model": "claude-sonnet-4-6",
+      "mode": "web",
+      "mention": "no",
+      "position": null,
+      "citationCount": 20,
+      "canonicalCitations": [
+        "https://www.skyvern.com/blog/best-ai-powered-form-filling-tools-for-enterprise-workflows-november-2025/",
+        "https://www.retellai.com/blog/top-10-enterprise-ai-voice-agent-contact-center-vendors",
+        "https://synthflow.ai/blog/top-10-enterprise-ai-voice-agent-vendors-for-contact-centers-in-2025",
+        "https://www.fluid.ai/blog/top-5-voice-ai-companies",
+        "https://www.sierraventures.com/content/voice-ai-market-map",
+        "https://www.salesforce.com/blog/voice-to-form/?bc=OTH",
+        "https://deepgram.com/learn/enterprise-ai-voice-agents",
+        "https://aiola.ai/blog/state-of-voice-ai/",
+        "https://rasa.com/blog/best-ai-voice-agents",
+        "https://www.glean.com/perspectives/most-promising-voice-ai-agent-platforms",
+        "https://learn.g2.com/best-ai-voice-assistants",
+        "https://aiola.ai/",
+        "https://www.bland.ai/",
+        "https://synthflow.ai/",
+        "https://aiola.ai/blog/enterprise-voice-ai-use-cases/",
+        "https://vapi.ai/",
+        "https://www.retellai.com/",
+        "https://callbotics.ai/blog/best-omnichannel-voice-ai-platforms"
+      ],
+      "competitors": [
+        "aiOla"
+      ],
+      "competitorsUnverified": [
+        "Salesforce Agentforce — Voice to Form",
+        "Jotform AI Agents",
+        "Synthflow",
+        "Retell AI",
+        "Salesforce Agentforce"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "Salesforce Agentforce — Voice to Form",
+            "aiOla",
+            "Jotform AI Agents",
+            "Synthflow",
+            "Retell AI"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "Salesforce Agentforce",
+            "aiOla"
+          ]
+        }
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "responseExcerpt": "Here is a comprehensive overview of **enterprise voice form filling / voice data capture vendors**, spanning purpose-built voice-to-form tools, field worker voice AI platforms, and broader enterprise voice agent platforms that include form/data capture capabilities:\n\n---\n\n## 🎙️ Enterprise Voice Form Filling & Voice Data Capture Vendors\n\n### **1. Salesforce Agentforce — Voice to Form**\nA dedicated voice-to-form product built for field service. \nAfter pressing one button, a technician can speak naturally — \"serial number A-7-3-2-B-9, condition good, minor corrosion on housing\" — and the form fills itself out, letting workers keep working with their hands while capturing details by voice.\n \nTechnicians don't have to follow the form's order or use specific phrases — saying \"the pole is 45 feet\" before mentioning its condition and the system knows exactly where each piece of information belongs.\n \nA form with 10 questions that takes a few minutes to fill out when typing takes just 30 seconds with Voice to Form.\n\n\n---\n\n### **2. aiOla**\nA voice AI platform purpose-built for frontline and field workers. \nIt offers Voice-to-Salesforce functionality, seamlessly updating standard and custom Salesforce objects and forms, populating unique fields, and syncing bidirectionally.\n \nRecognized as one of the most innovative enterprise companies in 2025 for rescuing legacy industries from manual data entry; one customer reported going from 30% CRM completeness to over 90% in the first month.\n \n",
+      "elapsedMs": 46234,
+      "inputTokens": 31303,
+      "outputTokens": 2412,
+      "costUsd": 0.130089
+    },
+    {
+      "query": "Q1",
+      "queryText": "top voice form filling services for ecommerce",
+      "provider": "anthropic",
+      "label": "Claude",
+      "model": "claude-sonnet-4-6",
+      "mode": "web",
+      "mention": "yes",
+      "position": null,
+      "citationCount": 20,
+      "canonicalCitations": [
+        "https://www.zigpoll.com/content/best-voice-customer-platforms-ecommerce-2026",
+        "https://www.singlegrain.com/seo/6-innovative-voice-commerce-seo-companies-transforming-search-in-2025/",
+        "https://technocratiq.com/voice-shopping-in-2025-what-every-e-commerce-business-needs-to-know/",
+        "https://www.itransition.com/ecommerce/voice",
+        "https://agencies.semrush.com/list/ecommerce/",
+        "https://syncly.app/blog/best-voc-tools-for-consumer-brands",
+        "https://www.netguru.com/blog/voice-search-ecommerce",
+        "https://ecommercefastlane.com/top-voice-of-customer-platforms/",
+        "https://www.intuz.com/blog/ai-in-voice-commerce",
+        "https://anvevoice.app/how-to/automate-form-filling-ecommerce",
+        "https://thunderbit.com/blog/top-autofill-extensions",
+        "https://o-mega.ai/articles/top-browser-agents-for-form-filling-in-2025",
+        "https://typelessform.com/blog/best-ai-form-filling-tools-2026/",
+        "https://textexpander.com/blog/auto-form-filling-software",
+        "https://chromewebstore.google.com/detail/autofill-forms-fill-hero/bmdlblkcnngnjahdbgiehfddgppkhdep",
+        "https://www.getapp.com/website-ecommerce-software/form-builder/f/autofill/",
+        "https://fillaform.ai/",
+        "https://www.swifdoo.com/chatgpt/ai-form-filler",
+        "https://windowsreport.com/form-filler-software-pc/"
+      ],
+      "competitors": [
+        "Form2Agent by Freeport Metrics"
+      ],
+      "competitorsUnverified": [
+        "Anve Voice (anvevoice.app)",
+        "Anve Voice"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "Anve Voice (anvevoice.app)",
+            "Form2Agent by Freeport Metrics"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "Anve Voice",
+            "Form2Agent by Freeport Metrics"
+          ]
+        }
+      },
+      "sentiment": {
+        "label": "positive",
+        "confidence": "high",
+        "rationale": "Presented as an ideal, recommended solution to reduce checkout abandonment with pricing and use-case details."
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": true,
+      "responseExcerpt": "Here is a comprehensive overview of the **Top Voice Form Filling Services for Ecommerce** — covering both **voice-enabled form filling tools** (for checkout and data entry) and **Voice of Customer (VoC) platforms** (for gathering ecommerce feedback):\n\n---\n\n## 🎙️ Top Voice Form Filling Services for Ecommerce\n\n### **A. Voice-Enabled Form Filling Tools**\n\nThese tools help ecommerce businesses reduce checkout abandonment and streamline data entry through voice and AI automation.\n\n---\n\n#### 1. 🏆 **TypelessForm**\n\nIdeal for ecommerce sites with long checkout forms — if your customers are abandoning checkout because the form is too long and you want all visitors to have an easier experience, TypelessForm adds voice input for all visitors without requiring them to install anything.\n\n\n- **Pricing:** \nFree pilot (200 fills), then $29–$199/month based on volume.\n\n- **Best For:** Ecommerce site owners who want to reduce form abandonment.\n\n---\n\n#### 2. 🤖 **Anve Voice (anvevoice.app)**\n\nYou can add a voice AI agent to your website in 2 minutes — it talks to visitors, fills forms, navigates pages, and books appointments.\n \nIt builds and deploys intelligent voice AI assistants that engage visitors, answer questions, and drive conversions, with a one-line embed, instant setup, and powerful analytics.\n\n\n- **Best For:** Quick-deploy voice agents for ecommerce websites.\n\n---\n\n#### 3. 🧠 **Thunderbit**\n\nThunderbit is the strongest choice when the form is only one part of a larger browser workf",
+      "elapsedMs": 48611,
+      "inputTokens": 46166,
+      "outputTokens": 2112,
+      "costUsd": 0.170178
+    },
+    {
+      "query": "Q3",
+      "queryText": "best voice form filling tools 2026",
+      "provider": "anthropic",
+      "label": "Claude",
+      "model": "claude-sonnet-4-6",
+      "mode": "web",
+      "mention": "no",
+      "position": null,
+      "citationCount": 20,
+      "canonicalCitations": [
+        "https://zapier.com/blog/best-text-dictation-software/",
+        "https://wisprflow.ai/",
+        "https://theresanaiforthat.com/s/form+filling+using+voice/",
+        "https://www.g2.com/products/voxiai-voice-driven-ivr-and-automated-form-filling/competitors/alternatives",
+        "https://theresanaiforthat.com/s/voice+form-filling/",
+        "https://www.voiceform.com/",
+        "https://voicetonotes.ai/blog/best-voice-to-text-app-android-iphone/",
+        "https://www.fillout.com/help/voice-recording",
+        "https://sonix.ai/resources/best-voice-to-text-software-tools/",
+        "https://anyspeech.io/blog/best-text-to-speech-tools",
+        "https://www.eliteai.tools/tool/form2agent-ai",
+        "https://help.smartsheet.com/articles/2483661-fill-out-smartsheet-forms-using-your-voice",
+        "https://jonnylangefeld.com/blog/nextux-fill-forms-with-your-voice",
+        "https://digi-texx.com/technology/data-entry-software/",
+        "https://www.capterra.com/data-entry-software/",
+        "https://support.formsonfire.com/en/support/solutions/articles/36000599746-voice-fill-with-ai",
+        "https://www.fulcrumapp.com/blog/audio-fastfill-field-data-capture-using-voice-dictation/",
+        "https://thunderbit.com/blog/best-ai-for-data-entry",
+        "https://axiom.ai/automate/form-filling"
+      ],
+      "competitors": [
+        "Smartsheet Intelligent Form Fill",
+        "Form2Agent AI",
+        "Fulcrum Audio FastFill",
+        "Forms On Fire (Voice Fill with AI)"
+      ],
+      "competitorsUnverified": [
+        "Wispr Flow",
+        "Voiceform",
+        "WebFill",
+        "Apple Dictation / Voice Control"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5-mini",
+          "brands": [
+            "Wispr Flow",
+            "Smartsheet Intelligent Form Fill",
+            "Form2Agent AI",
+            "Fulcrum Audio FastFill",
+            "Voiceform",
+            "WebFill",
+            "Apple Dictation / Voice Control",
+            "Forms On Fire (Voice Fill with AI)"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "Smartsheet Intelligent Form Fill",
+            "Form2Agent AI",
+            "Fulcrum Audio FastFill",
+            "Forms On Fire (Voice Fill with AI)"
+          ]
+        }
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "responseExcerpt": "Here is a comprehensive guide to the **best voice form filling tools in 2026**, covering a range of use cases — from general dictation to specialized field data capture:\n\n---\n\n## 🎙️ Best Voice Form Filling Tools in 2026\n\n---\n\n### 1. 🏆 **Wispr Flow** — Best Overall Voice Dictation for Form Filling\n\nWispr Flow is a system-wide AI dictation keyboard that works across Mac, Windows, iOS, and Android, adapting to each user's writing style to produce cleaner first-pass text. It installs as a system-level keyboard layer and activates via a configurable hotkey, enabling spoken input anywhere — including email clients, Slack, Google Docs, code editors, and CRMs — without switching apps.\n\n\n\nIts AI layer goes beyond raw transcription: it removes filler words, applies the user's preferred phrasing, and syncs a personal dictionary across all devices. Third-party comparison roundups report approximately 97% accuracy, outperforming Apple Dictation and Google Docs Voice Typing in the same test conditions.\n\n\n\nWispr Flow also launched Android support in February 2026, completing its cross-platform coverage.\n\n\n> 💡 **Best for:** Solo professionals, developers, marketers, and writers who dictate across multiple apps.\n\n---\n\n### 2. 🔬 **Sonix** — Best for Transcription Accuracy\n\nIn 2026, Sonix delivers up to 99% automated transcription accuracy for clear audio recordings across 53+ languages with SOC 2 Type II and HIPAA support (BAA available for enterprise and medical programs), trusted by over ",
+      "elapsedMs": 158914,
+      "inputTokens": 29202,
+      "outputTokens": 2299,
+      "costUsd": 0.122091
+    },
+    {
+      "query": "Q1",
+      "queryText": "best voice form filling tools 2026",
+      "provider": "perplexity",
+      "label": "Perplexity",
+      "model": "manual",
+      "source": "manual-paste",
+      "mention": "yes",
+      "position": null,
+      "citationCount": 0,
+      "canonicalCitations": [],
+      "competitors": [
+        "VoiceForms by AnveVoice",
+        "Form2Agent"
+      ],
+      "competitorsUnverified": [],
+      "sentiment": {
+        "label": "positive",
+        "confidence": "high",
+        "rationale": "TypelessForm is recommended as a simple drop-in voice widget and practical choice."
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "elapsedMs": null
+    },
+    {
+      "query": "Q2",
+      "queryText": "top one-shot voice form filling services for e-commerce",
+      "provider": "perplexity",
+      "label": "Perplexity",
+      "model": "manual",
+      "source": "manual-paste",
+      "mention": "no",
+      "position": null,
+      "citationCount": 0,
+      "canonicalCitations": [],
+      "competitors": [
+        "AnveVoice"
+      ],
+      "competitorsUnverified": [
+        "Voiceflow",
+        "Fluent.io",
+        "Plivo",
+        "Aircall",
+        "Goodcall"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5.4-mini",
+          "brands": [
+            "AnveVoice",
+            "Voiceflow",
+            "Fluent.io",
+            "Plivo",
+            "Aircall",
+            "Goodcall"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "AnveVoice"
+          ]
+        }
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "elapsedMs": null
+    },
+    {
+      "query": "Q3",
+      "queryText": "voice form data capture tools for healthcare forms",
+      "provider": "perplexity",
+      "label": "Perplexity",
+      "model": "manual",
+      "source": "manual-paste",
+      "mention": "no",
+      "position": null,
+      "citationCount": 0,
+      "canonicalCitations": [],
+      "competitors": [
+        "Voiceform",
+        "Data Capture Voice to Form"
+      ],
+      "competitorsUnverified": [
+        "FormStream",
+        "Jotform"
+      ],
+      "extractionSources": {
+        "primary": {
+          "model": "gpt-5.4-mini",
+          "brands": [
+            "Voiceform",
+            "Data Capture Voice to Form",
+            "FormStream",
+            "Jotform"
+          ]
+        },
+        "secondary": {
+          "model": "gemini-2.5-flash",
+          "brands": [
+            "Voiceform",
+            "Data Capture Voice to Form"
+          ]
+        }
+      },
+      "responseQuality": "rich",
+      "hasBrandInCitations": false,
+      "elapsedMs": null
+    }
+  ],
+  "topCompetitors": [
+    {
+      "name": "AnveVoice",
+      "count": 3
+    },
+    {
+      "name": "Vocale.ai",
+      "count": 1
+    },
+    {
+      "name": "FillApp",
+      "count": 1
+    },
+    {
+      "name": "AI Form Fill",
+      "count": 1
+    },
+    {
+      "name": "aiOla",
+      "count": 1
+    },
+    {
+      "name": "Form2Agent by Freeport Metrics",
+      "count": 1
+    },
+    {
+      "name": "Smartsheet Intelligent Form Fill",
+      "count": 1
+    },
+    {
+      "name": "Form2Agent AI",
+      "count": 1
+    }
+  ],
+  "topCanonicalSources": [
+    {
+      "url": "https://typelessform.com/?utm_source=openai",
+      "count": 2
+    },
+    {
+      "url": "https://www.concicares.com/?utm_source=openai",
+      "count": 2
+    },
+    {
+      "url": "https://anvevoice.app",
+      "count": 2
+    },
+    {
+      "url": "https://plivo.com",
+      "count": 2
+    },
+    {
+      "url": "https://goodcall.com",
+      "count": 2
+    },
+    {
+      "url": "https://formbuddy.ai/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://say2form.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://talktofill.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.voizreport.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://anvevoice.app/features/form-filling?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.sayfill.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://ent.sayfill.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.speechos.ai/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.vofo.dev/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://rechotechnologies.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://voiceboxmd.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.omivoice.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.vehrdict.com/?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://www.agyle.health/intelliform?utm_source=openai",
+      "count": 1
+    },
+    {
+      "url": "https://intrihealth.com/intrivoice/?utm_source=openai",
+      "count": 1
+    }
+  ],
+  "topDomains": [
+    {
+      "host": "typelessform.com",
+      "count": 4,
+      "share": 0.038461538461538464
+    },
+    {
+      "host": "anvevoice.app",
+      "count": 4,
+      "share": 0.038461538461538464
+    },
+    {
+      "host": "retellai.com",
+      "count": 3,
+      "share": 0.028846153846153848
+    },
+    {
+      "host": "synthflow.ai",
+      "count": 3,
+      "share": 0.028846153846153848
+    },
+    {
+      "host": "aiola.ai",
+      "count": 3,
+      "share": 0.028846153846153848
+    },
+    {
+      "host": "concicares.com",
+      "count": 2,
+      "share": 0.019230769230769232
+    },
+    {
+      "host": "plivo.com",
+      "count": 2,
+      "share": 0.019230769230769232
+    },
+    {
+      "host": "goodcall.com",
+      "count": 2,
+      "share": 0.019230769230769232
+    },
+    {
+      "host": "itransition.com",
+      "count": 2,
+      "share": 0.019230769230769232
+    },
+    {
+      "host": "zapier.com",
+      "count": 2,
+      "share": 0.019230769230769232
+    }
+  ],
+  "adsDetected": {
+    "totalCellsScanned": 12,
+    "totalCellsWithAdSignal": 0,
+    "byProvider": {},
+    "samples": []
+  },
+  "citationClassification": {
+    "results": [
+      {
+        "index": 0,
+        "hostname": "typelessform.com",
+        "onCategory": true,
+        "industry": "Voice-first form-filling / AI forms SaaS",
+        "confidence": "high"
+      },
+      {
+        "index": 1,
+        "hostname": "concicares.com",
+        "onCategory": false,
+        "industry": "Healthcare / medical care",
+        "confidence": "high"
+      },
+      {
+        "index": 2,
+        "hostname": "anvevoice.app",
+        "onCategory": true,
+        "industry": "Voice AI platform for websites / Conversational forms",
+        "confidence": "high"
+      },
+      {
+        "index": 3,
+        "hostname": "plivo.com",
+        "onCategory": true,
+        "industry": "Communications API / Voice & SMS CPaaS",
+        "confidence": "high"
+      },
+      {
+        "index": 4,
+        "hostname": "goodcall.com",
+        "onCategory": true,
+        "industry": "AI phone agents / Virtual receptionist SaaS",
+        "confidence": "high"
+      },
+      {
+        "index": 5,
+        "hostname": "formbuddy.ai",
+        "onCategory": true,
+        "industry": "AI-driven form assistant / Form-filling SaaS",
+        "confidence": "high"
+      },
+      {
+        "index": 6,
+        "hostname": "say2form.com",
+        "onCategory": true,
+        "industry": "Voice or speech-based form-filling tech",
+        "confidence": "medium"
+      },
+      {
+        "index": 7,
+        "hostname": "talktofill.com",
+        "onCategory": true,
+        "industry": "Voice input form-completion tool / Speech-to-form",
+        "confidence": "medium"
+      },
+      {
+        "index": 8,
+        "hostname": "voizreport.com",
+        "onCategory": true,
+        "industry": "Voice powered report-/survey forms / Voice report collection",
+        "confidence": "high"
+      },
+      {
+        "index": 9,
+        "hostname": "sayfill.com",
+        "onCategory": true,
+        "industry": "Voice enabled form-submission / Fill-forms via voice",
+        "confidence": "medium"
+      }
+    ],
+    "offCategoryDomains": [
+      {
+        "hostname": "concicares.com",
+        "industry": "Healthcare / medical care",
+        "confidence": "high"
+      }
+    ],
+    "onCategoryDomains": [
+      {
+        "hostname": "typelessform.com",
+        "industry": "Voice-first form-filling / AI forms SaaS",
+        "confidence": "high"
+      },
+      {
+        "hostname": "anvevoice.app",
+        "industry": "Voice AI platform for websites / Conversational forms",
+        "confidence": "high"
+      },
+      {
+        "hostname": "plivo.com",
+        "industry": "Communications API / Voice & SMS CPaaS",
+        "confidence": "high"
+      },
+      {
+        "hostname": "goodcall.com",
+        "industry": "AI phone agents / Virtual receptionist SaaS",
+        "confidence": "high"
+      },
+      {
+        "hostname": "formbuddy.ai",
+        "industry": "AI-driven form assistant / Form-filling SaaS",
+        "confidence": "high"
+      },
+      {
+        "hostname": "say2form.com",
+        "industry": "Voice or speech-based form-filling tech",
+        "confidence": "medium"
+      },
+      {
+        "hostname": "talktofill.com",
+        "industry": "Voice input form-completion tool / Speech-to-form",
+        "confidence": "medium"
+      },
+      {
+        "hostname": "voizreport.com",
+        "industry": "Voice powered report-/survey forms / Voice report collection",
+        "confidence": "high"
+      },
+      {
+        "hostname": "sayfill.com",
+        "industry": "Voice enabled form-submission / Fill-forms via voice",
+        "confidence": "medium"
+      }
+    ],
+    "ranAt": "2026-05-18T12:49:25.370Z"
+  },
+  "llmActions": [
+    {
+      "kind": "gap",
+      "priority": "high",
+      "engines": [
+        "openai",
+        "perplexity"
+      ],
+      "title": "Publish healthcare voice-form landing page",
+      "detail": "You are missing on the query \"voice form data capture tools for healthcare forms\" in both ChatGPT and Perplexity. This week, publish a dedicated page at typelessform.com targeting that exact phrase plus adjacent terms like HIPAA-safe intake, patient registration, and medical consent forms, with 3 concrete healthcare HTML form examples and a clear statement that one spoken sentence can fill multiple fields."
+    },
+    {
+      "kind": "gap",
+      "priority": "high",
+      "engines": [
+        "gemini",
+        "anthropic"
+      ],
+      "title": "Create enterprise vendor comparison page",
+      "detail": "You are invisible for \"voice form filling vendors for enterprise\" in Gemini and Claude. Create a comparison page titled around \"Enterprise Voice Form Filling Vendors\" that explicitly compares typelessform with AnveVoice, aiOla, and Form2Agent by Freeport Metrics on deployment model, multilingual support, HTML-form compatibility, and one-shot filling so those engines have a vendor-list source to cite."
+    },
+    {
+      "kind": "compete",
+      "priority": "high",
+      "engines": [],
+      "title": "Displace AnveVoice on category pages",
+      "detail": "AnveVoice appears in 3 checks, the strongest competitor in your dataset. Publish two list-style pages this week—\"Best Voice Form Filling Tools 2026\" and \"Top Voice Form Filling Services for Ecommerce\"—and include a competitor matrix showing where typelessform is differentiated: one-shot completion of all HTML fields, 25+ languages, and ecommerce checkout/account/lead-gen use cases."
+    },
+    {
+      "kind": "win",
+      "priority": "high",
+      "engines": [
+        "openai",
+        "gemini",
+        "perplexity"
+      ],
+      "title": "Pitch repeated citation sources directly",
+      "detail": "The most-cited sources in this vertical are Concicares, anvevoice.app, Plivo, and Goodcall, each appearing 2×. This week, email the editors/teams behind Concicares, Plivo, and Goodcall with a short note and copy-ready blurb asking to add typelessform to any voice form filling, voice AI for forms, or conversational data-capture roundups, because these domains are already being surfaced by multiple answer engines."
+    },
+    {
+      "kind": "defend",
+      "priority": "med",
+      "engines": [
+        "openai",
+        "gemini",
+        "perplexity"
+      ],
+      "title": "Reinforce the winning 2026 query",
+      "detail": "You already win mentions for \"best voice form filling tools 2026\" in ChatGPT, Gemini, and Perplexity, but not Claude. Strengthen that asset this week by adding a visible 'Updated for 2026' timestamp, a concise definition of one-shot voice form filling, and 3 proof points above the fold so AI systems keep selecting typelessform as the canonical category example."
+    }
+  ],
+  "costByModel": [
+    {
+      "provider": "openai",
+      "model": "gpt-5.4",
+      "label": "action-recommendations",
+      "requests": 1,
+      "inputTokens": 737,
+      "outputTokens": 677,
+      "costUsd": 0.011998
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-5.4-mini",
+      "label": "outreach-templates",
+      "requests": 1,
+      "inputTokens": 367,
+      "outputTokens": 608,
+      "costUsd": 0.003011
+    }
+  ],
+  "sessionCostUsd": 0.011998,
+  "pageSignals": {
+    "domain": "typelessform.com",
+    "ranAt": "2026-05-18T12:49:35.958Z",
+    "homepage": {
+      "ok": true,
+      "url": "https://typelessform.com/",
+      "fetchedAt": "2026-05-18T12:49:35.958Z",
+      "bytes": 82848,
+      "truncated": false,
+      "headings": {
+        "h1": {
+          "count": 1,
+          "samples": [
+            "TypelessForm — One-Shot Voice Form Filling Widget"
+          ]
+        },
+        "h2": {
+          "count": 9,
+          "samples": [
+            "How TypelessForm Fills Forms from Voice — 3-Step Pipeline",
+            "One Sentence → Structured Data",
+            "Live Demo — 6-Field Hotel Form Filled from One Sentence",
+            "What TypelessForm Does",
+            "Get Started in Minutes"
+          ]
+        }
+      },
+      "answerCapsules": {
+        "totalH2": 9,
+        "withCapsule": 1,
+        "coverage": 11,
+        "samples": [
+          {
+            "heading": "How TypelessForm Fills Forms from Voice — 3-Step Pipeline",
+            "paraWords": 7,
+            "hasCapsule": false
+          },
+          {
+            "heading": "One Sentence → Structured Data",
+            "paraWords": 11,
+            "hasCapsule": false
+          },
+          {
+            "heading": "Live Demo — 6-Field Hotel Form Filled from One Sentence",
+            "paraWords": 12,
+            "hasCapsule": false
+          },
+          {
+            "heading": "What TypelessForm Does",
+            "paraWords": 12,
+            "hasCapsule": false
+          },
+          {
+            "heading": "Get Started in Minutes",
+            "paraWords": 8,
+            "hasCapsule": false
+          }
+        ]
+      },
+      "schemaOrg": {
+        "blockCount": 10,
+        "parseFailures": 0,
+        "types": [
+          "Organization",
+          "SoftwareApplication",
+          "FAQPage",
+          "HowTo",
+          "Product",
+          "DefinedTerm",
+          "WebApplication",
+          "SoftwareSourceCode",
+          "VideoObject",
+          "BreadcrumbList"
+        ],
+        "hasOrganization": true,
+        "hasFaqPage": true,
+        "hasBreadcrumb": true,
+        "hasPerson": false,
+        "hasArticle": false,
+        "orgFields": [
+          "name",
+          "url",
+          "logo",
+          "description",
+          "contactPoint",
+          "parentOrganization",
+          "sameAs"
+        ]
+      },
+      "faq": {
+        "schemaCount": 8,
+        "heuristicCount": 8,
+        "total": 8
+      }
+    }
+  },
+  "authorityPresence": {
+    "brand": "typelessform",
+    "ranAt": "2026-05-18T12:49:36.628Z",
+    "profile": {
+      "type": "default",
+      "extras": [],
+      "caveat": ""
+    },
+    "wikipedia": {
+      "found": false,
+      "status": 404,
+      "url": "https://en.wikipedia.org/api/rest_v1/page/summary/typelessform",
+      "queryUrl": "https://en.wikipedia.org/wiki/typelessform"
+    },
+    "reddit": {
+      "found": false,
+      "mentionCount": 0,
+      "topSubs": [],
+      "url": "https://www.reddit.com/search.json?q=typelessform&sort=relevance&limit=25"
+    }
+  },
+  "crawlability": {
+    "domain": "typelessform.com",
+    "ranAt": "2026-05-18T12:49:36.871Z",
+    "robots": {
+      "url": "https://typelessform.com/robots.txt",
+      "found": true,
+      "status": 200,
+      "parsed": {
+        "groups": [
+          {
+            "userAgents": [
+              "*"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "GPTBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "ChatGPT-User"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "OAI-SearchBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Google-Extended"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "ClaudeBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Claude-SearchBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Claude-User"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "PerplexityBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Perplexity-User"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Bytespider"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "CCBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "cohere-ai"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Meta-ExternalAgent"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Applebot-Extended"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Amazonbot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "YouBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Timpibot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "AI2Bot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "Diffbot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "ImagesiftBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "DuckAssistBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "DeepSeekBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          },
+          {
+            "userAgents": [
+              "MistralBot"
+            ],
+            "allow": [
+              "/"
+            ],
+            "disallow": []
+          }
+        ],
+        "sitemaps": [
+          "https://typelessform.com/sitemap.xml"
+        ]
+      },
+      "error": null,
+      "bytes": 864
+    },
+    "llmsTxt": {
+      "url": "https://typelessform.com/llms.txt",
+      "found": true,
+      "status": 200,
+      "error": null,
+      "bytes": 9533
+    },
+    "sitemap": {
+      "url": "https://typelessform.com/sitemap.xml",
+      "found": true,
+      "status": 200,
+      "error": null,
+      "urlCount": 27
+    },
+    "botAccess": [
+      {
+        "name": "GPTBot",
+        "label": "GPTBot",
+        "provider": "ChatGPT",
+        "docs": "https://platform.openai.com/docs/bots",
+        "access": "allowed"
+      },
+      {
+        "name": "OAI-SearchBot",
+        "label": "OAI-SearchBot",
+        "provider": "ChatGPT",
+        "docs": "https://platform.openai.com/docs/bots",
+        "access": "allowed"
+      },
+      {
+        "name": "ChatGPT-User",
+        "label": "ChatGPT-User",
+        "provider": "ChatGPT",
+        "docs": "https://platform.openai.com/docs/bots",
+        "access": "allowed"
+      },
+      {
+        "name": "Google-Extended",
+        "label": "Google-Extended",
+        "provider": "Gemini",
+        "docs": "https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers",
+        "access": "allowed"
+      },
+      {
+        "name": "GoogleOther",
+        "label": "GoogleOther",
+        "provider": "Gemini",
+        "docs": "https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers",
+        "access": "allowed"
+      },
+      {
+        "name": "ClaudeBot",
+        "label": "ClaudeBot",
+        "provider": "Claude",
+        "docs": "https://support.anthropic.com/en/articles/8896518",
+        "access": "allowed"
+      },
+      {
+        "name": "Claude-Web",
+        "label": "Claude-Web",
+        "provider": "Claude",
+        "docs": "https://support.anthropic.com/en/articles/8896518",
+        "access": "allowed"
+      },
+      {
+        "name": "anthropic-ai",
+        "label": "anthropic-ai",
+        "provider": "Claude",
+        "docs": "https://support.anthropic.com/en/articles/8896518",
+        "access": "allowed"
+      },
+      {
+        "name": "PerplexityBot",
+        "label": "PerplexityBot",
+        "provider": "Perplexity",
+        "docs": "https://docs.perplexity.ai/guides/bots",
+        "access": "allowed"
+      },
+      {
+        "name": "Perplexity-User",
+        "label": "Perplexity-User",
+        "provider": "Perplexity",
+        "docs": "https://docs.perplexity.ai/guides/bots",
+        "access": "allowed"
+      },
+      {
+        "name": "CCBot",
+        "label": "CCBot (CommonCrawl)",
+        "provider": "training-data",
+        "docs": "https://commoncrawl.org/ccbot",
+        "access": "allowed"
+      },
+      {
+        "name": "Bytespider",
+        "label": "Bytespider",
+        "provider": "ByteDance/TikTok",
+        "docs": "https://bytespider.bytedance.com",
+        "access": "allowed"
+      }
+    ],
+    "summary": {
+      "totalBots": 12,
+      "blockedCount": 0,
+      "allowedCount": 12,
+      "partialCount": 0,
+      "unspecifiedCount": 0,
+      "hasRobots": true,
+      "hasLlmsTxt": true,
+      "hasSitemap": true
+    }
+  },
+  "entityGraph": {
+    "domain": "typelessform.com",
+    "ok": true,
+    "ranAt": "2026-05-18T12:49:38.074Z",
+    "sameAsCount": 4,
+    "edges": [
+      {
+        "url": "https://www.npmjs.com/package/typelessform-widget",
+        "platform": "npm",
+        "host": "npmjs.com",
+        "status": "unreachable",
+        "httpStatus": 403,
+        "error": "HTTP 403",
+        "confidence": "high"
+      },
+      {
+        "url": "https://www.producthunt.com/products/typelessform",
+        "platform": "producthunt",
+        "host": "producthunt.com",
+        "status": "reciprocates",
+        "httpStatus": 200,
+        "error": null,
+        "confidence": "high"
+      },
+      {
+        "url": "https://typelessity.com",
+        "platform": "typelessity.com",
+        "host": "typelessity.com",
+        "status": "unreachable",
+        "httpStatus": null,
+        "error": "fetch failed",
+        "confidence": "high"
+      },
+      {
+        "url": "https://typelessform.com/blog/what-is-voice-form-filling",
+        "platform": "typelessform.com",
+        "host": "typelessform.com",
+        "status": "reciprocates",
+        "httpStatus": 200,
+        "error": null,
+        "confidence": "high"
+      }
+    ],
+    "summary": {
+      "reciprocates": 2,
+      "oneWay": 0,
+      "unreachable": 2,
+      "verifiedHost": 0,
+      "brokenLink": 0,
+      "reciprocityRate": 50
+    }
+  },
+  "competitorPricing": [
+    {
+      "name": "AnveVoice",
+      "domain": "anvevoice.app",
+      "pricingUrl": "https://anvevoice.app/pricing",
+      "pricingSource": "heuristic",
+      "tier": "unknown",
+      "entryPrice": null,
+      "confidence": "low",
+      "error": null
+    },
+    {
+      "name": "Vocale.ai",
+      "domain": null,
+      "pricingUrl": null,
+      "pricingSource": null,
+      "tier": "unknown",
+      "entryPrice": null,
+      "confidence": "low",
+      "error": "no-domain-derivable"
+    },
+    {
+      "name": "FillApp",
+      "domain": null,
+      "pricingUrl": null,
+      "pricingSource": null,
+      "tier": "unknown",
+      "entryPrice": null,
+      "confidence": "low",
+      "error": "no-domain-derivable"
+    },
+    {
+      "name": "AI Form Fill",
+      "domain": null,
+      "pricingUrl": null,
+      "pricingSource": null,
+      "tier": "unknown",
+      "entryPrice": null,
+      "confidence": "low",
+      "error": "no-domain-derivable"
+    },
+    {
+      "name": "aiOla",
+      "domain": "aiola.ai",
+      "pricingUrl": null,
+      "pricingSource": null,
+      "tier": "unknown",
+      "entryPrice": null,
+      "confidence": "low",
+      "error": "no-pricing-page-found"
+    }
+  ],
+  "regionContext": {
+    "ranAt": "2026-05-18T12:49:40.328Z",
+    "aggregate": {
+      "dominantRegion": null,
+      "confidence": "none",
+      "perRegion": {},
+      "perProvider": {},
+      "mixedSignals": false
+    },
+    "perCell": []
+  },
+  "responseFreshness": {
+    "ranAt": "2026-05-18T12:49:40.329Z",
+    "aggregate": {
+      "overall": "fresh",
+      "counts": {
+        "fresh": 9,
+        "stale": 0,
+        "unknown": 3,
+        "total": 12
+      },
+      "perProvider": {
+        "openai": {
+          "fresh": 3,
+          "stale": 0,
+          "unknown": 0,
+          "total": 3,
+          "latestYear": null,
+          "verdict": "fresh"
+        },
+        "gemini": {
+          "fresh": 3,
+          "stale": 0,
+          "unknown": 0,
+          "total": 3,
+          "latestYear": null,
+          "verdict": "fresh"
+        },
+        "anthropic": {
+          "fresh": 3,
+          "stale": 0,
+          "unknown": 0,
+          "total": 3,
+          "latestYear": null,
+          "verdict": "fresh"
+        },
+        "perplexity": {
+          "fresh": 0,
+          "stale": 0,
+          "unknown": 3,
+          "total": 3,
+          "latestYear": null,
+          "verdict": "mixed"
+        }
+      }
+    },
+    "perCell": [
+      {
+        "provider": "openai",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "openai",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "openai",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "gemini",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "gemini",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "gemini",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "anthropic",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "anthropic",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "anthropic",
+        "freshness": "fresh",
+        "confidence": "high",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": true,
+        "reasoning": "web-search active — response reflects live data"
+      },
+      {
+        "provider": "perplexity",
+        "freshness": "unknown",
+        "confidence": "low",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": false,
+        "reasoning": "no year mentions, no cutoff phrases, no web search — cannot determine"
+      },
+      {
+        "provider": "perplexity",
+        "freshness": "unknown",
+        "confidence": "low",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": false,
+        "reasoning": "no year mentions, no cutoff phrases, no web search — cannot determine"
+      },
+      {
+        "provider": "perplexity",
+        "freshness": "unknown",
+        "confidence": "low",
+        "latestYearMentioned": null,
+        "cutoffPhrases": [],
+        "usedWebSearch": false,
+        "reasoning": "no year mentions, no cutoff phrases, no web search — cannot determine"
+      }
+    ],
+    "caveats": [
+      "Year-mention heuristic is approximate — a model can know about year N without explicitly stating it in response.",
+      "Web-search responses always classified as \"fresh\" regardless of training cutoff.",
+      "For non-search engines, \"stale\" indicates KNOWLEDGE-HORIZON gap; the practical AEO question is whether engine knows about YOUR brand specifically — combine with brand-mention rate."
+    ]
+  },
+  "outreachTemplates": [
+    {
+      "host": "anvevoice.app",
+      "subject": "Add a one-shot voice filling angle?",
+      "body": "Hi team — your content is being cited by AI answer engines for the one-shot voice form filling category, and Anvevoice.app shows up 4x in those results. I’m reaching out because typelessform is building the “speak one sentence, fill the whole HTML form” workflow, and we’re seeing a perspective that’s usually missing: how users handle multi-field forms in one pass, across 25+ languages.\n\nIf you’re updating coverage in this space, we could contribute a concise customer story or a concrete usage data point on where voice-to-form works best (and where it breaks). Not asking for a link — just offering a source if you want to broaden the angle.",
+      "why": "Cited 4x by AI for this category, so it materially shapes answer-engine coverage."
+    },
+    {
+      "host": "retellai.com",
+      "subject": "Voice workflow data for form filling coverage",
+      "body": "Hi team — RetellAI is being cited 3x by AI answer engines when they explain the voice form filling category. That makes your perspective especially influential.\n\nI’m with typelessform, where we pioneered one-shot voice form filling for HTML forms: one spoken sentence, all fields filled at once. A useful addition to the category coverage could be a real-world data point on completion speed, drop-off, or multilingual performance — the kind of evidence answer engines tend to surface.\n\nIf you’re open, we can share a short customer example or usage stats that would add a missing layer to the category conversation. No ask for a backlink; just happy to contribute something concrete.",
+      "why": "Cited 3x by AI in the category, so it helps define the facts answer engines repeat."
+    },
+    {
+      "host": "synthflow.ai",
+      "subject": "A missing angle on one-shot voice forms",
+      "body": "Hi Synthflow team — AI answer engines are citing your category content 3x when describing voice-driven workflows and form-related use cases. I’m reaching out because typelessform sits in a very specific slice of that market: one-shot voice form filling for HTML forms, where a single sentence can populate the whole form.\n\nOne perspective that’s often underrepresented is the operational side: how this performs in real customer flows, especially across 25+ languages and longer forms. If you’re expanding your coverage, we could contribute a customer story or a practical benchmark that adds specificity without turning it into a product pitch.\n\nIf useful, we’d be glad to send over something editorially clean.",
+      "why": "Cited 3x by AI for related category queries, making it a strong source in answer-engine synthesis."
+    }
+  ]
+}

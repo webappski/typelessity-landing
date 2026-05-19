@@ -1,0 +1,127 @@
+---
+title: "Cascade-aware corrections: how to handle field dependencies in conversational booking"
+description: "When a user changes one field mid-booking, every dependent field must be invalidated. Here is the dependency-graph algorithm Typelessity uses, the twelve lines of code behind it, and the UX rule that makes it readable to users."
+publishedAt: "2025-02-18"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "Engineering"
+tags: ["bugs", "algorithms", "ux", "extraction"]
+faqs:
+  - q: "What is a cascade-aware correction in a booking flow?"
+    a: "A cascade-aware correction is a mid-booking field edit that automatically invalidates every downstream field whose validity depended on the edited field. In Typelessity, changing `specialty` clears `doctor` and `slot`, then re-runs the relevant enrichment APIs in topological order — so the booking can never ship with a stale doctor under a new specialty."
+  - q: "How does Typelessity model field dependencies?"
+    a: "Each field in the Typelessity config declares a `depends_on` list. When any field changes, a depth-first traversal walks the dependency graph and clears every transitive dependent. The cleared set then drives a topologically ordered re-run of enrichment APIs (e.g. fetch doctors after specialty changes). The graph is part of config, not hardcoded per industry."
+  - q: "Why not just clear all later fields when one changes?"
+    a: "Clearing all later fields punishes the user — they re-enter information they did not change. Cascade-aware corrections clear only fields that *depended* on the edited one. Editing `phone_number` does not clear `slot`; editing `specialty` does. Targeted invalidation is the difference between a forgiving review screen and an annoying one."
+  - q: "What does Typelessity tell the user when a field is reset by a cascade?"
+    a: "When a downstream field is cleared by a cascade, the widget surfaces a one-line explanation — for example, 'Doctor reset — please reselect for orthodontics.' Without that copy, users perceive the form as buggy. With it, they understand cause and effect, and form abandonment after a cascade event drops sharply."
+  - q: "Where else does cascade-aware correction apply?"
+    a: "Any extraction system with cross-field dependencies has the same problem: lead capture forms with state-dependent dropdowns, tax software with line items that affect totals, booking systems with capacity constraints. The mental model is a spreadsheet — when a cell changes, recalculate the dependents. Typelessity applies this pattern to every config-driven booking surface."
+---
+
+<strong>Cascade-aware correction is a booking-form pattern in which editing one field automatically invalidates every dependent downstream field. Typelessity declares dependencies in config (`depends_on`), runs a depth-first traversal on edit, clears transitive dependents, and re-runs enrichment APIs in topological order. Twelve lines of code; eliminates a class of mid-edit booking bugs. Read /how-it-works for the full extraction pipeline.</strong>
+
+## The bug that motivated this
+
+A user said *"I want a dentist on Friday at 2pm."* Typelessity extracted `specialty=dentistry, date=Friday, time=14:00`, called the enrichment API, and offered a dentist's available slot. The user confirmed. On the review screen, they clicked "edit" and changed `specialty` to "orthodontist." Nothing else. They submitted.
+
+The dentist's slot stayed. The booking shipped with a dentist's slot under an orthodontist appointment. The clinic backend rejected it. The user got a confused email.
+
+The bug: changing `specialty` should have invalidated `doctor`, which should have invalidated `slot`. The relationship was nowhere encoded.
+
+**Bottom line:** in any extraction system with cross-field dependencies, an edit without a cascade is an undetected bug.
+
+## What is a cascade-aware correction?
+
+A cascade-aware correction is a mid-booking field edit that automatically clears every downstream field that depended on the edited one. The system then re-runs the enrichment APIs needed to repopulate those fields, in dependency order. The user sees a one-line explanation of what was reset and why.
+
+This is the difference between a booking flow that survives mid-edits and one that ships broken bookings.
+
+## How does Typelessity model field dependencies?
+
+Field relationships are first-class config:
+
+```json
+{
+  "fields": {
+    "specialty": { "depends_on": [] },
+    "date": { "depends_on": [] },
+    "doctor": { "depends_on": ["specialty"] },
+    "slot": { "depends_on": ["doctor", "date"] }
+  }
+}
+```
+
+When any field changes, a depth-first traversal walks the graph to find every downstream field that depended on it (transitively) and clears them. The cleared set then drives a topologically ordered re-run of the relevant enrichment APIs.
+
+```ts
+function clearDownstream(changed: string, fields: Record<string, FieldDef>) {
+  const cleared = new Set<string>();
+  const stack = [changed];
+  while (stack.length) {
+    const current = stack.pop()!;
+    for (const [name, def] of Object.entries(fields)) {
+      if (def.depends_on.includes(current) && !cleared.has(name)) {
+        cleared.add(name);
+        stack.push(name);
+      }
+    }
+  }
+  return cleared;
+}
+```
+
+Twelve lines. The dependency graph is in config, not in code, so adding a new field type does not require editing the orchestration layer.
+
+**Bottom line:** cascade behaviour is config-driven. The same engine handles dental clinics, transfer services, and 150+ other verticals because the dependency shape lives in config alongside the field schema.
+
+## Why not just clear every later field?
+
+Two reasons.
+
+1. **Most fields are independent.** Editing `phone_number` should not clear `slot`. Editing `passenger_name` should not clear `pickup_location`. Indiscriminate clearing makes the user re-enter data they did not change, and that is exactly the friction that conversational booking is supposed to remove.
+2. **Enrichment APIs are not free.** Each cleared field that has an enrichment trigger costs a round-trip to the customer's backend. Typelessity caps enrichments at 5 per config and 10 s timeout — wasting calls on un-affected fields breaks the latency budget.
+
+Targeted invalidation respects the user *and* the network. The dependency graph is the unit of restraint.
+
+## How is the reset surfaced to the user?
+
+When a cascade clears a downstream field, the widget shows a one-line explanation: *"Doctor reset — please reselect for orthodontics."* Without that copy, users assume the form is broken. With it, they read it as cause-and-effect and proceed.
+
+The UX rule is older than the algorithm: every state change the user did not initiate must be explained in plain language at the moment it happens. Silent state changes feel like bugs. Annotated state changes feel like a forgiving system.
+
+**Bottom line:** the algorithm is twelve lines; the explanation copy is what makes it usable.
+
+## Where does cascade-aware correction generalize?
+
+Any extraction system with cross-field dependencies has the same problem:
+
+- **Lead-capture forms** with state-dependent dropdowns (state → city → ZIP).
+- **Tax software** with line items that affect totals.
+- **Booking systems** with capacity constraints (date → vehicles available → drivers available).
+- **Multi-step intake** where later questions depend on earlier classifications.
+
+The mental model: **fields are not independent variables. Treat them like a spreadsheet — when a cell changes, recalculate the dependents.** A spreadsheet without dependency tracking is a grid of typos. A booking flow without it is the bug at the top of this article.
+
+## FAQ
+
+**What is a cascade-aware correction in a booking flow?**
+A cascade-aware correction is an edit that invalidates every dependent downstream field. Typelessity uses a config-declared dependency graph, walks it depth-first on every change, and re-runs only the enrichment APIs that became stale.
+
+**How does Typelessity model field dependencies?**
+Each field declares a `depends_on` list in config. The orchestration layer reads this graph at runtime — no per-industry code, no hardcoded relationships.
+
+**Why not just clear all later fields when one changes?**
+Indiscriminate clearing makes the user re-enter unrelated data and burns enrichment-API budget. Targeted invalidation only touches fields that actually depended on the edited one.
+
+**What does Typelessity tell the user when a field is reset by a cascade?**
+A one-line explanation in plain language at the moment the field is cleared, e.g. "Doctor reset — please reselect for orthodontics." Silent state changes are read as bugs by users.
+
+**Where else does cascade-aware correction apply?**
+Any extraction or intake system with cross-field dependencies — lead capture, tax software, multi-step booking with capacity constraints. The pattern is the spreadsheet model applied to forms.
+
+---
+
+For the extraction call that produces the initial fields, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the latency budget that constrains enrichment re-runs, see [Latency budgets](/blog/latency-budgets). For the four phases end to end, see [How it works](/how-it-works).
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

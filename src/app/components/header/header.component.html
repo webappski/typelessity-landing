@@ -1,0 +1,44 @@
+@let lang = t.lang();
+<header class="vc-nav">
+  <div class="vc-wrap vc-nav-inner">
+    <a class="vc-logo" [routerLink]="'/' + lang">
+      <span class="vc-logo-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M4 6h16M12 6v14" stroke="#ff5b1f" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="vc-logo-text">Typelessity</span>
+    </a>
+
+    <nav class="vc-nav-links" aria-label="Primary">
+      <a [routerLink]="'/' + lang + '/how-it-works'" routerLinkActive="active">{{ t.t('nav.howItWorks') }}</a>
+      <a [routerLink]="'/' + lang + '/industries'" routerLinkActive="active">{{ t.t('nav.industries') }}</a>
+      <a [routerLink]="'/' + lang + '/pricing'" routerLinkActive="active">{{ t.t('nav.pricing') }}</a>
+      <a [routerLink]="'/' + lang + '/blog'" routerLinkActive="active">{{ t.t('nav.blog') }}</a>
+      <a [routerLink]="'/' + lang + '/faq'" routerLinkActive="active">{{ t.t('nav.faq') }}</a>
+    </nav>
+
+    <div class="vc-nav-cta">
+      <app-language-switcher />
+      <a class="vc-pill" [routerLink]="'/' + lang + '/about'">{{ t.t('nav.about') }}</a>
+      <a class="vc-btn vc-btn-primary" [routerLink]="'/' + lang + '/pricing'">{{ t.t('nav.getStarted') }}</a>
+    </div>
+
+    <button class="vc-burger" (click)="toggleMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-label="Toggle menu">
+      <span [class.open]="mobileMenuOpen()"></span>
+    </button>
+  </div>
+
+  @if (mobileMenuOpen()) {
+    <div class="vc-mobile-menu">
+      <a [routerLink]="'/' + lang + '/how-it-works'" (click)="closeMenu()">{{ t.t('nav.howItWorks') }}</a>
+      <a [routerLink]="'/' + lang + '/industries'" (click)="closeMenu()">{{ t.t('nav.industries') }}</a>
+      <a [routerLink]="'/' + lang + '/pricing'" (click)="closeMenu()">{{ t.t('nav.pricing') }}</a>
+      <a [routerLink]="'/' + lang + '/blog'" (click)="closeMenu()">{{ t.t('nav.blog') }}</a>
+      <a [routerLink]="'/' + lang + '/faq'" (click)="closeMenu()">{{ t.t('nav.faq') }}</a>
+      <a [routerLink]="'/' + lang + '/about'" (click)="closeMenu()">{{ t.t('nav.about') }}</a>
+      <app-language-switcher />
+      <a class="vc-btn vc-btn-primary vc-btn-block" [routerLink]="'/' + lang + '/pricing'" (click)="closeMenu()">{{ t.t('nav.getStarted') }}</a>
+    </div>
+  }
+</header>

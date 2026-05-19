@@ -1,0 +1,62 @@
+// Variant C footer chrome — see vC_styles → .vC-footer block
+
+:host { display: block; }
+
+.vc-footer {
+  padding: 70px 0 36px;
+  border-top: 1px solid var(--line);
+}
+
+.vc-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 44px;
+}
+
+.vc-footer-brand {
+  p {
+    font-size: 13.5px;
+    color: var(--ink2);
+    line-height: 1.55;
+    margin: 16px 0;
+    max-width: 320px;
+  }
+}
+
+.vc-footer-meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink3);
+}
+
+.vc-footer-h {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+.vc-footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  a {
+    color: var(--ink2);
+    font-size: 13.5px;
+
+    &:hover { color: var(--ink); }
+  }
+}
+
+@media (max-width: 860px) {
+  .vc-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 540px) {
+  .vc-footer-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Home: English -->
+  <url>
+    <loc>https://typelessity.com/en/</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/"/>
+  </url>
+  <!-- Home: German -->
+  <url>
+    <loc>https://typelessity.com/de/</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/"/>
+  </url>
+  <!-- Home: Russian -->
+  <url>
+    <loc>https://typelessity.com/ru/</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/"/>
+  </url>
+  <!-- Home: Polish -->
+  <url>
+    <loc>https://typelessity.com/pl/</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/"/>
+  </url>
+  <!-- For AI Agents: English -->
+  <url>
+    <loc>https://typelessity.com/en/for-ai-agents</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/for-ai-agents"/>
+  </url>
+  <!-- For AI Agents: German -->
+  <url>
+    <loc>https://typelessity.com/de/for-ai-agents</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/for-ai-agents"/>
+  </url>
+  <!-- For AI Agents: Russian -->
+  <url>
+    <loc>https://typelessity.com/ru/for-ai-agents</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/for-ai-agents"/>
+  </url>
+  <!-- For AI Agents: Polish -->
+  <url>
+    <loc>https://typelessity.com/pl/for-ai-agents</loc>
+    <lastmod>2026-04-04</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://typelessity.com/en/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://typelessity.com/de/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://typelessity.com/ru/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://typelessity.com/pl/for-ai-agents"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://typelessity.com/en/for-ai-agents"/>
+  </url>
+</urlset>

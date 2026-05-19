@@ -1,0 +1,113 @@
+// Variant C nav chrome — see vC_styles → .vC-nav block
+
+:host { display: block; }
+
+.vc-nav {
+  padding: 22px 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(247, 243, 236, 0.78);
+  backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid var(--line);
+}
+
+.vc-nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.vc-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.vc-logo-mark { display: inline-flex; }
+
+.vc-logo-text {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.vc-nav-links {
+  display: flex;
+  gap: 28px;
+  flex: 1;
+
+  a {
+    color: var(--ink2);
+    font-size: 14.5px;
+    transition: color 0.15s;
+    font-weight: 450;
+
+    &:hover, &.active { color: var(--ink); }
+  }
+}
+
+.vc-nav-cta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.vc-pill {
+  color: var(--ink2);
+  font-size: 14.5px;
+  padding: 8px 4px;
+
+  &:hover { color: var(--ink); }
+}
+
+.vc-burger {
+  display: none;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+
+  span,
+  span::before,
+  span::after {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 1px;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  span { position: relative; }
+  span::before { position: absolute; top: -7px; left: 0; }
+  span::after { position: absolute; top: 7px; left: 0; }
+
+  span.open { background: transparent; }
+  span.open::before { transform: translateY(7px) rotate(45deg); }
+  span.open::after { transform: translateY(-7px) rotate(-45deg); }
+}
+
+.vc-mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px var(--container-pad) 28px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+
+  a {
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 6px 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .vc-nav-links, .vc-nav-cta { display: none; }
+  .vc-burger { display: inline-flex; }
+  .vc-mobile-menu { display: flex; }
+}

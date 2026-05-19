@@ -1,0 +1,124 @@
+:host { display: block; }
+
+.aiagents-hero {
+  padding: 70px 0 24px;
+
+  h1 {
+    font-size: clamp(28px, 4.6vw, 60px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    margin: 18px 0 18px;
+    text-wrap: balance;
+  }
+
+  &__lede {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink2);
+    max-width: 760px;
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      background: var(--bg-soft);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--ink);
+    }
+  }
+}
+
+.aiagents-section {
+  padding: 50px 0;
+
+  h2 {
+    font-size: 28px;
+    letter-spacing: -0.025em;
+    margin: 0 0 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    margin: 22px 0 10px;
+    color: var(--ink2);
+  }
+}
+
+.aiagents-def {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 760px;
+  text-wrap: pretty;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 26px;
+}
+
+.aiagents-code {
+  background: #1a1815;
+  color: #f7f3ec;
+  border-radius: 12px;
+  padding: 20px 24px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0 0 14px;
+}
+
+.aiagents-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+
+  @media (max-width: 540px) {
+    grid-template-columns: 1fr;
+  }
+
+  li {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+
+    strong {
+      color: var(--ink);
+      font-weight: 500;
+      margin-right: 8px;
+    }
+  }
+}
+
+.aiagents-resources {
+  padding: 40px 0 80px;
+
+  h2 {
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    margin: 0 0 14px;
+  }
+}
+
+.aiagents-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14.5px;
+
+  a {
+    color: var(--ink);
+    border-bottom: 1px solid rgba(20, 17, 13, 0.3);
+  }
+}
+
+@media (max-width: 760px) {
+  .aiagents-features { grid-template-columns: 1fr; }
+}
