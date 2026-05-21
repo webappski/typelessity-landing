@@ -1,0 +1,147 @@
+:host { display: block; }
+
+.vc-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 64px;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid var(--border);
+}
+
+.vc-nav-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.vc-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.vc-logo-mark {
+  display: inline-flex;
+  color: var(--accent);
+}
+
+.vc-logo-text {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.vc-nav-links {
+  display: flex;
+  gap: 32px;
+
+  a {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+    text-decoration: none;
+
+    &:hover, &.active { color: var(--text-primary); }
+  }
+}
+
+.vc-nav-cta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.vc-pill {
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 8px 4px;
+  text-decoration: none;
+
+  &:hover { color: var(--text-primary); }
+}
+
+// Override the global .vc-btn-primary inside the nav to be the compact pill
+.vc-nav-cta .vc-btn-primary {
+  padding: 8px 20px;
+  font-size: 13px;
+}
+
+.vc-burger {
+  display: none;
+  background: none;
+  border: 0;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  position: relative;
+
+  span,
+  span::before,
+  span::after {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 1px;
+    position: absolute;
+    left: 6px;
+    transition: transform 0.3s, opacity 0.2s;
+  }
+
+  span { top: 15px; }
+  span::before { top: -6px; }
+  span::after { top: 6px; }
+
+  span.open { background: transparent; }
+  span.open::before { transform: rotate(45deg); top: 0; }
+  span.open::after { transform: rotate(-45deg); top: 0; }
+}
+
+.vc-mobile-menu {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px var(--container-pad) 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+
+  a:not(.vc-btn) {
+    color: var(--text-secondary);
+    padding: 12px 0;
+    font-size: 15px;
+    text-decoration: none;
+
+    &:hover { color: var(--text-primary); }
+  }
+
+  .vc-btn {
+    text-align: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 860px) {
+  .vc-nav-links, .vc-nav-cta { display: none; }
+  .vc-burger { display: block; }
+  .vc-mobile-menu { display: flex; }
+}

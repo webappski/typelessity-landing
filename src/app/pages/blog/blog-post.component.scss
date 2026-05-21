@@ -1,0 +1,631 @@
+// ══════════════════════════════════════════════════════════════════════
+//  Blog Post — Editorial system v2
+//  - All body selectors descend through `markdown` (Angular component wrap)
+//  - Mobile (≤720px): tables become labelled key-value cards (data-label)
+//  - Italic restraint: blockquote + drop cap + byline only
+//  Inspired by Stripe Press / Noema / Vercel blog
+// ══════════════════════════════════════════════════════════════════════
+
+:host {
+  display: block;
+  --measure-body: 680px;
+  --measure-head: 880px;
+  --measure-bleed: 1180px;
+}
+
+// ── Reading progress bar ──
+.blog-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 100;
+  width: var(--read-progress, 0%);
+  transition: width 60ms linear;
+  box-shadow: 0 0 12px rgba(255, 107, 43, 0.45);
+  pointer-events: none;
+}
+
+// ── Article container ──
+.blog-post {
+  position: relative;
+  padding: 56px var(--container-pad) 120px;
+  max-width: var(--measure-bleed);
+  margin: 0 auto;
+
+  @media (max-width: 700px) {
+    padding-top: 32px;
+    padding-bottom: 80px;
+  }
+}
+
+// ── Back link ──
+.blog-post__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 48px;
+  transition: color 0.15s, gap 0.15s;
+
+  @media (max-width: 700px) { margin-bottom: 28px; }
+
+  &:hover {
+    color: var(--text-primary);
+    gap: 12px;
+  }
+}
+
+// ── Article head ──
+.blog-post__head {
+  max-width: var(--measure-head);
+  margin: 0 auto 64px;
+
+  @media (max-width: 700px) { margin-bottom: 40px; }
+}
+
+.blog-post__meta {
+  display: flex;
+  gap: 10px 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  line-height: 1.4;
+
+  @media (max-width: 700px) {
+    font-size: 10.5px;
+    gap: 8px 10px;
+    margin-bottom: 24px;
+  }
+
+  time { font-variant-numeric: tabular-nums; }
+}
+
+.blog-post__cat {
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 4px 10px 3px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.blog-post__sep { color: var(--text-muted); opacity: 0.4; }
+
+.blog-post__readtime::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-right: 8px;
+  transform: translateY(-1px);
+}
+
+.blog-post__title {
+  font-family: var(--font-body);
+  font-size: clamp(32px, 5.4vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.038em;
+  font-weight: 600;
+  margin: 0 0 24px;
+  text-wrap: balance;
+  color: var(--text-primary);
+
+  @media (max-width: 700px) {
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+}
+
+// Lede — sans-serif, regular weight, NOT italic. Italic was unreadable on mobile.
+.blog-post__lede {
+  font-family: var(--font-body);
+  font-size: clamp(15.5px, 1.8vw, 22px);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-wrap: pretty;
+  letter-spacing: -0.005em;
+  margin: 0;
+  max-width: 720px;
+  font-weight: 400;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  Article body
+//  All selectors go .blog-post__body markdown > … because <markdown>
+//  wraps every direct child.
+// ══════════════════════════════════════════════════════════════════════
+
+.blog-post__body {
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  max-width: var(--measure-body);
+  margin: 0 auto;
+
+  @media (max-width: 700px) {
+    font-size: 16.5px;
+    line-height: 1.65;
+  }
+
+  // Markdown component is a transparent wrapper; let it inherit
+  ::ng-deep markdown {
+    display: block;
+  }
+
+  // ── Paragraph rhythm ──
+  ::ng-deep p {
+    margin: 0 0 22px;
+    text-wrap: pretty;
+    hyphens: auto;
+  }
+
+  // ── TL;DR — first body paragraph (positional, robust) ──
+  ::ng-deep markdown > p:first-of-type {
+    margin: 0 0 48px;
+    padding: 26px 28px 28px;
+    background: var(--bg-card);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 1px 2px rgba(255, 255, 255, 0.04), 0 14px 36px -28px rgba(255, 255, 255, 0.16);
+    position: relative;
+    font-size: 17.5px;
+    line-height: 1.55;
+    color: var(--text-primary);
+    font-weight: 400;
+
+    @media (max-width: 700px) {
+      padding: 22px 22px 24px;
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 36px;
+    }
+
+    &::before {
+      content: "TL;DR";
+      display: block;
+      font-family: var(--font-display);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    // The wrapping <strong> from the .mdx — flatten visually
+    strong {
+      font-weight: 500;
+      color: var(--text-primary);
+      display: inline;
+    }
+  }
+
+  // Drop cap — second paragraph (the actual body opener)
+  ::ng-deep markdown > p:nth-of-type(2)::first-letter {
+    font-family: var(--font-body); font-style: italic;
+    font-style: italic;
+    font-size: 5em;
+    line-height: 0.86;
+    float: left;
+    margin: 0.04em 0.1em -0.05em 0;
+    color: var(--accent);
+    font-weight: 400;
+
+    @media (max-width: 700px) {
+      font-size: 3.6em;
+      margin: 0.06em 0.08em -0.05em 0;
+    }
+  }
+
+  // ── H2 ──
+  ::ng-deep h2 {
+    font-family: var(--font-body);
+    font-size: clamp(22px, 3.4vw, 32px);
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    font-weight: 600;
+    margin: 64px 0 20px;
+    color: var(--text-primary);
+    text-wrap: balance;
+    scroll-margin-top: 24px;
+
+    @media (max-width: 700px) {
+      margin: 44px 0 16px;
+    }
+  }
+
+  ::ng-deep h3 {
+    font-family: var(--font-body);
+    font-size: 19px;
+    letter-spacing: -0.018em;
+    line-height: 1.32;
+    font-weight: 600;
+    margin: 36px 0 12px;
+    color: var(--text-primary);
+  }
+
+  // ── Lists ──
+  ::ng-deep ul,
+  ::ng-deep ol {
+    margin: 0 0 22px;
+    padding: 0;
+    list-style: none;
+  }
+
+  ::ng-deep ul > li {
+    margin: 0 0 10px;
+    padding-left: 24px;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 0.7em;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    // Bold-prefix bullets (Direct comparison summary pattern):
+    // "**Foo** → bar" — visually elevate the prefix
+    > strong:first-child {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+  }
+
+  ::ng-deep ol {
+    counter-reset: ord;
+
+    > li {
+      margin: 0 0 10px;
+      padding-left: 32px;
+      position: relative;
+      counter-increment: ord;
+
+      &::before {
+        content: counter(ord, decimal-leading-zero);
+        position: absolute;
+        left: 0;
+        top: 0.05em;
+        font-family: var(--font-display);
+        font-size: 13px;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+    }
+  }
+
+  // ── Inline emphasis ──
+  ::ng-deep strong {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  ::ng-deep em {
+    font-style: italic;
+    color: var(--text-primary);
+  }
+
+  // ── Links — animated underline (color-sweep) ──
+  ::ng-deep a {
+    color: var(--text-primary);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-position: 0 100%;
+    background-size: 100% 1.5px;
+    background-repeat: no-repeat;
+    transition: background-size 0.18s ease;
+    padding-bottom: 1px;
+
+    &:hover {
+      background-size: 100% calc(100% - 2px);
+      background-image: linear-gradient(rgba(255, 107, 43, 0.18), rgba(255, 107, 43, 0.18));
+    }
+  }
+
+  // ── Inline code ──
+  ::ng-deep p code,
+  ::ng-deep li code,
+  ::ng-deep td code {
+    font-family: var(--font-display);
+    font-size: 0.85em;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    white-space: nowrap;
+  }
+
+  // ── Pre / code blocks ──
+  ::ng-deep pre {
+    background: var(--bg-code);
+    color: var(--text-primary);
+    border-radius: 10px;
+    padding: 22px 24px;
+    overflow-x: auto;
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    line-height: 1.68;
+    margin: 24px 0 28px;
+    box-shadow: 0 12px 40px -16px rgba(255, 255, 255, 0.4);
+    -webkit-overflow-scrolling: touch;
+
+    @media (max-width: 700px) {
+      font-size: 12.5px;
+      padding: 18px 20px;
+      margin-left: -8px;
+      margin-right: -8px;
+      border-radius: 8px;
+    }
+
+    code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: 0;
+      white-space: pre;
+      font-size: inherit;
+    }
+  }
+
+  // ── Blockquote (italic OK here — pull-quote convention) ──
+  ::ng-deep blockquote {
+    margin: 32px 0;
+    padding: 0 0 0 24px;
+    border-left: 3px solid var(--text-primary);
+    font-family: var(--font-body); font-style: italic;
+    font-style: italic;
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1.45;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+
+    p { margin-bottom: 10px; }
+    p:last-child { margin-bottom: 0; }
+  }
+
+  // ── HR ──
+  ::ng-deep hr {
+    border: 0;
+    margin: 48px 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--text-muted), transparent);
+    opacity: 0.4;
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  //  TABLES — markdown renders <table> directly inside <markdown>.
+  //  Brand-aligned: cream paper, graphite ink, mono header, warm-gray
+  //  dividers, tangerine pill on <strong> winners.
+  // ──────────────────────────────────────────────────────────────────
+
+  ::ng-deep table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 32px 0;
+    box-shadow: 0 1px 2px rgba(255, 255, 255, 0.03), 0 18px 48px -32px rgba(255, 255, 255, 0.18);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+  }
+
+  // Restore inner table semantics so cells lay out as a real table.
+  ::ng-deep table > thead,
+  ::ng-deep table > tbody { display: table-row-group; }
+  ::ng-deep table > thead > tr,
+  ::ng-deep table > tbody > tr { display: table-row; }
+
+  // Universal row divider — warm gray, on-brand against cream paper.
+  ::ng-deep table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  ::ng-deep table tbody tr:last-child { border-bottom: 0; }
+
+  // Subtle zebra
+  ::ng-deep table tbody tr:nth-child(even) > td {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  ::ng-deep table tbody tr:hover > td {
+    background: rgba(255, 107, 43, 0.06);
+  }
+
+  // Cells
+  ::ng-deep table th,
+  ::ng-deep table td {
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: top;
+    display: table-cell;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+
+    @media (max-width: 700px) {
+      padding: 8px 10px;
+      font-size: 11.5px;
+      line-height: 1.4;
+    }
+  }
+
+  // Header row — Geist Mono, uppercase, soft graphite
+  ::ng-deep table thead tr {
+    background: var(--bg-secondary);
+  }
+  ::ng-deep table th {
+    font-family: var(--font-display);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+
+  // First column — anchor, slightly bolder + sans
+  ::ng-deep table tr > th:first-child,
+  ::ng-deep table tr > td:first-child {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 12.5px;
+    border-right: 1px solid var(--border);
+  }
+
+  ::ng-deep table tr > th:first-child {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 10.5px;
+  }
+
+  // Strong-wrapped values are Typelessity's "winner pill" — tangerine.
+  ::ng-deep table td strong {
+    font-weight: 600;
+    color: var(--text-primary);
+    background: rgba(255, 107, 43, 0.16);
+    padding: 1px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  // ────────────────────────────
+  // (mobile-card layout postponed — re-enable once renderer wraps tables)
+  // ────────────────────────────
+  // ::ng-deep table — keeping desktop layout in all viewports for now
+  /*
+  @media (max-width: 1023px) {
+    ::ng-deep table {
+      display: block;
+      border: 0;
+    }
+    ::ng-deep table td {
+      display: grid;
+      grid-template-columns: minmax(0, 110px) 1fr;
+      gap: 14px;
+      padding-block: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: var(--text-primary);
+
+      &:last-child { border-bottom: 0; }
+
+      // First cell = the row's name (e.g. "Botpress") — promote to title
+      &:first-child {
+        display: block;
+        padding: 0 0 10px;
+        margin-bottom: 6px;
+        border-bottom: 2px solid var(--text-primary);
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 14.5px;
+        letter-spacing: -0.012em;
+      }
+
+      // Subsequent cells: data-label as left column
+      &::before {
+        content: attr(data-label);
+        display: block;
+      }
+    }
+  }
+  */
+
+  // ── Author byline at the very end (after final hr) ──
+  ::ng-deep hr + p:last-child {
+    font-family: var(--font-body); font-style: italic;
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 16.5px;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px dashed var(--border);
+
+    em { font-style: inherit; color: var(--text-secondary); }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+//  Footer
+// ══════════════════════════════════════════════════════════════════════
+
+.blog-post__footer {
+  max-width: var(--measure-head);
+  margin: 80px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: baseline;
+  justify-content: space-between;
+
+  @media (max-width: 700px) { margin-top: 56px; }
+
+  &__back {
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+
+    &:hover { color: var(--text-primary); }
+  }
+
+  &__share {
+    display: flex;
+    gap: 16px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    a {
+      color: var(--text-secondary);
+      &:hover { color: var(--accent); }
+    }
+  }
+}
+
+// ── Reduced motion ──
+@media (prefers-reduced-motion: reduce) {
+  .blog-progress { transition: none; }
+  .blog-post__body ::ng-deep a { transition: none; }
+}
+
+// ── Print ──
+@media print {
+  .blog-progress, .blog-post__back, .blog-post__footer { display: none; }
+  .blog-post__body ::ng-deep table { box-shadow: none; }
+  .blog-post { padding: 0; }
+}

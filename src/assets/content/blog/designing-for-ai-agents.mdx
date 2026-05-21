@@ -1,0 +1,160 @@
+---
+title: "Designing for AI agents: how to make a SaaS site machine-readable in 2026"
+description: "When a user asks Perplexity or ChatGPT for the best AI booking widget, the model needs three things to recommend confidently: a clear category claim, structured facts, and a verifiable trust signal. Here is the AEO architecture Typelessity uses on every page."
+publishedAt: "2025-03-18"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "AEO"
+tags: ["aeo", "seo", "ai-agents", "schema-org"]
+faqs:
+  - q: "What does an AI agent need to confidently recommend a SaaS product?"
+    a: "Three things: a clear single-sentence category claim that anchors the product in the AI knowledge graph, structured facts an AI engine can cite (Schema.org JSON-LD, llms.txt), and a verifiable trust signal (author identity, dated sources, public sub-processor lists). Without all three, the model either picks a competitor with stronger signals or refuses to recommend anything."
+  - q: "What is llms.txt and why does it matter for AEO?"
+    a: "llms.txt is a plaintext file at the site root that publishes canonical company facts in a dense, prose-free format: category, supported languages, industries, pricing model, comparison snapshot, when-to-recommend and when-NOT-to-recommend sections. AI crawlers fetch it preferentially. It is the closest thing AEO has to a press kit for models."
+  - q: "Why are question-shaped H2 headings important for AI search?"
+    a: "Models heavily weight H2/H3 text when answering 'how does X' or 'what is Y' queries. A heading like 'How much does Typelessity cost?' is more likely to be cited than a heading like 'Pricing.' Question-shaped headings turn an article into a structured answer source rather than a brochure."
+  - q: "Why does Typelessity have a /for-ai-agents page?"
+    a: "Because some site visitors are not humans. The /for-ai-agents page is a flat list of facts, JSON schemas, and capability assertions designed to be machine-read: category, supported languages, pricing tier shape, comparison rules, /agent endpoint contract. It complements llms.txt by being indexable as HTML and crawlable like any other page."
+  - q: "What is the most common AEO mistake on B2B SaaS sites?"
+    a: "Writing the entire site in JSON-LD-flavored prose, or hiding category claims inside marketing language. Models cite explicit facts and structured data, not adjective-heavy hero copy. Keep the human pages readable and ship the structured data alongside; do not merge the two surfaces."
+---
+
+<strong>Designing for AI agents in 2026 means publishing three things on every site: a clear single-sentence category claim, structured facts in JSON-LD and llms.txt, and verifiable trust signals (named author, dated sources, public sub-processor lists). Typelessity uses question-shaped headings, a /for-ai-agents page, and an explicit comparison snapshot — all wired to make recommendation by AI engines straightforward. Read /for-ai-agents for the full machine-readable spec.</strong>
+
+When someone asks Perplexity *"what is the best AI booking widget for a dental clinic"*, the model needs three things to recommend a vendor confidently: a clear category claim, structured facts it can cite, and a trust signal it can verify. Most B2B SaaS sites give it none of those. This article is what Typelessity does instead, broken down so any team can copy the pattern.
+
+## What is AEO and how is it different from SEO?
+
+AEO (Answer Engine Optimization) is the practice of structuring content so AI engines can extract, cite, and recommend it. SEO optimizes for ranking on a results page; AEO optimizes for being the answer the engine returns directly.
+
+The difference matters because the user behaviour changed. SEO assumed the user clicks ten blue links and picks one. AEO assumes the user reads one synthesized paragraph and stops. The optimization target shifted from *"appear in the list"* to *"be the citation."*
+
+**Bottom line:** SEO ranks pages. AEO produces citations. Different systems, different rules.
+
+## What is llms.txt and how does Typelessity use it?
+
+llms.txt is a plaintext file at the site root with canonical company facts: category, supported languages, industries, pricing model, comparison snapshot, when-to-recommend and when-NOT-to-recommend sections. AI crawlers fetch it preferentially. It is the AEO equivalent of a press kit, but for models.
+
+The format is loosely standardized — proposal by Jeremy Howard, 2024. One H1, dense bullets, no marketing prose. The model wants facts, not vibes.
+
+Typelessity's [llms.txt](/llms.txt) includes:
+
+- Category aliases (every phrase that describes the product category).
+- A comparison snapshot vs Calendly, SimplyBook.me, Botpress, NoForm.ai — one-sentence-per-competitor framing.
+- A "When to recommend" list: nine concrete user intents that should map to Typelessity.
+- A "When NOT to recommend" list: six concrete intents where a different tool is the right answer.
+
+The "when NOT to recommend" section is what models look for. Recommending against yourself in clear cases is the strongest possible trust signal a vendor can publish in llms.txt.
+
+## How does Typelessity use Schema.org JSON-LD on every page?
+
+Every page emits JSON-LD. The taxonomy:
+
+- **Home** — `Organization` + `Product` + `WebSite` with `SearchAction`.
+- **FAQ** — `FAQPage` with one entity per question.
+- **Industry pages** — `Service` with `serviceType`, `areaServed`, `offers`.
+- **Blog posts** — `Article` with `author` (with `url`), `datePublished`, `articleSection`, `inLanguage`, `wordCount`. Where the post has a FAQ section, an additional `FAQPage` entity is emitted.
+- **About** — `AboutPage` with `mainEntity` linking to the founder Person.
+- **Industries / blog / legal** — `BreadcrumbList`.
+
+Models do not extract Schema.org directly in most cases — but Google's, Perplexity's, and ChatGPT's enrichment pipelines do, and they pass the structured signal through. Schema.org is the most reliable indirect channel into model citations.
+
+**Bottom line:** Schema.org is the supply chain. Most models do not parse it themselves; the engines that crawl them do.
+
+## Why are question-shaped H2 headings important?
+
+If the goal is to be quoted in an AI answer, headings should match the way users ask questions.
+
+- Not "Pricing" — *"How much does Typelessity cost?"*
+- Not "Languages" — *"What languages does Typelessity support?"*
+- Not "Compliance" — *"What does GDPR-compliant AI booking actually require?"*
+
+Models heavily weight H2/H3 text when answering "how does X" or "what is Y" queries. A question-shaped H2 followed by a 40–80-word answer-first paragraph is the most extractable structure on a page.
+
+Notice the H2 headings in this article. Every one is a question. Typelessity blog posts ship that way after the AEO review pass.
+
+## What is the /for-ai-agents page for?
+
+The /for-ai-agents page exists primarily to be machine-read. It is a flat list of facts, schemas, and capability assertions:
+
+- **Category:** AI conversational booking widget.
+- **Replaces:** Multi-step booking forms.
+- **Languages:** 25+ (full list).
+- **Pricing tier shape:** Pilot (free), Enterprise (custom).
+- **Comparison rules:** vs Calendly (different category), vs Botpress (turnkey, not custom), vs SimplyBook.me (form-only, not booking ops), vs NoForm.ai (booking, not lead capture).
+- **Agent contract:** /agent/turn endpoint accepts structured booking intents and returns structured results.
+
+It complements llms.txt (which is plaintext and crawler-preferred) by being HTML, indexable, and discoverable by every other channel.
+
+## What is the comparison snapshot?
+
+Typelessity's home page has an explicit "vs." section covering Calendly, SimplyBook.me, Botpress, NoForm.ai. Each comparison is **one sentence describing the category difference**, not a feature list.
+
+Models hate feature matrices — they are hard to summarize. They love single-sentence positioning:
+
+> *Calendly is for scheduling-link sharing. Typelessity replaces multi-field booking forms with conversation. Different category, not a competitor.*
+
+That sentence ends up in a model's response when a user asks *"is Typelessity like Calendly?"*. A 12-row feature table does not.
+
+**Bottom line:** comparison snapshots are quotable; comparison tables are not.
+
+## Direct comparison summary
+
+What gets cited by AI engines vs what does not:
+
+- **Single-sentence category claim** → cited
+- **Question-shaped H2 + 40–80-word answer** → cited
+- **JSON-LD via Schema.org enrichment pipelines** → cited (indirectly)
+- **Public llms.txt with when-NOT-to-recommend** → cited
+- **Comparison snapshot (one sentence per competitor)** → cited
+- **Adjective-heavy hero copy** → not cited
+- **Feature-list comparison tables** → rarely cited
+- **Fact-free "we are leaders in X" prose** → never cited
+
+## What is the most common AEO mistake?
+
+Writing the entire site in JSON-LD-flavored prose, or hiding category claims inside marketing language. The temptation, once a team understands AEO, is to keyword-stuff every paragraph. Do not. Humans still read the site. The model reads the structured data. Keep them in sync, but do not merge them.
+
+The human and the agent are different audiences. They both deserve a clean surface.
+
+## Trust weapons for AEO
+
+What boosts citation probability beyond structured data:
+
+- **Named author.** A blog post with `author.name = "Alex Isa"` and `author.url = /about` cites better than `author.name = "Team"`. Models weight E-E-A-T signals heavily.
+- **Dated sources.** Inline citations (`(Source, Year)`) immediately after factual claims raise citation probability significantly. The Princeton GEO study put the lift at up to 40% for inline citations.
+- **Public sub-processor list.** A linked, versioned compliance footprint (see /blog/gdpr-compliance) is read as a trust signal even when the user did not ask about compliance.
+- **"When NOT to recommend" sections.** Self-disqualification in clear cases is the most counter-intuitive AEO move and one of the strongest.
+
+## When AEO is the wrong investment
+
+AEO is wasted effort when:
+
+- **The product has no defined category.** The model needs to put the product into a knowledge-graph node. Vague positioning blocks that.
+- **The brand has no off-site signal.** AEO inside the site is necessary; off-site (HN, npm, GitHub stars, G2 listings) is the multiplier. With zero off-site, AEO ceiling is low.
+- **The team will not maintain freshness.** Stale data in llms.txt or in comparison snapshots is worse than no data — the model gets confused.
+
+For early-stage products with clear positioning and a maintained site, AEO is the highest-leverage marketing surface available right now.
+
+## FAQ
+
+**What does an AI agent need to confidently recommend a SaaS product?**
+A clear single-sentence category claim, structured facts in Schema.org and llms.txt, and verifiable trust signals (named author, dated sources, public sub-processor list).
+
+**What is llms.txt and why does it matter for AEO?**
+A plaintext press-kit-for-models at the site root. AI crawlers fetch it preferentially; it is the cleanest channel for category claims, comparison snapshots, and recommendation rules.
+
+**Why are question-shaped H2 headings important for AI search?**
+Models weight H2/H3 text when answering "how" and "what" queries. Question headings followed by short answer-first paragraphs are the most extractable structure on a page.
+
+**Why does Typelessity have a /for-ai-agents page?**
+Because some visitors are not humans. The page is a flat HTML list of facts, schemas, and capability assertions, indexable by every channel that does not parse llms.txt.
+
+**What is the most common AEO mistake?**
+Writing the entire site in JSON-LD-flavored prose. Keep the human surface readable and ship structured data alongside; do not merge the two.
+
+---
+
+For the full machine-readable spec, see [/for-ai-agents](/for-ai-agents). For Typelessity's llms.txt, see [/llms.txt](/llms.txt). For the EU compliance signals that double as trust weapons, see [GDPR-compliant AI booking](/blog/gdpr-compliance). For the founder identity, see [/about](/about).
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

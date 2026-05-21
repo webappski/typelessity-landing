@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+
+// Fixed header → push main content down by header height
+main {
+  padding-top: 64px;
+  min-height: calc(100vh - 64px);
+}

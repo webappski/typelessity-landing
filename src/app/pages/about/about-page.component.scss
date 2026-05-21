@@ -1,0 +1,110 @@
+:host { display: block; }
+
+.about-hero {
+  padding-block: 70px 24px;
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.5vw, 48px);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    margin: 18px 0 18px;
+    color: var(--text-primary);
+    text-wrap: balance;
+  }
+
+  &__lede {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 760px;
+    text-wrap: pretty;
+  }
+}
+
+.about-mission,
+.about-founder,
+.about-values,
+.about-parent { padding-block: 60px; }
+
+.founder, .parent {
+  max-width: 760px;
+
+  p {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0 0 18px;
+
+    em {
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      &:hover { opacity: 0.8; }
+    }
+  }
+
+  &__links {
+    display: flex;
+    gap: 24px;
+    margin-top: 8px;
+    font-size: 14px;
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      &:hover { opacity: 0.8; }
+    }
+  }
+}
+
+.values {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+
+  li {
+    padding: 28px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s, transform 0.2s;
+
+    &:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+
+    strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 860px) {
+  .values { grid-template-columns: 1fr; }
+}

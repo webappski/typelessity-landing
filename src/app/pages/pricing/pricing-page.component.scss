@@ -1,0 +1,282 @@
+// Pricing page — TF-aligned dark redesign
+
+:host { display: block; }
+
+.pricing-hero {
+  padding-block: 70px 24px;
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.5vw, 48px);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    margin: 18px 0 16px;
+    color: var(--text-primary);
+  }
+}
+
+.pricing-tiers { padding-block: 30px 60px; }
+
+.home-tiers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.tier {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+
+  &:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-4px);
+  }
+
+  &--featured {
+    border: 1px solid var(--accent);
+    background: linear-gradient(180deg, rgba(255, 107, 43, 0.08) 0%, var(--bg-card) 40%);
+
+    &:hover { border-color: var(--accent-hover); }
+
+    .tier__price { color: var(--text-primary); }
+  }
+
+  &__badge {
+    position: absolute;
+    top: -12px;
+    left: 36px;
+    background: var(--accent);
+    color: #fff;
+    padding: 5px 12px;
+    font-family: var(--font-display);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  &__name {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__price {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  &__sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__bullets {
+    margin: 0 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    li {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      padding-left: 22px;
+      position: relative;
+
+      &::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--success);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// ── Onboarding 4-step ──────────────────────────
+.pricing-onboarding { padding-block: 60px; }
+
+.onboarding {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  counter-reset: onboarding;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+
+  li {
+    counter-increment: onboarding;
+    padding: 24px 26px 26px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+    transition: border-color 0.2s;
+
+    &:hover { border-color: var(--border-accent); }
+
+    &::before {
+      content: counter(onboarding, decimal-leading-zero);
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+
+    strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
+
+  &__day {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    padding: 3px 10px;
+    background: var(--accent-subtle);
+    border: 1px solid var(--border-accent);
+    border-radius: 6px;
+    font-weight: 700;
+  }
+}
+
+// ── FAQ ────────────────────────────────────────
+.pricing-faq { padding-block: 60px; }
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 920px;
+  margin: 0 auto;
+
+  details {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+
+    &[open] { border-color: var(--border-accent); }
+
+    summary {
+      padding: 22px 26px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      list-style: none;
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+
+      &::-webkit-details-marker { display: none; }
+    }
+  }
+
+  &__i {
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 28px;
+    font-weight: 700;
+  }
+
+  &__q { flex: 1; }
+
+  &__a {
+    padding: 4px 26px 26px 72px;
+    color: var(--text-secondary);
+    font-size: 14.5px;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .home-tiers, .onboarding { grid-template-columns: 1fr; }
+}
+
+// ── Pilot vs Enterprise diff table ──
+.pricing-diff {
+  padding-block: 60px;
+}
+.pricing-diff__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-size: 0.92rem;
+  th, td {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+  th {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  td:first-child { color: var(--text-primary); }
+  th:nth-child(2), td:nth-child(2),
+  th:nth-child(3), td:nth-child(3) {
+    text-align: center;
+    width: 6rem;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+}
+.pricing-diff__note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}

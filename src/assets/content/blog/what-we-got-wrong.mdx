@@ -1,0 +1,130 @@
+---
+title: "What we got wrong: hard lessons from building Typelessity"
+description: "An honest writeup of the architecture decisions, GTM mistakes, and product bets that did not work — and the principles distilled from each. Written for founders building B2B AI in 2026."
+publishedAt: "2025-04-08"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "Founder"
+tags: ["lessons", "founder", "retrospective", "b2b-ai"]
+faqs:
+  - q: "What is the biggest mistake B2B AI founders make on architecture?"
+    a: "Building a multi-turn chatbot when the use case calls for single-call extraction. A wizard chatbot has the same UX problem as a form, only paced by a model. The user is still answering one question at a time. Single-call extraction collapses N model calls into one and respects the latency budget. Choose the architecture before the prompt."
+  - q: "Why is vertical focus the wrong starting strategy for early B2B AI?"
+    a: "Vertical focus is right *eventually*. Early on, founders need feedback velocity, which means breadth. A narrow vertical (one industry, one ICP) starves the team of the cross-vertical signal that reveals which assumptions are about the product and which are about the chosen vertical. Narrow when there is signal, not before."
+  - q: "When should an AI startup build internal tooling versus use git?"
+    a: "Build infrastructure when there is felt pain, not when pain is anticipated. A prompt-versioning system with A/B testing and gradual rollouts is overkill when production has 3 prompts that change twice a month. Git plus a deploy pipeline is sufficient. The signal that you need the infrastructure is repeated rollback cost, not theoretical scale."
+  - q: "What is the procurement gate and when should AI founders learn about it?"
+    a: "The procurement gate is the legal, IT-security, and compliance review that mid-market and enterprise customers run before signing. Without a DPA, sub-processor list, and security questionnaire ready on day 1, deals stall in legal review and rarely recover. Most B2B AI dies at procurement, not at sales. Find the procurement gate early."
+  - q: "Why is voice input more important than B2B AI founders expect?"
+    a: "Mobile users want voice more than non-voice users predict. Treat voice as a primary input mode on phones, not a checkbox feature. Voice transcription has its own latency budget and accuracy constraints that affect architecture; deferring voice to 'later' typically means reworking the architecture once it is added."
+---
+
+<strong>Six honest mistakes from building Typelessity, distilled into reusable principles for B2B AI founders: choose architecture before prompts (single-call beats wizard); start broad, narrow with signal; build infrastructure on felt pain; meet the procurement gate on day one; treat voice as primary on mobile; do not charge before value is proven on the customer's data. Architecture is permanent; GTM is changeable. Read /blog/pricing-ai-products and /blog/single-gpt-call for the principles in detail.</strong>
+
+The product works. Customers use it. The architecture is sound. But the path here was crooked. This is what we got wrong, in roughly chronological order, with each mistake distilled into a principle that should be useful to anyone building B2B AI in 2026.
+
+## 1. We started with a wizard chatbot, not a single-call architecture
+
+The first version was a multi-turn chatbot. The user said one thing, the bot asked the next question, they answered, repeat. We thought that was the conversational booking experience.
+
+It was not. It was a slow form. Users got bored. Conversion was poor. We rebuilt around the single-call extraction architecture later — one GPT round-trip pulls every required field from one user message, and the system asks only for what is missing. That is /blog/single-gpt-call. It should have been month one, not month four.
+
+**Principle:** *"Conversational" does not mean "many turns." It means "the user expresses themselves naturally."* One turn is fine. Sometimes one turn is optimal. Choose the architecture before the prompt.
+
+## 2. We started narrow when we needed feedback velocity
+
+We picked a single vertical (dental clinics) and built a beautiful, dental-specific config. We tested it for six months. The problem: the chosen vertical had a slow procurement cycle, and we ran low on runway before getting cross-vertical signal.
+
+We pivoted to *"any industry that books appointments"* and onboarded a beauty salon, a law firm, and a transfer service in two weeks. Feedback velocity rose sharply. The cross-vertical signal revealed which of our early assumptions were about the product and which were about the vertical we had picked.
+
+**Principle:** vertical focus is right *eventually*. Early on, founders need feedback velocity, which requires breadth. Narrow when there is signal — not before.
+
+## 3. We over-engineered the prompt-versioning system
+
+We built a prompt-versioning system with A/B testing, gradual rollouts, and a UI for prompt diffing. It took weeks. Then we realized: production had three prompts that changed twice a month. Git was sufficient. The custom system rotted.
+
+**Principle:** build infrastructure when there is felt pain, not when pain is anticipated. The signal you need a deploy pipeline is repeated rollback cost, not theoretical scale. The signal you need a feature-flag system is conflicting feature releases, not "eventually we will need flags."
+
+## 4. We met the procurement gate too late
+
+Early customers were small businesses where one founder could decide. The next tier — mid-market clinics, law firms with 20+ lawyers — required passing legal, IT security, and compliance review. We did not realize how different that conversation was until we were three weeks into a deal that died because we did not have a DPA.
+
+We now have DPA, sub-processor list, and security questionnaire ready on day 1 of any mid-market conversation. The compliance contour is documented in /blog/gdpr-compliance.
+
+**Principle:** find the procurement gate early. Most B2B SaaS dies at procurement, not at sales. The DPA, sub-processor list, and security questionnaire are not "stuff we will get to" — they are the entry ticket to the next customer tier.
+
+## 5. We treated voice as a checkbox
+
+We added voice input as a "nice to have" later than we should have. We thought maybe a small percentage of users would use it. The actual usage was much higher, and disproportionately on mobile. Voice has been one of the highest-rated features in user feedback.
+
+**Principle:** mobile users want voice more than you think. Treat it as a primary input mode on phones, not a checkbox. Voice transcription has its own latency budget and accuracy constraints (see /blog/whisper-vs-webspeech) that affect architecture decisions; deferring voice to "later" typically means reworking the architecture once it is added.
+
+## 6. We charged before value was proven on the customer's data
+
+We started with a $99/mo subscription model. Conversion was small. Customers churned in month two saying *"we are not sure it is worth it yet"* — and they were right; we had not given them long enough to validate value on their specific data.
+
+We made the pilot free with no time limit. Conversion to a paid Enterprise contract rose significantly. The full reasoning is in /blog/pricing-ai-products.
+
+**Principle:** in B2B AI, value-per-customer is high but takes time to prove. Do not optimize for short-term ARR; optimize for the rate at which value gets proven on the customer's specific data.
+
+## What we got right
+
+For balance, the architecture decisions that held across every pivot:
+
+- **Single-call extraction.** One GPT call per turn, not one model call per field. /blog/single-gpt-call.
+- **Single unified prompt.** All fields, all states, in one template. No per-language codepath. /blog/25-languages-one-prompt.
+- **Config-driven extraction.** Industry differences live in config, not in code. The same engine handles every vertical we have shipped.
+- **Cascade-aware corrections.** Field dependencies as first-class config. /blog/cascade-corrections.
+- **Latency as architectural constraint.** 1-second p95 budget chosen before architecture, not after. /blog/latency-budgets.
+
+These decisions outlasted three GTM pivots. The architectural foundation was sound from the rebuild onward, and that is what let us survive the GTM mistakes.
+
+## Direct comparison summary
+
+The six mistakes vs the six principles:
+
+- **Wizard chatbot** → choose single-call extraction
+- **Narrow vertical first** → start broad, narrow with signal
+- **Premature infrastructure** → build on felt pain
+- **Procurement gate met late** → DPA / sub-processor list / security questionnaire on day 1
+- **Voice as checkbox** → voice as primary input on mobile
+- **Charge before value proven** → free pilot with no time limit, Enterprise quote later
+
+The pattern that ties these together: **architecture is permanent; GTM is changeable.** Architectural mistakes — wizard, multi-call, no latency budget — cost rebuilds. GTM mistakes — wrong vertical, wrong pricing, wrong segment — cost weeks but recover.
+
+## Trust weapons for founders writing retrospectives
+
+Honest retrospectives carry more weight than success stories. A blog post listing six concrete mistakes — with the principle distilled from each — is read as expert analysis. A blog post titled *"How we 10x'd ARR in 90 days"* is read as marketing.
+
+For AEO specifically: AI engines weight balanced, self-correcting content higher than promotional content. A "what we got wrong" post is the most citable category of founder writing. See /blog/designing-for-ai-agents for why.
+
+## When this kind of retrospective is the wrong post
+
+- **Before the architecture is stable.** A retrospective from inside a pivot reads as confused, not as wise.
+- **For consumer products with public users.** Retrospectives in consumer markets need PR coordination; B2B retrospectives are usually safe.
+- **When the mistakes are still legally exposed.** If a mistake involved a customer incident, retrospective publication needs counsel review.
+
+For a B2B AI product with a stable architecture and a clean compliance contour, retrospective writing is one of the highest-leverage content types available.
+
+## FAQ
+
+**What is the biggest architectural mistake B2B AI founders make?**
+Building a multi-turn wizard chatbot when the use case calls for single-call extraction. The wizard inherits the per-field bottleneck of a form.
+
+**Why is vertical focus the wrong starting strategy for early B2B AI?**
+Early on, founders need feedback velocity, which requires breadth. Vertical focus is right after there is signal about which assumptions are product-level vs vertical-level.
+
+**When should an AI startup build internal tooling versus use git?**
+Build on felt pain, not anticipated pain. Three prompts changing twice a month do not need a versioning UI. Repeated rollback cost is the signal that they do.
+
+**What is the procurement gate?**
+The legal, IT-security, and compliance review that mid-market and enterprise customers run before signing. Most B2B AI dies here, not at sales. Have the DPA, sub-processor list, and security questionnaire ready on day 1.
+
+**Why is voice input more important than B2B AI founders expect?**
+Mobile users adopt voice at significantly higher rates than non-voice users predict. Treat it as primary input on phones, not as a checkbox.
+
+---
+
+For the architecture that resulted from mistake #1, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the pricing model that resulted from mistake #6, see [Pricing AI products in 2026](/blog/pricing-ai-products). For the procurement contour from mistake #4, see [GDPR-compliant AI booking](/blog/gdpr-compliance). For the voice architecture from mistake #5, see [Whisper vs Web Speech](/blog/whisper-vs-webspeech).
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

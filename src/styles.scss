@@ -1,0 +1,210 @@
+// ══════════════════════════════════════
+//  Typelessity Landing — Global Styles
+//  Theme: TypelessForm-aligned dark + tangerine
+// ══════════════════════════════════════
+
+@use './styles/reset.scss';
+@use './styles/tokens.scss';
+@use './styles/typography.scss';
+
+// ── A11y: skip-link ──
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 1000;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  transition: top 0.15s;
+
+  &:focus-visible {
+    top: 0;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+// ── Global focus-visible ──
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+main:focus { outline: none; }
+
+// ── Layout ──
+.vc-wrap, .container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+  &:hover { color: var(--accent-hover); }
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+// Defensive: <pre> with white-space:pre inside grid/flex must not blow out its track.
+pre {
+  min-width: 0;
+  max-width: 100%;
+}
+
+// ──────────────────────────────────────────────────
+//  .vc-* utility classes — used by all page templates
+// ──────────────────────────────────────────────────
+
+.vc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.15s;
+  border: 1px solid transparent;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.vc-btn-lg { padding: 14px 24px; font-size: 15px; }
+.vc-btn-block { width: 100%; justify-content: center; }
+
+.vc-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 20px -8px rgba(255, 107, 43, 0.55);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 32px -10px rgba(255, 107, 43, 0.6);
+    background: var(--accent-hover);
+    color: #fff;
+  }
+}
+
+.vc-btn-accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 24px -8px rgba(255, 107, 43, 0.55);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 32px -10px rgba(255, 107, 43, 0.6);
+    background: var(--accent-hover);
+  }
+}
+
+.vc-btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border);
+
+  &:hover {
+    background: var(--accent-subtle);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+}
+
+.vc-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 7px 14px 7px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.vc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 107, 43, 0.18);
+}
+
+.vc-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin-bottom: 22px;
+  text-transform: uppercase;
+}
+
+.vc-kicker-bar {
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.vc-accent-magenta .vc-kicker-bar { background: var(--accent); }
+
+.vc-h1-grad {
+  color: var(--accent);
+  position: relative;
+  display: inline-block;
+}
+
+.vc-h1-em {
+  font-style: italic;
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.vc-section-h {
+  max-width: 760px;
+  margin: 0 auto 48px;
+  text-align: center;
+
+  .vc-kicker { justify-content: center; }
+}
+
+.vc-section-sub {
+  font-size: 17px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 620px;
+  text-wrap: pretty;
+}
+
+.vc-mesh {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: var(--gradient-mesh-hero);
+  mask-image: linear-gradient(to bottom, black, black 70%, transparent 95%);
+}
+
+.vc-grain { display: none; } // grain doesn't suit the dark TF aesthetic
+
+// ── Scrollbar ──
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }

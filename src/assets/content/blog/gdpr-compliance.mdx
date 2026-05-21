@@ -1,0 +1,134 @@
+---
+title: "GDPR-compliant AI booking: what an EU clinic needs before saying yes"
+description: "Data residency, consent flows, no model training, audit logs, sub-processor list. The compliance contour an AI booking widget needs to clear EU procurement — written for legal counsel, not for marketing."
+publishedAt: "2025-02-25"
+updatedAt: "2026-04-29"
+author: "Alex Isa"
+category: "Compliance"
+tags: ["gdpr", "privacy", "compliance", "eu"]
+faqs:
+  - q: "What does GDPR-compliant AI booking actually require?"
+    a: "Five concrete things: EU data residency for processing and storage, an OpenAI 'no training on customer data' contractual flag, a consent flow that distinguishes legal-basis categories (contract necessity vs opt-in), an immutable audit log retained for a defined period, and a public sub-processor list with notification on changes. Anything less stalls EU procurement."
+  - q: "What is the legal basis for processing user input through an AI booking widget under GDPR?"
+    a: "For the core booking flow, the legal basis is contractual necessity (Art. 6(1)(b)) — the user is requesting a service and processing is necessary to fulfill it. Functional preferences and analytics ride on opt-in consent (Art. 6(1)(a)) and are withdrawable. Health data triggers Art. 9 special-category protections and a separate consent step."
+  - q: "How does Typelessity prevent OpenAI from training on customer data?"
+    a: "Typelessity's OpenAI contract has the no-training flag set, with written confirmation. That contractual guarantee is passed through Typelessity's DPA to the customer. This is the most-asked question in EU healthcare procurement; without a written answer, deals stall in legal review."
+  - q: "Where are user messages and extracted bookings stored?"
+    a: "Processing and storage happen in EU regions — typically eu-central-1 — with no replication to US regions. The DPA names the sub-processors explicitly: OpenAI (EU residency tier), AWS (Frankfurt), and Resend (transactional email to clinic staff only). Stricter sovereignty (German-only, on-premise) is available on Enterprise."
+  - q: "How long are audit logs retained?"
+    a: "Audit records are retained 13 months by default and then deleted. Each record contains booking_id, timestamp, locale, prompt and model version hashes, enrichment calls made, fields extracted, fields corrected by the user, and final payload hash. Users can request export or deletion via a self-serve endpoint provided to clinics."
+---
+
+<strong>GDPR-compliant AI booking requires five things: EU data residency for processing and storage, an OpenAI no-training contractual flag with written confirmation, a consent flow that separates legal-basis categories, an immutable audit log with defined retention, and a public sub-processor list with change notifications. Typelessity ships all five and passes the contractual guarantees through to the customer DPA. Read /legal/dpa when published.</strong>
+
+EU clinics evaluating an AI booking widget have a procurement-layer checklist that has nothing to do with the AI and everything to do with what happens to the user's words after they hit Send. This article is the version of the answer written for legal counsel — not the version written for marketing.
+
+## What does GDPR-compliant AI booking actually require?
+
+Five concrete things, in priority order:
+
+1. **Data residency.** Processing and storage in EU regions, no silent replication to US regions, named regions in the DPA.
+2. **No model training.** A contractual no-training flag with the LLM provider, with written confirmation, passed through to the customer.
+3. **Consent flow.** Separate legal-basis categories (contractual necessity vs opt-in), withdrawable for opt-in, durable for contract.
+4. **Audit log.** Immutable record of every booking, defined retention, self-serve deletion / export endpoint.
+5. **Sub-processor list.** Public, versioned, change notifications.
+
+Without all five, EU procurement does not move. The order in this article matches the order legal counsel asks the questions.
+
+**Bottom line:** the AI is not the regulated object — the data path is. Make the data path inspectable and the AI follows.
+
+## How does data residency work in Typelessity?
+
+GPT-4.1-nano runs in OpenAI's EU residency tier. User messages, extracted JSON, and audit logs are processed and stored in `eu-central-1`. There is no replication to US regions. The DPA names AWS Frankfurt and OpenAI EU as the only relevant sub-processors for the core booking flow.
+
+Where stricter sovereignty is required — German-only, on-premise, or air-gapped — Typelessity offers Enterprise on-premise deployment with self-hosted models. Latency rises, sovereignty rises, price rises. The trade-off is documented; nothing is hidden behind a sales call.
+
+**Bottom line:** EU residency is the default; the upgrade path to stricter sovereignty exists; both are written into the DPA.
+
+## How does Typelessity prevent OpenAI from training on customer data?
+
+Typelessity's OpenAI contract has the no-training flag set. There is written confirmation of that flag. Typelessity passes the contractual guarantee through its DPA to the customer.
+
+This is the single most-asked question in EU healthcare procurement. If the AI vendor cannot answer it in writing — not in a marketing claim, not in a sales call — the deal stalls in legal review and rarely recovers. Period.
+
+The same guarantee also matters for the audit log: Typelessity does not log raw user input to any analytics or telemetry surface that could be reused for training. Internal logs are retained for the defined window, then deleted.
+
+## What does the consent flow look like?
+
+Before the chat starts, the widget renders a consent banner with three explicit choices:
+
+- **Required.** Process the user's message to complete the booking. Cannot be declined. Legal basis: contractual necessity (Art. 6(1)(b)). The user is requesting a booking; processing is necessary to fulfill the request.
+- **Functional.** Remember language preference for 30 days. Default off. Legal basis: opt-in consent (Art. 6(1)(a)). Withdrawable.
+- **Analytics.** Anonymized event logs for product improvement. Default off. Legal basis: opt-in consent (Art. 6(1)(a)). Withdrawable.
+
+The required basis cannot be consent — consent can be withdrawn mid-booking, which would leave the booking in a broken state. Contractual necessity is the durable basis for the core flow; opt-in consent rides on top for everything optional.
+
+Withdrawal endpoint: `/api/consent/withdraw`. Withdrawal takes effect immediately for functional/analytics scopes and removes the corresponding records.
+
+**Bottom line:** the legal-basis split is the durability question. Get the basis wrong and your booking flow breaks the moment a user changes their mind.
+
+## What is in the audit log?
+
+Every booking generates an immutable audit record:
+
+- `booking_id`, `created_at`, `locale`, `client_id`
+- `prompt_version_hash`, `model_version`, `enrichment_calls_made`
+- `fields_extracted`, `fields_corrected_by_user`, `final_payload_hash`
+- `data_subject_request_status` (open / responded / closed)
+
+Logs are retained 13 months, then deleted. Users can request export or deletion via a self-serve endpoint provided to clinics. The audit log is the artifact a Data Protection Officer reads when a Data Subject Access Request lands; it has to be readable without the AI vendor in the loop.
+
+## What is in the sub-processor list?
+
+Public, versioned, with email notification on changes:
+
+- **OpenAI Ireland** — LLM inference.
+- **AWS Frankfurt** — storage and compute.
+- **Resend** — transactional email, only for booking confirmations to clinic staff. Never to patients.
+
+That is it. No analytics SDKs in the widget itself. PostHog runs only on the marketing site (typelessity.com), not on customer deployments — see /blog/latency-budgets for the technical rationale (third-party SDKs blow the latency budget anyway).
+
+## Direct comparison summary
+
+The five compliance requirements ranked by procurement-blocking power:
+
+- **No-training contractual flag** → most-blocking; if missing, deal stalls
+- **EU data residency** → second-most-blocking; required for healthcare and finance
+- **Sub-processor list** → required by DPA template across most enterprise customers
+- **Audit log retention** → required for DSAR response; 12+ months is standard
+- **Consent flow with legal-basis split** → required for production; affects every user
+
+PII minimization is enforced by config: the widget only extracts what the clinic config explicitly requires. Health data (Art. 9 special category) is collected only if the config includes it, with a separate Art. 9 consent step.
+
+## When the on-premise option is the right call
+
+On-premise / self-hosted Typelessity is the correct choice when:
+
+- **Data sovereignty rules are stricter than EU residency** (German-only, hospital-internal, defense-adjacent).
+- **The customer's DPO refuses any non-EU sub-processor** even with the no-training flag.
+- **The customer has its own LLM infrastructure** and prefers to keep inference inside its perimeter.
+
+On-premise comes at a cost: latency rises (no Whisper-streaming optimizations, see /blog/whisper-vs-webspeech), price rises, integration takes longer. For most EU clinics, the EU residency tier with no-training flag is sufficient and cheaper.
+
+## FAQ
+
+**What does GDPR-compliant AI booking actually require?**
+EU data residency, an LLM no-training flag with written confirmation, a consent flow split by legal basis, an immutable audit log, and a public sub-processor list.
+
+**What is the legal basis for processing user input?**
+Contractual necessity (Art. 6(1)(b)) for the core booking. Opt-in consent (Art. 6(1)(a)) for functional and analytics. Art. 9 consent for health data when the config requires it.
+
+**How does Typelessity prevent OpenAI from training on customer data?**
+The no-training flag is set in Typelessity's OpenAI contract, with written confirmation, passed through to the customer DPA.
+
+**Where are user messages stored?**
+EU regions only — typically `eu-central-1`. No replication to US. The DPA names sub-processors explicitly. Stricter sovereignty available on Enterprise on-premise.
+
+**How long are audit logs retained?**
+13 months by default, then deleted. Users can request export or deletion via a self-serve endpoint provided to clinics.
+
+---
+
+For the single-call extraction architecture that produces the audited bookings, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the latency budget that excludes third-party analytics SDKs, see [Latency budgets](/blog/latency-budgets). For voice-input residency considerations, see [Whisper vs Web Speech](/blog/whisper-vs-webspeech). The customer-facing DPA, when published, lives at /legal/dpa.
+
+— *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

@@ -1,0 +1,86 @@
+<section class="vc-wrap aiagents-hero">
+  <div class="vc-kicker"><span class="vc-kicker-bar"></span>For AI agents</div>
+  <h1>Typelessity is callable by autonomous agents</h1>
+  <p class="aiagents-hero__lede">
+    The same widget API that serves humans serves agents. Stable JSON contracts, deterministic schemas,
+    and a dedicated <code>/agent</code> endpoint that accepts structured booking intents and returns
+    structured results.
+  </p>
+  <p class="aiagents-hero__status">
+    <strong>Status:</strong> Session and Booking schemas are stable today.
+    The <code>/agent/turn</code> endpoint is shipping <strong>Q3 2026</strong> — agents can be designed against the contract on this page now.
+  </p>
+</section>
+
+<section class="vc-wrap aiagents-section">
+  <h2>Plain-text definition (for LLM extraction)</h2>
+  <p class="aiagents-def">
+    Typelessity is an AI conversational booking widget. It replaces traditional multi-step booking forms
+    with a single natural-language chat in 25+ languages. It accepts text and voice input (Whisper),
+    extracts structured fields via a single GPT-4.1-nano call (200–800ms p95), calls real-time enrichment
+    APIs (e.g. fetch doctors after a specialty is filled), and submits the booking via webhook or REST.
+    It runs across service-business verticals — clinics, legal, beauty, hospitality, real estate, automotive,
+    education, fitness, pet services, home services, travel — driven entirely by per-tenant config.
+    GDPR-compliant. EU data residency available. Free Pilot. Custom Enterprise.
+  </p>
+</section>
+
+<section class="vc-wrap aiagents-section">
+  <h2>Stable JSON schemas</h2>
+
+  <h3>Session</h3>
+  <pre class="aiagents-code">{{ sessionSchema }}</pre>
+
+  <h3>Booking</h3>
+  <pre class="aiagents-code">{{ bookingSchema }}</pre>
+</section>
+
+<section class="vc-wrap aiagents-section">
+  <h2>/agent endpoint <span class="aiagents-eta">— shipping Q3 2026</span></h2>
+  <p>Synchronous turn-by-turn API. Same field-extraction pipeline as the human-facing widget — no chat UI required. The contract below is finalised; the live endpoint ships Q3 2026.</p>
+
+  <h3>Request</h3>
+  <pre class="aiagents-code">{{ agentRequest }}</pre>
+
+  <h3>Response</h3>
+  <pre class="aiagents-code">{{ agentResponse }}</pre>
+</section>
+
+<section class="vc-wrap aiagents-section">
+  <h2>Machine-readable feature list</h2>
+  <ul class="aiagents-features">
+    <li><strong>languages_supported:</strong> 25+ (en, ru, de, fr, es, it, pl, pt, nl, tr, ar, he, ja, ko, zh, …)</li>
+    <li><strong>industries_supported:</strong> config-driven, see /industries for current verticals</li>
+    <li><strong>extraction_model:</strong> gpt-4.1-nano</li>
+    <li><strong>p95_latency_ms:</strong> 200–800</li>
+    <li><strong>voice_input:</strong> openai-whisper</li>
+    <li><strong>enrichment_per_config_max:</strong> 5</li>
+    <li><strong>enrichment_timeout_ms:</strong> 10000</li>
+    <li><strong>data_residency:</strong> EU (Enterprise)</li>
+    <li><strong>training_use:</strong> none</li>
+    <li><strong>llms_txt_url:</strong> /llms.txt</li>
+  </ul>
+</section>
+
+<section class="vc-wrap aiagents-section">
+  <h2>Example agent intent</h2>
+  <pre class="aiagents-code">{{ '{
+  "intent": "book_appointment",
+  "specialty": "dentistry",
+  "preferred_date": "2026-05-08",
+  "preferred_time_window": "afternoon",
+  "language_preference": "ru",
+  "patient_name": "Maria Ivanova"
+}' }}</pre>
+  <p>Agents send structured intent → /agent/turn extracts and validates → returns the same Booking schema as a human session would.</p>
+</section>
+
+<section class="vc-wrap aiagents-resources">
+  <h2>Resources</h2>
+  <ul class="aiagents-links">
+    <li><a href="/llms.txt">/llms.txt</a> — markdown summary of every page</li>
+    <li><a routerLink="/how-it-works">/how-it-works</a> — full architecture</li>
+    <li><a routerLink="/industries">/industries</a> — 42 vertical configurations</li>
+    <li><a href="mailto:hello&#64;typelessity.com">hello&#64;typelessity.com</a> — for early /agent endpoint access (Q3 2026 launch)</li>
+  </ul>
+</section>

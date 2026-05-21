@@ -1,0 +1,61 @@
+// Design tokens — TypelessForm-aligned dark theme
+// Migration source: Webappski / TypelessForm design system
+
+:root {
+  // ── Surfaces ──
+  --bg-primary: #282838;
+  --bg-secondary: #313142;
+  --bg-card: #3A3A4C;
+  --bg-card-hover: #434356;
+  --bg-code: #2E2E3E;
+
+  // ── Text ──
+  --text-primary: #F0F0F5;
+  --text-secondary: #A3A3B8;
+  --text-muted: #7C7C92;
+
+  // ── Accent (single warm tangerine) ──
+  --accent: #FF6B2B;
+  --accent-hover: #FF8548;
+  --accent-glow: rgba(255, 107, 43, 0.15);
+  --accent-subtle: rgba(255, 107, 43, 0.08);
+
+  // ── Borders ──
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(255, 107, 43, 0.3);
+
+  // ── Semantic ──
+  --success: #34D399;
+  --info: #60A5FA;
+
+  // ── Typography ──
+  --font-display: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-display);
+  --font-sans: var(--font-body);
+
+  // ── Layout ──
+  --container: 1120px;
+  --container-pad: 40px;
+  --section-gap: 80px;
+  --radius: 12px;
+  --radius-lg: 20px;
+
+  // ── Hero atmosphere (used by .vc-mesh in home hero) ──
+  --gradient-mesh-hero:
+    radial-gradient(ellipse 900px 600px at 85% 0%, var(--accent-glow), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 5% 35%, var(--accent-subtle), transparent 60%);
+
+  color-scheme: dark;
+}
+
+// Responsive container padding
+@media (max-width: 860px) {
+  :root {
+    --container-pad: 24px;
+    --section-gap: 56px;
+  }
+}
+@media (max-width: 540px) {
+  :root { --container-pad: 18px; }
+}

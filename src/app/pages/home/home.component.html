@@ -1,0 +1,221 @@
+
+<!-- ── Hero ── -->
+<section class="home-hero">
+  <div class="vc-mesh" aria-hidden="true"></div>
+  <div class="vc-grain" aria-hidden="true"></div>
+  <div class="vc-wrap home-hero__grid">
+    <div>
+      <div class="vc-eyebrow">
+        <span class="vc-dot"></span>
+        {{ c.hero.eyebrow }}
+      </div>
+      <h1 class="home-hero__h1">
+        {{ c.hero.headlineLead }}
+        <span class="vc-h1-grad">{{ c.hero.headlineGrad }}</span>
+        <em class="vc-h1-em">{{ c.hero.headlineEm }}</em>
+      </h1>
+      <p class="home-hero__sub">{{ c.hero.sub }}</p>
+      <div class="home-hero__cta">
+        <a class="vc-btn vc-btn-accent vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">
+          {{ c.hero.cta.primary }}
+          <app-icon name="arrow-right-small" [size]="14" />
+        </a>
+        <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.hero.cta.secondary }}</a>
+      </div>
+      <p class="home-hero__trust">{{ c.hero.trustline }}</p>
+    </div>
+
+    <!-- Variant C hero right: live demo (typing → extracted → API call) -->
+    <div class="home-hero__right">
+      <app-live-demo />
+    </div>
+  </div>
+</section>
+
+<!-- ── TL;DR ── -->
+<section class="home-answer vc-wrap">
+  <div class="home-answer__grid">
+    <div>
+      <div class="vc-kicker"><span class="vc-kicker-bar"></span>What is it</div>
+      <h2>{{ c.tldr.title }}</h2>
+      <p class="home-answer__lede">{{ c.tldr.answer }}</p>
+    </div>
+    <dl class="home-facts">
+      @for (b of c.tldr.bullets; track b[0]) {
+        <div class="home-facts__row">
+          <dt>{{ b[0] }}</dt>
+          <dd>{{ b[1] }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<section class="home-stats vc-wrap">
+  <div class="home-stats__row">
+    @for (s of c.stats; track s.l) {
+      <div class="home-stat">
+        <div class="home-stat__n">{{ s.n }}</div>
+        <div class="home-stat__l">{{ s.l }}</div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ── How it works ── -->
+<section class="home-how vc-wrap">
+  <header class="vc-section-h">
+    <div class="vc-kicker"><span class="vc-kicker-bar"></span>How it works</div>
+    <h2>{{ c.howItWorks.title }}</h2>
+    <p class="vc-section-sub">{{ c.howItWorks.sub }}</p>
+  </header>
+
+  <div class="home-phases">
+    @for (p of c.howItWorks.phases; track p.n) {
+      <article class="phase phase--compact">
+        <header class="phase__head">
+          <div class="phase__num">{{ p.n }}</div>
+          <div>
+            <h3 class="phase__name">{{ p.name }}</h3>
+            <p class="phase__one">{{ p.oneLine }}</p>
+          </div>
+        </header>
+      </article>
+    }
+  </div>
+
+  <p class="home-how__more">
+    <a routerLink="/how-it-works">See a full session walkthrough with prompt example →</a>
+  </p>
+</section>
+
+<!-- ── Architecture ── -->
+<section class="home-arch vc-wrap">
+  <header class="vc-section-h">
+    <div class="vc-kicker"><span class="vc-kicker-bar"></span>Architecture</div>
+    <h2>{{ c.architecture.title }}</h2>
+    <p class="vc-section-sub">{{ c.architecture.sub }}</p>
+  </header>
+  <div class="home-arch__grid">
+    @for (p of c.architecture.pillars; track p.h; let i = $index) {
+      <article class="pillar">
+        <div class="pillar__num">{{ i + 1 | padNumber }}</div>
+        <h3 class="pillar__h">{{ p.h }}</h3>
+        <p class="pillar__b">{{ p.b }}</p>
+      </article>
+    }
+  </div>
+</section>
+
+<!-- ── Industries ── -->
+<section class="home-industries vc-wrap">
+  <header class="vc-section-h">
+    <div class="vc-kicker"><span class="vc-kicker-bar"></span>Industries</div>
+    <h2>Configured for {{ industriesCount }} {{ c.industriesIntro.titleSuffix }}</h2>
+    <p class="vc-section-sub">{{ c.industriesIntro.sub }}</p>
+  </header>
+  <ul class="home-industries__grid">
+    @for (n of c.industries; track n) {
+      <li class="home-industries__cell">
+        <span>{{ n }}</span>
+      </li>
+    }
+    <li class="home-industries__cell home-industries__cell--more">
+      <a routerLink="/industries">All {{ industriesCount }} industries →</a>
+    </li>
+  </ul>
+</section>
+
+<!-- ── Comparison ── -->
+<section class="home-compare vc-wrap">
+  <header class="vc-section-h">
+    <div class="vc-kicker vc-accent-magenta"><span class="vc-kicker-bar"></span>Compared</div>
+    <h2>{{ c.comparison.title }}</h2>
+    <p class="vc-section-sub">{{ c.comparison.sub }}</p>
+  </header>
+  <div class="home-compare__wrap">
+    <table class="home-compare__table">
+      <thead>
+        <tr>
+          @for (col of c.comparison.columns; track col; let i = $index) {
+            <th [class.home-compare__us]="i === 1">{{ col }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of c.comparison.rows; track row[0]) {
+          <tr>
+            @for (cell of row; track $index; let i = $index) {
+              <td [class.home-compare__us]="i === 1" [class.home-compare__key]="i === 0">{{ cell }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <aside class="home-compare__verdict">
+    <span class="home-compare__verdict-tag">Verdict</span>
+    <p>{{ c.comparison.verdict }}</p>
+  </aside>
+</section>
+
+<!-- ── Pricing ── -->
+<section class="home-pricing vc-wrap">
+  <header class="vc-section-h">
+    <div class="vc-kicker"><span class="vc-kicker-bar"></span>Pricing</div>
+    <h2>{{ c.pricing.title }}</h2>
+    <p class="vc-section-sub">{{ c.pricing.sub }}</p>
+  </header>
+  <div class="home-tiers">
+    @for (tier of c.pricing.tiers; track tier.name) {
+      <article class="tier tier--compact" [class.tier--featured]="tier.featured">
+        @if (tier.featured) { <span class="tier__badge">Most popular</span> }
+        <div class="tier__name">{{ tier.name }}</div>
+        <div class="tier__price">{{ tier.price }}</div>
+        <div class="tier__sub">{{ tier.sub }}</div>
+        <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">{{ tier.cta }}</a>
+      </article>
+    }
+  </div>
+
+  <p class="home-pricing__more">
+    <a routerLink="/pricing">See full plan details, ROI math and onboarding timeline →</a>
+  </p>
+</section>
+
+<!-- ── FAQ (top-of-funnel only; full set on /faq) ── -->
+<section class="home-faq vc-wrap">
+  <header class="vc-section-h">
+    <div class="vc-kicker"><span class="vc-kicker-bar"></span>FAQ</div>
+    <h2>Top questions</h2>
+    <p class="vc-section-sub">All {{ c.faq.length }} answers grouped by topic on the <a routerLink="/faq">FAQ page</a>.</p>
+  </header>
+  <div class="home-faq__list">
+    @for (qa of faqPreview; track qa.q; let i = $index) {
+      <details>
+        <summary>
+          <span class="home-faq__i">{{ i + 1 | padNumber }}</span>
+          <span class="home-faq__q">{{ qa.q }}</span>
+          <app-icon name="chevron-down" className="home-faq__toggle" />
+        </summary>
+        <p class="home-faq__a">{{ qa.a }}</p>
+      </details>
+    }
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="home-cta">
+  <div class="home-cta__bg" aria-hidden="true"></div>
+  <div class="vc-wrap home-cta__inner">
+    <div class="home-cta__eyebrow">{{ c.cta.eyebrow }}</div>
+    <h2 class="home-cta__h">{{ c.cta.title }}</h2>
+    <p class="home-cta__sub">{{ c.cta.sub }}</p>
+    <div class="home-cta__actions">
+      <a class="vc-btn vc-btn-accent vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">{{ c.cta.primary }}</a>
+      <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
+    </div>
+    <pre class="home-cta__snippet">{{ embedSnippet }}</pre>
+  </div>
+</section>

@@ -1,0 +1,141 @@
+# Typelessity — full content (llms-full.txt)
+
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-05-19.
+
+---
+
+## Home — https://typelessity.com/
+
+**Hero.** Bookings through conversation, not forms. Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. GDPR-compliant.
+
+**TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available doctors after a specialty is chosen), and submits the booking via webhook or REST. It supports 25+ languages and voice input, and is configurable for any service-business booking flow.
+
+**Stats.** Languages 25+. Per-turn latency under 800ms. Four phases (Chat → Select → Review → Confirm). One line of HTML to integrate.
+
+**Four phases.**
+1. Chat — User describes booking in plain language; GPT-4.1-nano reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
+2. Select — When options must be exact (a specific doctor, a specific time slot), the widget renders interactive cards. Triggered by enrichment APIs.
+3. Review — Full form review surface. User verifies every extracted field, edits inline if needed. Cascade-aware — changing a field clears downstream-dependent fields with a warning.
+4. Confirm — Booking sent to your system via webhook or REST POST. Success screen with confirmation ID. Failures retry with exponential backoff.
+
+**Architecture pillars.**
+- Single unified prompt: one GPT call extracts every field. Prompt budget 400–650 tokens.
+- Config-driven, not pattern-driven: aiHint per field; GPT reads context.
+- Real-time enrichment APIs: up to 5 per config, 10s timeout each, non-fatal on failure.
+- Cascade-aware corrections: DFS dependency walk on field changes.
+- Anti-hallucination guardrails: `_meta.mf` mentioned-fields signal; code-side correction guard.
+- Reliable by design: exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, full audit log per turn. 200–800ms latency on gpt-4.1-nano.
+
+**Comparison snapshot.** Use Typelessity when you have an existing booking system and want to replace its form with conversation. Use Calendly for simple meeting links. Use SimplyBook.me for end-to-end booking ops with payments. Use Botpress for custom chatbots. Use NoForm.ai for top-of-funnel lead capture.
+
+---
+
+## How it works — https://typelessity.com/how-it-works
+
+Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT call per turn, real-time enrichment APIs, cascade-aware corrections, no hardcoded regex.
+
+The widget is a Lit web component. The API is a Node service. The AI provider can be swapped between OpenAI, Azure OpenAI, or any OpenAI-compatible endpoint. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
+
+Embed: one line of HTML. The public CDN at cdn.typelessity.com/widget.js is shipping Q3 2026 — until then pilot customers receive a tenant-specific bundle URL during onboarding.
+
+---
+
+## Pricing — https://typelessity.com/pricing
+
+**Pilot — Free.** Full access for early adopters. All 25+ languages, voice input, enrichment APIs, custom branding, webhook integration, 1–2 day personal onboarding. No credit card.
+
+**Enterprise — Custom.** Everything in Pilot, plus SLA guarantee (99.9% uptime), dedicated account manager, custom integrations, on-premise / self-hosted deployment, EU data residency, custom AI provider, volume discount on bookings.
+
+Pilot has no time limit. Upgrade once booking volume justifies an SLA — typically > 5,000 sessions/month.
+
+We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic. A/B tooling is included in the Pilot.
+
+---
+
+## Industries — https://typelessity.com/industries
+
+Configurable per service-business vertical. Production categories: Medical (clinics), Beauty & Wellness, Professional Services, Fitness & Sports, Home Services, Automotive, Education, Hospitality, Real Estate, Pet Services. 42 vertical configurations live today. See /industries for the full list.
+
+US healthcare with HIPAA / BAA requirements is not a supported use case — Typelessity is not HIPAA-attested.
+
+---
+
+## For AI agents — https://typelessity.com/for-ai-agents
+
+Typelessity is callable by autonomous agents. Stable Session and Booking schemas are stable today. The dedicated `/agent/turn` endpoint is shipping Q3 2026 — agents can be designed against the contract on this page now.
+
+**Session schema.** `{ id, config, lang, fields, _meta: { mf, correction }, createdAt, completed }`.
+
+**Booking schema.** `{ bookingId, sessionId, fields, submittedAt, status }`.
+
+**Feature list (machine-readable).**
+- languages_supported: 25+
+- industries_supported: config-driven, see /industries for current verticals
+- extraction_model: gpt-4.1-nano
+- p95_latency_ms: 200–800
+- voice_input: openai-whisper
+- enrichment_per_config_max: 5
+- enrichment_timeout_ms: 10000
+- data_residency: EU (Enterprise)
+- training_use: none
+
+For early /agent endpoint access (Q3 2026 launch): hello@typelessity.com.
+
+---
+
+## FAQ — https://typelessity.com/faq
+
+Selection (full FAQ on /faq):
+
+- **What is Typelessity?** AI conversational booking widget replacing multi-step booking forms with a single natural-language chat. 25+ languages, voice via Whisper, real-time enrichment.
+- **How is it different from Calendly?** Calendly is a scheduling-link tool. Typelessity replaces an entire booking form with conversation.
+- **How is it different from SimplyBook.me?** SimplyBook is a full booking platform with payments and staff scheduling. Typelessity replaces only the booking form, then submits to your existing backend.
+- **GDPR compliant?** Yes. Configurable consent flow before any AI processing. Data processed in EU regions when configured. No model training. Right-to-erasure via session deletion API.
+- **Voice input?** Yes — OpenAI Whisper. All 25+ supported languages.
+- **Per-turn latency?** Median 200–800ms on gpt-4.1-nano, single AI call per turn. Enrichment turns add 1–3 seconds.
+- **Self-host?** On-premise available on Enterprise.
+- **Replace my booking system?** No. Replaces the form, not the backend. Submits via webhook or REST POST.
+- **Conversion lift?** A/B testing tooling is included in the Pilot — measure lift on your own traffic. No hero number is published.
+- **Best industries?** Any service business with appointments. Production verticals include clinics, beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services, travel.
+- **Works for AI agents?** Yes — by design. Stable Session and Booking schemas today; `/agent/turn` endpoint shipping Q3 2026.
+
+---
+
+## About — https://typelessity.com/about
+
+Mission: replace the booking form with one sentence. Multi-step forms exist because old UI primitives could not parse natural language. They can now.
+
+Founder: Alex Isa. Engineer turned founder. Took Typelessity from specification to first production deploy in early 2025 — single-call extraction architecture, config-driven enrichment, anti-hallucination guards, 25+ language support out of the box.
+
+**Built by Webappski.** Typelessity is a product of Webappski — a small product studio building the next layer of AI-native interfaces for service businesses. Sister product: TypelessForm — the same conversational-data-collection thesis applied to general-purpose forms (lead capture, support intake, onboarding). Typelessity is the booking-specific surface; TypelessForm is the generic one.
+
+Values: GPT decides, code orchestrates. Architecture is permanent, GTM is changeable. Numbers belong with sources. The widget is for humans and agents.
+
+---
+
+## Blog — https://typelessity.com/blog
+
+Engineering and product writeups. Selected posts:
+
+- Best AI booking widgets 2026 — category-by-category comparison of Botpress, Calendly, NoForm.ai, SimplyBook.me, Typelessity.
+- 25 languages, one prompt — how the unified prompt handles every supported language without per-language code.
+- Single GPT call — why one model call per turn beats one call per field.
+- Cascade corrections — how dependency-graph walks clear stale downstream data on field changes.
+- Whisper vs WebSpeech — voice input architecture choices.
+- Forms vs conversation study — what the literature does and does not say about conversational conversion lift.
+- Designing for AI agents — why a dedicated /for-ai-agents page complements llms.txt.
+- What we got wrong — three GTM pivots and the architecture that outlasted them.
+
+---
+
+## Legal — https://typelessity.com/legal/{privacy,terms,dpa,security,sub-processors}
+
+GDPR-aligned data flows. EU data residency available on Enterprise. Configurable consent flow shown before any AI processing begins. No data is used for model training. Right-to-erasure supported via session deletion API. Annual third-party penetration test. Dependency scanning on every CI run. Responsible disclosure: security@typelessity.com.
+
+---
+
+## Contact
+
+- Built by: Webappski (https://webappski.com). Sister product: TypelessForm (https://typelessform.com).
+- Founder: Alex Isa
+- Email: info@webappski.com
