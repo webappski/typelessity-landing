@@ -52,6 +52,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/blog/blog-post.component').then((m) => m.BlogPostComponent),
   },
+  // External legal docs — handled at SSR layer with 308 (see app.routes.server.ts).
+  // Client routes exist only so SSR engine validates path matches; component is never rendered for these paths in production.
+  { path: 'legal/privacy', loadComponent: () => import('./pages/legal/legal-page.component').then((m) => m.LegalPageComponent) },
+  { path: 'legal/terms', loadComponent: () => import('./pages/legal/legal-page.component').then((m) => m.LegalPageComponent) },
+  { path: 'legal/dpa', loadComponent: () => import('./pages/legal/legal-page.component').then((m) => m.LegalPageComponent) },
+  { path: 'legal/sub-processors', loadComponent: () => import('./pages/legal/legal-page.component').then((m) => m.LegalPageComponent) },
+  { path: 'legal/security', loadComponent: () => import('./pages/legal/legal-page.component').then((m) => m.LegalPageComponent) },
   {
     path: 'legal/:doc',
     loadComponent: () =>

@@ -19,7 +19,7 @@
 
     <div class="vc-nav-cta">
       <a class="vc-pill" routerLink="/about">{{ t.t('nav.about') }}</a>
-      <a class="vc-btn vc-btn-primary" href="https://webappski.com/en/portal" target="_blank" rel="noopener">{{ t.t('nav.getStarted') }}</a>
+      <a class="vc-btn vc-btn-primary" routerLink="/pricing" fragment="start-pilot">{{ t.t('nav.getStarted') }}</a>
     </div>
 
     <button class="vc-burger" (click)="toggleMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-label="Toggle menu">
@@ -35,7 +35,7 @@
       <a routerLink="/blog" (click)="closeMenu()">{{ t.t('nav.blog') }}</a>
       <a routerLink="/faq" (click)="closeMenu()">{{ t.t('nav.faq') }}</a>
       <a routerLink="/about" (click)="closeMenu()">{{ t.t('nav.about') }}</a>
-      <a class="vc-btn vc-btn-primary vc-btn-block" href="https://webappski.com/en/portal" target="_blank" rel="noopener" (click)="closeMenu()">{{ t.t('nav.getStarted') }}</a>
+      <a class="vc-btn vc-btn-primary vc-btn-block" routerLink="/pricing" fragment="start-pilot" (click)="closeMenu()">{{ t.t('nav.getStarted') }}</a>
     </div>
   }
 </header>

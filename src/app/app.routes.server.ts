@@ -13,8 +13,6 @@ const STATIC_PAGES = [
   'blog',
 ];
 
-const LEGAL_DOCS = ['privacy', 'terms', 'dpa', 'security', 'sub-processors'];
-
 export const serverRoutes: ServerRoute[] = [
   ...STATIC_PAGES.map((page): ServerRoute => ({
     path: page,
@@ -34,12 +32,34 @@ export const serverRoutes: ServerRoute[] = [
       return BLOG_SLUGS.map((slug) => ({ slug }));
     },
   },
+  // External legal docs — true server-side 308 to webappski.com (SSR-safe; AI crawlers see proper redirect, not blank prerendered HTML).
   {
-    path: 'legal/:doc',
+    path: 'legal/privacy',
+    renderMode: RenderMode.Server,
+    status: 308,
+    headers: { Location: 'https://webappski.com/en/legal/product-privacy' },
+  },
+  {
+    path: 'legal/terms',
+    renderMode: RenderMode.Server,
+    status: 308,
+    headers: { Location: 'https://webappski.com/en/legal/terms' },
+  },
+  {
+    path: 'legal/dpa',
+    renderMode: RenderMode.Server,
+    status: 308,
+    headers: { Location: 'https://webappski.com/en/legal/dpa' },
+  },
+  {
+    path: 'legal/sub-processors',
+    renderMode: RenderMode.Server,
+    status: 308,
+    headers: { Location: 'https://webappski.com/en/legal/dpa' },
+  },
+  {
+    path: 'legal/security',
     renderMode: RenderMode.Prerender,
-    async getPrerenderParams() {
-      return LEGAL_DOCS.map((doc) => ({ doc }));
-    },
   },
   { path: '**', renderMode: RenderMode.Server },
 ];
