@@ -29,13 +29,13 @@ export const EN: TranslationMap = {
 
   // ── SEO meta (title is suffixed with " — Typelessity" by SeoService; descriptions ≤155 chars) ──
   'seo.home.title': 'Bookings through conversation, not forms',
-  'seo.home.description': 'AI booking widget that replaces forms with chat. 25+ languages, voice input, configurable per industry. Single-call extraction, GDPR-native, live in 1–2 days.',
+  'seo.home.description': 'AI booking widget that replaces forms with chat. 25+ languages, voice input, configurable per industry. Single-call extraction, GDPR-native, live in hours.',
   'seo.howItWorks.title': 'How it works — 4 phases · single GPT call · enrichment APIs',
   'seo.howItWorks.description': 'Chat → Select → Review → Confirm. One GPT call per turn, 200–800ms latency, real-time enrichment APIs, cascade-aware corrections, no hardcoded regex.',
   'seo.pricing.title': 'Pricing — Pilot (Free) + Enterprise',
   'seo.pricing.description': 'Free Pilot for early adopters with full access. Custom Enterprise with SLA, dedicated account manager, on-premise deployment, EU data residency.',
   'seo.industries.title': 'Industries — AI booking for service verticals',
-  'seo.industries.description': 'Configured for medical, legal, beauty, hospitality, real estate, automotive and more. Same engine, different config per industry.',
+  'seo.industries.description': 'Configured for legal, beauty, hospitality, real estate, automotive, education and more. Same engine, different config per industry.',
   'seo.faq.title': 'FAQ — Common questions',
   'seo.faq.description': 'Self-contained answers about Typelessity — product, pricing, AI behavior, integration, privacy. First sentence works as a stand-alone citation.',
   'seo.about.title': 'About — Forms are an artifact of constrained UI',

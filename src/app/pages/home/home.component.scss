@@ -392,9 +392,9 @@
 
 .home-tiers {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  max-width: 920px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -418,7 +418,7 @@
     &:hover { border-color: var(--accent-hover); }
   }
 
-  // Tier badge — tangerine accent
+  // Tier badge — tangerine accent (active) or muted (coming soon)
   &__badge {
     position: absolute;
     top: -12px;
@@ -432,6 +432,24 @@
     font-weight: 700;
     border-radius: 999px;
     text-transform: uppercase;
+
+    &--soon {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+  }
+
+  &__cta-disabled {
+    display: block;
+    text-align: center;
+  }
+
+  // Coming soon tier — visually dimmed
+  &--coming-soon {
+    opacity: 0.6;
+    pointer-events: none;
+    border-style: dashed;
   }
 
   &__name {
@@ -628,13 +646,14 @@
   .home-phases { grid-template-columns: 1fr; }
   .home-arch__grid { grid-template-columns: 1fr; }
   .home-industries__grid { grid-template-columns: repeat(2, 1fr); }
-  .home-tiers { grid-template-columns: 1fr; }
+  .home-tiers { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 540px) {
   .home-industries__grid { grid-template-columns: 1fr; }
   .home-compare { font-size: 12px; }
   .home-compare__table th, .home-compare__table td { padding: 10px 12px; }
+  .home-tiers { grid-template-columns: 1fr; }
 }
 
 // ── Trim hints ──

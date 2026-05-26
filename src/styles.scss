@@ -107,6 +107,7 @@ pre {
     transform: translateY(-1px);
     box-shadow: 0 14px 32px -10px rgba(255, 107, 43, 0.6);
     background: var(--accent-hover);
+    color: #fff;
   }
 }
 
@@ -120,6 +121,14 @@ pre {
     border-color: var(--accent);
     color: var(--accent);
   }
+}
+
+.vc-btn-muted {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: default;
+  pointer-events: none;
 }
 
 .vc-eyebrow {

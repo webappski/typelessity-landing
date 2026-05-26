@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
-interface ContactPayload {
+interface WaitlistPayload {
   email: string;
-  company: string;
-  industry: string;
-  monthlyBookings: string;
+  website?: string;
+  plan: string;
+  industry?: string;
   message?: string;
 }
 
@@ -20,57 +20,70 @@ type Status = 'idle' | 'sending' | 'success' | 'error';
   imports: [FormsModule],
   styleUrl: './contact-form.component.scss',
   template: `
-    <form class="cf" (ngSubmit)="submit()" #f="ngForm" novalidate>
-      <div class="cf__row">
-        <label for="cf-email">Work email</label>
-        <input id="cf-email" name="email" type="email" required autocomplete="email" [(ngModel)]="model.email" />
-      </div>
-      <div class="cf__grid">
-        <div class="cf__row">
-          <label for="cf-company">Company</label>
-          <input id="cf-company" name="company" type="text" required [(ngModel)]="model.company" />
+    @if (status() !== 'success') {
+      <form class="cf" (ngSubmit)="submit()" #f="ngForm" novalidate>
+        <div class="cf__grid">
+          <div class="cf__row">
+            <label for="cf-email">Email *</label>
+            <input id="cf-email" name="email" type="email" required autocomplete="email" placeholder="your@email.com" [(ngModel)]="model.email" />
+          </div>
+          <div class="cf__row">
+            <label for="cf-website">Website URL (optional)</label>
+            <input id="cf-website" name="website" type="url" autocomplete="url" placeholder="https://yourwebsite.com" [(ngModel)]="model.website" />
+          </div>
         </div>
         <div class="cf__row">
-          <label for="cf-industry">Industry</label>
-          <input id="cf-industry" name="industry" type="text" required [(ngModel)]="model.industry" placeholder="Dental, Auto, Hotel, …" />
+          <label for="cf-plan">Preferred Plan *</label>
+          <select id="cf-plan" name="plan" required [(ngModel)]="model.plan">
+            <option value="">Select a plan</option>
+            <option value="starter">Starter ($39/mo)</option>
+            <option value="pro">Pro ($149/mo)</option>
+            <option value="enterprise">Enterprise ($399/mo)</option>
+          </select>
         </div>
+        <div class="cf__row">
+          <label for="cf-industry">Industry / Use Case (optional)</label>
+          <select id="cf-industry" name="industry" [(ngModel)]="model.industry">
+            <option value="">Select your industry</option>
+            <option value="hospitality">Hospitality & Restaurants</option>
+            <option value="transfer">Transfers & Mobility</option>
+            <option value="freight">Freight & Logistics</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="cf__row">
+          <label for="cf-message">Message (optional)</label>
+          <textarea id="cf-message" name="message" rows="3" placeholder="Tell us about your booking flow or requirements" [(ngModel)]="model.message"></textarea>
+        </div>
+        <div class="cf__row">
+          <label>
+            <input type="checkbox" name="consent" required />
+            <span>I agree to the <a href="https://webappski.com/en/legal/product-privacy" target="_blank" rel="noopener">privacy policy</a> and processing of my data for response purposes.</span>
+          </label>
+        </div>
+        <button type="submit" class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block" [disabled]="status() === 'sending' || !f.valid">
+          {{ status() === 'sending' ? 'Submitting…' : 'Join Waitlist' }}
+        </button>
+        @if (status() === 'error') {
+          <p class="cf__msg cf__msg--err">We couldn't submit your request. Please check your connection and try again.</p>
+        }
+      </form>
+    } @else {
+      <div class="cf__success" role="status" aria-live="polite">
+        <h3>You're on the Waitlist!</h3>
+        <p>We'll notify you as soon as Typelessity is available. Thanks for your interest!</p>
       </div>
-      <div class="cf__row">
-        <label for="cf-volume">Monthly bookings volume</label>
-        <select id="cf-volume" name="monthlyBookings" required [(ngModel)]="model.monthlyBookings">
-          <option value="">Select…</option>
-          <option value="0-100">Under 100</option>
-          <option value="100-1000">100 – 1,000</option>
-          <option value="1000-10000">1,000 – 10,000</option>
-          <option value="10000+">10,000+</option>
-        </select>
-      </div>
-      <div class="cf__row">
-        <label>
-          <input type="checkbox" name="consent" required />
-          <span>I agree to the <a href="/legal/privacy">privacy policy</a> and processing of my data for response purposes.</span>
-        </label>
-      </div>
-      <button type="submit" class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block" [disabled]="status() === 'sending' || !f.valid">
-        {{ status() === 'sending' ? 'Sending…' : 'Start Pilot' }}
-      </button>
-      @if (status() === 'success') {
-        <p class="cf__msg cf__msg--ok">Thanks — we'll reach out within one business day.</p>
-      }
-      @if (status() === 'error') {
-        <p class="cf__msg cf__msg--err">Something went wrong. Email <a href="mailto:hello&#64;typelessity.com">hello&#64;typelessity.com</a> directly.</p>
-      }
-    </form>
+    }
   `,
 })
 export class ContactFormComponent {
   private readonly http = inject(HttpClient);
 
-  protected readonly model: ContactPayload = {
+  protected readonly model: WaitlistPayload = {
     email: '',
-    company: '',
+    website: '',
+    plan: '',
     industry: '',
-    monthlyBookings: '',
     message: '',
   };
 
@@ -80,11 +93,18 @@ export class ContactFormComponent {
     if (this.status() === 'sending') return;
     this.status.set('sending');
     try {
-      await firstValueFrom(this.http.post('/api/contact', this.model));
+      await firstValueFrom(
+        this.http.post('/api/contact', {
+          ...this.model,
+          type: 'waitlist_request',
+          product: 'typelessity',
+          source: 'typelessity-waitlist-form',
+        }),
+      );
       this.status.set('success');
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      console.error('Contact form submission failed', { message });
+      console.error('Waitlist form submission failed', { message });
       this.status.set('error');
     }
   }

@@ -163,7 +163,7 @@ import { HOME } from '../home/home.content';
     <section class="vc-wrap how-cta">
       <h2>Ready to replace your form?</h2>
       <div class="how-cta__actions">
-        <a class="vc-btn vc-btn-primary vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">Start Pilot — Free</a>
+        <a class="vc-btn vc-btn-primary vc-btn-lg" routerLink="/pricing" fragment="start-pilot">Join Waitlist</a>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/industries">Browse industries</a>
       </div>
     </section>

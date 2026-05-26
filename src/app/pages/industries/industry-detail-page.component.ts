@@ -30,7 +30,7 @@ import { getIndustryBySlug } from '../../lib/industries';
           <p class="industry__sub">{{ i.hero.subtitle }}</p>
           @if (i.hero.cta) {
             <div class="industry__cta">
-              <a class="vc-btn vc-btn-primary vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">{{ i.hero.cta.primary }}</a>
+              <a class="vc-btn vc-btn-primary vc-btn-lg" routerLink="/pricing" fragment="start-pilot">{{ i.hero.cta.primary }}</a>
               <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/about">{{ i.hero.cta.secondary }}</a>
             </div>
           }

@@ -26,7 +26,9 @@
 
     input[type='email'],
     input[type='text'],
-    select {
+    input[type='url'],
+    select,
+    textarea {
       width: 100%;
       padding: 12px 14px;
       border: 1px solid var(--border);
@@ -43,6 +45,8 @@
         box-shadow: 0 0 0 3px var(--accent-glow);
       }
     }
+
+    textarea { resize: vertical; min-height: 80px; }
 
     label:has(input[type='checkbox']) {
       display: flex;
@@ -74,6 +78,29 @@
       color: #FCA5A5;
 
       a { color: inherit; text-decoration: underline; }
+    }
+  }
+
+  &__success {
+    max-width: 520px;
+    margin-inline: auto;
+    padding: 32px 28px;
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255, 107, 43, 0.08) 0%, var(--bg-card) 60%);
+    text-align: center;
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.6;
     }
   }
 }

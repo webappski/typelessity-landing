@@ -16,7 +16,7 @@
       </h1>
       <p class="home-hero__sub">{{ c.hero.sub }}</p>
       <div class="home-hero__cta">
-        <a class="vc-btn vc-btn-accent vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">
+        <a class="vc-btn vc-btn-accent vc-btn-lg" routerLink="/pricing" fragment="start-pilot">
           {{ c.hero.cta.primary }}
           <app-icon name="arrow-right-small" [size]="14" />
         </a>
@@ -217,7 +217,7 @@
     <h2 class="home-cta__h">{{ c.cta.title }}</h2>
     <p class="home-cta__sub">{{ c.cta.sub }}</p>
     <div class="home-cta__actions">
-      <a class="vc-btn vc-btn-accent vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">{{ c.cta.primary }}</a>
+      <a class="vc-btn vc-btn-accent vc-btn-lg" routerLink="/pricing" fragment="start-pilot">{{ c.cta.primary }}</a>
       <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
     </div>
     <pre class="home-cta__snippet">{{ embedSnippet }}</pre>
