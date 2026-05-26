@@ -11,6 +11,7 @@
     "postbuild": "npm run build:sitemap",
     "watch": "ng build --watch --configuration development",
     "test": "tsx --test \"src/**/*.spec.ts\"",
+    "postinstall": "git rev-parse --git-dir >/dev/null 2>&1 && git config core.hooksPath .githooks || true",
     "serve:ssr:typelessity-landing": "node dist/typelessity-landing/server/server.mjs"
   },
   "private": true,
