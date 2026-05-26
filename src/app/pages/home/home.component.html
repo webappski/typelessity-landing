@@ -169,12 +169,16 @@
   </header>
   <div class="home-tiers">
     @for (tier of c.pricing.tiers; track tier.name) {
-      <article class="tier tier--compact" [class.tier--featured]="tier.featured">
-        @if (tier.featured) { <span class="tier__badge">Most popular</span> }
+      <article class="tier tier--compact" [class.tier--coming-soon]="tier.comingSoon">
+        @if (tier.comingSoon) { <span class="tier__badge tier__badge--soon">Coming soon</span> }
         <div class="tier__name">{{ tier.name }}</div>
         <div class="tier__price">{{ tier.price }}</div>
         <div class="tier__sub">{{ tier.sub }}</div>
-        <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" href="https://webappski.com/en/portal" target="_blank" rel="noopener">{{ tier.cta }}</a>
+        @if (!tier.comingSoon) {
+          <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" routerLink="/pricing" fragment="start-pilot">{{ tier.cta }}</a>
+        } @else {
+          <span class="vc-btn vc-btn-muted vc-btn-block vc-btn-lg tier__cta-disabled">Coming soon</span>
+        }
       </article>
     }
   </div>

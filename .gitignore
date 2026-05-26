@@ -43,3 +43,10 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 .vercel
+
+# AEO tracker output (brand=typelessform — output migrated to ~/Projects/typelessform/, защита от повторного попадания)
+/aeo-reports/
+/aeo-responses/
+/perplexity-responses/
+.aeo-tracker.json
+.implementor.log

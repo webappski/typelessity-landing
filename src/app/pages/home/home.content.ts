@@ -138,28 +138,49 @@ export const HOME = {
   },
 
   pricing: {
-    title: 'Two plans',
-    sub: 'Free pilot for early adopters. Custom-priced enterprise for scale.',
+    title: 'Simple, Transparent Pricing',
+    sub: 'Choose the plan that fits your business needs.',
     tiers: [
       {
-        name: 'Pilot', price: 'Free', sub: 'Full access for early adopters', featured: false,
+        name: 'Free Pilot', price: '$0', sub: 'Test Typelessity on your site risk-free.', featured: false,
+        comingSoon: true,
         bullets: [
-          'All 25+ languages, voice input, enrichment APIs',
-          'Custom branding, webhook integration',
-          '1–2 day personal onboarding',
-          'No credit card required',
+          'Up to 50 submissions/month',
+          'Supports 25+ Languages',
+          'Email Support',
         ],
-        cta: 'Start Pilot',
+        // CTA text used post-launch (when comingSoon=false). Templates render "Coming soon" while disabled.
+        cta: 'Start free',
       },
       {
-        name: 'Enterprise', price: 'Custom', sub: 'For large-scale operations', featured: true,
+        name: 'Starter', price: '$39', sub: 'Perfect for small businesses.', featured: false,
+        comingSoon: true,
         bullets: [
-          'Everything in Pilot',
-          'SLA guarantee, dedicated account manager',
-          'Custom integrations, on-premise deployment',
-          'EU data residency',
+          'Up to 500 submissions/month',
+          'Supports 25+ Languages',
+          'Standard Support',
         ],
-        cta: 'Contact sales',
+        cta: 'Choose Starter',
+      },
+      {
+        name: 'Pro', price: '$149', sub: 'For growing companies with higher volume.', featured: true,
+        comingSoon: true,
+        bullets: [
+          'Up to 2,000 submissions/month',
+          'Supports 25+ Languages',
+          'Priority Support',
+        ],
+        cta: 'Choose Pro',
+      },
+      {
+        name: 'Enterprise', price: '$399', sub: 'For large organizations needing custom solutions.', featured: false,
+        comingSoon: true,
+        bullets: [
+          'Up to 6,000 submissions/month',
+          'Supports 25+ Languages',
+          'Dedicated Success Manager',
+        ],
+        cta: 'Talk to sales',
       },
     ] as const,
   },
@@ -180,7 +201,7 @@ export const HOME = {
     { category: 'AI Behavior', q: 'What is the per-turn latency?', a: 'Median per-turn latency is 200–800ms on gpt-4.1-nano, with a single AI call per turn. When enrichment triggers (a second AI call to present API results), latency adds 1–3 seconds. We do not use gpt-5 in the hot path because of its higher latency.' },
     { category: 'Integration', q: 'Can I self-host Typelessity?', a: 'On-premise deployment is available on the Enterprise plan. The widget runs as a Lit web component, the API is a Next.js service, and the AI provider can be swapped between OpenAI, Azure OpenAI, or any OpenAI-compatible endpoint.' },
     { category: 'Product', q: 'Does Typelessity replace my booking system?', a: 'No. Typelessity replaces the booking form, not the booking backend. It collects structured data via conversation and submits it to your existing system via webhook or REST POST. Your CRM, calendar, payment processor, and staff scheduler stay exactly as they are.' },
-    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'The Pilot plan is free for early adopters and includes all features: full field types, voice input, enrichment APIs, 25+ languages, custom branding, webhook integration, and 1–2 day personal onboarding. The Enterprise plan is custom-priced and adds SLA guarantee, dedicated account manager, custom integrations, and on-premise deployment.' },
+    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'Free Pilot ($0): up to 50 submissions/month — full feature access, personal onboarding. Starter ($39/mo, coming soon): up to 500 submissions/month. Pro ($149/mo, coming soon): up to 2,000 submissions/month, priority support. Enterprise ($399/mo, coming soon): up to 6,000 submissions/month, dedicated success manager.' },
     { category: 'AI Behavior', q: 'Will conversational booking convert better than my current form?', a: 'Head-to-head A/B testing is the only honest answer. We provide A/B testing tooling during the pilot so you measure lift on your own traffic against your existing form. We do not publish a hero conversion-lift number on this site because every claim of that shape we have seen in the AI-booking space is either uncited or based on a study with assumptions that do not transfer.' },
     { category: 'Product', q: 'What industries is Typelessity best for?', a: 'Any service business that takes appointments. Production verticals include clinics, beauty salons, legal practices, real estate, automotive services, hospitality, education, fitness, pet services, home services, and travel. The same engine handles every vertical — configuration changes the field schema, prompts, and enrichments per tenant.' },
     { category: 'Product', q: 'Does Typelessity work for AI agents (not humans)?', a: 'Yes — by design. The same widget API is callable by autonomous agents. We publish a stable JSON schema for sessions today, and the dedicated /agent endpoint (synchronous turn-by-turn API with the same field-extraction pipeline) is shipping Q3 2026. Documentation and schemas are already on /for-ai-agents so agents can be designed against the contract now.' },

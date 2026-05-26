@@ -9,6 +9,10 @@ test('HOME.faq: every item has a known category', () => {
     'Integration',
     'Privacy',
     'Pricing',
+    'Security',
+    'Compliance',
+    'For Developers',
+    'Competitor Migration',
   ]);
   for (const qa of HOME.faq) {
     assert.ok(allowed.has(qa.category), `unknown category for "${qa.q}": ${qa.category}`);

@@ -20,9 +20,9 @@
 
 .home-tiers {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  max-width: 920px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -236,11 +236,14 @@
   }
 }
 
+@media (max-width: 960px) {
+  .home-tiers { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 700px) {
   .home-tiers, .onboarding { grid-template-columns: 1fr; }
 }
 
-// ── Pilot vs Enterprise diff table ──
+// ── What changes at Enterprise diff table ──
 .pricing-diff {
   padding-block: 60px;
 }
