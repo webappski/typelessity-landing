@@ -1,6 +1,6 @@
 # Typelessity — full content (llms-full.txt)
 
-> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-05-19.
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-06-05.
 
 ---
 
@@ -36,19 +36,23 @@ Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT c
 
 The widget is a Lit web component. The API is a Node service. The AI provider can be swapped between OpenAI, Azure OpenAI, or any OpenAI-compatible endpoint. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
 
-Embed: one line of HTML. The public CDN at cdn.typelessity.com/widget.js is shipping Q3 2026 — until then pilot customers receive a tenant-specific bundle URL during onboarding.
+Embed: one line of HTML. The public CDN at cdn.typelessity.com/widget.js is shipping Q3 2026 — at launch, pilot customers will receive a tenant-specific bundle URL during onboarding.
 
 ---
 
 ## Pricing — https://typelessity.com/pricing
 
-**Pilot — Free.** Full access for early adopters. All 25+ languages, voice input, enrichment APIs, custom branding, webhook integration, 1–2 day personal onboarding. No credit card.
+Typelessity launches soon (PreOrder) — all four tiers become available at the same time. Pricing below; join the waitlist to be notified when it goes live.
 
-**Enterprise — Custom.** Everything in Pilot, plus SLA guarantee (99.9% uptime), dedicated account manager, custom integrations, on-premise / self-hosted deployment, EU data residency, custom AI provider, volume discount on bookings.
+**Free Pilot — $0.** Up to 50 submissions/month. Full feature access (25+ languages, voice input, enrichment APIs, custom branding, webhook integration) and email support. Risk-free evaluation on a real site.
 
-Pilot has no time limit. Upgrade once booking volume justifies an SLA — typically > 5,000 sessions/month.
+**Starter — $39/mo.** Up to 500 submissions/month, standard support.
 
-We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic. A/B tooling is included in the Pilot.
+**Pro — $149/mo.** Up to 2,000 submissions/month, priority support.
+
+**Enterprise — $399/mo.** Up to 6,000 submissions/month, dedicated success manager. SLA, custom integrations, on-premise / self-hosted, EU data residency, custom AI provider.
+
+We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic. A/B tooling is included in the Free Pilot at launch.
 
 ---
 
@@ -95,7 +99,7 @@ Selection (full FAQ on /faq):
 - **Per-turn latency?** Median 200–800ms on gpt-4.1-nano, single AI call per turn. Enrichment turns add 1–3 seconds.
 - **Self-host?** On-premise available on Enterprise.
 - **Replace my booking system?** No. Replaces the form, not the backend. Submits via webhook or REST POST.
-- **Conversion lift?** A/B testing tooling is included in the Pilot — measure lift on your own traffic. No hero number is published.
+- **Conversion lift?** A/B testing tooling is included in the Free Pilot at launch — measure lift on your own traffic. No hero number is published.
 - **Best industries?** Any service business with appointments. Production verticals include clinics, beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services, travel.
 - **Works for AI agents?** Yes — by design. Stable Session and Booking schemas today; `/agent/turn` endpoint shipping Q3 2026.
 

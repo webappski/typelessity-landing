@@ -1,6 +1,6 @@
 # Typelessity
 
-> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. It is configurable for service-business booking flows, supports voice input via OpenAI Whisper, real-time enrichment APIs, and GDPR-compliant consent flows. Built by Webappski. Free pilot, custom Enterprise pricing.
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. It is configurable for service-business booking flows, supports voice input via OpenAI Whisper, real-time enrichment APIs, and GDPR-compliant consent flows. Built by Webappski. Four tiers launching soon: Free Pilot $0, Starter $39/mo, Pro $149/mo, Enterprise $399/mo.
 
 ## Core facts
 
@@ -12,7 +12,7 @@
 - **Voice:** OpenAI Whisper, all 25+ languages
 - **Conversion lift:** We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms; we provide A/B testing tooling during pilot so each customer measures lift on their own traffic.
 - **Compliance:** GDPR, EU data residency, configurable consent, no model training on user data
-- **Pricing:** Pilot — Free (full access for early adopters). Enterprise — Custom (SLA, dedicated AM, on-premise option)
+- **Pricing:** Launching soon (PreOrder), all four tiers at once. Free Pilot — $0 (up to 50 submissions/month, full feature access, personal onboarding). Starter — $39/mo (up to 500/month). Pro — $149/mo (up to 2,000/month, priority support). Enterprise — $399/mo (up to 6,000/month, dedicated success manager, SLA, on-premise option). Join the waitlist to be notified at launch.
 - **Integration:** 1–2 days, 1 line of HTML, webhook or REST POST to your booking system
 
 ## How it works (4 phases)
@@ -35,7 +35,7 @@
 
 - [Home](https://typelessity.com/) — Product overview
 - [How it works](https://typelessity.com/how-it-works) — 4-phase flow + architecture deep dive
-- [Pricing](https://typelessity.com/pricing) — Pilot (free) + Enterprise (custom)
+- [Pricing](https://typelessity.com/pricing) — Free Pilot $0 / Starter $39 / Pro $149 / Enterprise $399 (launching soon)
 - [Industries](https://typelessity.com/industries) — 42 verticals, each with dedicated page
 - [For AI Agents](https://typelessity.com/for-ai-agents) — Machine-readable API + JSON schemas
 - [FAQ](https://typelessity.com/faq) — questions across product, AI behavior, integration, privacy, pricing
