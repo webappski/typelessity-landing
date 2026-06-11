@@ -7,6 +7,7 @@
     "build": "ng build",
     "build:blog": "tsx tools/build-blog-index.ts",
     "build:sitemap": "tsx tools/build-sitemap.ts",
+    "gen:favicon": "node tools/gen-favicon.mjs",
     "prebuild": "npm run build:blog",
     "postbuild": "npm run build:sitemap",
     "watch": "ng build --watch --configuration development",
