@@ -12,6 +12,7 @@
     "postbuild": "npm run build:sitemap",
     "watch": "ng build --watch --configuration development",
     "test": "tsx --test \"src/**/*.spec.ts\"",
+    "e2e": "tsx --test \"e2e/**/*.spec.ts\"",
     "postinstall": "git rev-parse --git-dir >/dev/null 2>&1 && git config core.hooksPath .githooks || true",
     "serve:ssr:typelessity-landing": "node dist/typelessity-landing/server/server.mjs"
   },
@@ -27,7 +28,7 @@
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.6",
     "@calcom/embed-snippet": "^1.3.3",
-    "aeo-platform": "^1.0.8",
+    "aeo-platform": "^1.2.0",
     "express": "^5.1.0",
     "marked": "^17.0.6",
     "ngx-markdown": "^21.2.0",

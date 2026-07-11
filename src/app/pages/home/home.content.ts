@@ -118,21 +118,22 @@ export const HOME = {
 
   comparison: {
     title: 'Typelessity vs alternatives',
-    sub: 'Honest comparison. AI booking tools fall into three categories: conversational widgets (us), scheduling tools (Calendly), and full booking platforms (SimplyBook).',
-    columns: ['Capability', 'Typelessity', 'Calendly', 'SimplyBook.me', 'Botpress', 'NoForm.ai'] as const,
+    sub: 'Honest comparison. AI booking tools span several categories: inbound conversational widgets (us), scheduling tools (Calendly, Cal.com), full booking platforms (SimplyBook), and outbound AI voice callers (Cal.ai). Different layers — many businesses use more than one together.',
+    columns: ['Capability', 'Typelessity', 'Calendly', 'Cal.com', 'Cal.ai', 'SimplyBook.me', 'Botpress', 'NoForm.ai'] as const,
     rows: [
-      ['AI natural-language booking', 'Yes', 'No', 'Limited', 'Custom build', 'Lead-qual only'],
-      ['Multi-language (25+)', 'Yes', 'EN-first', 'Yes', 'Custom build', 'Limited'],
-      ['Voice input (Whisper)', 'Yes', 'No', 'No', 'Custom build', 'No'],
-      ['Real-time enrichment APIs', 'Yes', 'No', 'No', 'Yes', 'No'],
-      ['Calendar integration', 'Webhook + API', 'Native', 'Native', 'Custom build', 'No'],
-      ['Staff & resource management', 'Via webhook', 'Yes', 'Yes', 'No', 'No'],
-      ['Setup time', 'Hours', 'Hours', 'Days', 'Weeks', 'Hours'],
-      ['GDPR-native consent flow', 'Yes', 'Yes', 'Yes', 'Custom build', 'Yes'],
-      ['Best for', 'Replacing forms with chat', 'Scheduling links', 'Full booking ops', 'Custom chatbots', 'Lead capture'],
+      ['Interaction model', 'Inbound chat widget', 'Slot-pick page', 'Slot-pick page', 'Outbound voice call', 'Booking pages', 'Custom bot flows', 'Lead chat'],
+      ['AI natural-language booking', 'Yes', 'No', 'No', 'Voice, outbound only', 'Limited', 'Custom build', 'Lead-qual only'],
+      ['Multi-language (25+)', 'Yes', 'EN-first', 'EN-first', 'Per voice config', 'Yes', 'Custom build', 'Limited'],
+      ['Voice input', 'Yes (Whisper, inbound)', 'No', 'No', 'Yes (phone calls)', 'No', 'Custom build', 'No'],
+      ['Real-time enrichment APIs', 'Yes', 'No', 'No', 'No', 'No', 'Yes', 'No'],
+      ['Calendar integration', 'Webhook + API', 'Native', 'Native', 'Native (Cal.com)', 'Native', 'Custom build', 'No'],
+      ['Staff & resource management', 'Via webhook', 'Yes', 'Yes', 'Via Cal.com', 'Yes', 'No', 'No'],
+      ['Setup time', 'Hours', 'Hours', 'Hours', 'Hours (in Cal.com)', 'Days', 'Weeks', 'Hours'],
+      ['GDPR-native consent flow', 'Yes', 'Yes', 'Yes', 'N/A (voice)', 'Yes', 'Custom build', 'Yes'],
+      ['Best for', 'Replacing intake forms with chat', 'Scheduling links', 'Open-source scheduling', 'Reminder & no-show calls', 'Full booking ops', 'Custom chatbots', 'Lead capture'],
     ] as const,
     verdict:
-      'Use Typelessity when you have an existing booking system and want to replace its form with conversation. Use Calendly for simple meeting links. Use SimplyBook.me for end-to-end booking ops with payments. Use Botpress when you need a custom-built bot. Use NoForm.ai for top-of-funnel lead capture.',
+      'Use Typelessity when you have an existing booking system and want to replace its intake form with an inbound conversation. Use Calendly or Cal.com for simple meeting links and slot-picking. Use Cal.ai when you want outbound AI phone calls inside Cal.com to confirm bookings and chase no-shows — a different layer that pairs with, rather than replaces, an inbound widget. Use SimplyBook.me for end-to-end booking ops with payments. Use Botpress when you need a custom-built bot. Use NoForm.ai for top-of-funnel lead capture.',
   },
 
   pricing: {
@@ -187,6 +188,7 @@ export const HOME = {
     { category: 'Product', q: 'What is Typelessity?', a: 'Typelessity is an AI conversational booking widget that replaces traditional multi-step booking forms with a single natural-language chat. It supports 25+ languages, voice input via Whisper, and real-time enrichment APIs. It is configured per industry — current production verticals include clinics, legal practices, hospitality, beauty, real estate, automotive, and education.' },
     { category: 'Product', q: 'How does Typelessity differ from Calendly?', a: 'Calendly is a scheduling-link tool — it shares a calendar and lets people pick a slot. Typelessity replaces an entire booking form with a conversation that can collect any structured data: specialty, doctor, dates, slots, addresses, vehicle types, dietary requirements, and dozens of other fields. Use Calendly for simple meeting links, Typelessity when the booking has more than two or three fields.' },
     { category: 'Product', q: 'How does Typelessity differ from SimplyBook.me?', a: 'SimplyBook.me is a full booking platform with built-in payments, staff scheduling, inventory, and customer accounts. Typelessity replaces only the booking form with conversation, then submits to your existing backend via webhook or REST POST. Use SimplyBook when you need an end-to-end booking system with payments. Use Typelessity when you already have a backend (CRM, calendar, payment processor) and want to replace the front-end form with a 25-language chat.' },
+    { category: 'Product', q: 'How does Typelessity differ from Cal.ai?', a: 'Cal.ai is an outbound AI phone-calling feature built into Cal.com Workflows — it places lifelike voice calls to confirm bookings, send reminders, and follow up on no-shows, billed per minute. Typelessity works the other direction: it is an inbound conversational widget on your own site that collects a complete, structured booking through chat in 25+ languages and submits it to your backend. They sit at different layers and pair well — Cal.ai can chase a no-show after Typelessity captured the booking. Use Cal.ai when your gap is outbound reminder and confirmation calls on top of Cal.com; use Typelessity when your gap is the inbound intake form itself.' },
     { category: 'Product', q: 'How does Typelessity differ from Botpress?', a: 'Botpress is a chatbot framework — you build conversation flows yourself with a visual editor, and you maintain that bot. Typelessity is a turnkey booking widget configured by us in a few hours from your spec, with a single GPT call extracting every field at once and anti-hallucination guards baked in. Use Botpress when you need a custom-built bot for a non-booking use case. Use Typelessity when you specifically want to replace a booking form and want a working integration the same day, not after weeks of engineering.' },
     { category: 'Product', q: 'How does Typelessity differ from NoForm.ai?', a: 'NoForm.ai is a top-of-funnel lead-qualification tool — it captures interest and routes leads to sales. Typelessity completes a structured booking with all required fields (specialty, date, time, name, contact, dietary preferences, etc.) and submits it to your booking system. Use NoForm for marketing lead capture. Use Typelessity when the user is ready to book, not just inquire.' },
     { category: 'AI Behavior', q: 'Does Typelessity work in non-English languages?', a: 'Yes. Typelessity supports 25+ languages out of the box including English, Russian, German, French, Spanish, Italian, Polish, Portuguese, Dutch, Turkish, Arabic, Hebrew, Japanese, Korean, and Chinese. The configuration language sets the response language; user input can be in any supported language and will be translated and normalized automatically.' },

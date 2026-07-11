@@ -68,8 +68,19 @@ export function softwareApplicationLd(): Json {
     '@type': 'SoftwareApplication',
     '@id': `${SITE_URL}/#software`,
     name: SITE_NAME,
+    description:
+      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. Supports 25+ languages, voice input via OpenAI Whisper, and real-time enrichment APIs; submits structured bookings to an existing backend via webhook or REST.',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
+    featureList: [
+      'Conversational booking in 25+ languages',
+      'Voice input via OpenAI Whisper',
+      'Real-time enrichment APIs (fetch doctors, slots, routes mid-conversation)',
+      'Cascade-aware corrections',
+      'GDPR-compliant consent flow',
+      'One-line HTML or React embed',
+      'Webhook or REST submit to your existing backend',
+    ],
     publisher: { '@id': ORG_ID },
     offers: [
       {
