@@ -33,6 +33,11 @@ const vercelConfig = JSON.parse(
 
 const sitemapGenerator = readFileSync(new URL('tools/build-sitemap.ts', ROOT), 'utf8');
 
+/** The discovery manifests, served verbatim — the first thing an AI crawler reads. */
+const MANIFESTS = ['llms.txt', 'llms-full.txt'].map(
+  (name) => [name, readFileSync(new URL(`public/${name}`, ROOT), 'utf8')] as const,
+);
+
 /** Every legal path that must leave this domain, with the document it must land on. */
 const OFFSITE_LEGAL: Record<string, string> = {
   '/legal/privacy': 'https://webappski.com/en/legal/product-privacy',
@@ -91,5 +96,41 @@ test('sitemap advertises the legal page we serve and none we redirect', () => {
       !sitemapGenerator.includes(`'${source}'`),
       `sitemap generator still lists ${source}, which is a redirect — sitemaps must list destinations, not hops`,
     );
+  }
+});
+
+// The same invariant for llms.txt / llms-full.txt. e2e/discovery-manifests.spec.ts asserts it
+// against the served dist/ copies, which is the stronger form — but only `npm test` runs in the
+// pre-commit AND pre-push hooks (`npm run e2e` runs in neither), and this drift has already
+// recurred twice unenforced (CR#3 2026-07-11, then again on 7c9acf9). So the sweep is mirrored
+// here, on the tier that actually gates a push.
+
+test('llms.txt + llms-full.txt advertise no legal path this domain only redirects', () => {
+  // A blanket sweep, not a per-path denylist: it also catches the brace shorthand
+  // (…/legal/{privacy,terms,dpa,…}) that a literal-by-literal check reads straight past.
+  const onsiteUrl = `typelessity.com${ONSITE_LEGAL}`;
+
+  for (const [name, body] of MANIFESTS) {
+    const cited = (body.match(/typelessity\.com\/legal\/[^\s)\]]*/g) ?? []).map((url) =>
+      url.replace(/[.,;:]+$/, ''),
+    );
+    for (const url of cited) {
+      assert.equal(
+        url,
+        onsiteUrl,
+        `${name} cites ${url}, which redirects offsite — manifests must print destinations, not hops`,
+      );
+    }
+  }
+});
+
+test('llms.txt + llms-full.txt print every offsite legal destination', () => {
+  for (const [name, body] of MANIFESTS) {
+    for (const destination of new Set(Object.values(OFFSITE_LEGAL))) {
+      assert.ok(
+        body.includes(destination),
+        `${name} never points at ${destination}, the live home of a legal document it lists`,
+      );
+    }
   }
 });
