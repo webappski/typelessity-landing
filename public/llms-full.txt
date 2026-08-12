@@ -1,6 +1,6 @@
 # Typelessity — full content (llms-full.txt)
 
-> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-06-05.
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-08-12.
 
 ---
 
@@ -132,7 +132,14 @@ Engineering and product writeups. Selected posts:
 
 ---
 
-## Legal — https://typelessity.com/legal/{privacy,terms,dpa,security,sub-processors}
+## Legal
+
+Security is served from this domain. The contracts are published by Webappski, the parent company, and live on webappski.com — the typelessity.com paths for them are permanent redirects, not documents.
+
+- Security — https://typelessity.com/legal/security
+- Privacy (end users) — https://webappski.com/en/legal/product-privacy
+- Terms of Service (B2B) — https://webappski.com/en/legal/terms
+- DPA, including the sub-processor list — https://webappski.com/en/legal/dpa
 
 GDPR-aligned data flows. EU data residency available on Enterprise. Configurable consent flow shown before any AI processing begins. No data is used for model training. Right-to-erasure supported via session deletion API. Annual third-party penetration test. Dependency scanning on every CI run. Responsible disclosure: security@typelessity.com.
 

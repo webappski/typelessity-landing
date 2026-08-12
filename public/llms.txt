@@ -42,10 +42,10 @@
 - [About](https://typelessity.com/about) — Founder, mission
 - [Blog](https://typelessity.com/blog) — Engineering & product writeups
 - [Best AI booking widgets 2026 — comparison and decision guide](https://typelessity.com/blog/best-ai-booking-widgets-2026) — Category-by-category comparison of Botpress, Calendly, NoForm.ai, SimplyBook.me, Typelessity
-- [Privacy](https://typelessity.com/legal/privacy)
-- [Terms](https://typelessity.com/legal/terms)
-- [DPA](https://typelessity.com/legal/dpa)
-- [Security](https://typelessity.com/legal/security)
+- [Privacy](https://webappski.com/en/legal/product-privacy) — end-user privacy policy, published by Webappski (parent company)
+- [Terms](https://webappski.com/en/legal/terms) — B2B terms of service, published by Webappski
+- [DPA](https://webappski.com/en/legal/dpa) — data processing agreement; carries the sub-processor list
+- [Security](https://typelessity.com/legal/security) — served from this domain
 
 ## Comparison snapshot
 
