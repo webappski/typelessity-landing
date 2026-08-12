@@ -27,11 +27,10 @@ const STATIC_PATHS: Url[] = [
   { path: '/faq', changefreq: 'monthly', priority: 0.8 },
   { path: '/about', changefreq: 'yearly', priority: 0.6 },
   { path: '/blog', changefreq: 'weekly', priority: 0.7 },
-  { path: '/legal/privacy', changefreq: 'yearly', priority: 0.3 },
-  { path: '/legal/terms', changefreq: 'yearly', priority: 0.3 },
-  { path: '/legal/dpa', changefreq: 'yearly', priority: 0.3 },
+  // Only /legal/security is a page on this domain. The other legal documents live on
+  // webappski.com and are 308-redirected there by vercel.json, so listing them here
+  // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.
   { path: '/legal/security', changefreq: 'yearly', priority: 0.3 },
-  { path: '/legal/sub-processors', changefreq: 'yearly', priority: 0.3 },
 ];
 
 const dynamicPaths = (): Url[] => [

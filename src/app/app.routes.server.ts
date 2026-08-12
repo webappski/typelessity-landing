@@ -32,7 +32,15 @@ export const serverRoutes: ServerRoute[] = [
       return BLOG_SLUGS.map((slug) => ({ slug }));
     },
   },
-  // External legal docs — true server-side 308 to webappski.com (SSR-safe; AI crawlers see proper redirect, not blank prerendered HTML).
+  // External legal docs — 308 to webappski.com.
+  //
+  // These never fire on the live site: the project deploys as static output, so the SSR
+  // server is not in the request path and each of these paths fell through to the SPA
+  // fallback index.html (HTTP 200 carrying the home page under a legal URL). The enforcing
+  // layer is the `redirects` block in vercel.json, guarded by
+  // src/app/discovery/legal-redirects.spec.ts — change the two together.
+  //
+  // Kept here deliberately: correct and inert today, correct and active if SSR is switched on.
   {
     path: 'legal/privacy',
     renderMode: RenderMode.Server,
