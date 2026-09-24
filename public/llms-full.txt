@@ -139,7 +139,7 @@ Security is served from this domain. The contracts are published by Webappski, t
 - Security — https://typelessity.com/legal/security
 - Privacy (end users) — https://webappski.com/en/legal/product-privacy
 - Terms of Service (B2B) — https://webappski.com/en/legal/terms
-- DPA, including the sub-processor list — https://webappski.com/en/legal/dpa
+- Typelessity DPA, including the sub-processor list (Appendix B) — https://webappski.com/en/legal/dpa-typelessity
 
 GDPR-aligned data flows. EU data residency available on Enterprise. Configurable consent flow shown before any AI processing begins. No data is used for model training. Right-to-erasure supported via session deletion API. Annual third-party penetration test. Dependency scanning on every CI run. Responsible disclosure: security@typelessity.com.
 

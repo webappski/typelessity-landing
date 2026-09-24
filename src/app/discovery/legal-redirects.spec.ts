@@ -42,9 +42,10 @@ const MANIFESTS = ['llms.txt', 'llms-full.txt'].map(
 const OFFSITE_LEGAL: Record<string, string> = {
   '/legal/privacy': 'https://webappski.com/en/legal/product-privacy',
   '/legal/terms': 'https://webappski.com/en/legal/terms',
-  '/legal/dpa': 'https://webappski.com/en/legal/dpa',
-  // No standalone sub-processor page on webappski yet; the DPA carries that section.
-  '/legal/sub-processors': 'https://webappski.com/en/legal/dpa',
+  // Typelessity's own DPA — /en/legal/dpa is TypelessForm's, a different service (A27, 24.09).
+  '/legal/dpa': 'https://webappski.com/en/legal/dpa-typelessity',
+  // No standalone sub-processor page on webappski; the list is Appendix B of that DPA.
+  '/legal/sub-processors': 'https://webappski.com/en/legal/dpa-typelessity',
 };
 
 /** The one legal page that is genuinely served from this domain (prerendered). */

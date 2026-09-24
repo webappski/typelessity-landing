@@ -57,13 +57,13 @@ export const serverRoutes: ServerRoute[] = [
     path: 'legal/dpa',
     renderMode: RenderMode.Server,
     status: 308,
-    headers: { Location: 'https://webappski.com/en/legal/dpa' },
+    headers: { Location: 'https://webappski.com/en/legal/dpa-typelessity' },
   },
   {
     path: 'legal/sub-processors',
     renderMode: RenderMode.Server,
     status: 308,
-    headers: { Location: 'https://webappski.com/en/legal/dpa' },
+    headers: { Location: 'https://webappski.com/en/legal/dpa-typelessity' },
   },
   {
     path: 'legal/security',
