@@ -2,7 +2,7 @@
 title: "GDPR-compliant AI booking: what an EU clinic needs before saying yes"
 description: "Data residency, consent flows, no model training, audit logs, sub-processor list. The compliance contour an AI booking widget needs to clear EU procurement — written for legal counsel, not for marketing."
 publishedAt: "2025-02-25"
-updatedAt: "2026-04-29"
+updatedAt: "2026-09-24"
 author: "Alex Isa"
 category: "Compliance"
 tags: ["gdpr", "privacy", "compliance", "eu"]
@@ -86,7 +86,7 @@ Public, versioned, with email notification on changes:
 - **AWS Frankfurt** — storage and compute.
 - **Resend** — transactional email, only for booking confirmations to clinic staff. Never to patients.
 
-That is it. No analytics SDKs in the widget itself. PostHog runs only on the marketing site (typelessity.com), not on customer deployments — see /blog/latency-budgets for the technical rationale (third-party SDKs blow the latency budget anyway).
+That is it. No analytics SDKs in the widget — see /blog/latency-budgets for the technical rationale (third-party SDKs blow the latency budget anyway).
 
 ## Direct comparison summary
 
