@@ -19,8 +19,21 @@ interface ResendBody {
   reply_to?: string;
 }
 
-const FROM = process.env.CONTACT_FROM ?? 'Typelessity <hello@typelessity.com>';
-const TO = process.env.CONTACT_TO ?? 'hello@typelessity.com';
+// Fallbacks are addresses that work: typelessity.com has no MX record, so a request sent to
+// hello@typelessity.com was never delivered, and it is not a domain verified in Resend, so Resend
+// refuses it as a sender. webappski.com is verified in Resend (resend._domainkey + send.webappski.com)
+// and info@webappski.com receives mail (Cloudflare Email Routing). Checked with dig, 2026-09-24.
+export const FALLBACK_FROM = 'Typelessity <info@webappski.com>';
+export const FALLBACK_TO = 'info@webappski.com';
+
+/** Read per request, not at import, so the route follows the env the function actually runs with. */
+export function mailRoute(env: Record<string, string | undefined> = process.env): { from: string; to: string } {
+  const unset = (['CONTACT_FROM', 'CONTACT_TO'] as const).filter((k) => !env[k]);
+  if (unset.length) {
+    console.warn(`[contact] ${unset.join(' and ')} not set — sending via ${FALLBACK_TO}`);
+  }
+  return { from: env['CONTACT_FROM'] || FALLBACK_FROM, to: env['CONTACT_TO'] || FALLBACK_TO };
+}
 
 function bad(message: string, status = 400): Response {
   return new Response(JSON.stringify({ ok: false, error: message }), {
@@ -82,9 +95,10 @@ export default async function handler(req: Request): Promise<Response> {
       message ? `\n${message}` : '',
     ].join('\n');
 
+    const { from, to } = mailRoute();
     const payload: ResendBody = {
-      from: FROM,
-      to: TO,
+      from,
+      to,
       subject: `[Pilot] ${company} (${industry})`,
       text,
       reply_to: email,
