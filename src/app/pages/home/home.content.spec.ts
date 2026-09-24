@@ -67,3 +67,58 @@ test('HOME.pricing: exactly one tier marked featured', () => {
   const featured = HOME.pricing.tiers.filter((t) => t.featured);
   assert.equal(featured.length, 1);
 });
+
+// A34 (c8, 2026-09-24): the data answers said what the product does not do — «24 hours» for
+// abandoned conversations (the widget notice and the code say 48: eligible at 24 h, removed by the
+// nightly job), a 90-day default, «Frankfurt, Paris», a DELETE /api/session route that does not
+// exist, dpo@/security@typelessity.com (typelessity.com has no MX record), daily snapshots with
+// point-in-time recovery (the free tiers have neither). Sources: ~/Projects/typelessity
+// constants.ts SESSION_DELETION_WORST_CASE_HOURS, cleanup-sessions/route.ts, and the Typelessity
+// DPA §5.5, §5.6, §5.8, §7.1, Appendix A. The guard reads every surface that repeats these answers.
+import { readFileSync } from 'node:fs';
+import { PRICING_FAQ } from '../pricing/pricing.content';
+
+const DATA_SURFACES: readonly { name: string; text: string }[] = [
+  { name: 'home FAQ', text: HOME.faq.map((qa) => qa.a).join('\n') },
+  { name: 'pricing FAQ', text: PRICING_FAQ.map((qa) => qa.a).join('\n') },
+  { name: '/legal/security', text: readFileSync('src/app/pages/legal/legal-page.component.ts', 'utf8') },
+  { name: 'llms-full.txt', text: readFileSync('public/llms-full.txt', 'utf8') },
+];
+
+test('data answers: every email address is one that receives mail', () => {
+  const allowed = new Set(['info@webappski.com']);
+  for (const { name, text } of DATA_SURFACES) {
+    for (const addr of text.match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g) ?? []) {
+      assert.ok(allowed.has(addr), `${name} publishes ${addr}, which no mailbox receives`);
+    }
+  }
+});
+
+test('data answers: no API route is promised that the typelessity API does not serve', () => {
+  for (const { name, text } of DATA_SURFACES) {
+    assert.ok(!/DELETE \/api|session deletion API/i.test(text), `${name} promises a session deletion API`);
+  }
+});
+
+test('data answers: retention, location, backups and training are stated as the code and the DPA state them', () => {
+  const banned: readonly RegExp[] = [
+    /24 hours for abandoned/i, /90 days for completed/i, /default 30 days/i, /retained per your retention policy/i,
+    /Paris/, /EU regions when configured/i, /residency available on Enterprise/i,
+    /TLS 1\.3/, /Field-level encryption/i, /Point-in-time recovery to any minute/i, /Daily automated Postgres snapshots/i,
+    /penetration test/i, /data-opt-out flag/i, /propagates to backups/i,
+  ];
+  for (const { name, text } of DATA_SURFACES) {
+    for (const re of banned) assert.ok(!re.test(text), `${name} still says ${re}`);
+  }
+  assert.match(answer(/How long is conversation data retained/i), /within 48 hours/);
+  assert.match(answer(/physically stored/i), /Frankfurt[\s\S]*Ireland/);
+  assert.match(answer(/right-to-erasure/i), /info@webappski\.com/);
+});
+
+test('data answers: no erase feature is promised that the owner cannot use today', () => {
+  // POST /api/admin/conversations/erase exists (typelessity 7231ca2) but the portal has no screen for
+  // it, and no card builds one — so the written instruction is the only route, and nothing says «planned».
+  for (const { name, text } of DATA_SURFACES) {
+    assert.ok(!/self-service (erase )?button|erase button[^.]*planned/i.test(text), `${name} promises an erase button`);
+  }
+});

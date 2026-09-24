@@ -24,34 +24,33 @@ const LEGAL_TEXT: Record<LegalDoc, LegalContent> = {
     title: 'Security',
     body: `## Infrastructure
 
-Typelessity runs on Vercel (edge functions, prerendered static assets) and OpenAI (gpt-4.1-nano + Whisper). Database: Supabase (Postgres + Row Level Security). EU region for European customers.
+The service runs on Vercel in the EU (Frankfurt, fra1). The database is Supabase Postgres in the EU (AWS eu-west-1, Ireland). OpenAI (conversation understanding and speech-to-text) and Resend (delivery of request emails) process in the United States under the 2021 Standard Contractual Clauses. The full list is Appendix B of the [Typelessity DPA](https://webappski.com/en/legal/dpa-typelessity).
 
 ## Encryption
 
-- TLS 1.2+ for all in-transit traffic.
-- AES-256 at rest for Supabase storage.
-- Strict CSP, HSTS, X-Frame-Options DENY on all pages.
+- TLS on every connection the service receives and makes: browser to service, service to database, service to each sub-processor. A booking endpoint must be an https:// URL; plain http:// is refused.
+- Database encryption at rest as provided by the database platform. Integration secrets you store carry a second, application-level AES-256-GCM encryption.
+- API keys are stored only as hashes; the plaintext key is shown once, at creation.
+- Strict CSP, HSTS, X-Frame-Options DENY on all pages of this site.
 
 ## Access control
 
-- SSO + 2FA required for all employees.
-- Least-privilege role model. Production access logged and reviewed monthly.
-- Customer data access requires explicit ticket and is fully audited.
+- Configurations, conversations and results are isolated per organisation, and every request is authenticated per organisation.
+- The administrative consoles of our providers are reachable only by the proprietor, each behind an individual account.
 
 ## Backups
 
-- Daily automated Postgres snapshots, 30-day retention.
-- Point-in-time recovery to any minute within retention window.
+- The service runs on the free tiers of its hosting and database providers. On those tiers there are no automatic backups and no point-in-time recovery; what exists is a database export taken by hand.
+- Before the widget is first installed live on a customer's site, or before the first invoice — whichever comes first — both platforms move to plans with automatic daily backups.
 
 ## Vulnerability management
 
-- Annual third-party penetration test.
-- Dependency scanning on every CI run.
-- Responsible disclosure: security@typelessity.com (PGP key on request).
+- Automated tests run on every change; changes that touch a security boundary carry tests verified to fail when the protection is removed.
+- Security reports: info@webappski.com.
 
 ## Compliance
 
-GDPR-aligned data flows.
+GDPR-aligned data flows. The limits above are stated in Appendix A of the Typelessity DPA.
 
 <!-- TODO(content): legal review before production launch — Phase 9 -->
 `,

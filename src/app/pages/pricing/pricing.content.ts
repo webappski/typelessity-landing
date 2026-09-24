@@ -8,6 +8,6 @@ export const PRICING_FAQ = [
   { q: 'Do you charge per booking, per session, or per AI call?', a: 'Paid tiers are structured per submission volume per month — no per-AI-call surprises. We absorb GPT cost variance.' },
   { q: 'Can I run my own GPT key?', a: 'No, not currently. Typelessity manages the AI provider on its infrastructure. Bringing your own OpenAI or Azure OpenAI key is planned for a future Enterprise tier.' },
   { q: 'What happens if GPT is down?', a: 'The widget falls back to a minimal form path (the same fields, no chat) so booking never breaks. Enrichment failures are non-fatal — the AI continues with whatever data it has.' },
-  { q: 'Do you store user input?', a: 'Sessions will be retained per your retention policy (default 30 days). Right-to-erasure supported via session deletion API. No data is used for model training.' },
+  { q: 'Do you store user input?', a: 'Yes, in the EU. An abandoned conversation is deleted within 48 hours of the visitor\'s last message; one that led to a booking is kept until you ask us to erase it, by written instruction to info@webappski.com. No data is used for model training.' },
   { q: 'Is there a commitment?', a: 'No. Pilot is free and capped at 50 submissions/month. Paid plans bill monthly with no long-term commitment unless you choose an annual contract for a discount.' },
 ] as const satisfies readonly { q: string; a: string }[];
