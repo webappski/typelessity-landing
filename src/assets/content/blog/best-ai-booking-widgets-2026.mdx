@@ -36,7 +36,7 @@ Three forces converged in the last two years and made the booking-form interface
 
 - **Multilingual LLMs.** GPT-4-class models handle 25+ languages without per-language code, removing the historical barrier to international booking surfaces.
 - **Sub-second extraction latency.** Models like GPT-4.1-nano return structured output in 300–800 ms, fitting inside a 1-second p95 budget that conversational interfaces require to feel responsive. See /blog/latency-budgets for the full architecture.
-- **Procurement-compatible AI compliance.** EU residency tiers, no-training contractual flags, and DPA templates removed the legal blockers that stalled AI booking deals in 2023–2024. See /blog/gdpr-compliance for the contour.
+- **Procurement-compatible AI compliance.** EU hosting, written terms on model training, and DPA templates with named sub-processors removed the legal blockers that stalled AI booking deals in 2023–2024. See /blog/gdpr-compliance for what to check.
 
 The result: in 2026, replacing a 7-field booking form with a 1-message extraction is no longer a research question. It is a product decision.
 
@@ -180,7 +180,7 @@ Listed alphabetically. Each entity uses the same five-field template — *What t
       <td>Yes</td>
       <td>Varies</td>
       <td>Yes</td>
-      <td>Yes (EU tier + on-premise)</td>
+      <td>Yes (EU hosting and database; OpenAI in the US under SCCs)</td>
     </tr>
     <tr>
       <td>Pricing model</td>
@@ -212,7 +212,7 @@ The five tools are not direct competitors in most use cases. The procurement que
 - **You have an existing booking backend and want to replace the form with conversation** → Typelessity.
 - **You operate in 5+ languages and the booking is appointment-shaped** → Typelessity (single-prompt multilingual extraction).
 - **You need voice booking on mobile** → Typelessity (Whisper-based) or a custom Botpress build.
-- **You need EU sovereignty, no-training flag, and an audit log out of the box** → Typelessity (EU tier or on-premise) or SimplyBook.me.
+- **You need EU hosting, no training on your conversations, and a DPA with a named sub-processor list** → Typelessity (service in Frankfurt, database in Ireland; OpenAI processes in the US under SCCs) or SimplyBook.me.
 
 ## Direct comparison summary
 

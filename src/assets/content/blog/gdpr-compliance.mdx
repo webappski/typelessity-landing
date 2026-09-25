@@ -1,134 +1,105 @@
 ---
-title: "GDPR-compliant AI booking: what an EU clinic needs before saying yes"
-description: "Data residency, consent flows, no model training, audit logs, sub-processor list. The compliance contour an AI booking widget needs to clear EU procurement — written for legal counsel, not for marketing."
+title: "GDPR and an AI booking widget: what to check before you say yes"
+description: "Where the data is processed, who the sub-processors are, how long conversations stay, how consent works and what the DPA says — the questions an EU business should ask an AI booking widget, with Typelessity's answers as the code and the DPA state them."
 publishedAt: "2025-02-25"
-updatedAt: "2026-09-24"
+updatedAt: "2026-09-25"
 author: "Alex Isa"
 category: "Compliance"
 tags: ["gdpr", "privacy", "compliance", "eu"]
 faqs:
-  - q: "What does GDPR-compliant AI booking actually require?"
-    a: "Five concrete things: EU data residency for processing and storage, an OpenAI 'no training on customer data' contractual flag, a consent flow that distinguishes legal-basis categories (contract necessity vs opt-in), an immutable audit log retained for a defined period, and a public sub-processor list with notification on changes. Anything less stalls EU procurement."
-  - q: "What is the legal basis for processing user input through an AI booking widget under GDPR?"
-    a: "For the core booking flow, the legal basis is contractual necessity (Art. 6(1)(b)) — the user is requesting a service and processing is necessary to fulfill it. Functional preferences and analytics ride on opt-in consent (Art. 6(1)(a)) and are withdrawable. Health data triggers Art. 9 special-category protections and a separate consent step."
-  - q: "How does Typelessity prevent OpenAI from training on customer data?"
-    a: "Typelessity's OpenAI contract has the no-training flag set, with written confirmation. That contractual guarantee is passed through Typelessity's DPA to the customer. This is the most-asked question in EU healthcare procurement; without a written answer, deals stall in legal review."
-  - q: "Where are user messages and extracted bookings stored?"
-    a: "Processing and storage happen in EU regions — typically eu-central-1 — with no replication to US regions. The DPA names the sub-processors explicitly: OpenAI (EU residency tier), AWS (Frankfurt), and Resend (transactional email to clinic staff only). Stricter sovereignty (German-only, on-premise) is available on Enterprise."
-  - q: "How long are audit logs retained?"
-    a: "Audit records are retained 13 months by default and then deleted. Each record contains booking_id, timestamp, locale, prompt and model version hashes, enrichment calls made, fields extracted, fields corrected by the user, and final payload hash. Users can request export or deletion via a self-serve endpoint provided to clinics."
+  - q: "What should an EU business check before adding an AI booking widget?"
+    a: "Five things: where the conversation is processed and stored, including by the AI provider; whether the provider trains on it and how long it keeps it; how the visitor's consent is asked and withdrawn; how long conversations are kept and how they are erased; and which sub-processors the DPA names. Ask for each answer in writing, from the contract or the code, not from a sales page."
+  - q: "Where does Typelessity process and store conversations?"
+    a: "The service runs on Vercel in Frankfurt (fra1) and the database is Supabase on AWS in Ireland (eu-west-1). OpenAI, which understands the conversation and transcribes voice, processes in the United States, and Resend, which delivers request emails, too — both under the 2021 Standard Contractual Clauses. Appendix B of the Typelessity DPA names each one."
+  - q: "Does OpenAI train on Typelessity conversations?"
+    a: "No. OpenAI does not use data sent to its API for training unless the account opts in, and ours has not. OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it; the transcription endpoint keeps no such copy. Typelessity has no Zero Data Retention approval from OpenAI. The Typelessity DPA also forbids us from using conversation content to train any model."
+  - q: "Can the widget be used for health data?"
+    a: "No. The Typelessity DPA does not allow special-category data under GDPR Article 9, so health details must not be collected through the widget. Medical example configurations are demos, not for real patients."
 ---
 
-<strong>GDPR-compliant AI booking requires five things: EU data residency for processing and storage, an OpenAI no-training contractual flag with written confirmation, a consent flow that separates legal-basis categories, an immutable audit log with defined retention, and a public sub-processor list with change notifications. Typelessity ships all five and passes the contractual guarantees through to the customer DPA. Read /legal/dpa when published.</strong>
+<strong>Before an EU business puts an AI booking widget on its site, it should check five things: where the conversation is processed and stored, including by the AI provider; whether that provider trains on it and how long it keeps it; how consent is asked and withdrawn; how long conversations are kept and how they are erased; and which sub-processors the DPA names. Below are the questions, and Typelessity's answers as the code and the DPA state them — including what we do not offer.</strong>
 
-EU clinics evaluating an AI booking widget have a procurement-layer checklist that has nothing to do with the AI and everything to do with what happens to the user's words after they hit Send. This article is the version of the answer written for legal counsel — not the version written for marketing.
+You, the business, are the controller of your visitors' data; Typelessity is your processor under a data processing agreement (GDPR Article 28). A compliance status is therefore not something a vendor can hand you. What a vendor can give you is a data path you can inspect and a contract that matches it. This article is not legal advice; for anything high-stakes, ask your data protection officer or lawyer.
 
-## What does GDPR-compliant AI booking actually require?
+## What should an EU business check before adding an AI booking widget?
 
-Five concrete things, in priority order:
+1. **Where the data goes.** Where the service and the database run, and where the AI provider processes the text — which is often a different country. Transfers outside the EEA need a mechanism such as the Standard Contractual Clauses (Articles 44–46).
+2. **Training and provider retention.** Whether the AI provider trains on the conversation, and how long it keeps a copy.
+3. **Consent.** Whether the visitor is asked before any AI processing starts, and how they withdraw (Article 7).
+4. **Retention and erasure.** How long conversations stay, what deletes them, and how an erasure request is handled (Articles 5(1)(e) and 17).
+5. **Sub-processors.** A named list in the DPA, with notice before it changes (Article 28).
 
-1. **Data residency.** Processing and storage in EU regions, no silent replication to US regions, named regions in the DPA.
-2. **No model training.** A contractual no-training flag with the LLM provider, with written confirmation, passed through to the customer.
-3. **Consent flow.** Separate legal-basis categories (contractual necessity vs opt-in), withdrawable for opt-in, durable for contract.
-4. **Audit log.** Immutable record of every booking, defined retention, self-serve deletion / export endpoint.
-5. **Sub-processor list.** Public, versioned, change notifications.
+**Bottom line:** the AI is not the regulated object — the data path is. Ask for each answer from the contract or the code.
 
-Without all five, EU procurement does not move. The order in this article matches the order legal counsel asks the questions.
+## Where does Typelessity process and store data?
 
-**Bottom line:** the AI is not the regulated object — the data path is. Make the data path inspectable and the AI follows.
+The service runs on Vercel in Frankfurt (fra1). The database is Supabase Postgres on AWS in Ireland (eu-west-1). This is the same for every plan; there is no separate residency tier.
 
-## How does data residency work in Typelessity?
+Two providers process outside the EEA: OpenAI, which understands the conversation and transcribes voice, and Resend, which delivers request emails to the business. Both process in the United States under the 2021 Standard Contractual Clauses.
 
-GPT-4.1-nano runs in OpenAI's EU residency tier. User messages, extracted JSON, and audit logs are processed and stored in `eu-central-1`. There is no replication to US regions. The DPA names AWS Frankfurt and OpenAI EU as the only relevant sub-processors for the core booking flow.
+Typelessity is a hosted service only. There is no on-premise or self-hosted build, and conversations always go to OpenAI through our account — there is no option to bring your own key or another AI provider.
 
-Where stricter sovereignty is required — German-only, on-premise, or air-gapped — Typelessity offers Enterprise on-premise deployment with self-hosted models. Latency rises, sovereignty rises, price rises. The trade-off is documented; nothing is hidden behind a sales call.
+Every connection the service receives and makes uses TLS, and a booking endpoint must be an https:// URL. Integration secrets you store, such as an API key for your booking system, carry an extra application-level AES-256-GCM encryption.
 
-**Bottom line:** EU residency is the default; the upgrade path to stricter sovereignty exists; both are written into the DPA.
+## Does OpenAI train on the conversations, and how long does it keep them?
 
-## How does Typelessity prevent OpenAI from training on customer data?
+OpenAI does not use data sent to its API for training unless the account opts in, and ours has not. The Typelessity DPA also forbids us from using conversation content to train any model, ours or anyone else's.
 
-Typelessity's OpenAI contract has the no-training flag set. There is written confirmation of that flag. Typelessity passes the contractual guarantee through its DPA to the customer.
+OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it. Its transcription endpoint keeps no such copy, and Typelessity never saves voice audio — it exists only while it is being transcribed. We hold no Zero Data Retention approval from OpenAI and cannot shorten its 30 days; if a contract requires Zero Data Retention, we can apply for it, but the decision is OpenAI's.
 
-This is the single most-asked question in EU healthcare procurement. If the AI vendor cannot answer it in writing — not in a marketing claim, not in a sales call — the deal stalls in legal review and rarely recovers. Period.
+## How does consent work in the widget?
 
-The same guarantee also matters for the audit log: Typelessity does not log raw user input to any analytics or telemetry surface that could be reused for training. Internal logs are retained for the defined window, then deleted.
+Before the assistant does anything — typing or speaking — the widget asks the visitor for consent, the same way in every region. The server checks for a consent record before a conversation can start and again on every message. The consent is recorded on our side and remembered in the visitor's browser so they are not asked again, and it can be withdrawn at any time from the privacy panel inside the widget.
 
-## What does the consent flow look like?
+The widget has no analytics and sets no cookies. Which legal basis applies to your booking process is your decision as the controller.
 
-Before the chat starts, the widget renders a consent banner with three explicit choices:
+## How long is data kept, and how is it erased?
 
-- **Required.** Process the user's message to complete the booking. Cannot be declined. Legal basis: contractual necessity (Art. 6(1)(b)). The user is requesting a booking; processing is necessary to fulfill the request.
-- **Functional.** Remember language preference for 30 days. Default off. Legal basis: opt-in consent (Art. 6(1)(a)). Withdrawable.
-- **Analytics.** Anonymized event logs for product improvement. Default off. Legal basis: opt-in consent (Art. 6(1)(a)). Withdrawable.
+An abandoned conversation — no booking and no activity for 24 hours — is removed by a job that runs once a night, so it is gone within 48 hours of the visitor's last message. A conversation that led to a booking or a forwarded request has no automatic expiry: it is kept until the business erases it. The record that the visitor consented is kept for 3 years and then deleted by the same nightly job.
 
-The required basis cannot be consent — consent can be withdrawn mid-booking, which would leave the booking in a broken state. Contractual necessity is the durable basis for the core flow; opt-in consent rides on top for everything optional.
+To erase a conversation, send a written instruction to info@webappski.com naming it. We erase the conversation and its messages and strip the personal content from its delivery record, leaving only status and timing as proof of delivery. Requests covering more than one conversation are handled within 10 working days. There is no self-service erasure or export endpoint.
 
-Withdrawal endpoint: `/api/consent/withdraw`. Withdrawal takes effect immediately for functional/analytics scopes and removes the corresponding records.
+## Who are the sub-processors?
 
-**Bottom line:** the legal-basis split is the durability question. Get the basis wrong and your booking flow breaks the moment a user changes their mind.
+Appendix B of the [Typelessity DPA](https://webappski.com/en/legal/dpa-typelessity) lists them, each with its contracting entity, where the data is processed and the transfer mechanism:
 
-## What is in the audit log?
+- **Vercel** — hosting, EU (Frankfurt).
+- **Supabase** — database, EU (AWS Ireland).
+- **OpenAI** — conversation understanding and speech-to-text, processed in the United States.
+- **Resend** — delivery of request emails, United States.
 
-Every booking generates an immutable audit record:
+Changes are notified at least 30 days in advance.
 
-- `booking_id`, `created_at`, `locale`, `client_id`
-- `prompt_version_hash`, `model_version`, `enrichment_calls_made`
-- `fields_extracted`, `fields_corrected_by_user`, `final_payload_hash`
-- `data_subject_request_status` (open / responded / closed)
+## Can the widget be used for health data?
 
-Logs are retained 13 months, then deleted. Users can request export or deletion via a self-serve endpoint provided to clinics. The audit log is the artifact a Data Protection Officer reads when a Data Subject Access Request lands; it has to be readable without the AI vendor in the loop.
+No. The Typelessity DPA does not allow special-category data under GDPR Article 9 — health details must not be collected through the widget. Medical example configurations are demos, not for real patients. US healthcare with HIPAA requirements is not supported either.
 
-## What is in the sub-processor list?
+## What Typelessity does not offer
 
-Public, versioned, with email notification on changes:
+So nothing here reads as more than it is:
 
-- **OpenAI Ireland** — LLM inference.
-- **AWS Frankfurt** — storage and compute.
-- **Resend** — transactional email, only for booking confirmations to clinic staff. Never to patients.
-
-That is it. No analytics SDKs in the widget — see /blog/latency-budgets for the technical rationale (third-party SDKs blow the latency budget anyway).
-
-## Direct comparison summary
-
-The five compliance requirements ranked by procurement-blocking power:
-
-- **No-training contractual flag** → most-blocking; if missing, deal stalls
-- **EU data residency** → second-most-blocking; required for healthcare and finance
-- **Sub-processor list** → required by DPA template across most enterprise customers
-- **Audit log retention** → required for DSAR response; 12+ months is standard
-- **Consent flow with legal-basis split** → required for production; affects every user
-
-PII minimization is enforced by config: the widget only extracts what the clinic config explicitly requires. Health data (Art. 9 special category) is collected only if the config includes it, with a separate Art. 9 consent step.
-
-## When the on-premise option is the right call
-
-On-premise / self-hosted Typelessity is the correct choice when:
-
-- **Data sovereignty rules are stricter than EU residency** (German-only, hospital-internal, defense-adjacent).
-- **The customer's DPO refuses any non-EU sub-processor** even with the no-training flag.
-- **The customer has its own LLM infrastructure** and prefers to keep inference inside its perimeter.
-
-On-premise comes at a cost: latency rises (no Whisper-streaming optimizations, see /blog/whisper-vs-webspeech), price rises, integration takes longer. For most EU clinics, the EU residency tier with no-training flag is sufficient and cheaper.
+- no on-premise or self-hosted build;
+- no Zero Data Retention with OpenAI;
+- no uptime commitment in the standard terms;
+- no self-service erasure or export endpoint, and no audit-log product;
+- no special-category (health) data.
 
 ## FAQ
 
-**What does GDPR-compliant AI booking actually require?**
-EU data residency, an LLM no-training flag with written confirmation, a consent flow split by legal basis, an immutable audit log, and a public sub-processor list.
+**What should an EU business check before adding an AI booking widget?**
+Where the conversation is processed and stored, whether the AI provider trains on it and how long it keeps it, how consent works, how conversations are erased, and which sub-processors the DPA names.
 
-**What is the legal basis for processing user input?**
-Contractual necessity (Art. 6(1)(b)) for the core booking. Opt-in consent (Art. 6(1)(a)) for functional and analytics. Art. 9 consent for health data when the config requires it.
+**Where does Typelessity process and store conversations?**
+Service in Frankfurt, database in Ireland; OpenAI and Resend process in the United States under the 2021 Standard Contractual Clauses.
 
-**How does Typelessity prevent OpenAI from training on customer data?**
-The no-training flag is set in Typelessity's OpenAI contract, with written confirmation, passed through to the customer DPA.
+**Does OpenAI train on Typelessity conversations?**
+No. It keeps conversation text for up to 30 days to check for abuse, then deletes it.
 
-**Where are user messages stored?**
-EU regions only — typically `eu-central-1`. No replication to US. The DPA names sub-processors explicitly. Stricter sovereignty available on Enterprise on-premise.
-
-**How long are audit logs retained?**
-13 months by default, then deleted. Users can request export or deletion via a self-serve endpoint provided to clinics.
+**Can the widget be used for health data?**
+No. The DPA does not allow special-category data under Article 9.
 
 ---
 
-For the single-call extraction architecture that produces the audited bookings, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the latency budget that excludes third-party analytics SDKs, see [Latency budgets](/blog/latency-budgets). For voice-input residency considerations, see [Whisper vs Web Speech](/blog/whisper-vs-webspeech). The customer-facing DPA, when published, lives at /legal/dpa.
+For the single-call extraction architecture behind each conversation, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For why the widget carries no third-party analytics SDKs, see [Latency budgets](/blog/latency-budgets). Security measures in detail: [/legal/security](/legal/security).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

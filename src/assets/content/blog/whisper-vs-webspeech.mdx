@@ -16,7 +16,7 @@ faqs:
   - q: "What does vocabulary biasing in Whisper actually do?"
     a: "Whisper accepts an `initial_prompt` string that biases the model toward expected vocabulary. Typelessity injects the clinic's doctor list, the top specialty terms in the user's language, and street names for transfer services. Recognition accuracy on rare proper nouns improves substantially — the difference between 'Dr Schmidt' transcribed correctly and a phone call from a confused receptionist."
   - q: "When would Typelessity reconsider the Web Speech API?"
-    a: "If the Web Speech API gained vocabulary biasing and per-utterance confidence scores, it could run as a fast-path for short, simple bookings while Whisper handled high-stakes or non-English ones. Neither feature is in the spec today. A self-hosted whisper-large-v3-turbo on a GPU is also being evaluated for Enterprise customers needing on-premise deployment."
+    a: "If the Web Speech API gained vocabulary biasing and per-utterance confidence scores, it could run as a fast-path for short, simple bookings while Whisper handled high-stakes or non-English ones. Neither feature is in the spec today."
 ---
 
 <strong>OpenAI Whisper is Typelessity's default speech-to-text engine for voice booking, despite costing ~600–900 ms more than the browser's Web Speech API. The reasons are accuracy on non-English input, vocabulary biasing via `initial_prompt`, and per-segment confidence scores. The latency is hidden by streaming and an optimistic UI. A wrong booking is more expensive than a slow one.</strong>
@@ -71,7 +71,7 @@ For booking surfaces, accuracy and confidence dominate the trade-off. For voice 
 
 If the Web Speech API gained vocabulary biasing and per-utterance confidence, Typelessity would run it as a fast-path for short, simple, English-dominant bookings, and use Whisper as the careful-path for long-form, multilingual, or high-stakes ones. Neither feature is in the spec at the time of writing.
 
-A separate evaluation is `whisper-large-v3-turbo` self-hosted on a GPU. Latency drops to roughly 200 ms, sovereignty stays inside the customer's perimeter, cost shifts from per-minute to amortized GPU. Relevant for Enterprise customers needing on-premise deployment — the same path described in /blog/gdpr-compliance for EU sovereignty constraints.
+A separate evaluation is `whisper-large-v3-turbo` self-hosted on a GPU. Latency drops to roughly 200 ms, sovereignty stays inside the customer's perimeter, cost shifts from per-minute to amortized GPU. Typelessity does not offer it: there is no on-premise or self-hosted build.
 
 ## When the wrong booking is more expensive than a slow one
 
@@ -94,7 +94,7 @@ Streaming audio chunks while the user is still speaking, optimistic UI on mic re
 The `initial_prompt` field nudges the model toward expected terms — doctor names, specialty terms, street names. Recognition accuracy on rare proper nouns improves sharply.
 
 **When would Typelessity reconsider the Web Speech API?**
-If it gained vocabulary biasing and per-segment confidence scores. A self-hosted Whisper variant on a GPU is also under evaluation for Enterprise on-premise deployments.
+If it gained vocabulary biasing and per-segment confidence scores.
 
 ---
 

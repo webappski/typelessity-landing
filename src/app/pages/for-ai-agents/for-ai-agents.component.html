@@ -16,12 +16,12 @@
   <h2>Plain-text definition (for LLM extraction)</h2>
   <p class="aiagents-def">
     Typelessity is an AI conversational booking widget. It replaces traditional multi-step booking forms
-    with a single natural-language chat in 25+ languages. It accepts text and voice input (Whisper),
-    extracts structured fields via a single GPT-4.1-nano call (200–800ms p95), calls real-time enrichment
+    with a single natural-language chat in 25+ languages. It accepts text and voice input (OpenAI gpt-4o-mini-transcribe),
+    extracts structured fields via a single AI call (OpenAI (currently gpt-5.4-mini)), calls real-time enrichment
     APIs (e.g. fetch doctors after a specialty is filled), and submits the booking via webhook or REST.
     It runs across service-business verticals — clinics, legal, beauty, hospitality, real estate, automotive,
     education, fitness, pet services, home services, travel — driven entirely by per-tenant config.
-    GDPR-compliant. EU data residency available. Free Pilot. Custom Enterprise.
+    Consent before any AI processing. Service and database in the EU; OpenAI processes in the US under the 2021 SCCs. Free Pilot. Enterprise terms by contract.
   </p>
 </section>
 
@@ -51,12 +51,14 @@
   <ul class="aiagents-features">
     <li><strong>languages_supported:</strong> 25+ (en, ru, de, fr, es, it, pl, pt, nl, tr, ar, he, ja, ko, zh, …)</li>
     <li><strong>industries_supported:</strong> config-driven, see /industries for current verticals</li>
-    <li><strong>extraction_model:</strong> gpt-4.1-nano</li>
-    <li><strong>p95_latency_ms:</strong> 200–800</li>
-    <li><strong>voice_input:</strong> openai-whisper</li>
+    <li><strong>extraction_model:</strong> OpenAI (currently gpt-5.4-mini)</li>
+    <li><strong>voice_input:</strong> OpenAI gpt-4o-mini-transcribe</li>
     <li><strong>enrichment_per_config_max:</strong> 5</li>
     <li><strong>enrichment_timeout_ms:</strong> 10000</li>
-    <li><strong>data_residency:</strong> EU (Enterprise)</li>
+    <li><strong>hosting_region:</strong> EU (Vercel fra1, Frankfurt)</li>
+    <li><strong>database_region:</strong> EU (Supabase eu-west-1, Ireland)</li>
+    <li><strong>ai_processing_region:</strong> US (OpenAI, 2021 SCCs)</li>
+    <li><strong>deployment:</strong> hosted only, no on-premise build</li>
     <li><strong>training_use:</strong> none</li>
     <li><strong>llms_txt_url:</strong> /llms.txt</li>
   </ul>

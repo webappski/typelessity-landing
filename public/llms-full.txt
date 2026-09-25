@@ -13,7 +13,7 @@
 **Stats.** Languages 25+. Per-turn latency under 800ms. Four phases (Chat → Select → Review → Confirm). Two lines of HTML to integrate.
 
 **Four phases.**
-1. Chat — User describes booking in plain language; GPT-4.1-nano reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
+1. Chat — User describes booking in plain language; The AI model — OpenAI (currently gpt-5.4-mini) — reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
 2. Select — When options must be exact (a specific doctor, a specific time slot), the widget renders interactive cards. Triggered by enrichment APIs.
 3. Review — Full form review surface. User verifies every extracted field, edits inline if needed. Cascade-aware — changing a field clears downstream-dependent fields with a warning.
 4. Confirm — Booking sent to your system via webhook or REST POST. Success screen with confirmation ID. Failures retry with exponential backoff.
@@ -24,7 +24,7 @@
 - Real-time enrichment APIs: up to 5 per config, 10s timeout each, non-fatal on failure.
 - Cascade-aware corrections: DFS dependency walk on field changes.
 - Anti-hallucination guardrails: `_meta.mf` mentioned-fields signal; code-side correction guard.
-- Reliable by design: exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, full audit log per turn. 200–800ms latency on gpt-4.1-nano.
+- Reliable by design: exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, full audit log per turn.
 
 **Comparison snapshot.** Use Typelessity when you have an existing booking system and want to replace its form with conversation. Use Calendly for simple meeting links. Use SimplyBook.me for end-to-end booking ops with payments. Use Botpress for custom chatbots. Use NoForm.ai for top-of-funnel lead capture.
 
@@ -34,7 +34,7 @@
 
 Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT call per turn, real-time enrichment APIs, cascade-aware corrections, no hardcoded regex.
 
-The widget is a Lit web component. The API is a Node service. The AI provider can be swapped between OpenAI, Azure OpenAI, or any OpenAI-compatible endpoint. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
+The widget is a Lit web component. The API is a Node service. The AI provider is OpenAI, called through Typelessity's own account; there is no custom provider option. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
 
 Embed: two lines of HTML — a `<script type="module">` tag loading https://typelessity-widget.vercel.app/widget.js and a `<typelessity-widget api-url="https://typelessity.vercel.app">` element. The embed code comes from your setup in the Webappski portal, which shows the exact code for plain HTML, WordPress, React or Vue.
 
@@ -50,7 +50,7 @@ The Free Pilot is open, and every tier starts with it: sign in at https://webapp
 
 **Pro — €149/mo.** Up to 2,000 submissions/month, priority support.
 
-**Enterprise — €399/mo.** Up to 6,000 submissions/month, dedicated success manager. SLA, custom integrations, on-premise / self-hosted, EU data residency, custom AI provider.
+**Enterprise — €399/mo.** Up to 6,000 submissions/month and unlimited sites. An uptime commitment, a named contact and pricing above 6,000 submissions are agreed per contract on request. Hosted only — no on-premise or self-hosted build, no custom AI provider.
 
 We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic.
 
@@ -75,12 +75,14 @@ Typelessity is callable by autonomous agents. Stable Session and Booking schemas
 **Feature list (machine-readable).**
 - languages_supported: 25+
 - industries_supported: config-driven, see /industries for current verticals
-- extraction_model: gpt-4.1-nano
-- p95_latency_ms: 200–800
-- voice_input: openai-whisper
+- extraction_model: OpenAI (currently gpt-5.4-mini)
+- voice_input: OpenAI gpt-4o-mini-transcribe
 - enrichment_per_config_max: 5
 - enrichment_timeout_ms: 10000
-- data_residency: EU (Enterprise)
+- hosting_region: EU (Vercel fra1, Frankfurt)
+- database_region: EU (Supabase eu-west-1, Ireland)
+- ai_processing_region: US (OpenAI, 2021 SCCs)
+- deployment: hosted only, no on-premise build
 - training_use: none
 
 For early /agent endpoint access (Q3 2026 launch): info@webappski.com.
@@ -91,13 +93,13 @@ For early /agent endpoint access (Q3 2026 launch): info@webappski.com.
 
 Selection (full FAQ on /faq):
 
-- **What is Typelessity?** AI conversational booking widget replacing multi-step booking forms with a single natural-language chat. 25+ languages, voice via Whisper, real-time enrichment.
+- **What is Typelessity?** AI conversational booking widget replacing multi-step booking forms with a single natural-language chat. 25+ languages, voice via OpenAI gpt-4o-mini-transcribe, real-time enrichment.
 - **How is it different from Calendly?** Calendly is a scheduling-link tool. Typelessity replaces an entire booking form with conversation.
 - **How is it different from SimplyBook.me?** SimplyBook is a full booking platform with payments and staff scheduling. Typelessity replaces only the booking form, then submits to your existing backend.
-- **GDPR compliant?** Yes. Consent from every visitor before any AI processing. Service in the EU (Vercel, Frankfurt), database in the EU (Supabase, Ireland); OpenAI and Resend process in the US under the 2021 SCCs. Abandoned conversations deleted within 48 hours; booked ones kept until the business has them erased (written instruction to info@webappski.com). No model training.
-- **Voice input?** Yes — OpenAI Whisper. All 25+ supported languages.
-- **Per-turn latency?** Median 200–800ms on gpt-4.1-nano, single AI call per turn. Enrichment turns add 1–3 seconds.
-- **Self-host?** On-premise available on Enterprise.
+- **GDPR compliant?** You are the controller and Typelessity is your processor under a DPA. On our side: consent from every visitor before any AI processing. Service in the EU (Vercel, Frankfurt), database in the EU (Supabase, Ireland); OpenAI and Resend process in the US under the 2021 SCCs. Abandoned conversations deleted within 48 hours; booked ones kept until the business has them erased (written instruction to info@webappski.com). No model training.
+- **Voice input?** Yes — OpenAI gpt-4o-mini-transcribe. All 25+ supported languages.
+- **Per-turn latency?** Not measured on the current model, so not quoted. One AI call per turn; enrichment turns make a second call.
+- **Self-host?** No. Hosted service only — there is no on-premise or self-hosted build.
 - **Replace my booking system?** No. Replaces the form, not the backend. Submits via webhook or REST POST.
 - **Best industries?** Any service business with appointments. Production verticals include clinics, beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services, travel.
 - **Works for AI agents?** Yes — by design. Stable Session and Booking schemas today; `/agent/turn` endpoint shipping Q3 2026.

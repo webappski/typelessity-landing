@@ -85,7 +85,7 @@ import { PRICING_FAQ } from './pricing.content';
       <header class="vc-section-h">
         <div class="vc-kicker vc-accent-magenta"><span class="vc-kicker-bar"></span>What changes at Enterprise</div>
         <h2>Every tier ships the full booking engine</h2>
-        <p class="vc-section-sub">Free Pilot, Starter and Pro all include every product feature — the differences are submission volume and support level (see cards above). Enterprise adds operational guarantees and deployment options on top.</p>
+        <p class="vc-section-sub">Free Pilot, Starter and Pro all include every product feature — the differences are submission volume and support level (see cards above). Enterprise adds the highest volume, unlimited sites, and contract terms agreed on request.</p>
       </header>
       <table class="pricing-diff__table">
         <thead>
@@ -96,16 +96,17 @@ import { PRICING_FAQ } from './pricing.content';
           <tr><td>Enrichment APIs (up to 5 per config)</td><td>✓</td><td>✓</td></tr>
           <tr><td>Custom branding, webhook integration</td><td>✓</td><td>✓</td></tr>
           <tr><td>Setup wizard in the Webappski portal</td><td>✓</td><td>✓</td></tr>
-          <tr><td>SLA guarantee (99.9% uptime)</td><td>—</td><td>✓</td></tr>
-          <tr><td>Dedicated account manager</td><td>—</td><td>✓</td></tr>
-          <tr><td>On-premise / self-hosted deployment</td><td>—</td><td>✓</td></tr>
-          <tr><td>EU data residency</td><td>—</td><td>✓</td></tr>
-          <tr><td>Custom AI provider (Azure OpenAI, etc.)</td><td>—</td><td>✓</td></tr>
-          <tr><td>Volume discount on bookings</td><td>—</td><td>✓</td></tr>
+          <tr><td>Websites (domains) per account</td><td>1 / 5 / 10</td><td>Unlimited</td></tr>
+          <tr><td>Service and database in the EU (Frankfurt, Ireland); OpenAI processes in the US under the 2021 SCCs</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Hosted by us — there is no on-premise or self-hosted build</td><td>✓</td><td>✓</td></tr>
+          <tr><td>AI provider: OpenAI, through our account (no own key or other provider)</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Uptime commitment (SLA)</td><td>None</td><td>By contract, on request</td></tr>
+          <tr><td>Named contact person</td><td>—</td><td>By contract, on request</td></tr>
+          <tr><td>Pricing above 6,000 submissions a month</td><td>—</td><td>By contract, on request</td></tr>
         </tbody>
       </table>
       <p class="pricing-diff__note">
-        Free Pilot has no time limit. Upgrade once booking volume crosses the next tier's cap or once you need an SLA — typically &gt; 5,000 sessions/month for Enterprise.
+        Free Pilot has no time limit. Upgrade when monthly submissions pass your tier's cap (50 / 500 / 2,000 / 6,000). Contract terms such as an uptime commitment are agreed with Enterprise customers on request.
       </p>
     </section>
 

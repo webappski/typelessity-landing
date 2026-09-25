@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { HOME, type FaqCategory } from './home.content';
+import { PRICING_FAQ } from '../pricing/pricing.content';
 
 test('HOME.faq: every item has a known category', () => {
   const allowed: ReadonlySet<FaqCategory> = new Set([
@@ -121,4 +122,27 @@ test('data answers: no erase feature is promised that the owner cannot use today
   for (const { name, text } of DATA_SURFACES) {
     assert.ok(!/self-service (erase )?button|erase button[^.]*planned/i.test(text), `${name} promises an erase button`);
   }
+});
+
+// A45 (founder 2026-09-25): Enterprise promised what neither the code nor the contracts back.
+// Sources: terms-typelessity.md §2.3 and DPA App. A «no availability SLA»; no Dockerfile or
+// self-host build in the typelessity repo; client-cache.ts calls OpenAI only (Azure is a dormant
+// enum); vercel.json fra1 + DPA App. B eu-west-1, OpenAI and Resend in the US.
+test('enterprise claims: no SLA figure, on-premise, residency tier, custom provider or dedicated manager', () => {
+  const banned: readonly RegExp[] = [
+    /99\.9/, /on-premise (deployment )?(is )?available/i, /self-hosted deployment/i, /EU data residency/i,
+    /dedicated (account|success) manager/i, /swapped between OpenAI/i, /Azure OpenAI, or any/i,
+    /planned for a future Enterprise/i, /gpt-4\.1-nano/i, /Whisper/, /200.800 ?ms/, />95%/,
+  ];
+  const surfaces = [
+    ...HOME.faq.map((qa) => ({ name: qa.q, text: qa.a })),
+    ...HOME.tldr.bullets.map(([k, v]) => ({ name: `tldr ${k}`, text: v })),
+    ...PRICING_FAQ.map((qa) => ({ name: `pricing: ${qa.q}`, text: qa.a })),
+  ];
+  for (const { name, text } of surfaces) {
+    for (const re of banned) assert.ok(!re.test(text), `${name} still says ${re}`);
+  }
+  assert.match(answer(/self-host/i), /^No\.[\s\S]*no on-premise or self-hosted build/);
+  assert.match(answer(/How much does Typelessity cost/i), /agreed on request/);
+  assert.doesNotMatch(answer(/GDPR compliant/i), /^Yes\b/, 'a compliance status is not ours to guarantee');
 });

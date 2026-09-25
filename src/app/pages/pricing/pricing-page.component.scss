@@ -283,6 +283,14 @@
     width: 6rem;
   }
   tbody tr:last-child td { border-bottom: 0; }
+  // Phones: the value columns hold short words («None», «Unlimited», «By contract, on request»),
+  // so they narrow and the capability column gets the width.
+  @media (max-width: 480px) {
+    th, td { padding: 0.75rem 0.5rem; }
+    th { font-size: 0.66rem; letter-spacing: 0; }
+    th:nth-child(2), td:nth-child(2),
+    th:nth-child(3), td:nth-child(3) { width: 4.5rem; }
+  }
 }
 .pricing-diff__note {
   margin-top: 1rem;

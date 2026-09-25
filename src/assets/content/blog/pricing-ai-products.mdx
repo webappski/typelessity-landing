@@ -1,6 +1,6 @@
 ---
 title: "Pricing AI products in 2026: why Typelessity makes the pilot free"
-description: "Most AI booking tools default to a $99/mo subscription. Typelessity makes the pilot free with no time limit and prices Enterprise to outcome. Here is the math behind that choice — and where it is the wrong choice."
+description: "Most AI booking tools default to a $99/mo subscription. Typelessity makes the pilot free with no time limit and publishes Enterprise at €399 a month, with terms above it agreed per contract. Here is the math behind that choice — and where it is the wrong choice."
 publishedAt: "2025-04-01"
 updatedAt: "2026-04-29"
 author: "Alex Isa"
@@ -13,13 +13,13 @@ faqs:
     a: "The entire product, deployed to a real customer-facing surface, with engineering support during integration. Not a sandbox. Not a demo. Real users booking real appointments, processed by Typelessity's infrastructure, at Typelessity's cost. The pilot has no time limit; the customer commits to paying when value is proven."
   - q: "How does Typelessity make the unit economics work on free pilots?"
     a: "Per-pilot marginal cost (OpenAI fees + infrastructure) is small relative to the cost of an Enterprise sales call. The constraint is engineering attention per pilot, not compute. Pilots that take roughly 5 hours of integration over 2 months scale; pilots that take 50 hours each do not. The model breaks for high-touch customers above a certain count."
-  - q: "Why is there no published Enterprise price?"
-    a: "Enterprise pricing depends on volume, languages, compliance requirements, SLA tier, and the custom enrichment APIs Typelessity has to build for the client. A single published price would either overcharge low-volume customers or undercharge high-volume ones. The Enterprise tier is quoted after the pilot data shows the actual usage shape."
+  - q: "What does Enterprise include, and what is agreed per contract?"
+    a: "Enterprise is published: €399 a month for up to 6,000 submissions, with unlimited sites. Volume above 6,000 submissions a month, an uptime commitment and a named contact are agreed per contract, on request; the standard terms carry no uptime commitment. There is no on-premise deployment."
   - q: "When is the free-pilot model the wrong choice for an AI product?"
     a: "When marginal cost per user is high (GPU-heavy generative video), when the customer base is huge and pilot-quality support cannot scale, or when the product is naturally self-serve and metered (per-API-call, per-token). For lower-touch products, publish a free tier with usage metering. The free-pilot model fits white-glove B2B AI specifically."
 ---
 
-<strong>Typelessity prices the pilot free with no time limit and quotes Enterprise to outcome — not as a freemium tier, not as a free trial, but as a deferred-payment partnership. The reasoning: standard SaaS pricing assumes zero marginal cost, screenshot-proven value, and credit-card procurement. None of those hold for B2B AI in 2026. The pilot is procurement-compatible; a $99/mo subscription is not. Read /pricing for tier shape.</strong>
+<strong>Typelessity prices the pilot free with no time limit — not as a freemium tier, not as a free trial, but as a deferred-payment partnership; Enterprise is published at €399 a month. The reasoning: standard SaaS pricing assumes zero marginal cost, screenshot-proven value, and credit-card procurement. None of those hold for B2B AI in 2026. The pilot is procurement-compatible; a $99/mo subscription is not. Read /pricing for tier shape.</strong>
 
 The conventional SaaS pricing playbook says: low free tier, $49/mo starter, $199/mo growth, custom Enterprise. Typelessity tried it. Conversion from signup to paid was small enough to make the model unworkable. The pilot was then made completely free — full features, no time limit, no credit card — and conversion to a paid Enterprise contract rose sharply. This article explains why.
 
@@ -65,15 +65,13 @@ If the integration cost per customer were higher, the pilot model would not work
 
 ## What is the Enterprise tier?
 
-Pilots that work convert to Enterprise. Published pricing on Enterprise would either overcharge low-volume customers or undercharge high-volume ones, because pricing depends on:
+Enterprise is published like every other tier: €399 a month for up to 6,000 submissions, with unlimited sites. What a list price cannot fix is agreed per contract, on request:
 
-- **Volume** — bookings per month.
-- **Languages** — single-language is cheaper than 25-language.
-- **Compliance requirements** — standard EU vs on-premise sovereign deployment (see /blog/gdpr-compliance).
-- **SLA tier** — best-effort vs 99.9% with credits.
-- **Custom enrichment APIs** Typelessity builds for the client.
+- **Volume** above 6,000 submissions a month.
+- **An uptime commitment** — the standard terms carry none.
+- **A named contact person.**
 
-The Enterprise tier is quoted after pilot data reveals the actual usage shape. For tier-shape, see /pricing.
+There is no on-premise or sovereign deployment: Typelessity is hosted only, with the service in Frankfurt and the database in Ireland (see /blog/gdpr-compliance). For tier shape, see /pricing.
 
 ## Why "no time limit" specifically?
 
@@ -98,7 +96,7 @@ It **is a deferred-payment model.** The customer commits to paying when value is
 
 Pricing models for B2B AI products, ranked by procurement compatibility:
 
-- **Free pilot, no time limit, Enterprise quote** → highest procurement compatibility
+- **Free pilot, no time limit, published tiers** → highest procurement compatibility
 - **Annual Enterprise contract with proof-of-concept clause** → strong; legal-friendly
 - **Time-boxed free trial (30-90 days)** → medium; reads as discount, not partnership
 - **Freemium (feature-gated free tier)** → weak for B2B AI; the gating creates the wrong evaluation signal
@@ -127,14 +125,14 @@ The entire product, deployed to a real customer-facing surface, with engineering
 **How does Typelessity make the unit economics work on free pilots?**
 Per-pilot marginal cost is small relative to the cost of a sales call. The real constraint is engineering attention per pilot, not compute. Cheap integration is the prerequisite.
 
-**Why is there no published Enterprise price?**
-Pricing depends on volume, languages, compliance, SLA, and custom enrichment APIs. Published pricing would mis-price both ends of the customer distribution.
+**What does Enterprise include, and what is agreed per contract?**
+€399 a month for up to 6,000 submissions and unlimited sites. Volume above that, an uptime commitment and a named contact are agreed per contract, on request.
 
 **When is the free-pilot model the wrong choice?**
 High marginal cost per user, huge customer base, or natively usage-priced products. Publish a metered free tier instead.
 
 ---
 
-For the architectural reason single-call extraction makes pilots cheap, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the EU compliance contour that affects Enterprise pricing, see [GDPR-compliant AI booking](/blog/gdpr-compliance). For the GTM mistakes that motivated the deferred-payment pilot, see [What we got wrong](/blog/what-we-got-wrong). For tier shape, see [Pricing](/pricing).
+For the architectural reason single-call extraction makes pilots cheap, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For what to check on data protection, see [GDPR and an AI booking widget](/blog/gdpr-compliance). For the GTM mistakes that motivated the deferred-payment pilot, see [What we got wrong](/blog/what-we-got-wrong). For tier shape, see [Pricing](/pricing).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

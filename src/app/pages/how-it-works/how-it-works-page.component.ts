@@ -115,7 +115,7 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
       <header class="vc-section-h">
         <div class="vc-kicker"><span class="vc-kicker-bar"></span>One turn, end to end</div>
         <h2>What happens in a single turn</h2>
-        <p class="vc-section-sub">User → widget → API → GPT → enrichment → response. Median 200–800ms.</p>
+        <p class="vc-section-sub">User → widget → API → GPT → enrichment → response.</p>
       </header>
       <div class="pipeline">
         <div class="pipe-node">
@@ -135,7 +135,7 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
         <span class="pipe-arrow">→</span>
         <div class="pipe-node">
           <div class="pipe-t">GPT</div>
-          <div class="pipe-l">Single call · 200–800ms</div>
+          <div class="pipe-l">Single call</div>
         </div>
         <span class="pipe-arrow">→</span>
         <div class="pipe-node">
