@@ -6,9 +6,9 @@ import { test, expect, type Page } from '@playwright/test';
 
 const TIERS = [
   { name: 'Free Pilot', cta: 'Start free pilot', content: 'free-pilot' },
-  { name: 'Starter', cta: 'Start with the free pilot', content: 'starter' },
-  { name: 'Pro', cta: 'Start with the free pilot', content: 'pro' },
-  { name: 'Enterprise', cta: 'Start with the free pilot', content: 'enterprise' },
+  { name: 'Starter', cta: 'Start free pilot', content: 'starter' },
+  { name: 'Pro', cta: 'Start free pilot', content: 'pro' },
+  { name: 'Enterprise', cta: 'Start free pilot', content: 'enterprise' },
 ];
 
 function expectPortalLink(href: string | null, medium: string, content: string) {

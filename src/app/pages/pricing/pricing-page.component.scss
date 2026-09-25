@@ -33,6 +33,12 @@
   padding: 40px;
   position: relative;
   transition: border-color 0.3s, transform 0.3s;
+  // A column, so the start button sits on the card's bottom edge whatever the text above it is —
+  // cards in one row keep their buttons on one line.
+  display: flex;
+  flex-direction: column;
+
+  > .vc-btn { margin-top: auto; white-space: nowrap; }
 
   &:hover {
     border-color: var(--border-accent);

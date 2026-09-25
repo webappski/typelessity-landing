@@ -172,7 +172,7 @@ export const HOME = {
           'Supports 25+ Languages',
           'Standard Support',
         ],
-        cta: 'Start with the free pilot', slug: 'starter',
+        cta: 'Start free pilot', slug: 'starter',
       },
       {
         name: 'Pro', price: '€149', sub: 'For growing companies with higher volume.', featured: true,
@@ -182,7 +182,7 @@ export const HOME = {
           'Supports 25+ Languages',
           'Priority Support',
         ],
-        cta: 'Start with the free pilot', slug: 'pro',
+        cta: 'Start free pilot', slug: 'pro',
       },
       {
         name: 'Enterprise', price: '€399', sub: 'For large organizations needing custom solutions.', featured: false,
@@ -192,7 +192,7 @@ export const HOME = {
           'Supports 25+ Languages',
           'Dedicated Success Manager',
         ],
-        cta: 'Start with the free pilot', slug: 'enterprise',
+        cta: 'Start free pilot', slug: 'enterprise',
       },
     ] as const,
   },
