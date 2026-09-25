@@ -1,6 +1,6 @@
 # Typelessity — full content (llms-full.txt)
 
-> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-08-12.
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-09-25.
 
 ---
 
@@ -44,13 +44,13 @@ Embed: one line of HTML. The public CDN at cdn.typelessity.com/widget.js is ship
 
 Typelessity launches soon (PreOrder) — all four tiers become available at the same time. Pricing below; join the waitlist to be notified when it goes live.
 
-**Free Pilot — $0.** Up to 50 submissions/month. Full feature access (25+ languages, voice input, enrichment APIs, custom branding, webhook integration) and email support. Risk-free evaluation on a real site.
+**Free Pilot — €0.** Up to 50 submissions/month. Full feature access (25+ languages, voice input, enrichment APIs, custom branding, webhook integration) and email support. Risk-free evaluation on a real site.
 
-**Starter — $39/mo.** Up to 500 submissions/month, standard support.
+**Starter — €39/mo.** Up to 500 submissions/month, standard support.
 
-**Pro — $149/mo.** Up to 2,000 submissions/month, priority support.
+**Pro — €149/mo.** Up to 2,000 submissions/month, priority support.
 
-**Enterprise — $399/mo.** Up to 6,000 submissions/month, dedicated success manager. SLA, custom integrations, on-premise / self-hosted, EU data residency, custom AI provider.
+**Enterprise — €399/mo.** Up to 6,000 submissions/month, dedicated success manager. SLA, custom integrations, on-premise / self-hosted, EU data residency, custom AI provider.
 
 We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic. A/B tooling is included in the Free Pilot at launch.
 
