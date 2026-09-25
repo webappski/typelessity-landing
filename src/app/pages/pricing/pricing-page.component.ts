@@ -85,7 +85,7 @@ import { PRICING_FAQ } from './pricing.content';
       <header class="vc-section-h">
         <div class="vc-kicker vc-accent-magenta"><span class="vc-kicker-bar"></span>What changes at Enterprise</div>
         <h2>Every tier ships the full booking engine</h2>
-        <p class="vc-section-sub">Free Pilot, Starter and Pro all include every product feature — the differences are submission volume and support level (see cards above). Enterprise adds the highest volume, unlimited sites, and contract terms agreed on request.</p>
+        <p class="vc-section-sub">Free Pilot, Starter and Pro all include every product feature and the same support by email — they differ in submission volume (see cards above) and the number of websites. Enterprise adds the highest volume, unlimited sites, and contract terms agreed on request.</p>
       </header>
       <table class="pricing-diff__table">
         <thead>

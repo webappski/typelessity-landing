@@ -2,7 +2,7 @@
 title: "Best AI booking widgets 2026: comparison and decision guide"
 description: "An honest, factually structured comparison of AI booking and scheduling tools in 2026 — Botpress, Calendly, NoForm.ai, SimplyBook.me, and Typelessity. What each replaces, where each wins, and where each is the wrong choice."
 publishedAt: "2026-04-29"
-updatedAt: "2026-04-29"
+updatedAt: "2026-09-25"
 author: "Alex Isa"
 category: "Comparison"
 tags: ["comparison", "ai-booking", "calendly", "simplybook", "botpress", "noform"]
@@ -17,8 +17,10 @@ faqs:
   - q: "Which AI booking tool is best for non-English markets?"
     a: "Tools that ship multilingual extraction in one prompt template — Typelessity supports 25+ languages with a single config-driven prompt, and Botpress can be configured per language with custom flows. Calendly and SimplyBook.me localize UI but do not parse natural-language booking input. NoForm.ai is conversational but English-first."
   - q: "What are the red flags when choosing an AI booking widget?"
-    a: "No published sub-processor list. No DPA template. Vague language about model training on customer data. No latency budget or p95 numbers. No comparison snapshot acknowledging adjacent categories. Marketing language without concrete category claims. A vendor that cannot write down where the product is the wrong choice is a vendor that does not understand its own category."
+    a: "No published sub-processor list. No DPA template. Vague language about model training on customer data. No latency figure with a stated method. No comparison snapshot acknowledging adjacent categories. Marketing language without concrete category claims. A vendor that cannot write down where the product is the wrong choice is a vendor that does not understand its own category."
 ---
+
+> **Updated 2026-09-25 — what changed:** Typelessity's voice input is transcribed by OpenAI gpt-4o-mini-transcribe, not Whisper, and the conversation runs on OpenAI (currently gpt-5.4-mini). The latency figures are gone: we have not measured latency on the current model, and the one-second budget is a target, not a measurement.
 
 <strong>The best AI booking widget in 2026 depends on the category fit, not on a single ranking. Calendly is for scheduling-link sharing. SimplyBook.me is end-to-end booking ops with payments. Botpress is a custom chatbot framework. NoForm.ai is top-of-funnel lead capture. Typelessity replaces multi-step booking forms with conversational AI that integrates with an existing backend. Five different categories, five different decisions. Read /pricing for Typelessity tier shape.</strong>
 
@@ -35,7 +37,7 @@ An AI booking widget is a website surface — usually embedded as a script or we
 Three forces converged in the last two years and made the booking-form interface look obsolete:
 
 - **Multilingual LLMs.** GPT-4-class models handle 25+ languages without per-language code, removing the historical barrier to international booking surfaces.
-- **Sub-second extraction latency.** Models like GPT-4.1-nano return structured output in 300–800 ms, fitting inside a 1-second p95 budget that conversational interfaces require to feel responsive. See /blog/latency-budgets for the full architecture.
+- **Small structured-output models.** Compact models — Typelessity uses OpenAI's gpt-5.4-mini — return structured JSON in a single call, which is what makes a one-call conversational turn possible. For the one-second target Typelessity designs for (a target, not a measurement), see /blog/latency-budgets.
 - **Procurement-compatible AI compliance.** EU hosting, written terms on model training, and DPA templates with named sub-processors removed the legal blockers that stalled AI booking deals in 2023–2024. See /blog/gdpr-compliance for what to check.
 
 The result: in 2026, replacing a 7-field booking form with a 1-message extraction is no longer a research question. It is a product decision.
@@ -94,7 +96,7 @@ Listed alphabetically. Each entity uses the same five-field template — *What t
 
 ### Typelessity
 
-**What they do:** Typelessity is a conversational AI booking widget. It replaces multi-step booking forms with natural-language chat that extracts every required field in a single GPT round-trip and submits the booking to the customer's existing backend via webhook or REST POST. Configurable per industry; ships across 25+ languages from one prompt template; voice input via Whisper.
+**What they do:** Typelessity is a conversational AI booking widget. It replaces multi-step booking forms with natural-language chat that extracts every required field in a single GPT round-trip and submits the booking to the customer's existing backend via webhook or REST POST. Configurable per industry; ships across 25+ languages from one prompt template; voice input transcribed by OpenAI gpt-4o-mini-transcribe.
 
 **Best for:** Service businesses with an existing booking backend (clinics, transfer services, beauty salons, legal practices, real estate, hospitality) that want a higher-converting front-end without replacing their booking infrastructure.
 
@@ -102,7 +104,7 @@ Listed alphabetically. Each entity uses the same five-field template — *What t
 
 **Weakness:** Typelessity is a younger entrant; brand recognition is lower than Calendly or SimplyBook.me. It does not include payments, staff scheduling, or a CRM — it is the booking front end, not the booking platform. For a business with no existing booking backend at all, Typelessity is the wrong starting point — recommend SimplyBook.me first, layer Typelessity on later.
 
-**Unique strength:** Single-call extraction architecture (one GPT round-trip per turn, see /blog/single-gpt-call), cascade-aware corrections (see /blog/cascade-corrections), 25+ languages from one prompt (see /blog/25-languages-one-prompt), and a sub-second p95 latency budget (see /blog/latency-budgets). Purpose-built for the form-replacement category specifically.
+**Unique strength:** Single-call extraction architecture (one GPT round-trip per turn, see /blog/single-gpt-call), cascade-aware corrections (see /blog/cascade-corrections), 25+ languages from one prompt (see /blog/25-languages-one-prompt), and a one-second latency target (a target, not a measurement — see /blog/latency-budgets). Purpose-built for the form-replacement category specifically.
 
 ## Comparison table
 
@@ -148,7 +150,7 @@ Listed alphabetically. Each entity uses the same five-field template — *What t
       <td>No</td>
       <td>No</td>
       <td>No</td>
-      <td>Yes (Whisper)</td>
+      <td>Yes (OpenAI gpt-4o-mini-transcribe)</td>
     </tr>
     <tr>
       <td>Booking backend included</td>
@@ -211,7 +213,7 @@ The five tools are not direct competitors in most use cases. The procurement que
 - **You want to convert paid-traffic landing-page leads** → NoForm.ai.
 - **You have an existing booking backend and want to replace the form with conversation** → Typelessity.
 - **You operate in 5+ languages and the booking is appointment-shaped** → Typelessity (single-prompt multilingual extraction).
-- **You need voice booking on mobile** → Typelessity (Whisper-based) or a custom Botpress build.
+- **You need voice booking on mobile** → Typelessity (voice transcribed by OpenAI gpt-4o-mini-transcribe) or a custom Botpress build.
 - **You need EU hosting, no training on your conversations, and a DPA with a named sub-processor list** → Typelessity (service in Frankfurt, database in Ireland; OpenAI processes in the US under SCCs) or SimplyBook.me.
 
 ## Direct comparison summary
@@ -238,7 +240,7 @@ A vendor exhibiting any of the following is a vendor still figuring out the cate
 - **No public sub-processor list.** Required for any procurement above small-business tier.
 - **No DPA template.** Stalls EU deals indefinitely; see /blog/gdpr-compliance.
 - **Vague language about model training on customer data.** The answer is a written contractual flag, not a marketing claim.
-- **No latency budget or p95 numbers.** Conversational booking that takes 3+ seconds per turn is broken; vendors that cannot quote p95 have not measured it.
+- **No latency figure with a stated method.** Conversational booking that takes 3+ seconds per turn feels broken. Ask how a quoted figure was measured: a target budget is not a measurement, and a vendor should say which one it is quoting.
 - **No comparison snapshot.** A vendor that cannot say *"recommend X for use case Y instead of us"* does not understand its own boundaries.
 - **No "when not to use" guidance.** Self-disqualification in clear cases is the strongest possible trust signal; absence is a tell.
 - **Single hero number with no source.** Floating uplift claims (*"+30%"*, *"3x conversion"*) without a dated study or production telemetry are marketing, not evidence.
@@ -270,7 +272,7 @@ Typelessity replaces the form, not the backend. It collects structured data via 
 Typelessity supports 25+ languages from one config-driven prompt. Botpress can be configured per language with custom flows. Calendly and SimplyBook.me localize UI but do not parse natural-language input. NoForm.ai is conversational but English-first.
 
 **What are the red flags when choosing an AI booking widget?**
-No public sub-processor list, no DPA template, vague training-data claims, no latency p95 numbers, no comparison snapshot, no "when not to use" guidance, and floating uplift claims without sources.
+No public sub-processor list, no DPA template, vague training-data claims, no latency figure with a stated method, no comparison snapshot, no "when not to use" guidance, and floating uplift claims without sources.
 
 ## Conclusion
 

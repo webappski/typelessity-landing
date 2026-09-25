@@ -30,9 +30,9 @@ export const HOME = {
     headlineLead: 'Bookings through',
     headlineGrad: 'conversation,',
     headlineEm: 'not forms',
-    sub: 'Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. GDPR-compliant.',
+    sub: 'Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. Consent before any AI processing.',
     cta: { primary: 'Start free pilot', secondary: 'See How It Works' },
-    trustline: 'Free pilot · 25+ languages · GDPR-native',
+    trustline: 'Free pilot · 25+ languages · Consent before any AI processing',
   },
 
   tldr: {
@@ -91,12 +91,12 @@ export const HOME = {
     title: 'How the AI actually works',
     sub: 'GPT decides. Code orchestrates. No hardcoding. Ever.',
     pillars: [
-      { h: 'Single unified prompt', b: 'One GPT call extracts every field, detects corrections, generates the response, and matches options. Prompt budget: 400–650 tokens for configs with 20 fields.' },
+      { h: 'Single unified prompt', b: 'One GPT call extracts every field, detects corrections, generates the response, and matches options. The prompt is built from your configuration, so its size grows with your fields and options.' },
       { h: 'Config-driven, not pattern-driven', b: 'Each field has an aiHint that tells GPT what it means semantically. The system never matches words like "airport" or "hotel" with regex. GPT reads context, GPT decides.' },
       { h: 'Real-time enrichment APIs', b: 'Fields can trigger external API calls. Specialty → fetch doctors. Date → fetch slots. Pickup location → fetch routes. Up to 5 enrichments per config, 10s timeout each, non-fatal on failure.' },
       { h: 'Cascade-aware corrections', b: 'If a user changes an upstream field (e.g. switches specialty mid-flow), the system DFS-walks the dependency graph and clears stale downstream data — with a confirmation if the change is destructive.' },
-      { h: 'Anti-hallucination guardrails', b: '_meta.mf signals: GPT can only commit a field value if it explicitly marked the field as mentioned by the user. Filters phantom extractions. Code-side correction guardrail catches drift.' },
-      { h: 'Reliable by design', b: 'Exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, full audit log per turn.' },
+      { h: 'Anti-hallucination guardrails', b: 'Fields outside your configuration are dropped; a reply claiming the booking is done before the visitor confirms is discarded; a new value for a filled field becomes a correction. The visitor reviews every field before sending.' },
+      { h: 'Reliable by design', b: 'Exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, every message stored with its conversation.' },
     ] as const,
   },
 
@@ -141,8 +141,7 @@ export const HOME = {
       ['Real-time enrichment APIs', 'Yes', 'No', 'No', 'No', 'No', 'Yes', 'No'],
       ['Calendar integration', 'Webhook + API', 'Native', 'Native', 'Native (Cal.com)', 'Native', 'Custom build', 'No'],
       ['Staff & resource management', 'Via webhook', 'Yes', 'Yes', 'Via Cal.com', 'Yes', 'No', 'No'],
-      ['Setup time', 'Hours', 'Hours', 'Hours', 'Hours (in Cal.com)', 'Days', 'Weeks', 'Hours'],
-      ['GDPR-native consent flow', 'Yes', 'Yes', 'Yes', 'N/A (voice)', 'Yes', 'Custom build', 'Yes'],
+      ['GDPR consent flow', 'Yes', 'Yes', 'Yes', 'N/A (voice)', 'Yes', 'Custom build', 'Yes'],
       ['Best for', 'Replacing intake forms with chat', 'Scheduling links', 'Open-source scheduling', 'Reminder & no-show calls', 'Full booking ops', 'Custom chatbots', 'Lead capture'],
     ] as const,
     verdict:
@@ -159,7 +158,7 @@ export const HOME = {
         bullets: [
           'Up to 50 submissions/month',
           'Supports 25+ Languages',
-          'Email Support',
+          'Support by email',
         ],
         // comingSoon: true renders a disabled «Coming soon» button instead of the link.
         cta: 'Start free pilot', slug: 'free-pilot',
@@ -170,7 +169,7 @@ export const HOME = {
         bullets: [
           'Up to 500 submissions/month',
           'Supports 25+ Languages',
-          'Standard Support',
+          'Support by email',
         ],
         cta: 'Start free pilot', slug: 'starter',
       },
@@ -180,7 +179,7 @@ export const HOME = {
         bullets: [
           'Up to 2,000 submissions/month',
           'Supports 25+ Languages',
-          'Priority Support',
+          'Support by email',
         ],
         cta: 'Start free pilot', slug: 'pro',
       },
@@ -191,6 +190,7 @@ export const HOME = {
           'Up to 6,000 submissions/month',
           'Supports 25+ Languages',
           'Unlimited sites',
+          'Support by email',
         ],
         cta: 'Start free pilot', slug: 'enterprise',
       },
@@ -202,10 +202,10 @@ export const HOME = {
     { category: 'Product', q: 'How does Typelessity differ from Calendly?', a: 'Calendly is a scheduling-link tool — it shares a calendar and lets people pick a slot. Typelessity replaces an entire booking form with a conversation that can collect any structured data: specialty, doctor, dates, slots, addresses, vehicle types, dietary requirements, and dozens of other fields. Use Calendly for simple meeting links, Typelessity when the booking has more than two or three fields.' },
     { category: 'Product', q: 'How does Typelessity differ from SimplyBook.me?', a: 'SimplyBook.me is a full booking platform with built-in payments, staff scheduling, inventory, and customer accounts. Typelessity replaces only the booking form with conversation, then submits to your existing backend via webhook or REST POST. Use SimplyBook when you need an end-to-end booking system with payments. Use Typelessity when you already have a backend (CRM, calendar, payment processor) and want to replace the front-end form with a 25-language chat.' },
     { category: 'Product', q: 'How does Typelessity differ from Cal.ai?', a: 'Cal.ai is an outbound AI phone-calling feature built into Cal.com Workflows — it places lifelike voice calls to confirm bookings, send reminders, and follow up on no-shows, billed per minute. Typelessity works the other direction: it is an inbound conversational widget on your own site that collects a complete, structured booking through chat in 25+ languages and submits it to your backend. They sit at different layers and pair well — Cal.ai can chase a no-show after Typelessity captured the booking. Use Cal.ai when your gap is outbound reminder and confirmation calls on top of Cal.com; use Typelessity when your gap is the inbound intake form itself.' },
-    { category: 'Product', q: 'How does Typelessity differ from Botpress?', a: 'Botpress is a chatbot framework — you build conversation flows yourself with a visual editor, and you maintain that bot. Typelessity is a turnkey booking widget configured by us in a few hours from your spec, with a single GPT call extracting every field at once and anti-hallucination guards baked in. Use Botpress when you need a custom-built bot for a non-booking use case. Use Typelessity when you specifically want to replace a booking form and want a working integration the same day, not after weeks of engineering.' },
+    { category: 'Product', q: 'How does Typelessity differ from Botpress?', a: 'Botpress is a chatbot framework — you build conversation flows yourself with a visual editor, and you maintain that bot. Typelessity is a ready-made booking widget you set up yourself in the Webappski portal, with a single GPT call extracting every field at once and a review step before anything is sent. Use Botpress when you need a custom-built bot for a non-booking use case. Use Typelessity when you specifically want to replace a booking form and would rather set it up yourself in the portal wizard than build conversation flows.' },
     { category: 'Product', q: 'How does Typelessity differ from NoForm.ai?', a: 'NoForm.ai is a top-of-funnel lead-qualification tool — it captures interest and routes leads to sales. Typelessity completes a structured booking with all required fields (specialty, date, time, name, contact, dietary preferences, etc.) and submits it to your booking system. Use NoForm for marketing lead capture. Use Typelessity when the user is ready to book, not just inquire.' },
     { category: 'AI Behavior', q: 'Does Typelessity work in non-English languages?', a: 'Yes. Typelessity supports 25+ languages out of the box including English, Russian, German, French, Spanish, Italian, Polish, Portuguese, Dutch, Turkish, Arabic, Hebrew, Japanese, Korean, and Chinese. The configuration language sets the response language; user input can be in any supported language and will be translated and normalized automatically.' },
-    { category: 'AI Behavior', q: 'How accurate is the data extraction?', a: 'Typelessity uses OpenAI (currently gpt-5.4-mini) with a unified prompt that reads each field\'s aiHint. We have not published a measured extraction accuracy for the current model, so we do not quote one. The system never uses hardcoded regex patterns — GPT reads the config and extracts based on semantic context. Anti-hallucination guards ensure GPT only commits values the user explicitly mentioned.' },
+    { category: 'AI Behavior', q: 'How accurate is the data extraction?', a: 'Typelessity uses OpenAI (currently gpt-5.4-mini) with a unified prompt that reads each field\'s aiHint. We have not published a measured extraction accuracy for the current model, so we do not quote one. The system never uses hardcoded regex patterns — GPT reads the config and extracts based on semantic context. Code-side guards drop any field the configuration does not define, and the visitor reviews every field before the booking is sent.' },
     { category: 'AI Behavior', q: "What does 'enrichment' mean?", a: 'Enrichment is a real-time API call that triggers when a specific field is filled. For example: when a user says "cardiologist", Typelessity calls GET /doctors?specialty=cardiology, receives a list of doctors, and presents them as interactive cards. Up to 5 enrichments per config. 10 second timeout each. Failures are non-fatal — the AI falls back to asking the user directly.' },
     { category: 'Integration', q: 'How long does integration take?', a: 'We have not measured a typical setup time, so we do not quote one. Setup is a wizard in the Webappski portal that you complete yourself. Step by step: Your business → Questions → Data & delivery → Messages → Review → Install. Or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back (Your business → Your AI’s answer → Review → Install). Before you publish you can try the widget as a customer; the Install step gives you the embed code for your platform.' },
     { category: 'Privacy', q: 'Is Typelessity GDPR compliant?', a: 'You are the controller and Typelessity is your processor under a DPA, so here is what we do on our side. The widget asks every visitor for consent before any AI processing begins. The service runs in the EU (Vercel, Frankfurt) and its database is in the EU (Supabase, Ireland); OpenAI, which understands the conversation and transcribes voice, processes in the United States under the 2021 Standard Contractual Clauses. An abandoned conversation is deleted within 48 hours of the visitor\'s last message; one that led to a booking is kept until the business erases it. No data is used for model training.' },
@@ -214,10 +214,10 @@ export const HOME = {
     { category: 'AI Behavior', q: 'What is the per-turn latency?', a: 'We have not measured it on the current model, so we do not quote a number. Each turn makes one AI call to OpenAI (currently gpt-5.4-mini); when an enrichment triggers, a second call presents the API results, which adds time.' },
     { category: 'Integration', q: 'Can I self-host Typelessity?', a: 'No. Typelessity is a hosted service: the service runs on Vercel in Frankfurt and the database on Supabase in Ireland, and there is no on-premise or self-hosted build. The widget is a Lit web component and the API is a Next.js service; conversations are understood by OpenAI through our account.' },
     { category: 'Product', q: 'Does Typelessity replace my booking system?', a: 'No. Typelessity replaces the booking form, not the booking backend. It collects structured data via conversation and submits it to your existing system via webhook or REST POST. Your CRM, calendar, payment processor, and staff scheduler stay exactly as they are.' },
-    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'Free Pilot (€0): up to 50 submissions/month — full feature access. Starter (€39/mo): up to 500 submissions/month. Pro (€149/mo): up to 2,000 submissions/month, priority support. Enterprise (€399/mo): up to 6,000 submissions/month and unlimited sites; a named contact and other contract terms are agreed on request.' },
+    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'Free Pilot (€0): up to 50 submissions/month — full feature access. Starter (€39/mo): up to 500 submissions/month. Pro (€149/mo): up to 2,000 submissions/month. Enterprise (€399/mo): up to 6,000 submissions/month and unlimited sites; a named contact and other contract terms are agreed on request. Support is by email on every plan.' },
     { category: 'AI Behavior', q: 'Will conversational booking convert better than my current form?', a: 'Head-to-head A/B testing is the only honest answer. Typelessity does not include A/B testing tooling — to measure lift, run the widget and your existing form side by side with your own analytics. We do not publish a hero conversion-lift number on this site because every claim of that shape we have seen in the AI-booking space is either uncited or based on a study with assumptions that do not transfer.' },
     { category: 'Product', q: 'What industries is Typelessity best for?', a: 'Any service business that takes appointments. Production verticals include beauty salons, legal practices, real estate, automotive services, hospitality, education, fitness, pet services, home services, travel, and more. The same engine handles every vertical — configuration changes the field schema, prompts, and enrichments per tenant.' },
-    { category: 'Product', q: 'Does Typelessity work for AI agents (not humans)?', a: 'Yes — by design. The same widget API is callable by autonomous agents. We publish a stable JSON schema for sessions today, and the dedicated /agent endpoint (synchronous turn-by-turn API with the same field-extraction pipeline) is shipping Q3 2026. Documentation and schemas are already on /for-ai-agents so agents can be designed against the contract now.' },
+    { category: 'Product', q: 'Does Typelessity work for AI agents (not humans)?', a: 'Not through a dedicated endpoint yet. We publish stable JSON schemas for sessions and bookings on /for-ai-agents. A dedicated /agent endpoint (a synchronous turn-by-turn API with the same field-extraction pipeline) is designed there, but it is not built and has no release date.' },
 
     // ── Security ──
     { category: 'Security', q: 'Is data encrypted in transit and at rest?', a: 'Yes. Every connection the service receives and makes uses TLS — browser to service, service to database, service to each sub-processor — and a booking endpoint must be an https:// URL; plain http:// is refused. The database is encrypted at rest by the database platform, and integration secrets you store, such as an API key for your booking system, carry a second, application-level AES-256-GCM encryption on top.' },
@@ -240,14 +240,14 @@ export const HOME = {
     { category: 'For Developers', q: 'Can I customize the AI prompt itself?', a: 'You customize via `aiHint` per field — a short instruction telling GPT what each field means semantically. The system prompt is single, unified, and not editable per tenant; that\'s the architectural guarantee that gives us anti-hallucination behavior and predictable latency.' },
     { category: 'For Developers', q: 'How does cascade-aware correction work?', a: 'Field dependencies are declared in config (e.g. `doctor depends_on specialty`). When the user changes an upstream field, the system walks the dependency graph via DFS and clears downstream-stale values. Destructive cascades surface a confirmation: "Changing specialty will clear doctor and time slot — proceed?"' },
     { category: 'For Developers', q: 'What happens if an enrichment API call fails?', a: 'Non-fatal. Each enrichment has a 10-second timeout. On failure, the widget falls back to asking the user directly (e.g. "I couldn\'t fetch doctor list — please type the doctor name"). Errors are logged with full context for your debugging.' },
-    { category: 'For Developers', q: 'Is there an /agent endpoint for autonomous AI agents?', a: 'Shipping Q3 2026. The contract is finalised and published on /for-ai-agents — agents can be designed against it today. The endpoint is a synchronous turn-by-turn API with the same field-extraction pipeline as the human-facing widget, just without the chat UI.' },
+    { category: 'For Developers', q: 'Is there an /agent endpoint for autonomous AI agents?', a: 'Not yet. Its design is published on /for-ai-agents: a synchronous turn-by-turn API with the same field-extraction pipeline as the human-facing widget, just without the chat UI. It is not built and has no release date.' },
     { category: 'For Developers', q: 'How do I test the integration before going live?', a: 'Every pilot includes a dev tenant with a test booking endpoint. You receive synthetic-data conversations to validate field mapping, webhook delivery, error handling, and rollback behavior before pointing the widget at your production submit URL.' },
 
     // ── Competitor Migration ──
     { category: 'Competitor Migration', q: 'We use Calendly today — how do we migrate?', a: 'You keep Calendly for the slot pick if it works for you; Typelessity replaces the intake form that captures specialty, requirements, contact info, and dietary/insurance details before the slot. Hybrid integration: Typelessity submits the intake JSON to your CRM or directly into Calendly\'s webhook.' },
     { category: 'Competitor Migration', q: 'We use SimplyBook.me — what changes?', a: 'SimplyBook stays as your booking backend (calendar, staff, payments). Typelessity replaces only the front-end form. The migration is one config: map Typelessity field outputs to SimplyBook\'s booking API. Typical setup time: 1 day.' },
     { category: 'Competitor Migration', q: 'We have a custom HTML form — how do we replace it?', a: 'Field mapping in your tenant config maps Typelessity extraction output to your existing API\'s expected JSON shape. We never ask you to rewrite the backend. If your form is multi-step with conditional fields, the cascade dependency feature replaces the conditional logic on the front-end side.' },
-    { category: 'Competitor Migration', q: 'We tried Botpress and it was hard — what is different about Typelessity?', a: 'Botpress is a chatbot framework: you build the flow yourself, you maintain it. Typelessity is turnkey — config in a few hours for a booking-specific flow with anti-hallucination guards already wired up. Use Botpress when you need a custom general-purpose bot; use Typelessity when the use case is bookings specifically.' },
+    { category: 'Competitor Migration', q: 'We tried Botpress and it was hard — what is different about Typelessity?', a: 'Botpress is a chatbot framework: you build the flow yourself, you maintain it. Typelessity is ready-made — you set up a booking-specific flow yourself in the portal wizard, with code-side guards already wired up: fields outside your configuration are dropped and a changed value becomes a correction. Use Botpress when you need a custom general-purpose bot; use Typelessity when the use case is bookings specifically.' },
     { category: 'Competitor Migration', q: 'We use NoForm.ai for lead capture — does Typelessity replace it?', a: 'Different layer. NoForm is top-of-funnel marketing lead capture; Typelessity is structured booking with all required fields completed before submit. Many customers use both: NoForm on the marketing site, Typelessity on the booking page.' },
     { category: 'Competitor Migration', q: 'How does Typelessity compare to Acuity Scheduling?', a: 'Acuity is in the same class as Calendly — strong for slot picking, weak for multi-field intake. Typelessity replaces the intake; Acuity can stay as the slot backend. If your bookings are simple (1 service, 1 duration, just pick a time), Acuity alone is fine — use Typelessity when bookings have 5+ fields.' },
     { category: 'Competitor Migration', q: 'We use Setmore — when should we switch?', a: 'When your bookings have grown past simple slot-picking. Setmore handles the calendar well; Typelessity adds natural-language intake on top. Migration is the same as SimplyBook: keep Setmore as backend, replace the intake form. Typical setup: 1 day.' },

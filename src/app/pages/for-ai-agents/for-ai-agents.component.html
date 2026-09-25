@@ -1,14 +1,14 @@
 <section class="vc-wrap aiagents-hero">
   <div class="vc-kicker"><span class="vc-kicker-bar"></span>For AI agents</div>
-  <h1>Typelessity is callable by autonomous agents</h1>
+  <h1>Typelessity for autonomous agents</h1>
   <p class="aiagents-hero__lede">
-    The same widget API that serves humans serves agents. Stable JSON contracts, deterministic schemas,
-    and a dedicated <code>/agent</code> endpoint that accepts structured booking intents and returns
-    structured results.
+    Stable JSON contracts and deterministic schemas for what a session and a booking look like.
+    A dedicated <code>/agent</code> endpoint that would accept structured booking intents and return
+    structured results is designed below — it is not built yet.
   </p>
   <p class="aiagents-hero__status">
     <strong>Status:</strong> Session and Booking schemas are stable today.
-    The <code>/agent/turn</code> endpoint is shipping <strong>Q3 2026</strong> — agents can be designed against the contract on this page now.
+    There is no <code>/agent/turn</code> endpoint yet and no release date; the contract below is its design.
   </p>
 </section>
 
@@ -36,8 +36,8 @@
 </section>
 
 <section class="vc-wrap aiagents-section">
-  <h2>/agent endpoint <span class="aiagents-eta">— shipping Q3 2026</span></h2>
-  <p>Synchronous turn-by-turn API. Same field-extraction pipeline as the human-facing widget — no chat UI required. The contract below is finalised; the live endpoint ships Q3 2026.</p>
+  <h2>/agent endpoint <span class="aiagents-eta">— not built yet</span></h2>
+  <p>A synchronous turn-by-turn API with the same field-extraction pipeline as the human-facing widget and no chat UI. This is the design; nothing serves it today, and there is no release date.</p>
 
   <h3>Request</h3>
   <pre class="aiagents-code">{{ agentRequest }}</pre>
@@ -83,6 +83,6 @@
     <li><a href="/llms.txt">/llms.txt</a> — markdown summary of every page</li>
     <li><a routerLink="/how-it-works">/how-it-works</a> — full architecture</li>
     <li><a routerLink="/industries">/industries</a> — 42 vertical configurations</li>
-    <li><a href="mailto:hello&#64;typelessity.com">hello&#64;typelessity.com</a> — for early /agent endpoint access (Q3 2026 launch)</li>
+    <li><a href="mailto:hello&#64;typelessity.com">hello&#64;typelessity.com</a> — to ask about the /agent endpoint</li>
   </ul>
 </section>

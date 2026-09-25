@@ -146,3 +146,34 @@ test('enterprise claims: no SLA figure, on-premise, residency tier, custom provi
   assert.match(answer(/How much does Typelessity cost/i), /agreed on request/);
   assert.doesNotMatch(answer(/GDPR compliant/i), /^Yes\b/, 'a compliance status is not ours to guarantee');
 });
+
+// A45b (founder 2026-09-25): the terms define no support levels, so every tier says the one thing
+// that is true — «Support by email». The engine (typelessity 15305e9) has no /agent route, exposes
+// no per-turn audit log, has no form fallback when OpenAI fails (one retry, then the chat asks for
+// the field), and only logs _meta.mf — it drops out-of-config fields instead.
+test('A45b: one support line on every tier, no dated /agent, audit log, GDPR-native or form fallback', () => {
+  for (const tier of HOME.pricing.tiers) {
+    assert.ok((tier.bullets as readonly string[]).includes('Support by email'), `${tier.name} card lacks «Support by email»`);
+  }
+  const banned: readonly RegExp[] = [
+    /standard support|priority support|\bemail support\b|support level/i, /Q3 2026/, /full audit log/i,
+    /GDPR-native/i, /minimal form path/i, /phantom extractions/i, /only commits values the user explicitly mentioned/i,
+    /400.650 tokens/, /configured by us/i, /same day, not after weeks/i, /config in a few hours/i, /^Setup time\b/,
+  ];
+  const surfaces = [
+    ...HOME.faq.map((qa) => ({ name: qa.q, text: qa.a })),
+    ...PRICING_FAQ.map((qa) => ({ name: `pricing: ${qa.q}`, text: qa.a })),
+    ...HOME.architecture.pillars.map((p) => ({ name: `pillar ${p.h}`, text: p.b })),
+    ...HOME.pricing.tiers.map((t) => ({ name: `tier ${t.name}`, text: t.bullets.join(' · ') })),
+    ...HOME.comparison.rows.map((r) => ({ name: `compare ${r[0]}`, text: r.join(' · ') })),
+    { name: 'hero sub', text: HOME.hero.sub },
+    { name: 'hero trustline', text: HOME.hero.trustline },
+  ];
+  for (const { name, text } of surfaces) {
+    for (const re of banned) assert.ok(!re.test(text), `${name} still says ${re}`);
+  }
+  const outage = PRICING_FAQ.find((qa) => /What happens if GPT is down/i.test(qa.q));
+  assert.ok(outage, 'pricing FAQ lost the outage question');
+  assert.match(outage.a, /retried once[\s\S]*no separate form mode/);
+});
+

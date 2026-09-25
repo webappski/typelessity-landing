@@ -1,27 +1,29 @@
 ---
 title: "25 languages, one prompt: how config-driven extraction beats per-language code"
-description: "Most multilingual chatbots ship a separate codepath per language. Typelessity ships one prompt template, one config, and 25+ languages work the same day. Here is the architecture and the 80 strings of localization that remain."
+description: "Most multilingual chatbots ship a separate codepath per language. Typelessity ships one prompt template, one config, and 25+ languages work the same day. Here is the architecture and the localized strings that remain."
 publishedAt: "2025-02-11"
-updatedAt: "2026-04-29"
+updatedAt: "2026-09-25"
 author: "Alex Isa"
 category: "Engineering"
-tags: ["i18n", "prompts", "architecture", "gpt-4.1-nano"]
+tags: ["i18n", "prompts", "architecture", "gpt-5.4-mini"]
 faqs:
   - q: "How does Typelessity support 25+ languages without a per-language codepath?"
-    a: "Typelessity uses one prompt template written in English and a per-industry config. The user message arrives in any language; GPT-4.1-nano translates, normalizes, and extracts in one round-trip; the output is structured JSON in a stable schema. Languages are an emergent property of the model, not a feature implemented per locale."
+    a: "Typelessity uses one prompt template written in English and a per-industry config. The user message arrives in any language; the model — OpenAI, currently gpt-5.4-mini — normalizes and extracts in one round-trip; the output is structured JSON in a stable schema. Languages are an emergent property of the model, not a feature implemented per locale."
   - q: "What is actually translated by hand?"
-    a: "Approximately 80 short strings per locale — field labels (Date, Doctor, Time), confirmation copy, error messages, accessibility strings. These live in standard messages.{locale}.json files. Everything else — extraction, response generation, multilingual normalization — is handled by the model."
+    a: "About 146 short strings per locale — widget text, the consent notice, review and error messages — in one TypeScript module per locale, across 25 locales. Everything else — extraction, response generation, multilingual normalization — is handled by the model."
   - q: "Does Typelessity detect the user's language?"
-    a: "There is no explicit language-detection step. The model sees the user message, the prompt instructs it to respond in the same language, and it does. The detected language is logged in `_meta.lang` for analytics, but the system does not branch on it. No regex, no classifier, no per-language handler."
+    a: "No. The reply language is the one set in the business's configuration; the user can write in any supported language and the model extracts the fields from it. There is no detection step and no per-language handler — no regex, no classifier."
   - q: "How much does latency vary across languages?"
-    a: "Latency stays well inside the 1-second p95 budget across the supported languages. Token counts vary — Japanese can be roughly 2x English in tokens for the same meaning — but absolute latency is dominated by model time-to-first-token, not by language choice. Per-language p50/p95 numbers are tracked in production telemetry."
+    a: "We have not measured it, so we quote no numbers. Token counts do vary by language — the same meaning can take more tokens in some scripts than in English — but what that does to latency per language is not measured."
   - q: "What still needs language-specific code in Typelessity?"
-    a: "Phone number formats use libphonenumber per region. Date parsing falls back to chrono-node for locales the model handles awkwardly. Currency display uses Intl.NumberFormat. Honorifics — Japanese keigo, Korean speech levels — are handled by asking the model to mirror the user's register; the rest is an emergent property of the LLM."
+    a: "Less than this post used to claim. There is no phone-number or date-parsing library in the engine: dates go through the model and our own date utilities. The per-locale widget strings are the language-specific part; everything else is the model."
 ---
 
-<strong>Typelessity supports 25+ languages with one English-language prompt template, one per-industry config, and approximately 80 hand-translated UI strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. GPT-4.1-nano handles translation, normalization, and extraction in a single round-trip. Adding a new language is a translation of UI strings; the extraction works the day the language is added.</strong>
+> **Updated 2026-09-25 — what changed:** extraction runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The reply language is the one set in the configuration — it is not detected from the user, and the model returns no language tag. The widget strings are about 146 per locale in a TypeScript module, not 80 in JSON files, and the engine has no phone- or date-parsing library. Latency per language is not measured, so its figures are gone.
 
-When engineers hear that Typelessity supports 25+ languages, the next question is always the same: *"How big is your i18n team?"* Zero. There is no i18n team. There is one prompt template and per-industry configs. Languages are an emergent property of GPT-4.1-nano, not a feature built per market.
+<strong>Typelessity supports 25+ languages with one English-language prompt template, one per-industry config, and about 146 translated widget strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. The model — OpenAI, currently gpt-5.4-mini — handles normalization and extraction in a single round-trip, whatever language the user writes in. Adding a new language is a translation of widget strings.</strong>
+
+When engineers hear that Typelessity supports 25+ languages, the next question is always the same: *"How big is your i18n team?"* Zero. There is no i18n team. There is one prompt template and per-industry configs. Languages are an emergent property of the model (OpenAI, currently gpt-5.4-mini), not a feature built per market.
 
 ## What is the trap of per-language code?
 
@@ -45,26 +47,24 @@ A typical medical-clinic config is around 120 lines. Adding a new vertical takes
 
 ## What is the language-detection step you do not write?
 
-There is no explicit language-detection step. The model sees the user message, the prompt instructs it to respond in the same language, and it does. The detected language is logged in `_meta.lang` for analytics — but the orchestration layer does not branch on it.
+There is no language-detection step. The reply language is the one set in the business's configuration; the user can write in any supported language, and the model extracts the fields from whatever they wrote. The orchestration layer never branches on the user's language.
 
-The one place language matters is the **review screen**, where extracted fields are shown back to the user. Field labels (`Date`, `Doctor`, `Time`) need translation, and Typelessity keeps those in standard `messages.{locale}.json` files. Approximately 80 short strings per locale. That is the entire translation effort.
+The other place language matters is the widget's own text — buttons, the consent notice, review and error messages. Typelessity keeps those in one TypeScript module per locale: about 146 short strings each, across 25 locales. That is the translation effort.
 
 **Bottom line:** the model is the language layer. Code is the labels layer.
 
 ## How much does latency vary across languages?
 
-Token counts vary across languages — Japanese is roughly 2x English in tokens for the same meaning, due to script density. But the user-perceived latency is dominated by model time-to-first-token, which is largely independent of source language. The Typelessity 1-second p95 budget holds across supported locales.
+Token counts vary across languages — the same meaning can take more tokens in some scripts than in English. We have not measured what that does to latency per language, so we quote no numbers; the one-second figure in /blog/latency-budgets is a target, not a measurement.
 
-The per-language p50/p95 distribution is tracked in production telemetry; high-friction or low-resource languages occasionally need prompt tuning, but no language has required a separate codepath. The full latency budget is detailed in /blog/latency-budgets.
+No language has required a separate codepath.
 
 ## What still needs language-specific code?
 
-The list is short and stable:
+Less than this post used to claim:
 
-- **Phone number formats** — `libphonenumber` per region. Phone numbers are not a language problem; they are a regional formatting problem.
-- **Date parsing edge cases** — `chrono-node` for locales where the model occasionally hallucinates a date. The model handles 95% of cases; `chrono-node` covers the long tail.
-- **Currency display** — `Intl.NumberFormat`. Same logic as phone numbers — regional, not linguistic.
-- **Honorifics** — Japanese keigo, Korean speech levels. The prompt asks the model to mirror the user's register. Works most of the time; the residual is acceptable for booking surfaces.
+- **Phone numbers and dates** — there is no phone-number or date-parsing library in the engine; dates go through the model and our own date utilities.
+- **Widget text** — the per-locale strings described above.
 
 Everything else is the model.
 
@@ -84,16 +84,16 @@ If the use case is open-ended advisory dialogue with deep cultural nuance — th
 One English-language prompt template plus per-industry config. The model handles translation, normalization, and extraction in one round-trip and returns structured JSON.
 
 **What is actually translated by hand?**
-Approximately 80 short UI strings per locale — labels, confirmation copy, error messages. Stored in standard `messages.{locale}.json` files.
+About 146 short widget strings per locale — widget text, consent notice, review and error messages — in one TypeScript module per locale.
 
 **Does Typelessity detect the user's language?**
-No explicit detection step. The model responds in the user's language; the detected language is logged in `_meta.lang` for analytics but does not branch the orchestration layer.
+No. The reply language is set in the configuration; the user can write in any supported language and the model extracts from it.
 
 **How much does latency vary across languages?**
-Token counts vary, but user-perceived latency stays inside the 1-second p95 budget across supported locales. No language requires a separate codepath.
+Token counts vary, but we have not measured latency per language, so we quote no numbers. No language requires a separate codepath.
 
 **What still needs language-specific code in Typelessity?**
-Phone formatting (libphonenumber), date parsing edge cases (chrono-node), currency display (Intl.NumberFormat), and honorific handling via prompt instruction.
+Only the per-locale widget strings. There is no phone-number or date-parsing library; dates go through the model and our own date utilities.
 
 ---
 

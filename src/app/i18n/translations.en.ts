@@ -29,7 +29,7 @@ export const EN: TranslationMap = {
 
   // ── SEO meta (title is suffixed with " — Typelessity" by SeoService; descriptions ≤155 chars) ──
   'seo.home.title': 'Bookings through conversation, not forms',
-  'seo.home.description': 'AI booking widget that replaces forms with chat. 25+ languages, voice input, configurable per industry. Single-call extraction, GDPR-native, live in hours.',
+  'seo.home.description': 'AI booking widget that replaces forms with chat. 25+ languages, voice input. Consent before any AI processing; service and database in the EU.',
   'seo.howItWorks.title': 'How it works — 4 phases · single GPT call · enrichment APIs',
   'seo.howItWorks.description': 'Chat → Select → Review → Confirm. One AI call per turn, real-time enrichment APIs, cascade-aware corrections, no hardcoded regex.',
   'seo.pricing.title': 'Pricing — Pilot (Free) + Enterprise',
@@ -40,8 +40,8 @@ export const EN: TranslationMap = {
   'seo.faq.description': 'Self-contained answers about Typelessity — product, pricing, AI behavior, integration, privacy. First sentence works as a stand-alone citation.',
   'seo.about.title': 'About — Forms are an artifact of constrained UI',
   'seo.about.description': 'Typelessity is built on one bet: when users describe what they need in their own words, conversion goes up — and the architecture is simpler.',
-  'seo.forAiAgents.title': 'For AI agents — stable JSON contracts + /agent endpoint',
-  'seo.forAiAgents.description': 'Typelessity is callable by autonomous agents. Stable Session and Booking JSON schemas, dedicated /agent/turn endpoint, machine-readable feature list.',
+  'seo.forAiAgents.title': 'For AI agents — stable JSON contracts and schemas',
+  'seo.forAiAgents.description': 'Stable Session and Booking JSON schemas, a machine-readable feature list, and the design of an /agent/turn endpoint that is not built yet.',
   'seo.blog.title': 'Blog — Conversational booking, AI agents, integration patterns',
   'seo.blog.description': 'Articles on replacing forms with chat, GPT-driven extraction, multi-language UX, enrichment patterns, and the agent web.',
 };

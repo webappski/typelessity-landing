@@ -67,7 +67,7 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
       </header>
       <div class="how-inside__grid">
         <div>
-          <h3 class="how-inside__h">Prompt (≈420 tokens)</h3>
+          <h3 class="how-inside__h">Prompt (excerpt)</h3>
           <pre class="how-inside__code">{{ promptSample }}</pre>
         </div>
         <div>
@@ -76,9 +76,9 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
         </div>
       </div>
       <p class="how-inside__note">
-        The <code>_meta.mf</code> array (mentioned-fields) is the anti-hallucination guard:
-        a field's value is only committed if its name appears in <code>mf</code>.
-        Phantom extractions are filtered before the field reaches the form layer.
+        The <code>_meta.mf</code> array (mentioned fields) is logged for diagnostics; the engine does not drop values by it.
+        What acts in code: fields the configuration does not define are dropped, a new value for a filled field
+        is treated as a correction, and the visitor reviews every field before the booking is sent.
       </p>
     </section>
 
@@ -90,7 +90,7 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
       <ul class="edge">
         <li>
           <strong>GPT outage</strong>
-          <p>Widget falls back to a minimal form path with the same field config. Booking never breaks.</p>
+          <p>The model call is retried once. If it still fails, the widget stays in the chat and asks for the next field directly — there is no separate form mode.</p>
         </li>
         <li>
           <strong>Enrichment timeout (10s)</strong>
@@ -102,7 +102,7 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
         </li>
         <li>
           <strong>GPT hallucinates a value</strong>
-          <p>Filtered by <code>_meta.mf</code> guard. Code-side correction guard catches drift.</p>
+          <p>Fields outside the configuration are dropped; a changed value for a filled field is treated as a correction; the visitor reviews every field before sending. <code>_meta.mf</code> is logged, not enforced.</p>
         </li>
         <li>
           <strong>Submit endpoint 5xx</strong>

@@ -71,7 +71,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
         </p>
         <p>
           Engineering, design, and operations across the Webappski portfolio share one codebase pattern,
-          one extraction prompt template, and one set of GDPR-native data flows.
+          one extraction prompt template, and one consent step that runs before any AI processing.
         </p>
       </div>
     </section>
@@ -92,11 +92,11 @@ import { aboutPageLd } from '../../core/seo/schemas';
         </li>
         <li>
           <strong>Numbers belong with sources.</strong>
-          <p>Conversion uplift, latency p95, hallucination rate — every claim points to a benchmark or a dated production telemetry window. No floating numbers, no vendor-deck statistics.</p>
+          <p>Conversion uplift, latency, extraction accuracy — a number appears only with its source: a benchmark or our own dated measurement. Where we have not measured, we say so. No floating numbers, no vendor-deck statistics.</p>
         </li>
         <li>
           <strong>The widget is for humans and agents.</strong>
-          <p>The same JSON contract serves a human typing into chat and an autonomous AI agent calling /agent (endpoint shipping Q3 2026). The conversational booking layer for the agent web.</p>
+          <p>The same JSON contract describes the booking a human makes in chat, and it is the design for an /agent endpoint that autonomous AI agents could call. That endpoint is not built yet and has no release date.</p>
         </li>
       </ul>
     </section>

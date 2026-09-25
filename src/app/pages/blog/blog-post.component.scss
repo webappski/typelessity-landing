@@ -404,6 +404,21 @@
     p:last-child { margin-bottom: 0; }
   }
 
+  // ── Dated update note — a blockquote that opens the body («Updated YYYY-MM-DD — what changed»).
+  //    Not a pull-quote: plain, small, muted, so the TL;DR under it stays the first thing read.
+  ::ng-deep markdown > blockquote:first-child {
+    margin: 0 0 28px;
+    padding: 2px 0 2px 16px;
+    border-left: 3px solid var(--accent);
+    font-style: normal;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: 0;
+    color: var(--text-secondary);
+
+    strong { color: var(--text-primary); font-weight: 500; }
+  }
+
   // ── HR ──
   ::ng-deep hr {
     border: 0;

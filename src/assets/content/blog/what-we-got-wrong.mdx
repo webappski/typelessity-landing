@@ -2,7 +2,7 @@
 title: "What we got wrong: hard lessons from building Typelessity"
 description: "An honest writeup of the architecture decisions, GTM mistakes, and product bets that did not work — and the principles distilled from each. Written for founders building B2B AI in 2026."
 publishedAt: "2025-04-08"
-updatedAt: "2026-04-29"
+updatedAt: "2026-09-25"
 author: "Alex Isa"
 category: "Founder"
 tags: ["lessons", "founder", "retrospective", "b2b-ai"]
@@ -18,6 +18,8 @@ faqs:
   - q: "Why is voice input more important than B2B AI founders expect?"
     a: "Mobile users want voice more than non-voice users predict. Treat voice as a primary input mode on phones, not a checkbox feature. Voice transcription has its own latency budget and accuracy constraints that affect architecture; deferring voice to 'later' typically means reworking the architecture once it is added."
 ---
+
+> **Updated 2026-09-25 — what changed:** the latency principle now says what it is — a one-second target, not a measurement — and the pricing lesson reflects today's published tiers: a free pilot, then Starter, Pro and Enterprise. Conversion results we have no data for are removed.
 
 <strong>Six honest mistakes from building Typelessity, distilled into reusable principles for B2B AI founders: choose architecture before prompts (single-call beats wizard); start broad, narrow with signal; build infrastructure on felt pain; meet the procurement gate on day one; treat voice as primary on mobile; do not charge before value is proven on the customer's data. Architecture is permanent; GTM is changeable. Read /blog/pricing-ai-products and /blog/single-gpt-call for the principles in detail.</strong>
 
@@ -61,9 +63,9 @@ We added voice input as a "nice to have" later than we should have. We thought m
 
 ## 6. We charged before value was proven on the customer's data
 
-We started with a $99/mo subscription model. Conversion was small. Customers churned in month two saying *"we are not sure it is worth it yet"* — and they were right; we had not given them long enough to validate value on their specific data.
+We started with a $99/mo subscription model. Customers churned in month two saying *"we are not sure it is worth it yet"* — and they were right; we had not given them long enough to validate value on their specific data.
 
-We made the pilot free with no time limit. Conversion to a paid Enterprise contract rose significantly. The full reasoning is in /blog/pricing-ai-products.
+We made the pilot free with no time limit, and the paid tiers — Starter, Pro and Enterprise — come after it, published on /pricing. The full reasoning is in /blog/pricing-ai-products.
 
 **Principle:** in B2B AI, value-per-customer is high but takes time to prove. Do not optimize for short-term ARR; optimize for the rate at which value gets proven on the customer's specific data.
 
@@ -75,7 +77,7 @@ For balance, the architecture decisions that held across every pivot:
 - **Single unified prompt.** All fields, all states, in one template. No per-language codepath. /blog/25-languages-one-prompt.
 - **Config-driven extraction.** Industry differences live in config, not in code. The same engine handles every vertical we have shipped.
 - **Cascade-aware corrections.** Field dependencies as first-class config. /blog/cascade-corrections.
-- **Latency as architectural constraint.** 1-second p95 budget chosen before architecture, not after. /blog/latency-budgets.
+- **Latency as architectural constraint.** A one-second target for the booking turn, chosen before the architecture, not after — a target, not a measurement. /blog/latency-budgets.
 
 These decisions outlasted three GTM pivots. The architectural foundation was sound from the rebuild onward, and that is what let us survive the GTM mistakes.
 
@@ -88,7 +90,7 @@ The six mistakes vs the six principles:
 - **Premature infrastructure** → build on felt pain
 - **Procurement gate met late** → DPA / sub-processor list / security questionnaire on day 1
 - **Voice as checkbox** → voice as primary input on mobile
-- **Charge before value proven** → free pilot with no time limit, Enterprise quote later
+- **Charge before value proven** → free pilot with no time limit, published paid tiers after it
 
 The pattern that ties these together: **architecture is permanent; GTM is changeable.** Architectural mistakes — wizard, multi-call, no latency budget — cost rebuilds. GTM mistakes — wrong vertical, wrong pricing, wrong segment — cost weeks but recover.
 

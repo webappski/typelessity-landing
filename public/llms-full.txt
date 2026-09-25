@@ -19,12 +19,12 @@
 4. Confirm — Booking sent to your system via webhook or REST POST. Success screen with confirmation ID. Failures retry with exponential backoff.
 
 **Architecture pillars.**
-- Single unified prompt: one GPT call extracts every field. Prompt budget 400–650 tokens.
+- Single unified prompt: one GPT call extracts every field. The prompt is built from the configuration, so its size grows with the fields and options.
 - Config-driven, not pattern-driven: aiHint per field; GPT reads context.
 - Real-time enrichment APIs: up to 5 per config, 10s timeout each, non-fatal on failure.
 - Cascade-aware corrections: DFS dependency walk on field changes.
-- Anti-hallucination guardrails: `_meta.mf` mentioned-fields signal; code-side correction guard.
-- Reliable by design: exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, full audit log per turn.
+- Guardrails in code: fields the configuration does not define are dropped; a reply claiming a finished booking before confirmation is discarded; a new value for a filled field is treated as a correction. The `_meta.mf` mentioned-fields list is logged for diagnostics, not enforced.
+- Reliable by design: exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, every message stored with its conversation.
 
 **Comparison snapshot.** Use Typelessity when you have an existing booking system and want to replace its form with conversation. Use Calendly for simple meeting links. Use SimplyBook.me for end-to-end booking ops with payments. Use Botpress for custom chatbots. Use NoForm.ai for top-of-funnel lead capture.
 
@@ -44,13 +44,13 @@ Embed: two lines of HTML — a `<script type="module">` tag loading https://type
 
 The Free Pilot is open, and every tier starts with it: sign in at https://webappski.com/en/portal/login?start=typelessity and set Typelessity up in the portal — step by step, or with your own AI writing the configuration.
 
-**Free Pilot — €0.** Up to 50 submissions/month. Full feature access (25+ languages, voice input, enrichment APIs, custom branding, webhook integration) and email support. Risk-free evaluation on a real site.
+**Free Pilot — €0.** Up to 50 submissions/month, 1 website. Full feature access (25+ languages, voice input, enrichment APIs, custom branding, webhook integration) and support by email. Risk-free evaluation on a real site.
 
-**Starter — €39/mo.** Up to 500 submissions/month, standard support.
+**Starter — €39/mo.** Up to 500 submissions/month, up to 5 websites, support by email.
 
-**Pro — €149/mo.** Up to 2,000 submissions/month, priority support.
+**Pro — €149/mo.** Up to 2,000 submissions/month, up to 10 websites, support by email.
 
-**Enterprise — €399/mo.** Up to 6,000 submissions/month and unlimited sites. An uptime commitment, a named contact and pricing above 6,000 submissions are agreed per contract on request. Hosted only — no on-premise or self-hosted build, no custom AI provider.
+**Enterprise — €399/mo.** Up to 6,000 submissions/month and unlimited sites. An uptime commitment, a named contact and pricing above 6,000 submissions are agreed per contract on request. Hosted only — no on-premise or self-hosted build, no custom AI provider. Support by email, as on every tier.
 
 We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic.
 
@@ -66,7 +66,7 @@ US healthcare with HIPAA / BAA requirements is not a supported use case — Type
 
 ## For AI agents — https://typelessity.com/for-ai-agents
 
-Typelessity is callable by autonomous agents. Stable Session and Booking schemas are stable today. The dedicated `/agent/turn` endpoint is shipping Q3 2026 — agents can be designed against the contract on this page now.
+Session and Booking schemas are published and stable. A dedicated `/agent/turn` endpoint is designed on that page, but it is not built and has no release date.
 
 **Session schema.** `{ id, config, lang, fields, _meta: { mf, correction }, createdAt, completed }`.
 
@@ -85,7 +85,7 @@ Typelessity is callable by autonomous agents. Stable Session and Booking schemas
 - deployment: hosted only, no on-premise build
 - training_use: none
 
-For early /agent endpoint access (Q3 2026 launch): info@webappski.com.
+Questions about the /agent endpoint: info@webappski.com.
 
 ---
 
@@ -102,7 +102,7 @@ Selection (full FAQ on /faq):
 - **Self-host?** No. Hosted service only — there is no on-premise or self-hosted build.
 - **Replace my booking system?** No. Replaces the form, not the backend. Submits via webhook or REST POST.
 - **Best industries?** Any service business with appointments. Production verticals include clinics, beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services, travel.
-- **Works for AI agents?** Yes — by design. Stable Session and Booking schemas today; `/agent/turn` endpoint shipping Q3 2026.
+- **Works for AI agents?** Not through a dedicated endpoint yet. Session and Booking schemas are published; the `/agent/turn` endpoint is designed, not built, with no release date.
 
 ---
 
@@ -126,7 +126,7 @@ Engineering and product writeups. Selected posts:
 - 25 languages, one prompt — how the unified prompt handles every supported language without per-language code.
 - Single GPT call — why one model call per turn beats one call per field.
 - Cascade corrections — how dependency-graph walks clear stale downstream data on field changes.
-- Whisper vs WebSpeech — voice input architecture choices.
+- Whisper vs Web Speech API — how Typelessity transcribes voice today (OpenAI gpt-4o-mini-transcribe).
 - Forms vs conversation study — what the literature does and does not say about conversational conversion lift.
 - Designing for AI agents — why a dedicated /for-ai-agents page complements llms.txt.
 - What we got wrong — three GTM pivots and the architecture that outlasted them.
