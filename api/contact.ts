@@ -9,6 +9,12 @@ interface ContactPayload {
   industry?: string;
   monthlyBookings?: string;
   message?: string;
+  // Waitlist form (/pricing): type 'waitlist_request', no company or volume.
+  type?: string;
+  website?: string;
+  plan?: string;
+  product?: string;
+  source?: string;
 }
 
 interface ResendBody {
@@ -62,6 +68,8 @@ export default async function handler(req: Request): Promise<Response> {
   } catch {
     return bad('Invalid JSON');
   }
+
+  if (body.type === 'waitlist_request') return waitlist(body);
 
   const email = (body.email ?? '').trim();
   const company = (body.company ?? '').trim();
@@ -144,6 +152,48 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     await Promise.all(tasks);
+    return ok();
+  } catch {
+    return bad('Submission failed', 502);
+  }
+}
+
+// The waitlist form asks only for email and plan. It is emailed, not stored: the Supabase leads
+// table is shaped for pilot requests.
+async function waitlist(body: ContactPayload): Promise<Response> {
+  const email = (body.email ?? '').trim();
+  const plan = (body.plan ?? '').trim();
+  if (!email || !isEmail(email)) return bad('Valid email is required');
+  if (!plan) return bad('Plan is required');
+
+  const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  if (!RESEND_API_KEY) {
+    return bad('Contact endpoint is not configured (missing RESEND_API_KEY)', 503);
+  }
+
+  const field = (v: string | undefined) => (v ?? '').trim() || '—';
+  const message = (body.message ?? '').trim();
+  const text = [
+    `New Waitlist request`,
+    ``,
+    `Email:    ${email}`,
+    `Plan:     ${plan}`,
+    `Website:  ${field(body.website)}`,
+    `Industry: ${field(body.industry)}`,
+    `Product:  ${field(body.product)}`,
+    `Source:   ${field(body.source)}`,
+    message ? `\n${message}` : '',
+  ].join('\n');
+
+  const { from, to } = mailRoute();
+  const payload: ResendBody = { from, to, subject: `[Waitlist] ${plan}`, text, reply_to: email };
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'authorization': `Bearer ${RESEND_API_KEY}`, 'content-type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) throw new Error(`resend ${r.status}`);
     return ok();
   } catch {
     return bad('Submission failed', 502);
