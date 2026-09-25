@@ -6,7 +6,7 @@ import { SeoService } from '../../core/seo/seo.service';
 import { faqLd, productLd } from '../../core/seo/schemas';
 import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { ContactFormComponent } from '../../shared/contact-form/contact-form.component';
-import { HOME } from '../home/home.content';
+import { HOME, pilotSignupUrl } from '../home/home.content';
 import { PRICING_FAQ } from './pricing.content';
 
 @Component({
@@ -24,7 +24,7 @@ import { PRICING_FAQ } from './pricing.content';
 
     <section class="vc-wrap pricing-tiers">
       <div class="home-tiers">
-        @for (tier of tiersByAnchorOrder; track tier.name) {
+        @for (tier of c.pricing.tiers; track tier.name) {
           <article class="tier" [class.tier--featured]="tier.featured">
             @if (tier.featured) { <span class="tier__badge">Recommended</span> }
             <div class="tier__name">{{ tier.name }}</div>
@@ -34,7 +34,7 @@ import { PRICING_FAQ } from './pricing.content';
               @for (b of tier.bullets; track b) { <li>{{ b }}</li> }
             </ul>
             @if (!tier.comingSoon) {
-              <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" routerLink="/pricing" fragment="start-pilot">{{ tier.cta }}</a>
+              <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" [href]="signupUrl('pricing', tier.slug)">{{ tier.cta }}</a>
             } @else {
               <span class="vc-btn vc-btn-muted vc-btn-block vc-btn-lg">Coming soon</span>
             }
@@ -45,38 +45,38 @@ import { PRICING_FAQ } from './pricing.content';
 
     <section id="start-pilot" class="vc-wrap pricing-form">
       <header class="vc-section-h">
-        <div class="vc-kicker"><span class="vc-kicker-bar"></span>Waitlist</div>
-        <h2>Get notified when Typelessity launches</h2>
-        <p class="vc-section-sub">Typelessity is launching soon. Sign up to be notified when it goes live.</p>
+        <div class="vc-kicker"><span class="vc-kicker-bar"></span>Questions</div>
+        <h2>Questions before you start?</h2>
+        <p class="vc-section-sub">Write to us and we’ll reply by email.</p>
       </header>
       <app-contact-form />
     </section>
 
     <section class="vc-wrap pricing-onboarding">
       <header class="vc-section-h">
-        <div class="vc-kicker"><span class="vc-kicker-bar"></span>Onboarding</div>
-        <h2>From spec to live in a couple of hours</h2>
+        <div class="vc-kicker"><span class="vc-kicker-bar"></span>Setup</div>
+        <h2>You set it up yourself, in the Webappski portal</h2>
       </header>
       <ol class="onboarding">
         <li>
           <span class="onboarding__day">Step 1</span>
-          <strong>Client spec interview</strong>
-          <p>30-minute call. We capture your fields, options, enrichments, and branding into a structured spec template.</p>
+          <strong>Choose a path</strong>
+          <p>Step by step — a few short screens — or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back.</p>
         </li>
         <li>
           <span class="onboarding__day">Step 2</span>
-          <strong>Config JSON generated</strong>
-          <p>We turn the spec into a versioned config JSON. You review the field list, aiHints, and enrichment endpoints.</p>
+          <strong>Describe your booking</strong>
+          <p>Your business, the questions in the order a customer answers, and where bookings go: an email address or your system’s address.</p>
         </li>
         <li>
           <span class="onboarding__day">Step 3</span>
-          <strong>Embed code on your page</strong>
-          <p>One <code>&lt;script&gt;</code> tag added to the page where booking happens. Widget renders against your config.</p>
+          <strong>Review and try it</strong>
+          <p>Check everything before you publish, and try the widget as a customer. Practice bookings go nowhere and don’t count towards your monthly limit.</p>
         </li>
         <li>
           <span class="onboarding__day">Step 4</span>
-          <strong>Booking endpoint wired</strong>
-          <p>Your existing booking API is mapped to the widget's submit. Test booking. Go live.</p>
+          <strong>Install</strong>
+          <p>The portal gives you the code for your platform — two lines of HTML that work in plain HTML, WordPress, React or Vue.</p>
         </li>
       </ol>
     </section>
@@ -95,7 +95,7 @@ import { PRICING_FAQ } from './pricing.content';
           <tr><td>All field types, voice, 25+ languages</td><td>✓</td><td>✓</td></tr>
           <tr><td>Enrichment APIs (up to 5 per config)</td><td>✓</td><td>✓</td></tr>
           <tr><td>Custom branding, webhook integration</td><td>✓</td><td>✓</td></tr>
-          <tr><td>Personal onboarding included</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Setup wizard in the Webappski portal</td><td>✓</td><td>✓</td></tr>
           <tr><td>SLA guarantee (99.9% uptime)</td><td>—</td><td>✓</td></tr>
           <tr><td>Dedicated account manager</td><td>—</td><td>✓</td></tr>
           <tr><td>On-premise / self-hosted deployment</td><td>—</td><td>✓</td></tr>
@@ -134,9 +134,9 @@ export class PricingPageComponent implements OnInit {
   private readonly jsonLd = inject(JsonLdService);
   protected readonly c = HOME;
   protected readonly pricingFaq = PRICING_FAQ;
-  // CRO display order: highest price first (anchoring bias) — Enterprise → Pro → Starter → Free Pilot.
-  // Home page keeps natural ascending order; this reversal is pricing-page-only.
-  protected readonly tiersByAnchorOrder = [...HOME.pricing.tiers].reverse();
+  // Tiers run Free Pilot → Enterprise, the same as on the home page: every tier starts with the free
+  // pilot, so it comes first (founder 2026-09-25, A43 — replaces the highest-price-first anchoring order).
+  protected readonly signupUrl = pilotSignupUrl;
 
   ngOnInit(): void {
     this.seo.apply({

@@ -89,7 +89,7 @@ export function softwareApplicationLd(): Json {
         price: '0',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -97,7 +97,7 @@ export function softwareApplicationLd(): Json {
         price: '39',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -105,7 +105,7 @@ export function softwareApplicationLd(): Json {
         price: '149',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -113,7 +113,7 @@ export function softwareApplicationLd(): Json {
         price: '399',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
     ],
   };
@@ -202,7 +202,7 @@ export function productLd(): Json {
         price: '0',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -210,7 +210,7 @@ export function productLd(): Json {
         price: '39',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -218,7 +218,7 @@ export function productLd(): Json {
         price: '149',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
       {
         '@type': 'Offer',
@@ -226,7 +226,7 @@ export function productLd(): Json {
         price: '399',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/PreOrder',
+        availability: 'https://schema.org/InStock',
       },
     ],
   };

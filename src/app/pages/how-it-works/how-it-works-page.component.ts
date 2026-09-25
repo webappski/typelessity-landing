@@ -4,7 +4,7 @@ import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { EMBED_SNIPPET } from '../../core/integrations/embed-snippet';
 import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
-import { HOME } from '../home/home.content';
+import { HOME, pilotSignupUrl } from '../home/home.content';
 
 @Component({
   selector: 'app-how-it-works-page',
@@ -153,17 +153,17 @@ import { HOME } from '../home/home.content';
     <section class="vc-wrap how-embed">
       <header class="vc-section-h">
         <div class="vc-kicker"><span class="vc-kicker-bar"></span>Embed</div>
-        <h2>One line of HTML</h2>
-        <p class="vc-section-sub">Drop into any page. React, Vue, plain HTML — same script tag.</p>
+        <h2>Two lines of HTML</h2>
+        <p class="vc-section-sub">A web component: the same code works in plain HTML, WordPress, React or Vue.</p>
       </header>
       <pre class="how-embed__code">{{ embedSnippet }}</pre>
-      <p class="how-embed__note">For React, the script auto-mounts to <code>&lt;div id="typelessity-widget"&gt;</code>. Vue and Svelte hooks ship with the same package.</p>
+      <p class="how-embed__note">The Install step in the Webappski portal shows the exact code for your platform.</p>
     </section>
 
     <section class="vc-wrap how-cta">
       <h2>Ready to replace your form?</h2>
       <div class="how-cta__actions">
-        <a class="vc-btn vc-btn-primary vc-btn-lg" routerLink="/pricing" fragment="start-pilot">Join Waitlist</a>
+        <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('how-it-works', 'free-pilot')">Start free pilot</a>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/industries">Browse industries</a>
       </div>
     </section>
@@ -173,6 +173,7 @@ export class HowItWorksPageComponent implements OnInit {
   protected readonly t = inject(TranslationService);
   private readonly seo = inject(SeoService);
   protected readonly c = HOME;
+  protected readonly signupUrl = pilotSignupUrl;
 
   ngOnInit(): void {
     this.seo.apply({

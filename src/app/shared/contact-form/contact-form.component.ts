@@ -63,7 +63,7 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
           </label>
         </div>
         <button type="submit" class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block" [disabled]="status() === 'sending' || !f.valid">
-          {{ status() === 'sending' ? 'Submitting…' : 'Join Waitlist' }}
+          {{ status() === 'sending' ? 'Sending…' : 'Send' }}
         </button>
         @if (status() === 'offline') {
           <p class="cf__msg cf__msg--err" role="alert">We couldn't reach our server. Please check your connection and try again.</p>
@@ -74,8 +74,7 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
       </form>
     } @else {
       <div class="cf__success" role="status" aria-live="polite">
-        <h3>You're on the Waitlist!</h3>
-        <p>We'll notify you as soon as Typelessity is available. Thanks for your interest!</p>
+        <h3>Thanks — we’ll reply by email.</h3>
       </div>
     }
   `,
@@ -113,7 +112,7 @@ export class ContactFormComponent {
     const m = this.model;
     const note = (m.message ?? '').trim();
     const body = [
-      'Waitlist request',
+      'Question about Typelessity',
       '',
       `Email: ${m.email}`,
       `Website: ${m.website || '—'}`,
@@ -121,7 +120,7 @@ export class ContactFormComponent {
       `Industry: ${m.industry || '—'}`,
       note ? `\n${note.length > MAX_MESSAGE_IN_MAILTO ? `${note.slice(0, MAX_MESSAGE_IN_MAILTO)}…` : note}` : '',
     ].join('\n');
-    const subject = `Typelessity waitlist — ${m.plan}`;
+    const subject = `Typelessity question — ${m.plan}`;
     return `mailto:${FALLBACK_MAILBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 }

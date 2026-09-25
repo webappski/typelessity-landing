@@ -29,7 +29,7 @@ test('a server refusal offers an email with the request already in it', async ({
   const href = await error.getByRole('link', { name: 'info@webappski.com' }).getAttribute('href');
   expect(href).toMatch(/^mailto:info@webappski\.com\?/);
   const params = new URLSearchParams(href!.slice(href!.indexOf('?') + 1));
-  expect(params.get('subject')).toBe('Typelessity waitlist — pro');
+  expect(params.get('subject')).toBe('Typelessity question — pro');
   const body = params.get('body') ?? '';
   for (const value of ['owner@clinic.example', 'https://clinic.example', 'pro', 'hospitality', 'Two locations, about 300 bookings a month.']) {
     expect(body).toContain(value);

@@ -10,7 +10,7 @@
 
 **TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available doctors after a specialty is chosen), and submits the booking via webhook or REST. It supports 25+ languages and voice input, and is configurable for any service-business booking flow.
 
-**Stats.** Languages 25+. Per-turn latency under 800ms. Four phases (Chat → Select → Review → Confirm). One line of HTML to integrate.
+**Stats.** Languages 25+. Per-turn latency under 800ms. Four phases (Chat → Select → Review → Confirm). Two lines of HTML to integrate.
 
 **Four phases.**
 1. Chat — User describes booking in plain language; GPT-4.1-nano reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
@@ -36,13 +36,13 @@ Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT c
 
 The widget is a Lit web component. The API is a Node service. The AI provider can be swapped between OpenAI, Azure OpenAI, or any OpenAI-compatible endpoint. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
 
-Embed: one line of HTML. The public CDN at cdn.typelessity.com/widget.js is shipping Q3 2026 — at launch, pilot customers will receive a tenant-specific bundle URL during onboarding.
+Embed: two lines of HTML — a `<script type="module">` tag loading https://typelessity-widget.vercel.app/widget.js and a `<typelessity-widget api-url="https://typelessity.vercel.app">` element. The embed code comes from your setup in the Webappski portal, which shows the exact code for plain HTML, WordPress, React or Vue.
 
 ---
 
 ## Pricing — https://typelessity.com/pricing
 
-Typelessity launches soon (PreOrder) — all four tiers become available at the same time. Pricing below; join the waitlist to be notified when it goes live.
+The Free Pilot is open, and every tier starts with it: sign in at https://webappski.com/en/portal/login?start=typelessity and set Typelessity up in the portal — step by step, or with your own AI writing the configuration.
 
 **Free Pilot — €0.** Up to 50 submissions/month. Full feature access (25+ languages, voice input, enrichment APIs, custom branding, webhook integration) and email support. Risk-free evaluation on a real site.
 
@@ -52,7 +52,7 @@ Typelessity launches soon (PreOrder) — all four tiers become available at the 
 
 **Enterprise — €399/mo.** Up to 6,000 submissions/month, dedicated success manager. SLA, custom integrations, on-premise / self-hosted, EU data residency, custom AI provider.
 
-We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic. A/B tooling is included in the Free Pilot at launch.
+We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic.
 
 ---
 
@@ -99,7 +99,6 @@ Selection (full FAQ on /faq):
 - **Per-turn latency?** Median 200–800ms on gpt-4.1-nano, single AI call per turn. Enrichment turns add 1–3 seconds.
 - **Self-host?** On-premise available on Enterprise.
 - **Replace my booking system?** No. Replaces the form, not the backend. Submits via webhook or REST POST.
-- **Conversion lift?** A/B testing tooling is included in the Free Pilot at launch — measure lift on your own traffic. No hero number is published.
 - **Best industries?** Any service business with appointments. Production verticals include clinics, beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services, travel.
 - **Works for AI agents?** Yes — by design. Stable Session and Booking schemas today; `/agent/turn` endpoint shipping Q3 2026.
 

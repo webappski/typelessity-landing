@@ -16,7 +16,7 @@
       </h1>
       <p class="home-hero__sub">{{ c.hero.sub }}</p>
       <div class="home-hero__cta">
-        <a class="vc-btn vc-btn-accent vc-btn-lg" routerLink="/pricing" fragment="start-pilot">
+        <a class="vc-btn vc-btn-accent vc-btn-lg" [href]="signupUrl('hero', 'free-pilot')">
           {{ c.hero.cta.primary }}
           <app-icon name="arrow-right-small" [size]="14" />
         </a>
@@ -175,7 +175,7 @@
         <div class="tier__price">{{ tier.price }}</div>
         <div class="tier__sub">{{ tier.sub }}</div>
         @if (!tier.comingSoon) {
-          <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" routerLink="/pricing" fragment="start-pilot">{{ tier.cta }}</a>
+          <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" [href]="signupUrl('pricing', tier.slug)">{{ tier.cta }}</a>
         } @else {
           <span class="vc-btn vc-btn-muted vc-btn-block vc-btn-lg tier__cta-disabled">Coming soon</span>
         }
@@ -184,7 +184,7 @@
   </div>
 
   <p class="home-pricing__more">
-    <a routerLink="/pricing">See full plan details, ROI math and onboarding timeline →</a>
+    <a routerLink="/pricing">See full plan details and how setup works →</a>
   </p>
 </section>
 
@@ -217,7 +217,7 @@
     <h2 class="home-cta__h">{{ c.cta.title }}</h2>
     <p class="home-cta__sub">{{ c.cta.sub }}</p>
     <div class="home-cta__actions">
-      <a class="vc-btn vc-btn-accent vc-btn-lg" routerLink="/pricing" fragment="start-pilot">{{ c.cta.primary }}</a>
+      <a class="vc-btn vc-btn-accent vc-btn-lg" [href]="signupUrl('home-cta', 'free-pilot')">{{ c.cta.primary }}</a>
       <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
     </div>
     <pre class="home-cta__snippet">{{ embedSnippet }}</pre>

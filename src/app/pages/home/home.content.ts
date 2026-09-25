@@ -11,6 +11,19 @@ export type FaqCategory =
   | 'For Developers'
   | 'Competitor Migration';
 
+// Typelessity is set up inside the Webappski portal (A43, founder 2026-09-25). A link to another site
+// carries utm_* — webappski.com records it on load; ?via= is only for links within webappski.com.
+export const PORTAL_SIGNUP_URL = 'https://webappski.com/en/portal/login';
+
+export function pilotSignupUrl(medium: string, content: string): string {
+  const url = new URL(PORTAL_SIGNUP_URL);
+  url.searchParams.set('start', 'typelessity');
+  url.searchParams.set('utm_source', 'typelessity.com');
+  url.searchParams.set('utm_medium', medium);
+  url.searchParams.set('utm_content', content);
+  return url.toString();
+}
+
 export const HOME = {
   hero: {
     eyebrow: 'AI conversational booking widget',
@@ -18,8 +31,8 @@ export const HOME = {
     headlineGrad: 'conversation,',
     headlineEm: 'not forms',
     sub: 'Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. GDPR-compliant.',
-    cta: { primary: 'Join Waitlist', secondary: 'See How It Works' },
-    trustline: 'Launching soon · 25+ languages · GDPR-native',
+    cta: { primary: 'Start free pilot', secondary: 'See How It Works' },
+    trustline: 'Free pilot · 25+ languages · GDPR-native',
   },
 
   tldr: {
@@ -31,7 +44,7 @@ export const HOME = {
       ['Used by', 'Service businesses with appointment booking — legal, real-estate, hospitality, beauty, automotive, education, and more'],
       ['Languages', "25+ — single config, GPT auto-detects user's language and responds in it"],
       ['Latency', '200–800ms per turn (gpt-4.1-nano)'],
-      ['Integration', '1 line of HTML or React; webhook or REST submit; native Calendar/CRM hooks'],
+      ['Integration', 'Two lines of HTML (a web component); submits by email, webhook or REST'],
       ['Compliance', 'GDPR, configurable consent flow, EU data residency'],
     ] as const,
   },
@@ -40,7 +53,7 @@ export const HOME = {
     { n: '25+', l: 'Languages supported' },
     { n: '~800ms', l: 'Per-turn latency' },
     { n: '4', l: 'Phases: Chat → Select → Review → Confirm' },
-    { n: '1 line', l: 'Of HTML to integrate' },
+    { n: '2 lines', l: 'Of HTML to integrate' },
   ] as const,
 
   howItWorks: {
@@ -94,9 +107,9 @@ export const HOME = {
 
   cta: {
     eyebrow: 'Replace forms with chat',
-    title: 'Get notified when Typelessity launches',
-    sub: 'Join the waitlist to be among the first to try Typelessity when it goes live.',
-    primary: 'Join Waitlist',
+    title: 'Start your free pilot',
+    sub: 'Up to 50 submissions a month with no time limit. Set it up step by step in the Webappski portal, or let your own AI fill it in.',
+    primary: 'Start free pilot',
     secondary: 'See how it works',
   },
 
@@ -142,44 +155,44 @@ export const HOME = {
     tiers: [
       {
         name: 'Free Pilot', price: '€0', sub: 'Test Typelessity on your site risk-free.', featured: false,
-        comingSoon: true,
+        comingSoon: false,
         bullets: [
           'Up to 50 submissions/month',
           'Supports 25+ Languages',
           'Email Support',
         ],
-        // CTA text used post-launch (when comingSoon=false). Templates render "Coming soon" while disabled.
-        cta: 'Start free',
+        // comingSoon: true renders a disabled «Coming soon» button instead of the link.
+        cta: 'Start free pilot', slug: 'free-pilot',
       },
       {
         name: 'Starter', price: '€39', sub: 'Perfect for small businesses.', featured: false,
-        comingSoon: true,
+        comingSoon: false,
         bullets: [
           'Up to 500 submissions/month',
           'Supports 25+ Languages',
           'Standard Support',
         ],
-        cta: 'Choose Starter',
+        cta: 'Start with the free pilot', slug: 'starter',
       },
       {
         name: 'Pro', price: '€149', sub: 'For growing companies with higher volume.', featured: true,
-        comingSoon: true,
+        comingSoon: false,
         bullets: [
           'Up to 2,000 submissions/month',
           'Supports 25+ Languages',
           'Priority Support',
         ],
-        cta: 'Choose Pro',
+        cta: 'Start with the free pilot', slug: 'pro',
       },
       {
         name: 'Enterprise', price: '€399', sub: 'For large organizations needing custom solutions.', featured: false,
-        comingSoon: true,
+        comingSoon: false,
         bullets: [
           'Up to 6,000 submissions/month',
           'Supports 25+ Languages',
           'Dedicated Success Manager',
         ],
-        cta: 'Talk to sales',
+        cta: 'Start with the free pilot', slug: 'enterprise',
       },
     ] as const,
   },
@@ -194,15 +207,15 @@ export const HOME = {
     { category: 'AI Behavior', q: 'Does Typelessity work in non-English languages?', a: 'Yes. Typelessity supports 25+ languages out of the box including English, Russian, German, French, Spanish, Italian, Polish, Portuguese, Dutch, Turkish, Arabic, Hebrew, Japanese, Korean, and Chinese. The configuration language sets the response language; user input can be in any supported language and will be translated and normalized automatically.' },
     { category: 'AI Behavior', q: 'How accurate is the data extraction?', a: 'Typelessity uses gpt-4.1-nano with a unified prompt that reads each field\'s aiHint. Extraction accuracy on typical service-industry configs is >95% for first-attempt structured fields. The system never uses hardcoded regex patterns — GPT reads the config and extracts based on semantic context. Anti-hallucination guards ensure GPT only commits values the user explicitly mentioned.' },
     { category: 'AI Behavior', q: "What does 'enrichment' mean?", a: 'Enrichment is a real-time API call that triggers when a specific field is filled. For example: when a user says "cardiologist", Typelessity calls GET /doctors?specialty=cardiology, receives a list of doctors, and presents them as interactive cards. Up to 5 enrichments per config. 10 second timeout each. Failures are non-fatal — the AI falls back to asking the user directly.' },
-    { category: 'Integration', q: 'How long does integration take?', a: 'Typically a few hours with personal onboarding. Step 1: fill the client spec template (your fields, options, enrichments, branding). Step 2: we generate a config JSON. Step 3: drop one HTML script tag onto your page. Step 4: hook up your booking API endpoint via the webhook field-mapping you provided.' },
+    { category: 'Integration', q: 'How long does integration take?', a: 'We have not measured a typical setup time, so we do not quote one. Setup is a wizard in the Webappski portal that you complete yourself. Step by step: Your business → Questions → Data & delivery → Messages → Review → Install. Or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back (Your business → Your AI’s answer → Review → Install). Before you publish you can try the widget as a customer; the Install step gives you the embed code for your platform.' },
     { category: 'Privacy', q: 'Is Typelessity GDPR compliant?', a: 'Yes. The widget asks every visitor for consent before any AI processing begins. The service runs in the EU (Vercel, Frankfurt) and its database is in the EU (Supabase, Ireland); OpenAI, which understands the conversation and transcribes voice, processes in the United States under the 2021 Standard Contractual Clauses. An abandoned conversation is deleted within 48 hours of the visitor\'s last message; one that led to a booking is kept until the business erases it. No data is used for model training.' },
     { category: 'AI Behavior', q: 'Does Typelessity support voice input?', a: 'Yes. Voice input is powered by OpenAI Whisper. Users tap the microphone, speak naturally, and the transcription is fed into the same extraction pipeline as typed text. Voice works in all 25+ supported languages.' },
     { category: 'AI Behavior', q: 'How does Typelessity handle corrections?', a: 'If a user changes a previously filled field, the system detects the correction (GPT signals it via a "correction" key), then walks the dependency graph and clears any downstream fields that depended on the changed value. Destructive cascades show a confirmation: "Changing X will also clear Y, Z. Proceed?"' },
     { category: 'AI Behavior', q: 'What is the per-turn latency?', a: 'Median per-turn latency is 200–800ms on gpt-4.1-nano, with a single AI call per turn. When enrichment triggers (a second AI call to present API results), latency adds 1–3 seconds. We do not use gpt-5 in the hot path because of its higher latency.' },
     { category: 'Integration', q: 'Can I self-host Typelessity?', a: 'On-premise deployment is available on the Enterprise plan. The widget runs as a Lit web component, the API is a Next.js service, and the AI provider can be swapped between OpenAI, Azure OpenAI, or any OpenAI-compatible endpoint.' },
     { category: 'Product', q: 'Does Typelessity replace my booking system?', a: 'No. Typelessity replaces the booking form, not the booking backend. It collects structured data via conversation and submits it to your existing system via webhook or REST POST. Your CRM, calendar, payment processor, and staff scheduler stay exactly as they are.' },
-    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'Free Pilot (€0): up to 50 submissions/month — full feature access, personal onboarding. Starter (€39/mo, coming soon): up to 500 submissions/month. Pro (€149/mo, coming soon): up to 2,000 submissions/month, priority support. Enterprise (€399/mo, coming soon): up to 6,000 submissions/month, dedicated success manager.' },
-    { category: 'AI Behavior', q: 'Will conversational booking convert better than my current form?', a: 'Head-to-head A/B testing is the only honest answer. We provide A/B testing tooling during the pilot so you measure lift on your own traffic against your existing form. We do not publish a hero conversion-lift number on this site because every claim of that shape we have seen in the AI-booking space is either uncited or based on a study with assumptions that do not transfer.' },
+    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'Free Pilot (€0): up to 50 submissions/month — full feature access. Starter (€39/mo): up to 500 submissions/month. Pro (€149/mo): up to 2,000 submissions/month, priority support. Enterprise (€399/mo): up to 6,000 submissions/month, dedicated success manager.' },
+    { category: 'AI Behavior', q: 'Will conversational booking convert better than my current form?', a: 'Head-to-head A/B testing is the only honest answer. Typelessity does not include A/B testing tooling — to measure lift, run the widget and your existing form side by side with your own analytics. We do not publish a hero conversion-lift number on this site because every claim of that shape we have seen in the AI-booking space is either uncited or based on a study with assumptions that do not transfer.' },
     { category: 'Product', q: 'What industries is Typelessity best for?', a: 'Any service business that takes appointments. Production verticals include beauty salons, legal practices, real estate, automotive services, hospitality, education, fitness, pet services, home services, travel, and more. The same engine handles every vertical — configuration changes the field schema, prompts, and enrichments per tenant.' },
     { category: 'Product', q: 'Does Typelessity work for AI agents (not humans)?', a: 'Yes — by design. The same widget API is callable by autonomous agents. We publish a stable JSON schema for sessions today, and the dedicated /agent endpoint (synchronous turn-by-turn API with the same field-extraction pipeline) is shipping Q3 2026. Documentation and schemas are already on /for-ai-agents so agents can be designed against the contract now.' },
 
@@ -221,7 +234,7 @@ export const HOME = {
     { category: 'Compliance', q: 'Is Typelessity certified for US healthcare (HIPAA)?', a: 'No, and we don\'t target US healthcare. The widget is configurable for non-US health-adjacent flows (wellness, fitness, EU clinics under GDPR) but US healthcare with HIPAA/BAA requirements is an explicit non-goal until we ship the relevant attestation.' },
 
     // ── For Developers ──
-    { category: 'For Developers', q: 'What does the embed snippet look like in production?', a: 'One <script> tag with a tenant-specific bundle URL and a data-config attribute. The public CDN at cdn.typelessity.com/widget.js is shipping Q3 2026; until then, pilot customers receive a tenant bundle URL during onboarding (configured for your domain, with CSP-safe loading).' },
+    { category: 'For Developers', q: 'What does the embed snippet look like in production?', a: 'Two lines: a <script type="module"> tag that loads the widget from typelessity-widget.vercel.app, and a <typelessity-widget api-url="https://typelessity.vercel.app"> element where the widget should appear. It is a web component, so the same code works in plain HTML, WordPress, React or Vue; the Install step in the Webappski portal shows the exact code for your platform.' },
     { category: 'For Developers', q: 'How does the widget submit to my backend?', a: 'Two options: (a) Webhook — the widget POSTs the structured Booking JSON to your endpoint with optional HMAC signature; (b) REST POST — you provide the endpoint shape and field mapping in your config and the widget calls it directly from the browser with a short-lived token.' },
     { category: 'For Developers', q: 'What is the JSON shape of a submitted booking?', a: 'Stable schema: `{ bookingId, sessionId, fields: {...}, submittedAt, status }`. Full schemas (Session, Booking, /agent request/response) are published on /for-ai-agents and version-pinned with a `schemaVersion` field.' },
     { category: 'For Developers', q: 'Can I customize the AI prompt itself?', a: 'You customize via `aiHint` per field — a short instruction telling GPT what each field means semantically. The system prompt is single, unified, and not editable per tenant; that\'s the architectural guarantee that gives us anti-hallucination behavior and predictable latency.' },

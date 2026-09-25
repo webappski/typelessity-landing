@@ -9,7 +9,7 @@ import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { LiveDemoComponent } from '../../widgets/live-demo/live-demo.component';
 import { ALL_INDUSTRIES } from '../../lib/industries';
-import { HOME } from './home.content';
+import { HOME, pilotSignupUrl } from './home.content';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   protected readonly c = HOME;
   protected readonly industriesCount = ALL_INDUSTRIES.length;
   protected readonly embedSnippet = EMBED_SNIPPET;
+  protected readonly signupUrl = pilotSignupUrl;
   protected readonly faqPreview = HOME.faq.filter((qa) => qa.category === 'Product');
 
   ngOnInit(): void {
