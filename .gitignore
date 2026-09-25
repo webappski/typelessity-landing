@@ -50,3 +50,7 @@ Thumbs.db
 /perplexity-responses/
 .aeo-tracker.json
 .implementor.log
+
+# Playwright browser E2E output
+/test-results/
+/playwright-report/

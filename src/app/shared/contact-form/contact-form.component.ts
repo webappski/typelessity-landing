@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { WaitlistPayload, waitlistRequestBody } from './waitlist-request';
 
-interface WaitlistPayload {
-  email: string;
-  website?: string;
-  plan: string;
-  industry?: string;
-  message?: string;
-}
 
-type Status = 'idle' | 'sending' | 'success' | 'error';
+// 'offline' — no response reached us (status 0): retrying on a working connection can help.
+// 'rejected' — the server answered with an error: retrying gives the same answer, so the
+// visitor gets the one path that always works — an email with their request already in it.
+type Status = 'idle' | 'sending' | 'success' | 'offline' | 'rejected';
+
+const FALLBACK_MAILBOX = 'info@webappski.com';
+// Browsers and mail clients cut long mailto: links; the rest of a long message is typed again.
+const MAX_MESSAGE_IN_MAILTO = 1000;
 
 @Component({
   selector: 'app-contact-form',
@@ -64,8 +65,11 @@ type Status = 'idle' | 'sending' | 'success' | 'error';
         <button type="submit" class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block" [disabled]="status() === 'sending' || !f.valid">
           {{ status() === 'sending' ? 'Submitting…' : 'Join Waitlist' }}
         </button>
-        @if (status() === 'error') {
-          <p class="cf__msg cf__msg--err">We couldn't submit your request. Please check your connection and try again.</p>
+        @if (status() === 'offline') {
+          <p class="cf__msg cf__msg--err" role="alert">We couldn't reach our server. Please check your connection and try again.</p>
+        }
+        @if (status() === 'rejected') {
+          <p class="cf__msg cf__msg--err" role="alert">We couldn't send your request. Please email us at <a [href]="mailtoHref()">info&#64;webappski.com</a> — your details are already in the email.</p>
         }
       </form>
     } @else {
@@ -94,18 +98,30 @@ export class ContactFormComponent {
     this.status.set('sending');
     try {
       await firstValueFrom(
-        this.http.post('/api/contact', {
-          ...this.model,
-          type: 'waitlist_request',
-          product: 'typelessity',
-          source: 'typelessity-waitlist-form',
-        }),
+        this.http.post('/api/contact', waitlistRequestBody(this.model)),
       );
       this.status.set('success');
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       console.error('Waitlist form submission failed', { message });
-      this.status.set('error');
+      const noResponse = error instanceof HttpErrorResponse && error.status === 0;
+      this.status.set(noResponse ? 'offline' : 'rejected');
     }
+  }
+
+  protected mailtoHref(): string {
+    const m = this.model;
+    const note = (m.message ?? '').trim();
+    const body = [
+      'Waitlist request',
+      '',
+      `Email: ${m.email}`,
+      `Website: ${m.website || '—'}`,
+      `Preferred plan: ${m.plan}`,
+      `Industry: ${m.industry || '—'}`,
+      note ? `\n${note.length > MAX_MESSAGE_IN_MAILTO ? `${note.slice(0, MAX_MESSAGE_IN_MAILTO)}…` : note}` : '',
+    ].join('\n');
+    const subject = `Typelessity waitlist — ${m.plan}`;
+    return `mailto:${FALLBACK_MAILBOX}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 }

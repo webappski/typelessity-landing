@@ -1,34 +1,33 @@
-// Playwright scaffold for typelessity-landing (R42 E2E-infra bootstrap).
+// Browser E2E for typelessity-landing — одобрено founder 2026-09-25 (@playwright/test added).
 //
-// STATUS: scaffold only. Browser binaries are NOT yet installed — installing
-// @playwright/test + downloading Chromium is a large dependency/lockfile change, and the
-// landing is dormant, so the running R36/R42 smoke currently lives in `e2e/home-smoke.spec.ts`
-// (node:test over a real HTTP server serving the prerendered dist/ — no browser needed).
+// The four steps this scaffold used to list are done:
+//   1. @playwright/test is a devDependency, pinned to the version webappka uses (1.58.2) so its
+//      Chromium comes from the shared ~/Library/Caches/ms-playwright cache — nothing is downloaded.
+//   2. Chromium is that cached build (`npx playwright install chromium` only if the cache is gone).
+//   3. Browser specs live in e2e/browser/*.pw.ts. The node:test smokes in e2e/*.spec.ts stay as
+//      they are — they check the prerendered bytes a crawler receives, which a browser does not.
+//   4. `npm run e2e:browser` runs them.
 //
-// To activate full browser E2E in a future cycle (founder reviews the dep add):
-//   1. npm i -D @playwright/test
-//   2. npx playwright install chromium
-//   3. port e2e/home-smoke.spec.ts assertions into a Playwright spec using `page.goto` +
-//      `expect(page.locator(...))`, then point `testDir` here at it.
-//   4. add an `e2e:browser` script: `playwright test`.
-//
-// This file is intentionally inert (no @playwright/test import) so `npm run build` and the
-// fast test tier never fail on a missing dependency. It documents the contract the next
-// cycle implements.
+// The web server is the real SSR build (`npm run build` first). With a server already on :4000
+// it is reused.
 
-export const playwrightPlan = {
-  testDir: './e2e',
-  baseURL: 'http://127.0.0.1:4000', // `npm run serve:ssr:typelessity-landing`
-  webServer: {
-    command: 'npm run build && PORT=4000 npm run serve:ssr:typelessity-landing',
-    url: 'http://127.0.0.1:4000',
-    reuseExistingServer: true,
-    timeout: 120_000,
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e/browser',
+  testMatch: '**/*.pw.ts',
+  fullyParallel: true,
+  forbidOnly: !!process.env['CI'],
+  reporter: 'list',
+  use: {
+    baseURL: 'http://localhost:4000',
+    trace: 'retain-on-failure',
   },
-  // Smokes to port from the node:test version:
-  smokes: [
-    'home renders + brand visible',
-    'SoftwareApplication schema with featureList in <head>',
-    'comparison section shows Cal.ai + Cal.com columns',
-  ],
-} as const;
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  webServer: {
+    command: 'PORT=4000 npm run serve:ssr:typelessity-landing',
+    url: 'http://localhost:4000',
+    reuseExistingServer: true,
+    timeout: 60_000,
+  },
+});
