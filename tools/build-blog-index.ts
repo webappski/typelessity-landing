@@ -5,6 +5,7 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import matter from 'gray-matter';
+import { compareEditorial } from '../src/app/lib/blog-order';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SRC_DIR = join(ROOT, 'src/assets/content/blog');
@@ -44,7 +45,7 @@ const posts = files
       body: content.trim(),
     };
   })
-  .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  .sort(compareEditorial);
 
 const banner =
   '// AUTO-GENERATED — do not edit by hand.\n' +

@@ -50,9 +50,6 @@ const BANNED: readonly RegExp[] = [
   /<t[dh][^>]*>\s*Setup time\s*</, /same day, not after weeks/i, /config in a few hours/i,
 ];
 
-// A45c. what-we-got-wrong and forms-vs-conversation-study still carry some of these; A45d removes
-// both posts, and with them this exemption.
-const KEPT_UNTIL_A45D: ReadonlySet<string> = new Set(['what-we-got-wrong', 'forms-vs-conversation-study']);
 const BANNED_A45C: readonly RegExp[] = [
   // medical examples
   /cardiolog/i, /GET \/doctors/i, /patientName|patient_name/, /dentist|dental|стоматолог/i, /MedBook/i,
@@ -91,7 +88,6 @@ const POST_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'cascade-corrections': [UPDATED_27, /Changing Service will also clear: Mechanic, Time slot/, /dependsOn/],
   'best-ai-booking-beauty-salons-2026': [UPDATED_27, /gpt-4o-mini-transcribe/],
   'best-ai-booking-transfer-services-2026': [UPDATED_27, /gpt-4o-mini-transcribe/],
-  'what-we-got-wrong': [UPDATED, /a target, not a measurement/],
   'pricing-ai-products': [UPDATED, /Starter €39/, /up to 50 submissions a month/],
 };
 
@@ -123,9 +119,8 @@ async function posts(): Promise<string[]> {
   return entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
 }
 
-function banned(path: string, body: string, slug?: string): void {
+function banned(path: string, body: string): void {
   for (const re of BANNED) assert.doesNotMatch(body, re, `${path} still says ${re}`);
-  if (slug && KEPT_UNTIL_A45D.has(slug)) return;
   for (const re of BANNED_A45C) assert.doesNotMatch(body, re, `${path} still says ${re}`);
 }
 
@@ -147,12 +142,12 @@ for (const path of PAGES) {
 
 test('every blog post the build emitted: no old model, unmeasured latency or missing mechanics', async () => {
   const slugs = await posts();
-  assert.ok(slugs.length >= 13, `expected the 13 posts under dist/blog, found ${slugs.length}`);
+  assert.ok(slugs.length >= 11, `expected the 11 posts under dist/blog, found ${slugs.length}`);
   for (const slug of Object.keys(POST_TRUTH)) assert.ok(slugs.includes(slug), `dist/blog/${slug} missing`);
   for (const slug of slugs) {
     const path = `blog/${slug}/index.html`;
     const body = await read(path);
-    banned(path, body, slug);
+    banned(path, body);
     for (const re of POST_TRUTH[slug] ?? []) assert.match(body, re, `${path} lost the line ${re}`);
   }
 });

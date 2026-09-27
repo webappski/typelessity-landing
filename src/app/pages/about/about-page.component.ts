@@ -38,8 +38,8 @@ import { aboutPageLd } from '../../core/seo/schemas';
       </header>
       <div class="founder">
         <p>
-          Engineer turned founder. Took Typelessity from specification to first production deploy in
-          early 2025 — single-call extraction architecture, config-driven enrichment, anti-hallucination
+          Engineer turned founder. Started the Typelessity engine in January 2026 and took it from
+          specification to the free pilot — single-call extraction architecture, config-driven enrichment, anti-hallucination
           guards, 25+ language support out of the box. Background in distributed systems and frontend infrastructure.
         </p>
         <p>
@@ -89,7 +89,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
         </li>
         <li>
           <strong>Architecture is permanent. GTM is changeable.</strong>
-          <p>We over-invested in the architecture early — single-call extraction, unified prompt, config-driven everything. That foundation outlasted three GTM pivots.</p>
+          <p>We over-invested in the architecture early — single-call extraction, unified prompt, config-driven everything.</p>
         </li>
         <li>
           <strong>Numbers belong with sources.</strong>

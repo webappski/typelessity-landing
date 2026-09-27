@@ -109,7 +109,7 @@ Selection (full FAQ on /faq):
 
 Mission: replace the booking form with one sentence. Multi-step forms exist because old UI primitives could not parse natural language. They can now.
 
-Founder: Alex Isa. Engineer turned founder. Took Typelessity from specification to first production deploy in early 2025 — single-call extraction architecture, config-driven enrichment, anti-hallucination guards, 25+ language support out of the box.
+Founder: Alex Isa. Engineer turned founder. Started the Typelessity engine in January 2026 and took it from specification to the free pilot — single-call extraction architecture, config-driven enrichment, anti-hallucination guards, 25+ language support out of the box.
 
 **Built by Webappski.** Typelessity is a product of Webappski — a small product studio building the next layer of AI-native interfaces for service businesses. Sister product: TypelessForm — the same conversational-data-collection thesis applied to general-purpose forms (lead capture, support intake, onboarding). Typelessity is the booking-specific surface; TypelessForm is the generic one.
 
@@ -126,9 +126,7 @@ Engineering and product writeups. Selected posts:
 - Single GPT call — why one model call per turn beats one call per field.
 - Cascade corrections — how dependency-graph walks clear stale downstream data on field changes.
 - Whisper vs Web Speech API — how Typelessity transcribes voice today (OpenAI gpt-4o-mini-transcribe).
-- Forms vs conversation study — what the literature does and does not say about conversational conversion lift.
 - Designing for AI agents — why a dedicated /for-ai-agents page complements llms.txt.
-- What we got wrong — three GTM pivots and the architecture that outlasted them.
 
 ---
 

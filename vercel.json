@@ -20,6 +20,16 @@
       "source": "/legal/sub-processors",
       "destination": "https://webappski.com/en/legal/dpa-typelessity",
       "permanent": true
+    },
+    {
+      "source": "/blog/what-we-got-wrong",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/blog/forms-vs-conversation-study",
+      "destination": "/blog",
+      "permanent": true
     }
   ],
   "headers": [
