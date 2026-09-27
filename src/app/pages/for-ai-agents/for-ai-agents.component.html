@@ -2,7 +2,7 @@
   <div class="vc-kicker"><span class="vc-kicker-bar"></span>For AI agents</div>
   <h1>Typelessity for autonomous agents</h1>
   <p class="aiagents-hero__lede">
-    Stable JSON contracts and deterministic schemas for what a session and a booking look like.
+    The JSON shapes the widget API returns for a session and for a confirmed booking.
     A dedicated <code>/agent</code> endpoint that would accept structured booking intents and return
     structured results is designed below — it is not built yet.
   </p>
@@ -18,20 +18,21 @@
     Typelessity is an AI conversational booking widget. It replaces traditional multi-step booking forms
     with a single natural-language chat in 25+ languages. It accepts text and voice input (OpenAI gpt-4o-mini-transcribe),
     extracts structured fields via a single AI call (OpenAI (currently gpt-5.4-mini)), calls real-time enrichment
-    APIs (e.g. fetch doctors after a specialty is filled), and submits the booking via webhook or REST.
-    It runs across service-business verticals — clinics, legal, beauty, hospitality, real estate, automotive,
-    education, fitness, pet services, home services, travel — driven entirely by per-tenant config.
+    APIs (e.g. fetch mechanics after a service is filled), and submits the booking to your endpoint or by email.
+    It runs across service-business verticals — legal, beauty, hospitality, real estate, automotive,
+    education, fitness, pet services, home services — driven entirely by per-tenant config.
     Consent before any AI processing. Service and database in the EU; OpenAI processes in the US under the 2021 SCCs. Free Pilot. Enterprise terms by contract.
   </p>
 </section>
 
 <section class="vc-wrap aiagents-section">
-  <h2>Stable JSON schemas</h2>
+  <h2>JSON shapes</h2>
+  <p>What the widget API returns today. They are not versioned yet.</p>
 
   <h3>Session</h3>
   <pre class="aiagents-code">{{ sessionSchema }}</pre>
 
-  <h3>Booking</h3>
+  <h3>Booking (the result of confirming a session)</h3>
   <pre class="aiagents-code">{{ bookingSchema }}</pre>
 </section>
 
@@ -53,8 +54,7 @@
     <li><strong>industries_supported:</strong> config-driven, see /industries for current verticals</li>
     <li><strong>extraction_model:</strong> OpenAI (currently gpt-5.4-mini)</li>
     <li><strong>voice_input:</strong> OpenAI gpt-4o-mini-transcribe</li>
-    <li><strong>enrichment_per_config_max:</strong> 5</li>
-    <li><strong>enrichment_timeout_ms:</strong> 10000</li>
+    <li><strong>enrichment_timeout_ms:</strong> 10000 by default, configurable</li>
     <li><strong>hosting_region:</strong> EU (Vercel fra1, Frankfurt)</li>
     <li><strong>database_region:</strong> EU (Supabase eu-west-1, Ireland)</li>
     <li><strong>ai_processing_region:</strong> US (OpenAI, 2021 SCCs)</li>
@@ -68,13 +68,13 @@
   <h2>Example agent intent</h2>
   <pre class="aiagents-code">{{ '{
   "intent": "book_appointment",
-  "specialty": "dentistry",
+  "service": "brake_pads",
   "preferred_date": "2026-05-08",
   "preferred_time_window": "afternoon",
   "language_preference": "ru",
-  "patient_name": "Maria Ivanova"
+  "customer_name": "Maria Ivanova"
 }' }}</pre>
-  <p>Agents send structured intent → /agent/turn extracts and validates → returns the same Booking schema as a human session would.</p>
+  <p>The /agent endpoint is designed to take an intent like this, extract and validate it, and return the same Booking schema as a human session. It is not built yet.</p>
 </section>
 
 <section class="vc-wrap aiagents-resources">
@@ -82,7 +82,7 @@
   <ul class="aiagents-links">
     <li><a href="/llms.txt">/llms.txt</a> — markdown summary of every page</li>
     <li><a routerLink="/how-it-works">/how-it-works</a> — full architecture</li>
-    <li><a routerLink="/industries">/industries</a> — 42 vertical configurations</li>
-    <li><a href="mailto:hello&#64;typelessity.com">hello&#64;typelessity.com</a> — to ask about the /agent endpoint</li>
+    <li><a routerLink="/industries">/industries</a> — vertical configurations</li>
+    <li><a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a> — to ask about the /agent endpoint</li>
   </ul>
 </section>

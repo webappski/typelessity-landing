@@ -33,21 +33,19 @@ export class ForAiAgentsComponent implements OnInit {
   }
 
   protected readonly sessionSchema = `{
-  "id": "ses_a8f3e1",
-  "config": "your-config-id",
-  "lang": "en",
-  "fields": { "<field>": "<value>", ... },
-  "_meta": { "mf": ["<field>"], "correction": null },
+  "id": "<session id>",
+  "configId": "<your config id>",
+  "state": "COLLECTING | READY_TO_SUBMIT | … | COMPLETED",
+  "extractedData": { "<field>": "<value>", ... },
   "createdAt": "<ISO-8601>",
-  "completed": false
+  "updatedAt": "<ISO-8601>",
+  "bookingResult": { ... }
 }`;
 
   protected readonly bookingSchema = `{
-  "bookingId": "bk_a8f3e1",
-  "sessionId": "ses_a8f3e1",
-  "fields": { ... },
-  "submittedAt": "<ISO-8601>",
-  "status": "confirmed | pending | failed"
+  "success": true,
+  "bookingId": "<the id your system returned, or bkg_…>",
+  "outcome": "booking | request"
 }`;
 
   protected readonly agentRequest = `POST /agent/turn

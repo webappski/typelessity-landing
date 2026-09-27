@@ -177,3 +177,24 @@ test('A45b: one support line on every tier, no dated /agent, audit log, GDPR-nat
   assert.match(outage.a, /retried once[\s\S]*no separate form mode/);
 });
 
+
+// A45c (c8 2026-09-25/27). The Typelessity DPA forbids health data (GDPR Art. 9), so no example
+// books medical care — the enrichment example is an auto repair shop. And the lines the engine
+// (typelessity 15305e9) does not back: cost tracking only writes to the log, there is no cap on
+// enrichments per config (the 10 s timeout is a default), no HMAC signature, no dev tenant, no
+// calendar step, no schemaVersion, and the booking is sent from our server, not the browser.
+test('A45c: no medical example and no promise the engine does not back', () => {
+  const text = JSON.stringify(HOME) + JSON.stringify(PRICING_FAQ);
+  const banned: readonly RegExp[] = [
+    /cardiolog/i, /GET \/doctors/i, /patientName|patient_name/, /dentist|dental/i, /\bdoctors?\b/i, /specialty/i,
+    /EU clinics/i, /cost tracking/i, /up to 5 (enrichments )?per config/i, /optional HMAC/i, /dev tenant/i,
+    /synthetic-data/i, /Calendar event/i, /version-pinned/i, /directly from the browser/i, /Typical setup time:/i,
+    /annual contract/i, /business-day/i, /insurance details/i, /consistently outperform/i, /higher-converting/i, /800\s?ms/,
+    /production vertical/i, /\bUsed by\b/, /widely reported/i, /GDPR-compliant/i, /home services, travel/, /bk_a8f3e1/, /auto-detects/i, /via webhook or REST/i,
+  ];
+  for (const re of banned) assert.doesNotMatch(text, re);
+  const answer = (q: RegExp) => HOME.faq.find((qa) => q.test(qa.q))?.a ?? '';
+  assert.match(answer(/HIPAA/), /DPA does not allow health data/);
+  assert.match(answer(/How does the widget submit/), /From our server[\s\S]*There is no HMAC signature/);
+  assert.match(answer(/cascade-aware correction work/), /Changing Service will also clear: Mechanic, Time slot/);
+});

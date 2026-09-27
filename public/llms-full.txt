@@ -6,25 +6,25 @@
 
 ## Home — https://typelessity.com/
 
-**Hero.** Bookings through conversation, not forms. Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. GDPR-compliant.
+**Hero.** Bookings through conversation, not forms. Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. Consent before any AI processing; service and database in the EU, OpenAI in the US under the 2021 SCCs; processing under the Typelessity DPA.
 
-**TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available doctors after a specialty is chosen), and submits the booking via webhook or REST. It supports 25+ languages and voice input, and is configurable for any service-business booking flow.
+**TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available mechanics after a service is chosen), and submits the booking by email, webhook or REST. It supports 25+ languages and voice input, and is configurable for any service-business booking flow.
 
-**Stats.** Languages 25+. Per-turn latency under 800ms. Four phases (Chat → Select → Review → Confirm). Two lines of HTML to integrate.
+**Stats.** Languages 25+. Free pilot €0, up to 50 submissions a month. Four phases (Chat → Select → Review → Confirm). Two lines of HTML to integrate.
 
 **Four phases.**
 1. Chat — User describes booking in plain language; The AI model — OpenAI (currently gpt-5.4-mini) — reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
-2. Select — When options must be exact (a specific doctor, a specific time slot), the widget renders interactive cards. Triggered by enrichment APIs.
+2. Select — When options must be exact (a specific mechanic, a specific time slot), the widget renders interactive cards. Triggered by enrichment APIs.
 3. Review — Full form review surface. User verifies every extracted field, edits inline if needed. Cascade-aware — changing a field clears downstream-dependent fields with a warning.
-4. Confirm — Booking sent to your system via webhook or REST POST. Success screen with confirmation ID. Failures retry with exponential backoff.
+4. Confirm — Booking sent to your system: as JSON to your endpoint, shaped by the field mapping, or by email. The success screen shows a reference: the ID your system returned, or our own when it returned none. A 502, 503 or 504 from your endpoint is retried with exponential backoff.
 
 **Architecture pillars.**
 - Single unified prompt: one GPT call extracts every field. The prompt is built from the configuration, so its size grows with the fields and options.
 - Config-driven, not pattern-driven: aiHint per field; GPT reads context.
-- Real-time enrichment APIs: up to 5 per config, 10s timeout each, non-fatal on failure.
+- Real-time enrichment APIs: 10 s timeout each by default (configurable), non-fatal on failure.
 - Cascade-aware corrections: DFS dependency walk on field changes.
 - Guardrails in code: fields the configuration does not define are dropped; a reply claiming a finished booking before confirmation is discarded; a new value for a filled field is treated as a correction. The `_meta.mf` mentioned-fields list is logged for diagnostics, not enforced.
-- Reliable by design: exponential-backoff retries, semaphore-bounded concurrency, structured cost tracking, every message stored with its conversation.
+- Reliable by design: exponential-backoff retries on model calls and on booking submission, semaphore-bounded concurrency for model calls, every message stored with its conversation.
 
 **Comparison snapshot.** Use Typelessity when you have an existing booking system and want to replace its form with conversation. Use Calendly for simple meeting links. Use SimplyBook.me for end-to-end booking ops with payments. Use Botpress for custom chatbots. Use NoForm.ai for top-of-funnel lead capture.
 
@@ -52,15 +52,15 @@ The Free Pilot is open, and every tier starts with it: sign in at https://webapp
 
 **Enterprise — €399/mo.** Up to 6,000 submissions/month and unlimited sites. An uptime commitment, a named contact and pricing above 6,000 submissions are agreed per contract on request. Hosted only — no on-premise or self-hosted build, no custom AI provider. Support by email, as on every tier.
 
-We do not publish a hero conversion-lift number. Conversational interfaces are widely reported to outperform multi-step forms in head-to-head studies, but the only honest answer for a specific business is an A/B test on its own traffic.
+We do not publish a conversion-lift number. The only honest answer for a specific business is an A/B test on its own traffic.
 
 ---
 
 ## Industries — https://typelessity.com/industries
 
-Configurable per service-business vertical. Production categories: Medical (clinics), Beauty & Wellness, Professional Services, Fitness & Sports, Home Services, Automotive, Education, Hospitality, Real Estate, Pet Services. 42 vertical configurations live today. See /industries for the full list.
+Configurable per service-business vertical. Supported categories (configurations): Beauty & Wellness, Professional Services, Fitness & Sports, Home Services, Automotive, Education, Hospitality, Real Estate, Pet Services. Each vertical has its own configuration; see /industries for the full list.
 
-US healthcare with HIPAA / BAA requirements is not a supported use case — Typelessity is not HIPAA-attested.
+Medical booking is not a supported use case: the Typelessity DPA does not permit health data (GDPR Article 9), in the US or the EU, and Typelessity is not HIPAA-attested.
 
 ---
 
@@ -77,8 +77,7 @@ Session and Booking schemas are published and stable. A dedicated `/agent/turn` 
 - industries_supported: config-driven, see /industries for current verticals
 - extraction_model: OpenAI (currently gpt-5.4-mini)
 - voice_input: OpenAI gpt-4o-mini-transcribe
-- enrichment_per_config_max: 5
-- enrichment_timeout_ms: 10000
+- enrichment_timeout_ms: 10000 by default, configurable
 - hosting_region: EU (Vercel fra1, Frankfurt)
 - database_region: EU (Supabase eu-west-1, Ireland)
 - ai_processing_region: US (OpenAI, 2021 SCCs)
@@ -100,8 +99,8 @@ Selection (full FAQ on /faq):
 - **Voice input?** Yes — OpenAI gpt-4o-mini-transcribe. All 25+ supported languages.
 - **Per-turn latency?** Not measured on the current model, so not quoted. One AI call per turn; enrichment turns make a second call.
 - **Self-host?** No. Hosted service only — there is no on-premise or self-hosted build.
-- **Replace my booking system?** No. Replaces the form, not the backend. Submits via webhook or REST POST.
-- **Best industries?** Any service business with appointments. Production verticals include clinics, beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services, travel.
+- **Replace my booking system?** No. Replaces the form, not the backend. Submits by email, webhook or REST POST.
+- **Best industries?** Any service business with appointments. Supported verticals (configurations) include beauty salons, legal, real estate, automotive, hospitality, education, fitness, pet services, home services.
 - **Works for AI agents?** Not through a dedicated endpoint yet. Session and Booking schemas are published; the `/agent/turn` endpoint is designed, not built, with no release date.
 
 ---

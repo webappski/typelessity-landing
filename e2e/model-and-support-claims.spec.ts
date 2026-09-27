@@ -13,6 +13,14 @@ import { readFile, readdir } from 'node:fs/promises';
 // Plus three promises from the A45 list: an /agent endpoint «shipping Q3 2026» (the engine has
 // no such route), a «full audit log per turn» and «GDPR-native».
 //
+// A45c (c8 2026-09-25/27): the Typelessity DPA forbids health data (GDPR Art. 9), so no page or
+// post books medical care as an example — the enrichment example is an auto repair shop, the hero
+// opens on a hair salon. hello@typelessity.com has no MX record, so contact is info@webappski.com.
+// And the lines the engine (typelessity 15305e9) does not back: structured cost tracking, a cap of
+// 5 enrichments, HMAC, a dev tenant, a calendar step, schemaVersion, a «Doctor reset» message,
+// «twelve lines», a topological re-run, a DPA review turnaround, «42 verticals», 320 ms, one prompt
+// template across the portfolio, and unmeasured voice-adoption and conversion claims.
+//
 // Reads what visitors and AI crawlers receive — prerendered HTML with its JSON-LD, the llms
 // files, and every post the build emitted under blog/ (not a fixed list, so a new post is
 // checked too). Run `npm run build` first.
@@ -42,26 +50,64 @@ const BANNED: readonly RegExp[] = [
   /<t[dh][^>]*>\s*Setup time\s*</, /same day, not after weeks/i, /config in a few hours/i,
 ];
 
+// A45c. what-we-got-wrong and forms-vs-conversation-study still carry some of these; A45d removes
+// both posts, and with them this exemption.
+const KEPT_UNTIL_A45D: ReadonlySet<string> = new Set(['what-we-got-wrong', 'forms-vs-conversation-study']);
+const BANNED_A45C: readonly RegExp[] = [
+  // medical examples
+  /cardiolog/i, /GET \/doctors/i, /patientName|patient_name/, /dentist|dental|стоматолог/i, /MedBook/i,
+  /Medical \(clinics\)/, /EU clinics/i, /Doctor reset/i,
+  // the mailbox with no MX record, in either spelling
+  /hello@typelessity|hello&#64;typelessity/i,
+  // engine claims without code behind them
+  /cost tracking/i, /up to 5 (enrichments )?per config/i, /enrichment_per_config_max/, /optional HMAC/i,
+  /dev tenant/i, /synthetic-data/i, /Calendar event/i, /version-pinned/i, /directly from the browser/i,
+  /Twelve lines/i, /topological/i, /depends_on/, /\/agent\/turn extracts/i,
+  // numbers and promises nobody measured or signed
+  /annual contract/i, /business-day/i, /\b42 vertical/i, /120 lines/i, /a day, not a sprint/i,
+  /Typical setup time:/i, /config in 1 day/i, /\b320\s?ms\b/i, /\b800\s?ms\b/i, /one extraction prompt template/i,
+  /adoption on mobile is significantly higher/i, /higher-converting/i, /consistently outperform/i,
+  // no live deployments before 30.09; a booking shape the engine returns; no «travel» config
+  /production vertical/i, /Production categor/, /\bUsed by\b/, /widely reported to outperform/i, /home services, travel/,
+  /bk_a8f3e1/, /"submittedAt"/, /Stable JSON/i, /auto-detects/i,
+  // email is a delivery mode too (c8 27.09): no list of the modes leaves it out
+  /via webhook or REST/i,
+];
+// A45c: a compliance status is not ours to state on our own pages — the facts are (a post may quote
+// the phrase as a reader's question, so this one is checked on pages only).
+const BANNED_PAGES_A45C: readonly RegExp[] = [/GDPR-compliant/];
+
+
 // The dated note and the truthful replacement each edited post must carry — so an empty page or
 // a wrong path cannot pass the bans by accident.
-const UPDATED = /Updated 2026-09-25 — what changed/;
+const UPDATED = /Updated 2026-09-2[57] — what changed/;
+const UPDATED_27 = /Updated 2026-09-27 — what changed/;
 const POST_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'whisper-vs-webspeech': [UPDATED, /gpt-4o-mini-transcribe/, /We have not measured/],
   'latency-budgets': [UPDATED, /a target, not a measurement/, /currently gpt-5\.4-mini/],
-  '25-languages-one-prompt': [UPDATED, /currently gpt-5\.4-mini/],
-  'single-gpt-call': [UPDATED, /currently gpt-5\.4-mini/],
-  'best-ai-booking-widgets-2026': [UPDATED, /gpt-4o-mini-transcribe/],
-  'best-ai-booking-beauty-salons-2026': [UPDATED, /gpt-4o-mini-transcribe/],
-  'best-ai-booking-transfer-services-2026': [UPDATED, /gpt-4o-mini-transcribe/],
+  '25-languages-one-prompt': [UPDATED_27, /currently gpt-5\.4-mini/, /GET \/mechanics\?service=brakes/],
+  'single-gpt-call': [UPDATED_27, /currently gpt-5\.4-mini/, /brake_pads/],
+  'best-ai-booking-widgets-2026': [UPDATED_27, /gpt-4o-mini-transcribe/, /Not testing voice on mobile/],
+  'cascade-corrections': [UPDATED_27, /Changing Service will also clear: Mechanic, Time slot/, /dependsOn/],
+  'best-ai-booking-beauty-salons-2026': [UPDATED_27, /gpt-4o-mini-transcribe/],
+  'best-ai-booking-transfer-services-2026': [UPDATED_27, /gpt-4o-mini-transcribe/],
   'what-we-got-wrong': [UPDATED, /a target, not a measurement/],
   'pricing-ai-products': [UPDATED, /Starter €39/, /up to 50 submissions a month/],
 };
 
 const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
+  'index.html': [/mailto:info@webappski\.com/, /GET \/stylists/, /on model calls and on booking submission/,
+    /supported verticals \(configurations\)/i],
   'pricing/index.html': [/they differ in submission volume \(see cards above\) and the number of websites/,
-    /same support by email/],
-  'llms.txt': [/Support is by email on every tier/],
-  'llms-full.txt': [/Up to 2,000 submissions\/month, up to 10 websites, support by email/],
+    /same support by email/, /other terms are by contract, on request/],
+  'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /review customer-provided DPAs on request/],
+  'for-ai-agents/index.html': [/mailto:info@webappski\.com/, /is designed to take an intent like this/, /bookingResult/,
+    /booking \| request/],
+  'how-it-works/index.html': [/Submit endpoint returns 502, 503 or 504/, /brake_pads/],
+  'about/index.html': [/mailto:info@webappski\.com/, /Typelessity and TypelessForm are separate codebases/],
+  'llms.txt': [/Support is by email on every tier/, /health data is not permitted under the Typelessity DPA/],
+  'llms-full.txt': [/Up to 2,000 submissions\/month, up to 10 websites, support by email/,
+    /Each vertical has its own configuration/],
 };
 
 async function read(path: string): Promise<string> {
@@ -77,8 +123,10 @@ async function posts(): Promise<string[]> {
   return entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
 }
 
-function banned(path: string, body: string): void {
+function banned(path: string, body: string, slug?: string): void {
   for (const re of BANNED) assert.doesNotMatch(body, re, `${path} still says ${re}`);
+  if (slug && KEPT_UNTIL_A45D.has(slug)) return;
+  for (const re of BANNED_A45C) assert.doesNotMatch(body, re, `${path} still says ${re}`);
 }
 
 // The home page shows compact tier cards without bullets; /pricing carries the full cards.
@@ -92,6 +140,7 @@ for (const path of PAGES) {
   test(`${path}: no support level, old model, unmeasured latency or dated promise`, async () => {
     const body = await read(path);
     banned(path, body);
+    for (const re of BANNED_PAGES_A45C) assert.doesNotMatch(body, re, `${path} still says ${re}`);
     for (const re of PAGE_TRUTH[path] ?? []) assert.match(body, re, `${path} lost the line ${re}`);
   });
 }
@@ -103,7 +152,20 @@ test('every blog post the build emitted: no old model, unmeasured latency or mis
   for (const slug of slugs) {
     const path = `blog/${slug}/index.html`;
     const body = await read(path);
-    banned(path, body);
+    banned(path, body, slug);
     for (const re of POST_TRUTH[slug] ?? []) assert.match(body, re, `${path} lost the line ${re}`);
+  }
+});
+
+// A45c. The hero rotates five demos; only the first is prerendered, so the rest are checked in the
+// scripts the build emitted.
+test('the emitted scripts: no medical demo in the hero rotation', async () => {
+  const files = (await readdir(DIST)).filter((f) => f.endsWith('.js'));
+  assert.ok(files.length > 0, 'no scripts under dist/browser — run `npm run build` first');
+  for (const f of files) {
+    const body = await read(f);
+    for (const re of [/cardiolog/i, /MedBook/i, /GET \/doctors/i, /doctorGender/]) {
+      assert.doesNotMatch(body, re, `${f} still says ${re}`);
+    }
   }
 });

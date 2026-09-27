@@ -93,7 +93,7 @@ import { PRICING_FAQ } from './pricing.content';
         </thead>
         <tbody>
           <tr><td>All field types, voice, 25+ languages</td><td>✓</td><td>✓</td></tr>
-          <tr><td>Enrichment APIs (up to 5 per config)</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Enrichment APIs</td><td>✓</td><td>✓</td></tr>
           <tr><td>Custom branding, webhook integration</td><td>✓</td><td>✓</td></tr>
           <tr><td>Setup wizard in the Webappski portal</td><td>✓</td><td>✓</td></tr>
           <tr><td>Websites (domains) per account</td><td>1 / 5 / 10</td><td>Unlimited</td></tr>

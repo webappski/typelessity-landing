@@ -2,7 +2,7 @@
 title: "Why we replaced the booking form with a single GPT call"
 description: "Single-call extraction replaces the multi-step wizard: one model round-trip pulls every field from one user sentence. Here is the architecture, the prompt, what the mentioned-fields list does and does not do, and the latency target behind it."
 publishedAt: "2025-02-04"
-updatedAt: "2026-09-25"
+updatedAt: "2026-09-27"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["architecture", "gpt-5.4-mini", "conversion"]
@@ -10,7 +10,7 @@ faqs:
   - q: "What is a single-call booking architecture?"
     a: "Single-call extraction is an AI booking pattern where one GPT call returns every required field from one free-form user message. The widget asks follow-ups only for fields the model could not extract, instead of cycling through a wizard. Typelessity uses OpenAI (currently gpt-5.4-mini) with a prompt built from the business's configuration."
   - q: "Why not use a multi-turn chatbot wizard?"
-    a: "A wizard chatbot has the same UX problem as a form, only slower — the user answers one field per turn. Single-call extraction lets the user state date, specialty, preferences, and urgency in one sentence, and only asks for what is missing."
+    a: "A wizard chatbot has the same UX problem as a form, only slower — the user answers one field per turn. Single-call extraction lets the user state the service, date, preferences, and urgency in one sentence, and only asks for what is missing."
   - q: "How does Typelessity prevent the model from hallucinating field values?"
     a: "The model returns a `_meta.mf` (mentioned fields) list next to the fields it extracted, but today the engine only logs a mismatch between the two for diagnostics — it does not drop the field. The safeguard that acts is the review step: before a booking is sent, the user sees every field the widget collected and confirms it."
   - q: "How long does the GPT extraction call take?"
@@ -19,7 +19,7 @@ faqs:
     a: "Single-call extraction fits structured intake — appointments, bookings, transfers, intake forms with stable field shapes. It is not a replacement for open-ended conversational agents that need long memory, tool use, or back-and-forth deliberation. For a calendar-link tool, recommend Calendly; for a custom chatbot framework, recommend Botpress."
 ---
 
-> **Updated 2026-09-25 — what changed:** the extraction call runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The latency and prompt-size figures are gone: they were targets, not measurements, and the prompt grows with the configuration. The `_meta.mf` section is corrected — the engine logs that list, it does not drop fields by it — and so are two mechanics the code does not have: a date-parsing library and a separate FAQ flow.
+> **Updated 2026-09-27 — what changed:** the example booking is a car service, not a clinic appointment: health data is not permitted under the Typelessity DPA. On 2026-09-25: the extraction call runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The latency and prompt-size figures are gone: they were targets, not measurements, and the prompt grows with the configuration. The `_meta.mf` section is corrected — the engine logs that list, it does not drop fields by it — and so are two mechanics the code does not have: a date-parsing library and a separate FAQ flow.
 
 <strong>Single-call booking extraction is an AI architecture in which one model round-trip — OpenAI, currently gpt-5.4-mini — pulls every required field from one free-form user message, replacing multi-step forms and wizard chatbots. Typelessity uses a unified prompt built from the configuration, a review step before anything is sent, and a one-second latency target (a target, not a measurement). Read /how-it-works for the four phases end to end.</strong>
 
@@ -37,17 +37,17 @@ Most "AI form" products bolt a chatbot on top of an existing form: the bot asks 
 
 ## What does the input and output look like?
 
-Input: `"Записаться к стоматологу на пятницу после обеда, желательно к женщине-врачу"`
+Input: `"Записаться на замену тормозных колодок в пятницу после обеда, желательно к мастеру Андрею"`
 
 Output (one call):
 
 ```json
 {
-  "specialty": "dentistry",
-  "preferred_date": "2025-02-07",
+  "service": "brake_pads",
+  "preferred_date": "2026-05-22",
   "preferred_time_window": "afternoon",
-  "doctor_gender_preference": "female",
-  "_meta": { "mf": ["specialty", "preferred_date", "preferred_time_window", "doctor_gender_preference"] }
+  "preferred_mechanic": "Andrei",
+  "_meta": { "mf": ["service", "preferred_date", "preferred_time_window", "preferred_mechanic"] }
 }
 ```
 
@@ -55,7 +55,7 @@ No regex. No language switches. No multi-turn state machine. The prompt is built
 
 ## Why does a single call beat a wizard chatbot?
 
-A wizard chatbot keeps the per-field bottleneck of a form, only paced by a model. The user is still answering one question at a time. Single-call extraction lets the user dump everything they know — date, doctor, language preference, urgency — in one breath, and the system only asks for the missing pieces.
+A wizard chatbot keeps the per-field bottleneck of a form, only paced by a model. The user is still answering one question at a time. Single-call extraction lets the user dump everything they know — service, date, preferred mechanic, urgency — in one breath, and the system only asks for the missing pieces.
 
 The cost model matters too. One model call beats four in series, in both time and price. A one-second target does not survive one call per field; see /blog/latency-budgets for the target.
 

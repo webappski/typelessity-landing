@@ -2,7 +2,7 @@
 title: "25 languages, one prompt: how config-driven extraction beats per-language code"
 description: "Most multilingual chatbots ship a separate codepath per language. Typelessity ships one prompt template, one config, and 25+ languages work the same day. Here is the architecture and the localized strings that remain."
 publishedAt: "2025-02-11"
-updatedAt: "2026-09-25"
+updatedAt: "2026-09-27"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["i18n", "prompts", "architecture", "gpt-5.4-mini"]
@@ -19,7 +19,7 @@ faqs:
     a: "Less than this post used to claim. There is no phone-number or date-parsing library in the engine: dates go through the model and our own date utilities. The per-locale widget strings are the language-specific part; everything else is the model."
 ---
 
-> **Updated 2026-09-25 — what changed:** extraction runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The reply language is the one set in the configuration — it is not detected from the user, and the model returns no language tag. The widget strings are about 146 per locale in a TypeScript module, not 80 in JSON files, and the engine has no phone- or date-parsing library. Latency per language is not measured, so its figures are gone.
+> **Updated 2026-09-27 — what changed:** the config example is an auto repair shop, not a clinic — health data is not permitted under the Typelessity DPA — and the claims about the size of a clinic config and the time it takes to add a new vertical are gone: we did not measure either. A config is stored on our side, not a JSON file per client. On 2026-09-25: extraction runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The reply language is the one set in the configuration — it is not detected from the user, and the model returns no language tag. The widget strings are about 146 per locale in a TypeScript module, not 80 in JSON files, and the engine has no phone- or date-parsing library. Latency per language is not measured, so its figures are gone.
 
 <strong>Typelessity supports 25+ languages with one English-language prompt template, one per-industry config, and about 146 translated widget strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. The model — OpenAI, currently gpt-5.4-mini — handles normalization and extraction in a single round-trip, whatever language the user writes in. Adding a new language is a translation of widget strings.</strong>
 
@@ -35,15 +35,13 @@ Typelessity made the opposite bet. The prompt is in English. The user input is i
 
 ## What is actually in the config?
 
-A config is a JSON file per client and industry. It defines:
+A config is stored on our side, one per widget. The business builds it in the Webappski portal wizard or pastes it in as JSON. It defines:
 
-- **Required fields** — what must be extracted (e.g. `specialty`, `date`, `time_window`).
-- **Optional fields** — preferences (`doctor_gender`, `language_of_consultation`).
-- **Enrichment APIs** — endpoints to call when a field is set (e.g. `specialty=dentistry` → `GET /doctors?specialty=dentistry`).
+- **Required fields** — what must be extracted (e.g. `service`, `date`, `time_window`).
+- **Optional fields** — preferences (`preferred_mechanic`, `courtesy_car`).
+- **Enrichment APIs** — endpoints to call when a field is set (e.g. `service=brakes` → `GET /mechanics?service=brakes`).
 - **Cascade rules** — when field A changes, which downstream fields to clear. See /blog/cascade-corrections.
 - **Confirmation copy** — per-locale strings for the review step. This *is* per-language, but it is just labels.
-
-A typical medical-clinic config is around 120 lines. Adding a new vertical takes a day, not a sprint.
 
 ## What is the language-detection step you do not write?
 

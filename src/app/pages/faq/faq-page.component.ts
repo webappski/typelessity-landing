@@ -46,7 +46,7 @@ type FaqItem = { q: string; a: string };
     }
 
     <section class="vc-wrap faq-todo">
-      <p>Need a question we missed? <a href="mailto:hello&#64;typelessity.com">Email us</a>.</p>
+      <p>Need a question we missed? <a href="mailto:info&#64;webappski.com">Email us</a>.</p>
     </section>
   `,
 })

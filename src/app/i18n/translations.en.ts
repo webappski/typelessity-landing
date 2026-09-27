@@ -40,8 +40,8 @@ export const EN: TranslationMap = {
   'seo.faq.description': 'Self-contained answers about Typelessity — product, pricing, AI behavior, integration, privacy. First sentence works as a stand-alone citation.',
   'seo.about.title': 'About — Forms are an artifact of constrained UI',
   'seo.about.description': 'Typelessity is built on one bet: when users describe what they need in their own words, conversion goes up — and the architecture is simpler.',
-  'seo.forAiAgents.title': 'For AI agents — stable JSON contracts and schemas',
-  'seo.forAiAgents.description': 'Stable Session and Booking JSON schemas, a machine-readable feature list, and the design of an /agent/turn endpoint that is not built yet.',
+  'seo.forAiAgents.title': 'For AI agents — Session and Booking JSON shapes',
+  'seo.forAiAgents.description': 'The Session and Booking JSON shapes, a machine-readable feature list, and the design of an /agent/turn endpoint that is not built yet.',
   'seo.blog.title': 'Blog — Conversational booking, AI agents, integration patterns',
   'seo.blog.description': 'Articles on replacing forms with chat, GPT-driven extraction, multi-language UX, enrichment patterns, and the agent web.',
 };

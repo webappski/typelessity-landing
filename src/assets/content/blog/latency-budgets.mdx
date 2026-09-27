@@ -49,7 +49,7 @@ Without a measurement, the target cannot yet tell us when a turn runs over it; m
 
 **One extraction call per turn.** Every field the user mentioned is extracted in one model round-trip, not one per field. When the user taps an option card whose value matches exactly, no model call runs at all. Architecture detailed in /blog/single-gpt-call.
 
-**Enrichment after the call, one API at a time.** When the model returns a field that triggers an enrichment — `specialty: "dentistry"` → `GET /doctors?specialty=dentistry` — the engine calls the business's API after the model call, one enrichment after another. Running them in parallel with the render is not built.
+**Enrichment after the call, one API at a time.** When the model returns a field that triggers an enrichment — `service: "brakes"` → `GET /mechanics?service=brakes` — the engine calls the business's API after the model call, one enrichment after another. Running them in parallel with the render is not built.
 
 **No streaming.** The widget waits for the complete response and shows a typing indicator meanwhile. Streaming tokens to bring the first visible text forward is not built.
 

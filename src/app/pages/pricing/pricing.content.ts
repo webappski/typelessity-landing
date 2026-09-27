@@ -9,5 +9,5 @@ export const PRICING_FAQ = [
   { q: 'Can I run my own GPT key?', a: 'No. Typelessity runs every conversation through its own OpenAI account; using your own OpenAI key or another AI provider is not offered.' },
   { q: 'What happens if GPT is down?', a: 'The model call is retried once. If it still fails, the widget stays in the chat and asks the visitor for the next field directly; there is no separate form mode. Enrichment failures are non-fatal — the AI continues with whatever data it has.' },
   { q: 'Do you store user input?', a: 'Yes, in the EU. An abandoned conversation is deleted within 48 hours of the visitor\'s last message; one that led to a booking is kept until you ask us to erase it, by written instruction to info@webappski.com. No data is used for model training.' },
-  { q: 'Is there a commitment?', a: 'No. Pilot is free and capped at 50 submissions/month. Paid plans bill monthly with no long-term commitment unless you choose an annual contract for a discount.' },
+  { q: 'Is there a commitment?', a: 'No. Pilot is free and capped at 50 submissions/month. Paid plans bill monthly with no long-term commitment; other terms are by contract, on request.' },
 ] as const satisfies readonly { q: string; a: string }[];

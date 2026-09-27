@@ -41,20 +41,20 @@ function isoInDays(days: number, now: Date = new Date()): string {
 
 const DEMOS: readonly Demo[] = [
   {
-    phrase: 'need a cardiologist next tuesday morning, ideally female',
-    surfaceLabel: 'MedBook · booking',
+    phrase: 'balayage and a trim next tuesday morning, long hair',
+    surfaceLabel: 'StudioLine · booking',
     greeting: 'How can I help you today?',
-    endpoint: 'GET /doctors',
+    endpoint: 'GET /stylists',
     extracted: {
-      specialty: 'cardiology',
+      service: 'balayage + haircut',
+      hairLength: 'long',
       preferredDate: nextWeekdayIso(2),
       timeWindow: 'morning',
-      doctorGender: 'F',
     },
     results: [
-      { name: 'Dr. M. Chen', meta: 'Cardiology · Tue 09:30' },
-      { name: 'Dr. A. Lopez', meta: 'Cardiology · Tue 11:00' },
-      { name: 'Dr. S. Patel', meta: 'Cardiology · Wed 08:15' },
+      { name: 'Anna K.', meta: 'Colour · Tue 09:30' },
+      { name: 'Marta L.', meta: 'Colour · Tue 11:00' },
+      { name: 'Julia S.', meta: 'Colour · Wed 08:15' },
     ],
   },
   {

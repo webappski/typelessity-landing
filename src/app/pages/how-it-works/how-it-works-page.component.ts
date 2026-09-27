@@ -105,8 +105,8 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
           <p>Fields outside the configuration are dropped; a changed value for a filled field is treated as a correction; the visitor reviews every field before sending. <code>_meta.mf</code> is logged, not enforced.</p>
         </li>
         <li>
-          <strong>Submit endpoint 5xx</strong>
-          <p>Exponential backoff (3 retries). Final failure surfaces a retry button — session state is preserved.</p>
+          <strong>Submit endpoint returns 502, 503 or 504</strong>
+          <p>Retried with exponential backoff, 3 retries by default. If it still fails, the widget shows a Retry button and keeps everything the visitor entered.</p>
         </li>
       </ul>
     </section>
@@ -190,29 +190,31 @@ fields below from the user's message. Only commit a
 field if you see explicit evidence in the input.
 
 Fields:
-  specialty       (enum: cardiology|dermatology|...)
+  service         (enum: brake_pads|oil_change|...)
+  vehicle         (string)
   preferredDate   (ISO 8601)
   preferredTime   (HH:MM, 24h)
-  patientName     (string)
-  doctorGender    (enum: M|F|any)
+  customerName    (string)
 
 Return JSON: { fields: {...}, _meta: { mf: [...] },
 reply: "<assistant text>" }
 
-User: "I need a cardiologist next Tuesday at 2pm,
-patient name Robert Smith"`;
+User: "Brake pads for my 2019 RAV4 next Tuesday
+at 2pm, name Robert Smith"`;
 
   protected readonly responseSample = `{
   "fields": {
-    "specialty": "cardiology",
+    "service": "brake_pads",
+    "vehicle": "2019 Toyota RAV4",
     "preferredDate": "${new Date(Date.now() + 7 * 86400e3).toISOString().slice(0, 10)}",
     "preferredTime": "14:00",
-    "patientName": "Robert Smith"
+    "customerName": "Robert Smith"
   },
   "_meta": {
-    "mf": ["specialty", "preferredDate", "preferredTime", "patientName"],
+    "mf": ["service", "vehicle", "preferredDate",
+           "preferredTime", "customerName"],
     "correction": null
   },
-  "reply": "Got it — cardiology, next Tuesday at 14:00, for Robert Smith. Any preference for the doctor?"
+  "reply": "Brake pads, Tue 14:00. Any mechanic you prefer?"
 }`;
 }

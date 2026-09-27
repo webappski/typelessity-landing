@@ -44,11 +44,11 @@ import { aboutPageLd } from '../../core/seo/schemas';
         </p>
         <p>
           The thesis: AI didn't just make booking <em>better</em> — it changed what's possible. A user can now say
-          "Записаться к стоматологу на пятницу после обеда" and the system extracts specialty, urgency,
-          time window, and language preference in 320ms. The form stops being the contract; the conversation is.
+          "Записаться на замену тормозных колодок в пятницу после обеда" and the system extracts the service,
+          the day, the time window and the language in one AI call. The form stops being the contract; the conversation is.
         </p>
         <ul class="founder__links">
-          <li><a href="mailto:hello&#64;typelessity.com">hello&#64;typelessity.com</a></li>
+          <li><a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a></li>
           <li><a routerLink="/blog">Blog</a></li>
         </ul>
       </div>
@@ -70,8 +70,9 @@ import { aboutPageLd } from '../../core/seo/schemas';
           onboarding). Typelessity is the booking-specific surface; TypelessForm is the generic one.
         </p>
         <p>
-          Engineering, design, and operations across the Webappski portfolio share one codebase pattern,
-          one extraction prompt template, and one consent step that runs before any AI processing.
+          Typelessity and TypelessForm are separate codebases with their own prompts. They share the approach —
+          the AI reads the field configuration and fills in the fields — and both ask the visitor for consent
+          before any AI processing.
         </p>
       </div>
     </section>
