@@ -130,7 +130,7 @@ import { HOME, pilotSignupUrl } from '../home/home.content';
         <span class="pipe-arrow">→</span>
         <div class="pipe-node">
           <div class="pipe-t">API</div>
-          <div class="pipe-l">/agent/turn</div>
+          <div class="pipe-l">Session API</div>
         </div>
         <span class="pipe-arrow">→</span>
         <div class="pipe-node">

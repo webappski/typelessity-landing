@@ -69,23 +69,23 @@ export function softwareApplicationLd(): Json {
     '@id': `${SITE_URL}/#software`,
     name: SITE_NAME,
     description:
-      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. Supports 25+ languages, voice input via OpenAI gpt-4o-mini-transcribe, and real-time enrichment APIs; submits structured bookings to an existing backend by email, webhook or REST.',
+      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. Supports 25+ languages, voice input via OpenAI gpt-4o-mini-transcribe, and enrichment APIs; submits structured bookings to an existing backend by email, webhook or REST.',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     featureList: [
       'Conversational booking in 25+ languages',
       'Voice input via OpenAI gpt-4o-mini-transcribe',
-      'Real-time enrichment APIs (fetch mechanics, slots, routes mid-conversation)',
+      'Enrichment APIs (fetch mechanics, slots, routes mid-conversation)',
       'Cascade-aware corrections',
       'Consent before any AI processing',
-      'One-line HTML or React embed',
+      'Two-line HTML embed (web component)',
       'Webhook or REST submit to your existing backend',
     ],
     publisher: { '@id': ORG_ID },
     offers: [
       {
         '@type': 'Offer',
-        name: 'Pilot',
+        name: 'Free Pilot',
         price: '0',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),
@@ -198,7 +198,7 @@ export function productLd(): Json {
     offers: [
       {
         '@type': 'Offer',
-        name: 'Pilot',
+        name: 'Free Pilot',
         price: '0',
         priceCurrency: 'EUR',
         url: canonicalUrl('/pricing'),

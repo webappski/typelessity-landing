@@ -31,7 +31,7 @@ The service runs on Vercel in the EU (Frankfurt, fra1). The database is Supabase
 - TLS on every connection the service receives and makes: browser to service, service to database, service to each sub-processor. A booking endpoint must be an https:// URL; plain http:// is refused.
 - Database encryption at rest as provided by the database platform. Integration secrets you store carry a second, application-level AES-256-GCM encryption.
 - API keys are stored only as hashes; the plaintext key is shown once, at creation.
-- Strict CSP, HSTS, X-Frame-Options DENY on all pages of this site.
+- A Content-Security-Policy header, HSTS and X-Frame-Options DENY on all pages of this site.
 
 ## Access control
 
@@ -52,7 +52,6 @@ The service runs on Vercel in the EU (Frankfurt, fra1). The database is Supabase
 
 GDPR-aligned data flows. The limits above are stated in Appendix A of the Typelessity DPA.
 
-<!-- TODO(content): legal review before production launch — Phase 9 -->
 `,
   },
 };

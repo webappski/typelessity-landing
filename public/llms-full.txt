@@ -1,12 +1,12 @@
 # Typelessity — full content (llms-full.txt)
 
-> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-09-25.
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat in 25+ languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-10-03.
 
 ---
 
 ## Home — https://typelessity.com/
 
-**Hero.** Bookings through conversation, not forms. Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Real-time enrichment. Consent before any AI processing; service and database in the EU, OpenAI in the US under the 2021 SCCs; processing under the Typelessity DPA.
+**Hero.** Bookings through conversation, not forms. Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in any of 25+ languages — the AI extracts dates, times, preferences and personal details automatically. Voice input. Enrichment from your own APIs. Consent before any AI processing; service and database in the EU, OpenAI in the US under the 2021 SCCs; processing under the Typelessity DPA.
 
 **TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available mechanics after a service is chosen), and submits the booking by email, webhook or REST. It supports 25+ languages and voice input, and is configurable for any service-business booking flow.
 
@@ -21,7 +21,7 @@
 **Architecture pillars.**
 - Single unified prompt: one GPT call extracts every field. The prompt is built from the configuration, so its size grows with the fields and options.
 - Config-driven, not pattern-driven: aiHint per field; GPT reads context.
-- Real-time enrichment APIs: 10 s timeout each by default (configurable), non-fatal on failure.
+- Enrichment APIs: 10 s timeout each by default (configurable), non-fatal on failure.
 - Cascade-aware corrections: DFS dependency walk on field changes.
 - Guardrails in code: fields the configuration does not define are dropped; a reply claiming a finished booking before confirmation is discarded; a new value for a filled field is treated as a correction. The `_meta.mf` mentioned-fields list is logged for diagnostics, not enforced.
 - Reliable by design: exponential-backoff retries on model calls and on booking submission, semaphore-bounded concurrency for model calls, every message stored with its conversation.
@@ -32,7 +32,7 @@
 
 ## How it works — https://typelessity.com/how-it-works
 
-Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT call per turn, real-time enrichment APIs, cascade-aware corrections, no hardcoded regex.
+Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT call per turn, enrichment APIs, cascade-aware corrections, no hardcoded regex.
 
 The widget is a Lit web component. The API is a Node service. The AI provider is OpenAI, called through Typelessity's own account; there is no custom provider option. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
 
@@ -66,11 +66,11 @@ Medical booking is not a supported use case: the Typelessity DPA does not permit
 
 ## For AI agents — https://typelessity.com/for-ai-agents
 
-Session and Booking schemas are published and stable. A dedicated `/agent/turn` endpoint is designed on that page, but it is not built and has no release date.
+The Session and Booking shapes are published, not versioned yet. A dedicated `/agent/turn` endpoint is designed on that page, but it is not built and has no release date.
 
-**Session schema.** `{ id, config, lang, fields, _meta: { mf, correction }, createdAt, completed }`.
+**Session schema.** `{ id, configId, state, extractedData, createdAt, updatedAt, bookingResult }`.
 
-**Booking schema.** `{ bookingId, sessionId, fields, submittedAt, status }`.
+**Booking schema.** `{ success, bookingId, outcome }` (outcome is `booking` or `request`).
 
 **Feature list (machine-readable).**
 - languages_supported: 25+
@@ -92,10 +92,10 @@ Questions about the /agent endpoint: info@webappski.com.
 
 Selection (full FAQ on /faq):
 
-- **What is Typelessity?** AI conversational booking widget replacing multi-step booking forms with a single natural-language chat. 25+ languages, voice via OpenAI gpt-4o-mini-transcribe, real-time enrichment.
+- **What is Typelessity?** AI conversational booking widget replacing multi-step booking forms with a single natural-language chat. 25+ languages, voice via OpenAI gpt-4o-mini-transcribe, enrichment APIs.
 - **How is it different from Calendly?** Calendly is a scheduling-link tool. Typelessity replaces an entire booking form with conversation.
 - **How is it different from SimplyBook.me?** SimplyBook is a full booking platform with payments and staff scheduling. Typelessity replaces only the booking form, then submits to your existing backend.
-- **GDPR compliant?** You are the controller and Typelessity is your processor under a DPA. On our side: consent from every visitor before any AI processing. Service in the EU (Vercel, Frankfurt), database in the EU (Supabase, Ireland); OpenAI and Resend process in the US under the 2021 SCCs. Abandoned conversations deleted within 48 hours; booked ones kept until the business has them erased (written instruction to info@webappski.com). No model training.
+- **GDPR compliant?** You are the controller and Typelessity is your processor under a DPA. On our side: consent from every visitor before any AI processing. Service in the EU (Vercel, Frankfurt), database in the EU (Supabase, Ireland); OpenAI and Resend process in the US under the 2021 SCCs. Abandoned conversations deleted within 48 hours; booked ones kept until the business has them erased (written instruction to info@webappski.com). OpenAI keeps conversation text up to 30 days for abuse checks. No model training.
 - **Voice input?** Yes — OpenAI gpt-4o-mini-transcribe. All 25+ supported languages.
 - **Per-turn latency?** Not measured on the current model, so not quoted. One AI call per turn; enrichment turns make a second call.
 - **Self-host?** No. Hosted service only — there is no on-premise or self-hosted build.
@@ -135,11 +135,11 @@ Engineering and product writeups. Selected posts:
 Security is served from this domain. The contracts are published by Webappski, the parent company, and live on webappski.com — the typelessity.com paths for them are permanent redirects, not documents.
 
 - Security — https://typelessity.com/legal/security
-- Privacy (end users) — https://webappski.com/en/legal/product-privacy
-- Terms of Service (B2B) — https://webappski.com/en/legal/terms
+- Terms of Service — https://webappski.com/en/legal/terms-typelessity
 - Typelessity DPA, including the sub-processor list (Appendix B) — https://webappski.com/en/legal/dpa-typelessity
+- Privacy notice for the question form on the pricing page — printed under the form at https://typelessity.com/pricing#start-pilot
 
-Service in the EU (Vercel, Frankfurt) and database in the EU (Supabase, Ireland) for every customer; OpenAI and Resend process in the US under the 2021 SCCs. Consent asked from every visitor before any AI processing begins. No data is used for model training. Abandoned conversations are deleted within 48 hours of the last message; conversations that led to a booking are kept until the business has them erased by written instruction to info@webappski.com. Security reports: info@webappski.com.
+Service in the EU (Vercel, Frankfurt) and database in the EU (Supabase, Ireland) for every customer; OpenAI and Resend process in the US under the 2021 SCCs. Consent asked from every visitor before any AI processing begins. OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it. No data is used for model training. Abandoned conversations are deleted within 48 hours of the last message; conversations that led to a booking are kept until the business has them erased by written instruction to info@webappski.com. Security reports: info@webappski.com.
 
 ---
 

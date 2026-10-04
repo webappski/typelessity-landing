@@ -17,7 +17,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
       <div class="vc-kicker"><span class="vc-kicker-bar"></span>About</div>
       <h1>Forms are an artifact of constrained UI</h1>
       <p class="about-hero__lede">
-        Typelessity is built on a single bet: when users describe what they need in their own words, conversion goes up — and the architecture that makes this work is simpler, not more complex, than the form it replaces.
+        Typelessity is built on a single bet: let users describe what they need in their own words, and the architecture that makes this work is simpler, not more complex, than the form it replaces.
       </p>
     </section>
 
