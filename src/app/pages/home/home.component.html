@@ -116,7 +116,7 @@
     <p class="vc-section-sub">{{ c.industriesIntro.sub }}</p>
   </header>
   <ul class="home-industries__grid">
-    @for (n of c.industries; track n) {
+    @for (n of industryNames; track n) {
       <li class="home-industries__cell">
         <span>{{ n }}</span>
       </li>
@@ -154,6 +154,7 @@
       </tbody>
     </table>
   </div>
+  <p class="home-compare__sources">{{ c.comparison.sources }}</p>
   <aside class="home-compare__verdict">
     <span class="home-compare__verdict-tag">Verdict</span>
     <p>{{ c.comparison.verdict }}</p>
