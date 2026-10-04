@@ -13,7 +13,7 @@ export const industriesBatch3: IndustryContent[] = [
       eyebrow: 'For tutoring agencies',
       title: 'Parents describe what their child needs',
       subtitle:
-        'Subject, grade level, exam prep, language preference — all extracted from one message. Tutor matched to student.',
+        'Subject, grade level, exam prep, language preference — all extracted from one message.',
     },
     exampleConversations: [
       {
@@ -23,7 +23,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['subject', 'grade_level', 'goal', 'frequency', 'language', 'in_person_or_remote', 'date_window'],
-    proofPoints: ['Tutor-to-student subject + level matching', 'Exam prep deadline awareness'],
+    proofPoints: ['Subject and grade level are filled from one message', 'Remote versus in person is a select field with your own options'],
   },
   {
     slug: 'education-language-schools',
@@ -31,7 +31,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Language schools',
     hero: {
       title: 'Placement, courses, and trials — conversational',
-      subtitle: 'Prospective students describe their goal and current level; the widget books a placement test or trial class.',
+      subtitle: 'Prospective students describe their goal and current level; the widget collects what a placement test or trial class needs.',
     },
     exampleConversations: [
       {
@@ -41,7 +41,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['target_language', 'current_level', 'goal', 'group_or_private', 'schedule_preference'],
-    proofPoints: ['Self-described level captured for placement', 'Group + private routing'],
+    proofPoints: ['Current level is captured in the student\'s own words', 'Group versus private is a select field with your own options'],
   },
   {
     slug: 'education-music-schools',
@@ -49,7 +49,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Music schools & instructors',
     hero: {
       title: 'Trial lessons, instrument matching, recurring schedules',
-      subtitle: 'Students describe their instrument, level, and goal; the widget books a trial lesson with the right teacher.',
+      subtitle: 'Students describe their instrument, level, and goal; the widget collects the details for a trial lesson.',
     },
     exampleConversations: [
       {
@@ -59,15 +59,15 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['instrument', 'level', 'student_age', 'preferred_teacher', 'lesson_format', 'date_window'],
-    proofPoints: ['Instrument + age + level → teacher match', 'Recital prep priority routing'],
+    proofPoints: ['Instrument, level and student age are filled from one message', 'The teacher list can come from your own endpoint and appear as cards'],
   },
   {
     slug: 'education-test-prep',
     category: 'Education',
     name: 'Test prep (SAT/IELTS/etc)',
     hero: {
-      title: 'Test goals captured, prep plans suggested',
-      subtitle: 'Students describe the test, target score, and timeline; the widget books a diagnostic and recommends prep package.',
+      title: 'Test goals captured before the first call',
+      subtitle: 'Students describe the test, target score, and timeline; the widget collects them and a time for a diagnostic.',
     },
     exampleConversations: [
       {
@@ -77,7 +77,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['test_type', 'target_score', 'test_date', 'current_level', 'preferred_format'],
-    proofPoints: ['Diagnostic-first booking flow', 'Package recommendation inline'],
+    proofPoints: ['Test type, target score and test date are filled from one message', 'Preferred format is a select field with your own options'],
   },
 
   // ============================================================
@@ -91,17 +91,17 @@ export const industriesBatch3: IndustryContent[] = [
       eyebrow: 'For restaurants',
       title: '"Table for 4 on Saturday at 8" — done',
       subtitle:
-        'Reservations described in plain language. Party size, date, time, dietary needs, special occasions — all extracted in one message.',
+        'Reservations described in plain language. Party size, date, time, special occasions and seating — all extracted in one message.',
     },
     exampleConversations: [
       {
         lang: 'en',
-        user: 'Table for 4 on Saturday at 8pm for a birthday, one vegetarian, would love a window seat if possible',
-        extracted: { party_size: 4, date: 'saturday', time: '20:00', occasion: 'birthday', dietary_restrictions: ['vegetarian'], seating_preference: 'window' },
+        user: 'Table for 4 on Saturday at 8pm for a birthday, would love a window seat if possible',
+        extracted: { party_size: 4, date: 'saturday', time: '20:00', occasion: 'birthday', seating_preference: 'window' },
       },
     ],
-    fields: ['party_size', 'date', 'time', 'dietary_restrictions', 'occasion', 'seating_preference'],
-    proofPoints: ['Special occasions trigger note to staff', 'Allergy info preserved verbatim'],
+    fields: ['party_size', 'date', 'time', 'occasion', 'seating_preference'],
+    proofPoints: ['Party size, date and time are filled from one message', 'Occasion and seating preference are optional fields you can add'],
   },
   {
     slug: 'hospitality-hotels',
@@ -109,7 +109,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Hotels & B&Bs',
     hero: {
       title: 'Inquiries that turn into bookings',
-      subtitle: 'Guests describe their stay — dates, party, room type, special requests — and the widget books or routes to the front desk.',
+      subtitle: 'Guests describe their stay — dates, party, room type, special requests — and the widget collects the details your front desk needs.',
     },
     exampleConversations: [
       {
@@ -119,7 +119,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['check_in', 'check_out', 'guests', 'room_type', 'special_requests', 'package_interest'],
-    proofPoints: ['Multi-room bookings handled', 'Direct booking conversion vs. OTA'],
+    proofPoints: ['Check-in and check-out dates and guest counts are filled from one message', 'Special requests are collected as free text for your front desk'],
   },
   {
     slug: 'hospitality-event-venues',
@@ -127,7 +127,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Event venues',
     hero: {
       title: 'Event inquiries that don\'t require a form',
-      subtitle: 'Hosts describe their event — type, date, headcount, catering — and the widget routes to the right event manager.',
+      subtitle: 'Hosts describe their event — type, date, headcount, catering — and the widget collects what your event manager needs.',
     },
     exampleConversations: [
       {
@@ -137,7 +137,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['event_type', 'date', 'headcount', 'catering_interest', 'av_needs', 'budget_range'],
-    proofPoints: ['Event manager assignment by event type', 'Walk-through booking automated'],
+    proofPoints: ['Event type, date and headcount are filled from one message', 'Budget range is an optional field'],
   },
   {
     slug: 'hospitality-tours',
@@ -145,7 +145,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Tours & activities',
     hero: {
       title: 'Tour bookings in any language',
-      subtitle: 'Guests describe what they want to do; the widget books a tour with a guide in their language.',
+      subtitle: 'Guests describe what they want to do; the widget collects the tour, the group size and the language.',
     },
     exampleConversations: [
       {
@@ -155,7 +155,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['tour_type', 'date', 'group_size', 'language', 'duration', 'pickup_location'],
-    proofPoints: ['Multilingual guide matching', 'Group + private routing'],
+    proofPoints: ['Guests can write in any of 25+ languages; the tour language is a field', 'Date, group size and duration are filled from one message'],
   },
 
   // ============================================================
@@ -169,7 +169,7 @@ export const industriesBatch3: IndustryContent[] = [
       eyebrow: 'For real estate agencies',
       title: 'Buyers describe what they want. The widget books a viewing.',
       subtitle:
-        'Bedrooms, neighborhood, price range, must-haves — all extracted. Viewing scheduled with the right agent.',
+        'Bedrooms, neighborhood, price range, must-haves — all extracted. A viewing request is collected with the details your agent needs.',
     },
     exampleConversations: [
       {
@@ -179,7 +179,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['property_type', 'bedrooms', 'neighborhood', 'price_range', 'buy_or_rent', 'timeline', 'date_window'],
-    proofPoints: ['Buyer profile auto-built for agent CRM', 'Multi-property viewing scheduling'],
+    proofPoints: ['Bedrooms, neighborhood and price range are filled from one message', 'The fields arrive at your CRM as JSON, shaped by your field mapping'],
   },
   {
     slug: 'realestate-commercial',
@@ -187,7 +187,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Commercial real estate',
     hero: {
       title: 'Tenant inquiries, qualified at intake',
-      subtitle: 'Prospective tenants describe their business and space needs; the widget routes to the right broker.',
+      subtitle: 'Prospective tenants describe their business and space needs; the widget collects what your broker needs.',
     },
     exampleConversations: [
       {
@@ -197,7 +197,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['space_type', 'sqft', 'location', 'business_type', 'lease_or_buy', 'move_in_timeline'],
-    proofPoints: ['Business-type pre-qualification', 'Multi-property tour scheduling'],
+    proofPoints: ['Space type, size and location are filled from one message', 'The fields arrive at your CRM as JSON, shaped by your field mapping'],
   },
   {
     slug: 'realestate-property-management',
@@ -205,7 +205,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Property management',
     hero: {
       title: 'Tenant requests, maintenance, viewings — one widget',
-      subtitle: 'Prospective and current tenants describe their need; the widget routes to leasing, maintenance, or accounting.',
+      subtitle: 'Prospective and current tenants describe their need; the widget collects the request type, the unit and the urgency.',
     },
     exampleConversations: [
       {
@@ -215,7 +215,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['inquiry_type', 'unit_id', 'urgency', 'description', 'date_window'],
-    proofPoints: ['Maintenance ticket creation inline', 'Tenant vs. prospect auto-routed'],
+    proofPoints: ['Request type is a select field with your own options (leasing, maintenance, accounting)', 'Unit and description are filled from one message'],
   },
 
   // ============================================================
@@ -229,7 +229,7 @@ export const industriesBatch3: IndustryContent[] = [
       eyebrow: 'For veterinary clinics',
       title: 'Pet owners describe what\'s wrong. The widget books the vet.',
       subtitle:
-        'Species, breed, age, symptom, urgency — captured in one message. Routing handles emergency vs. routine cleanly.',
+        'Species, breed, age, symptom, urgency — captured in one message.',
     },
     exampleConversations: [
       {
@@ -239,7 +239,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['species', 'breed', 'pet_age', 'symptom', 'urgency', 'preferred_vet', 'date_window'],
-    proofPoints: ['Emergency keyword detection', 'Multi-pet households handled'],
+    proofPoints: ['Species, breed and age are filled from one message', 'Urgency is a select field with your own options'],
   },
   {
     slug: 'pet-grooming',
@@ -247,7 +247,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Pet grooming',
     hero: {
       title: 'Bath, groom, full package — by breed and size',
-      subtitle: 'Owners describe their pet and service; the widget prices and books with the right groomer.',
+      subtitle: 'Owners describe their pet and service; the widget collects breed, size and service for your groomer.',
     },
     exampleConversations: [
       {
@@ -257,7 +257,7 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['species', 'breed', 'size', 'service', 'preferred_groomer', 'date_window'],
-    proofPoints: ['Breed-aware service duration', 'Add-on suggestions'],
+    proofPoints: ['Breed and size are filled from one message', 'Add-ons are a multiselect field with your own options'],
   },
   {
     slug: 'pet-training',
@@ -265,7 +265,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Pet training',
     hero: {
       title: 'Behavior described, trainer matched, session booked',
-      subtitle: 'Owners describe the issue — pulling on leash, separation anxiety, basic obedience — and the widget books with a specialized trainer.',
+      subtitle: 'Owners describe the issue — pulling on leash, separation anxiety, basic obedience — and the widget collects the issue and the goal for your trainer.',
     },
     exampleConversations: [
       {
@@ -275,6 +275,6 @@ export const industriesBatch3: IndustryContent[] = [
       },
     ],
     fields: ['species', 'pet_age', 'behavior_concern', 'training_goal', 'group_or_private', 'date_window'],
-    proofPoints: ['Behavior-to-trainer specialty match', 'Group class vs. private routing'],
+    proofPoints: ['Behavior concerns are a multiselect field with your own options', 'Group versus private is a select field'],
   },
 ];

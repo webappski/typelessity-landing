@@ -13,7 +13,7 @@ export const industriesBatch2: IndustryContent[] = [
       eyebrow: 'For personal trainers',
       title: 'Clients describe their goal. The widget books the session.',
       subtitle:
-        'Weight loss, strength, mobility, sport-specific — clients describe what they want, the widget matches a trainer and books an intro session.',
+        'Weight loss, strength, mobility, sport-specific — clients describe what they want; the widget collects their goal, experience level and availability for an intro session.',
     },
     exampleConversations: [
       {
@@ -23,7 +23,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['goal', 'experience_level', 'frequency', 'preferred_trainer', 'session_type', 'time_window'],
-    proofPoints: ['Goal-to-trainer matching automatic', 'Multi-session packages bookable in one flow'],
+    proofPoints: ['Goal and experience level are filled from one message', 'Session type is a select field with your own options'],
   },
   {
     slug: 'fitness-gyms',
@@ -41,25 +41,25 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['inquiry_type', 'goal', 'membership_interest', 'trial_or_tour', 'date_window'],
-    proofPoints: ['Splits info request from booking automatically', 'Class trial scheduling inline'],
+    proofPoints: ['An inquiry-type field separates a tour, a trial class and a membership question', 'Trial and tour dates are collected in the same conversation'],
   },
   {
     slug: 'fitness-yoga-studios',
     category: 'Fitness & Sports',
     name: 'Yoga & pilates studios',
     hero: {
-      title: 'From "do you have prenatal yoga?" to a booked class',
+      title: 'From "do you have a beginner class on weekday mornings?" to a booked class',
       subtitle: 'Students describe what they\'re looking for — class type, level, instructor — and book in one flow.',
     },
     exampleConversations: [
       {
         lang: 'en',
-        user: 'Looking for a beginner-friendly prenatal yoga class, weekday mornings work best, second trimester',
-        extracted: { class_type: 'prenatal_yoga', level: 'beginner', time_window: 'weekday_mornings', first_class: true },
+        user: 'Looking for a beginner-friendly vinyasa class, weekday mornings work best',
+        extracted: { class_type: 'vinyasa', level: 'beginner', time_window: 'weekday_mornings', first_class: true },
       },
     ],
     fields: ['class_type', 'level', 'preferred_instructor', 'date_window', 'first_class'],
-    proofPoints: ['Handles 20+ class types per studio', 'First-class discount auto-applied'],
+    proofPoints: ['Class type, level and instructor are filled from one message', 'The instructor list can come from your own endpoint and appear as cards the student picks from'],
   },
   {
     slug: 'fitness-martial-arts',
@@ -77,7 +77,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['discipline', 'experience', 'student_age', 'trial_type', 'date_window'],
-    proofPoints: ['Adult / kids / family classes routed correctly', 'Trial-to-membership conversion tracked'],
+    proofPoints: ['Adult, kids and family classes are one select field with your own options', 'Student age is a number field with the minimum and maximum you set'],
   },
   {
     slug: 'fitness-sports-coaching',
@@ -95,7 +95,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['sport', 'level', 'goal', 'preferred_coach', 'session_or_court', 'date_window'],
-    proofPoints: ['Court availability + coach availability merged', 'Group vs. private auto-suggested'],
+    proofPoints: ['Sport and level are filled from one message', 'Coach and court availability can come from your own endpoints and appear as cards'],
   },
 
   // ============================================================
@@ -107,9 +107,9 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Cleaning services',
     hero: {
       eyebrow: 'For cleaning companies',
-      title: 'Clients describe the home. The widget quotes and books.',
+      title: 'Clients describe the home. The widget collects the job.',
       subtitle:
-        'Bedrooms, bathrooms, square footage, deep clean vs. regular, frequency — all extracted from one message. Estimated price shown inline.',
+        'Bedrooms, bathrooms, square footage, deep clean vs. regular, frequency — all extracted from one message.',
     },
     exampleConversations: [
       {
@@ -119,7 +119,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['bedrooms', 'bathrooms', 'sqft', 'service_type', 'frequency', 'context', 'date_window', 'pets'],
-    proofPoints: ['Inline price estimation from extracted fields', 'Move-in/out vs. recurring routed correctly'],
+    proofPoints: ['Bedrooms and bathrooms are number fields filled from one sentence', 'Move-in/out versus recurring is a select field with your own options'],
   },
   {
     slug: 'home-handyman',
@@ -127,17 +127,17 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Handyman & home repair',
     hero: {
       title: 'From "my faucet is leaking" to a scheduled visit',
-      subtitle: 'Clients describe the problem; the widget extracts urgency, trade, and books a visit with photo upload optional.',
+      subtitle: 'Clients describe the problem; the widget extracts the trade and urgency and collects a time for a visit.',
     },
     exampleConversations: [
       {
         lang: 'en',
-        user: 'Kitchen faucet has been dripping for a week, getting worse, attaching a photo, ideally this week',
-        extracted: { problem_description: 'kitchen_faucet_drip', trade: 'plumbing', urgency: 'medium', photo_attachment: true, date_window: 'this_week' },
+        user: 'Kitchen faucet has been dripping for a week, getting worse, ideally this week',
+        extracted: { problem_description: 'kitchen_faucet_drip', trade: 'plumbing', urgency: 'medium', date_window: 'this_week' },
       },
     ],
-    fields: ['problem_description', 'trade', 'urgency', 'photo_attachment', 'date_window'],
-    proofPoints: ['Auto-classifies into 18 trade categories', 'Emergency vs. scheduled routing'],
+    fields: ['problem_description', 'trade', 'urgency', 'date_window'],
+    proofPoints: ['The problem description is collected as free text for your team', 'Trade and urgency are select fields with your own options'],
   },
   {
     slug: 'home-hvac',
@@ -145,7 +145,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'HVAC & plumbing',
     hero: {
       title: 'Service calls described in plain words',
-      subtitle: 'Clients describe the symptom — "AC not cooling," "water heater making noise" — and the widget books with the right technician.',
+      subtitle: 'Clients describe the symptom — "AC not cooling," "water heater making noise" — and the widget collects it for your dispatcher.',
     },
     exampleConversations: [
       {
@@ -155,7 +155,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['system_type', 'symptom', 'urgency', 'unit_age', 'preferred_window'],
-    proofPoints: ['Symptom-to-technician matching', 'Same-day urgency surfaces emergency dispatcher'],
+    proofPoints: ['System type and symptom are filled from the client\'s own words', 'Urgency is a select field with your own options'],
   },
   {
     slug: 'home-landscaping',
@@ -163,7 +163,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Landscaping & gardening',
     hero: {
       title: 'Quotes, recurring service, one-off projects — one flow',
-      subtitle: 'Clients describe their property and need; the widget routes to estimator, recurring crew, or project lead.',
+      subtitle: 'Clients describe their property and need; the widget collects what your estimator, recurring crew or project lead needs.',
     },
     exampleConversations: [
       {
@@ -173,7 +173,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['property_size', 'service_type', 'frequency', 'project_or_recurring', 'date_window'],
-    proofPoints: ['Property-size triage', 'Seasonal service auto-suggested'],
+    proofPoints: ['Property size and service type are filled from one message', 'Project versus recurring is a select field with your own options'],
   },
   {
     slug: 'home-moving',
@@ -181,7 +181,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Moving companies',
     hero: {
       title: 'Move-day scheduling, conversational',
-      subtitle: 'Clients describe their move — origin, destination, size, packing service — and book a binding estimate visit.',
+      subtitle: 'Clients describe their move — origin, destination, size, packing service — and request an estimate visit.',
     },
     exampleConversations: [
       {
@@ -191,7 +191,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['origin', 'destination', 'home_size', 'packing_service', 'storage_needed', 'move_date'],
-    proofPoints: ['Long-distance vs. local routing', 'Estimate visit + move date booked together'],
+    proofPoints: ['Origin and destination are address fields', 'Estimate visit and move date are collected in the same conversation'],
   },
 
   // ============================================================
@@ -205,7 +205,7 @@ export const industriesBatch2: IndustryContent[] = [
       eyebrow: 'For auto repair',
       title: '"My check engine light is on" → booked diagnostic',
       subtitle:
-        'Customers describe the symptom; the widget captures vehicle make/model/year, books a diagnostic, and suggests prep info.',
+        'Customers describe the symptom; the widget captures vehicle make/model/year and collects a time for a diagnostic.',
     },
     exampleConversations: [
       {
@@ -215,15 +215,15 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['vehicle_make', 'vehicle_model', 'vehicle_year', 'symptom', 'urgency', 'preferred_mechanic', 'date_window'],
-    proofPoints: ['VIN lookup integration', 'Maintenance vs. repair auto-routed'],
+    proofPoints: ['Vehicle make, model and year are filled from one sentence', 'Your own mechanics endpoint can offer the available mechanics as cards'],
   },
   {
     slug: 'automotive-detailing',
     category: 'Automotive',
     name: 'Auto detailing',
     hero: {
-      title: 'Wash, full detail, ceramic coating — described, priced, booked',
-      subtitle: 'Customers describe the package they want and the vehicle. Inline pricing reflects vehicle size.',
+      title: 'Wash, full detail, ceramic coating — described and booked',
+      subtitle: 'Customers describe the package they want and the vehicle; the widget collects both, plus add-ons and where the service happens.',
     },
     exampleConversations: [
       {
@@ -233,14 +233,14 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['package', 'vehicle_size', 'add_ons', 'preferred_location', 'date_window'],
-    proofPoints: ['Package upsell suggestions', 'Mobile vs. shop location split'],
+    proofPoints: ['Add-ons are a multiselect field with your own options', 'Mobile versus in-shop is a select field'],
   },
   {
     slug: 'automotive-test-drives',
     category: 'Automotive',
     name: 'Dealership test drives',
     hero: {
-      title: 'Browsing to booked test drive in 30 seconds',
+      title: 'From the car they like to a booked test drive',
       subtitle: 'Prospects describe the vehicle they\'re interested in; the widget books a test drive with a salesperson.',
     },
     exampleConversations: [
@@ -251,7 +251,7 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['vehicle_interest', 'trim_level', 'trade_in', 'finance_or_lease', 'preferred_salesperson', 'date_window'],
-    proofPoints: ['Inventory check inline', 'Trade-in question integrated'],
+    proofPoints: ['Vehicle of interest and trim level are filled from one message', 'A trade-in vehicle is a field like any other'],
   },
   {
     slug: 'automotive-driving-schools',
@@ -269,6 +269,6 @@ export const industriesBatch2: IndustryContent[] = [
       },
     ],
     fields: ['license_type', 'experience', 'package', 'language', 'preferred_instructor', 'date_window'],
-    proofPoints: ['Language-matched instructor routing', 'Package + individual lesson pricing'],
+    proofPoints: ['Licence type and the student\'s language are collected from one message', 'Preferred instructor and date window are collected in the same conversation'],
   },
 ];

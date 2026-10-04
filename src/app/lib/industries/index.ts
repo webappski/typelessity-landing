@@ -10,7 +10,7 @@ export const ALL_INDUSTRIES: IndustryContent[] = [
   ...industriesBatch3,
 ];
 
-// Total: 14 + 14 + 14 = 42 industry pages
+// Total: 8 + 14 + 14 = 36 industry pages (the cosmetic-clinic page is gone: it invited health data, A45e)
 
 export function getIndustryBySlug(slug: string): IndustryContent | undefined {
   return ALL_INDUSTRIES.find((i) => i.slug === slug);

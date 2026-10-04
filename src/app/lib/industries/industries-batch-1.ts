@@ -1,4 +1,4 @@
-// Industries content — bulk file with 14 verticals.
+// Industries content — batch 1: 8 verticals.
 // Each entry follows the IndustryContent shape from lib/types.ts.
 
 import type { IndustryContent } from '../types';
@@ -15,7 +15,7 @@ export const industries: IndustryContent[] = [
       eyebrow: 'For hair salons & barbershops',
       title: '"I want a balayage, can you fit me in Saturday?"',
       subtitle:
-        'Clients describe the service they want in their own words — balayage, fade, root touch-up, perm — and Typelessity matches it to your service menu, picks a stylist, and finds the slot.',
+        'Clients describe the service they want in their own words — balayage, fade, root touch-up, perm — and Typelessity matches it to your service menu and collects the stylist, date and time in the same conversation.',
     },
     exampleConversations: [
       {
@@ -25,7 +25,7 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['service', 'hair_length', 'preferred_stylist', 'date_window', 'time_window', 'first_visit'],
-    proofPoints: ['Maps free-text service requests to your menu', 'Auto-calculates appointment duration from services'],
+    proofPoints: ['Free-text service requests are matched to the options in your service field', 'Stylist, date and time are collected in the same conversation and reviewed by the client before sending'],
   },
   {
     slug: 'beauty-nail-salons',
@@ -33,7 +33,7 @@ export const industries: IndustryContent[] = [
     name: 'Nail salons',
     hero: {
       title: 'Manicure, pedicure, gel, acrylic — your clients know what they want',
-      subtitle: 'Stop forcing clients into dropdowns. They describe the service, the widget picks the right technician and slot.',
+      subtitle: 'Stop forcing clients into dropdowns. They describe the service; the widget collects the service, add-ons, technician and time window in one conversation.',
     },
     exampleConversations: [
       {
@@ -43,7 +43,7 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['service', 'add_ons', 'preferred_technician', 'date_window', 'time_window'],
-    proofPoints: ['Handles complex service combinations', 'Most bookings completed in under 30 seconds'],
+    proofPoints: ['Several services in one message (gel manicure plus pedicure) fill a multiselect service field together', 'Technician and time window are collected in the same conversation'],
   },
   {
     slug: 'beauty-spas',
@@ -51,7 +51,7 @@ export const industries: IndustryContent[] = [
     name: 'Spas & wellness centers',
     hero: {
       title: 'A booking flow that fits the relaxed brand',
-      subtitle: 'No multi-step forms breaking the calm. Clients describe the experience they want — couples massage, hot stone, facial — and book in one conversation.',
+      subtitle: 'No multi-step forms breaking the calm. Clients describe the experience they want — couples massage, hot stone, facial — and send a booking request in one conversation.',
     },
     exampleConversations: [
       {
@@ -61,25 +61,7 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['service', 'duration', 'package_or_single', 'therapist_gender_preference', 'date_window'],
-    proofPoints: ['Premium voice tone in widget', 'Multi-service packages handled natively'],
-  },
-  {
-    slug: 'beauty-aesthetic-clinics',
-    category: 'Beauty & Wellness',
-    name: 'Aesthetic & cosmetic clinics',
-    hero: {
-      title: 'Inquire, consult, book — in one flow',
-      subtitle: 'Botox, fillers, laser — clients describe what they\'re considering. The widget books a consultation with the right practitioner and surfaces relevant pre-care info.',
-    },
-    exampleConversations: [
-      {
-        lang: 'en',
-        user: 'Thinking about lip filler for the first time, would like to talk to someone before booking the actual treatment',
-        extracted: { procedure_interest: 'lip_filler', consultation_or_treatment: 'consultation', first_time: true },
-      },
-    ],
-    fields: ['procedure_interest', 'consultation_or_treatment', 'preferred_practitioner', 'date_window'],
-    proofPoints: ['Splits "info request" from "ready to book"', 'Pre-care messaging triggered by procedure type'],
+    proofPoints: ['Service, duration and date window are filled from one message', 'The client reviews every answer before the request is sent'],
   },
   {
     slug: 'beauty-tattoo-studios',
@@ -87,17 +69,17 @@ export const industries: IndustryContent[] = [
     name: 'Tattoo & piercing studios',
     hero: {
       title: 'Clients describe their piece. The widget books a consultation.',
-      subtitle: 'Style, size, placement, artist preference — all extracted from one message. Reference image upload optional.',
+      subtitle: 'Style, size, placement, artist preference — all extracted from one message.',
     },
     exampleConversations: [
       {
         lang: 'en',
-        user: 'Small geometric design on my forearm, about 3 inches, sending a reference image, would love to consult first',
-        extracted: { style: 'geometric', size: '3in', placement: 'forearm', image_attachment: true, consultation_or_session: 'consultation' },
+        user: 'Small geometric design on my forearm, about 3 inches, would love to consult first',
+        extracted: { style: 'geometric', size: '3in', placement: 'forearm', consultation_or_session: 'consultation' },
       },
     ],
-    fields: ['style', 'size', 'placement', 'preferred_artist', 'image_attachment', 'consultation_or_session'],
-    proofPoints: ['Reference image attachment handled', 'Artist style matching from free-text description'],
+    fields: ['style', 'size', 'placement', 'preferred_artist', 'consultation_or_session'],
+    proofPoints: ['Style, size and placement are filled from one free-text description', 'Preferred artist is a select field with your artists as options'],
   },
 
   // ============================================================
@@ -111,7 +93,7 @@ export const industries: IndustryContent[] = [
       eyebrow: 'For law firms',
       title: 'Intake conversations, not intake forms',
       subtitle:
-        'Prospective clients describe their situation. The widget extracts practice area, jurisdiction, urgency, conflict-check basics, and books a paid or free initial consultation.',
+        'Prospective clients describe their situation. The widget extracts practice area, jurisdiction and urgency, and collects a request for a paid or free initial consultation.',
     },
     exampleConversations: [
       {
@@ -121,7 +103,7 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['practice_area', 'jurisdiction', 'urgency', 'opposing_party_basic', 'consultation_type', 'language'],
-    proofPoints: ['Handles 14 practice areas via single config', 'Conflict-check question integrated'],
+    proofPoints: ['Practice area and jurisdiction are select fields with your own options', 'The description of the situation is collected as free text for your team'],
   },
   {
     slug: 'professional-accounting',
@@ -139,15 +121,15 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['service_type', 'business_type', 'urgency', 'tax_year', 'jurisdiction', 'document_count_estimate'],
-    proofPoints: ['Routes individual vs. business automatically', 'Pre-flags audit and back-tax cases'],
+    proofPoints: ['Service type and business type are select fields with your own options', 'Tax year and jurisdiction are filled from the same message'],
   },
   {
     slug: 'professional-financial-advisors',
     category: 'Professional Services',
     name: 'Financial advisors',
     hero: {
-      title: 'Suitable, compliant intake — without the form',
-      subtitle: 'Prospects describe their situation; the widget captures suitability basics, goals, and books a discovery call with the right advisor.',
+      title: 'Prospect intake — without the form',
+      subtitle: 'Prospects describe their situation; the widget captures their goals and the details your intake needs, and collects a request for a discovery call.',
     },
     exampleConversations: [
       {
@@ -157,7 +139,7 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['life_event', 'goals', 'asset_range', 'time_horizon', 'preferred_advisor_specialty'],
-    proofPoints: ['Suitability fields configurable per region', 'KYC pre-questions inline'],
+    proofPoints: ['You decide which intake fields are asked, and which are not', 'The prospect reviews every answer before it is sent to you'],
   },
   {
     slug: 'professional-coaching',
@@ -175,6 +157,6 @@ export const industries: IndustryContent[] = [
       },
     ],
     fields: ['goal_area', 'time_commitment', 'preferred_coach', 'session_format', 'language'],
-    proofPoints: ['Free-text goal capture preserved verbatim for the coach', 'Session format auto-suggested from goal'],
+    proofPoints: ['The prospect describes the goal in their own words; it is collected as free text for the coach', 'Session format is a select field with your own options'],
   },
 ];
