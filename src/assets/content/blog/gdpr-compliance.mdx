@@ -2,7 +2,7 @@
 title: "GDPR and an AI booking widget: what to check before you say yes"
 description: "Where the data is processed, who the sub-processors are, how long conversations stay, how consent works and what the DPA says — the questions an EU business should ask an AI booking widget, with Typelessity's answers as the code and the DPA state them."
 publishedAt: "2026-05-21"
-updatedAt: "2026-09-25"
+updatedAt: "2026-10-03"
 author: "Alex Isa"
 category: "Compliance"
 tags: ["gdpr", "privacy", "compliance", "eu"]
@@ -14,8 +14,10 @@ faqs:
   - q: "Does OpenAI train on Typelessity conversations?"
     a: "No. OpenAI does not use data sent to its API for training unless the account opts in, and ours has not. OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it; the transcription endpoint keeps no such copy. Typelessity has no Zero Data Retention approval from OpenAI. The Typelessity DPA also forbids us from using conversation content to train any model."
   - q: "Can the widget be used for health data?"
-    a: "No. The Typelessity DPA does not allow special-category data under GDPR Article 9, so health details must not be collected through the widget. Medical example configurations are demos, not for real patients."
+    a: "No. The Typelessity DPA does not allow special-category data under GDPR Article 9, so health details must not be collected through the widget. The service refuses a configuration that declares the medical business type."
 ---
+
+> **Updated 2026-10-03 — what changed:** the health-data answer now says the service refuses a configuration that declares the medical business type; the offer to apply for Zero Data Retention is gone (we hold no approval and have not applied); and the erasure line says what the DPA says: the Portal has no self-service button for it today.
 
 <strong>Before an EU business puts an AI booking widget on its site, it should check five things: where the conversation is processed and stored, including by the AI provider; whether that provider trains on it and how long it keeps it; how consent is asked and withdrawn; how long conversations are kept and how they are erased; and which sub-processors the DPA names. Below are the questions, and Typelessity's answers as the code and the DPA state them — including what we do not offer.</strong>
 
@@ -45,7 +47,7 @@ Every connection the service receives and makes uses TLS, and a booking endpoint
 
 OpenAI does not use data sent to its API for training unless the account opts in, and ours has not. The Typelessity DPA also forbids us from using conversation content to train any model, ours or anyone else's.
 
-OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it. Its transcription endpoint keeps no such copy, and Typelessity never saves voice audio — it exists only while it is being transcribed. We hold no Zero Data Retention approval from OpenAI and cannot shorten its 30 days; if a contract requires Zero Data Retention, we can apply for it, but the decision is OpenAI's.
+OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it. Its transcription endpoint keeps no such copy, and Typelessity never saves voice audio — it exists only while it is being transcribed. We hold no Zero Data Retention approval from OpenAI and cannot shorten its 30 days.
 
 ## How does consent work in the widget?
 
@@ -57,7 +59,7 @@ The widget has no analytics and sets no cookies. Which legal basis applies to yo
 
 An abandoned conversation — no booking and no activity for 24 hours — is removed by a job that runs once a night, so it is gone within 48 hours of the visitor's last message. A conversation that led to a booking or a forwarded request has no automatic expiry: it is kept until the business erases it. The record that the visitor consented is kept for 3 years and then deleted by the same nightly job.
 
-To erase a conversation, send a written instruction to info@webappski.com naming it. We erase the conversation and its messages and strip the personal content from its delivery record, leaving only status and timing as proof of delivery. Requests covering more than one conversation are handled within 10 working days. There is no self-service erasure or export endpoint.
+To erase a conversation, send a written instruction to info@webappski.com naming it. We erase the conversation and its messages and strip the personal content from its delivery record, leaving only status and timing as proof of delivery. Requests covering more than one conversation are handled within 10 working days. The Portal does not today give the business a self-service button for this.
 
 ## Who are the sub-processors?
 
@@ -72,7 +74,7 @@ Changes are notified at least 30 days in advance.
 
 ## Can the widget be used for health data?
 
-No. The Typelessity DPA does not allow special-category data under GDPR Article 9 — health details must not be collected through the widget. Medical example configurations are demos, not for real patients. US healthcare with HIPAA requirements is not supported either.
+No. The Typelessity DPA does not allow special-category data under GDPR Article 9 — health details must not be collected through the widget. The service refuses a configuration that declares the medical business type. US healthcare with HIPAA requirements is not supported either.
 
 ## What Typelessity does not offer
 
@@ -81,7 +83,7 @@ So nothing here reads as more than it is:
 - no on-premise or self-hosted build;
 - no Zero Data Retention with OpenAI;
 - no uptime commitment in the standard terms;
-- no self-service erasure or export endpoint, and no audit-log product;
+- no self-service erasure or export button in the Portal today, and no audit-log product;
 - no special-category (health) data.
 
 ## FAQ

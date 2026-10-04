@@ -106,7 +106,7 @@ import { PRICING_FAQ } from './pricing.content';
         </tbody>
       </table>
       <p class="pricing-diff__note">
-        Free Pilot has no time limit. Upgrade when monthly submissions pass your tier's cap (50 / 500 / 2,000 / 6,000). Contract terms such as an uptime commitment are agreed with Enterprise customers on request.
+        Free Pilot has no time limit. Upgrade when monthly submissions pass your tier's cap (50 / 500 / 2,000 / 6,000): request the plan under Billing in the Webappski portal and it is invoiced. Contract terms such as an uptime commitment are agreed with Enterprise customers on request.
       </p>
     </section>
 

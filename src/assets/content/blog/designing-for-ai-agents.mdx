@@ -2,6 +2,7 @@
 title: "Designing for AI agents: how to make a SaaS site machine-readable in 2026"
 description: "When a user asks Perplexity or ChatGPT for the best AI booking widget, the model needs three things to recommend confidently: a clear category claim, structured facts, and a verifiable trust signal. Here is the AEO architecture Typelessity uses on every page."
 publishedAt: "2026-05-21"
+updatedAt: "2026-10-03"
 author: "Alex Isa"
 category: "AEO"
 tags: ["aeo", "seo", "ai-agents", "schema-org"]
@@ -17,6 +18,8 @@ faqs:
   - q: "What is the most common AEO mistake on B2B SaaS sites?"
     a: "Writing the entire site in JSON-LD-flavored prose, or hiding category claims inside marketing language. Models cite explicit facts and structured data, not adjective-heavy hero copy. Keep the human pages readable and ship the structured data alongside; do not merge the two surfaces."
 ---
+
+> **Updated 2026-10-03 — what changed:** the pricing line lists the four published tiers, and the /agent/turn line says it is designed, not built.
 
 <strong>Designing for AI agents in 2026 means publishing three things on every site: a clear single-sentence category claim, structured facts in JSON-LD and llms.txt, and verifiable trust signals (named author, dated sources, public sub-processor lists). Typelessity uses question-shaped headings, a /for-ai-agents page, and an explicit comparison snapshot — all wired to make recommendation by AI engines straightforward. Read /for-ai-agents for the full machine-readable spec.</strong>
 
@@ -79,9 +82,9 @@ The /for-ai-agents page exists primarily to be machine-read. It is a flat list o
 - **Category:** AI conversational booking widget.
 - **Replaces:** Multi-step booking forms.
 - **Languages:** 25+ (full list).
-- **Pricing tier shape:** Pilot (free), Enterprise (custom).
+- **Pricing tier shape:** Free Pilot, Starter, Pro, Enterprise (four published tiers).
 - **Comparison rules:** vs Calendly (different category), vs Botpress (turnkey, not custom), vs SimplyBook.me (form-only, not booking ops), vs NoForm.ai (booking, not lead capture).
-- **Agent contract:** /agent/turn endpoint accepts structured booking intents and returns structured results.
+- **Agent contract:** a /agent/turn endpoint for structured booking intents is designed on the page, not built, with no release date.
 
 It complements llms.txt (which is plaintext and crawler-preferred) by being HTML, indexable, and discoverable by every other channel.
 

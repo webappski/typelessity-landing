@@ -77,17 +77,19 @@ const BANNED_PAGES_A45C: readonly RegExp[] = [/GDPR-compliant/];
 
 // The dated note and the truthful replacement each edited post must carry — so an empty page or
 // a wrong path cannot pass the bans by accident.
-const UPDATED = /Updated 2026-09-2[57] — what changed/;
+const UPDATED = /Updated 2026-(?:09-2[57]|10-03) — what changed/;
 const UPDATED_27 = /Updated 2026-09-27 — what changed/;
+// A45e (c8 2026-10-03): the three comparison posts got a new dated note on top of the 09-27 one (the Pricing line).
+const UPDATED_1003 = /Updated 2026-10-03 — what changed[\s\S]{0,1200}?Earlier, on 2026-09-27/;
 const POST_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'whisper-vs-webspeech': [UPDATED, /gpt-4o-mini-transcribe/, /We have not measured/],
   'latency-budgets': [UPDATED, /a target, not a measurement/, /currently gpt-5\.4-mini/],
   '25-languages-one-prompt': [UPDATED_27, /currently gpt-5\.4-mini/, /GET \/mechanics\?service=brakes/],
   'single-gpt-call': [UPDATED_27, /currently gpt-5\.4-mini/, /brake_pads/],
-  'best-ai-booking-widgets-2026': [UPDATED_27, /gpt-4o-mini-transcribe/, /Not testing voice on mobile/],
+  'best-ai-booking-widgets-2026': [UPDATED_1003, /gpt-4o-mini-transcribe/, /Not testing voice on mobile/],
   'cascade-corrections': [UPDATED_27, /Changing Service will also clear: Mechanic, Time slot/, /dependsOn/],
-  'best-ai-booking-beauty-salons-2026': [UPDATED_27, /gpt-4o-mini-transcribe/],
-  'best-ai-booking-transfer-services-2026': [UPDATED_27, /gpt-4o-mini-transcribe/],
+  'best-ai-booking-beauty-salons-2026': [UPDATED_1003, /gpt-4o-mini-transcribe/],
+  'best-ai-booking-transfer-services-2026': [UPDATED_1003, /gpt-4o-mini-transcribe/],
   'pricing-ai-products': [UPDATED, /Starter €39/, /up to 50 submissions a month/],
 };
 
@@ -96,7 +98,7 @@ const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
     /supported verticals \(configurations\)/i],
   'pricing/index.html': [/they differ in submission volume \(see cards above\) and the number of websites/,
     /same support by email/, /other terms are by contract, on request/],
-  'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /review customer-provided DPAs on request/],
+  'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /DPA is accepted in the Webappski portal before any visitor data is processed/],
   'for-ai-agents/index.html': [/mailto:info@webappski\.com/, /is designed to take an intent like this/, /bookingResult/,
     /booking \| request/],
   'how-it-works/index.html': [/Submit endpoint returns 502, 503 or 504/, /brake_pads/],

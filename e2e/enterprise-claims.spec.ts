@@ -19,6 +19,11 @@ const BANNED: readonly RegExp[] = [
   /self-hosted deployment/i, /EU data residency/i, /data_residency/i, /EU residency tier/i,
   /dedicated (account|success) manager/i, /swapped between OpenAI/i, /Custom AI provider \(Azure/i,
   /volume discount/i, /planned for a future Enterprise/i,
+  // A45e (c8 2026-10-03): the pre-launch offer survived in four posts and in /pricing's <title> because this list
+  // held phrases, not the offer. e2e/claims-class-guard.spec.ts sweeps the whole dist for the same class; these
+  // lines keep it out of every page the TRUTH table below names.
+  /Enterprise quote/i, /Custom Enterprise/i, /Enterprise \(custom\)/i, /engineering[- ]supported/i,
+  /early[- ]adopters?/i, /\bSLA tier/i, /Pilot \(Free\)/i,
 ];
 
 // Pages and AI files name the models the engine calls (constants.ts AI.DEFAULT_MODEL, transcribe
@@ -34,7 +39,7 @@ const MODEL_CHECKED = new Set(['index.html', 'pricing/index.html', 'faq/index.ht
 // page cannot pass the bans by accident.
 const TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'index.html': [/6,000 submissions\/month and unlimited sites; a named contact/],
-  'pricing/index.html': [/Unlimited sites/, /there is no on-premise or self-hosted build/, /By contract, on request/, /Uptime commitment \(SLA\)<\/td><td[^>]*>None<\/td>/],
+  'pricing/index.html': [/<title>Pricing — Free Pilot, Starter, Pro, Enterprise — Typelessity<\/title>/, /Unlimited sites/, /there is no on-premise or self-hosted build/, /By contract, on request/, /Uptime commitment \(SLA\)<\/td><td[^>]*>None<\/td>/],
   'faq/index.html': [/no on-premise or self-hosted build/],
   'for-ai-agents/index.html': [/hosting_region/, /hosted only, no on-premise build/, /currently gpt-5\.4-mini/, /gpt-4o-mini-transcribe/],
   'llms.txt': [/hosted only, no on-premise build/],
@@ -42,9 +47,11 @@ const TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'how-it-works/index.html': [/Single call</],
   'blog/gdpr-compliance/index.html': [/no on-premise or self-hosted build/, /does not allow special-category data/],
   'blog/pricing-ai-products/index.html': [/There is no on-premise or sovereign deployment/],
-  'blog/best-ai-booking-widgets-2026/index.html': [/EU hosting and database; OpenAI in the US under SCCs/],
-  'blog/best-ai-booking-transfer-services-2026/index.html': [/service and database in the EU; OpenAI processes in the US under SCCs/],
+  'blog/best-ai-booking-widgets-2026/index.html': [/EU hosting and database; OpenAI in the US under SCCs/, /Four published tiers, each starting with the free pilot/],
+  'blog/best-ai-booking-transfer-services-2026/index.html': [/service and database in the EU; OpenAI processes in the US under SCCs/, /Four published tiers, each starting with the free pilot/],
   'blog/whisper-vs-webspeech/index.html': [/there is no on-premise or self-hosted build/],
+  'blog/best-ai-booking-beauty-salons-2026/index.html': [/Four published tiers, each starting with the free pilot/],
+  'blog/designing-for-ai-agents/index.html': [/Free Pilot, Starter, Pro, Enterprise \(four published tiers\)/],
 };
 
 async function read(path: string): Promise<string> {
