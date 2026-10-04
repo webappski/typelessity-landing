@@ -77,7 +77,7 @@ import { getIndustryBySlug } from '../../lib/industries';
 
         @if (i.proofPoints.length) {
           <section class="industry__section">
-            <h2>Why {{ i.name }} needs Typelessity</h2>
+            <h2>Why Typelessity fits</h2>
             <ul class="proof-list">
               @for (p of i.proofPoints; track p) {
                 <li>{{ p }}</li>

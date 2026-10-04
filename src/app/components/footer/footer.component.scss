@@ -56,10 +56,13 @@
   a { color: var(--text-secondary); text-decoration: none; &:hover { color: var(--accent); } }
 }
 
+// The links sit on their own line: as an inline box that wrapped to a new line, the 4px margin-left
+// indented «webappski.com» (r64 frames, 04.10).
 .vc-footer-parent-links {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
-  margin-left: 4px;
+  margin-top: 4px;
 }
 
 .vc-footer-h {

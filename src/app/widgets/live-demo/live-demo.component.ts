@@ -58,7 +58,7 @@ const DEMOS: readonly Demo[] = [
     ],
   },
   {
-    phrase: 'book a table for 4 friday 8pm, vegan options please',
+    phrase: 'book a table for 4 friday 8pm, by the window please',
     surfaceLabel: 'TastePlace · reservation',
     greeting: 'When would you like the table?',
     endpoint: 'GET /tables',
@@ -66,7 +66,7 @@ const DEMOS: readonly Demo[] = [
       partySize: '4',
       date: nextWeekdayIso(5),
       time: '20:00',
-      dietary: 'vegan',
+      seating: 'window',
     },
     results: [
       { name: 'Window 2', meta: 'Seats 4 · Fri 20:00' },
@@ -149,7 +149,7 @@ const DEMOS: readonly Demo[] = [
           </div>
           <div class="ld__mic">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-            <span>voice · 25 lang</span>
+            <span>voice · 25+ languages</span>
           </div>
         </div>
       </div>
