@@ -328,7 +328,8 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    overflow: hidden;
+    // Sideways scroll instead of clipping: the sourced cells are longer than the old one-word ones.
+    overflow-x: auto;
   }
 
   &__table {
@@ -358,8 +359,18 @@
 
   &__us { background: var(--accent-subtle); }
   th.home-compare__us { background: var(--accent-subtle); color: var(--accent); }
+  // Our column is tinted (accent-subtle over the card): --text-secondary on it is 4.34:1, so its cells use the primary text colour.
+  td.home-compare__us { color: var(--text-primary); }
 
   &__key { color: var(--text-primary); font-weight: 500; }
+
+  // Where the competitor cells come from (A56).
+  &__sources {
+    margin: 14px 4px 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
 
   // Verdict — TF terminal-style block with single accent tag
   &__verdict {
@@ -393,7 +404,7 @@
 .home-tiers {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -402,7 +413,9 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 40px;
+  // 36px 24px: a four-column card is 245px wide at 1280px, and «Start with the free pilot» (162px at 15px)
+  // has to fit one line inside it (founder 25.09: the button says this on every paid tier).
+  padding: 36px 24px;
   position: relative;
   transition: border-color 0.3s, transform 0.3s;
   // A column, so the start button sits on the card's bottom edge whatever the text above it is —
@@ -410,7 +423,7 @@
   display: flex;
   flex-direction: column;
 
-  > .vc-btn { margin-top: auto; white-space: nowrap; }
+  > .vc-btn { margin-top: auto; white-space: nowrap; padding-inline: 14px; }
 
   &:hover {
     border-color: var(--border-accent);
@@ -422,15 +435,18 @@
     background: linear-gradient(180deg, rgba(255, 107, 43, 0.08) 0%, var(--bg-card) 40%);
 
     &:hover { border-color: var(--accent-hover); }
+
+    // The card's top is tinted by the gradient (accent over card): grey there is 4.34:1, so the name takes the primary colour.
+    .tier__name { color: var(--text-primary); }
   }
 
   // Tier badge — tangerine accent (active) or muted (coming soon)
   &__badge {
     position: absolute;
     top: -12px;
-    left: 36px;
+    left: 24px;
     background: var(--accent);
-    color: #fff;
+    color: var(--text-on-accent);
     padding: 5px 12px;
     font-family: var(--font-display);
     font-size: 11.5px;
@@ -652,6 +668,10 @@
   .home-phases { grid-template-columns: 1fr; }
   .home-arch__grid { grid-template-columns: 1fr; }
   .home-industries__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+// Four tier cards in a row only while the paid-tier label fits one line in a card (>= 1121px viewport).
+@media (max-width: 1120px) {
   .home-tiers { grid-template-columns: repeat(2, 1fr); }
 }
 
