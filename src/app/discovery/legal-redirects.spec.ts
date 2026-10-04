@@ -40,8 +40,13 @@ const MANIFESTS = ['llms.txt', 'llms-full.txt'].map(
 
 /** Every legal path that must leave this domain, with the document it must land on. */
 const OFFSITE_LEGAL: Record<string, string> = {
-  '/legal/privacy': 'https://webappski.com/en/legal/product-privacy',
-  '/legal/terms': 'https://webappski.com/en/legal/terms',
+  // c8 2026-10-03 (A45e): the TypelessForm documents (/legal/product-privacy, /legal/terms) say they are
+  // TypelessForm's — «Using one does not bring you under the other's documents». Typelessity's own Terms
+  // are published (terms-typelessity). There is no Typelessity privacy policy yet: the page-wide link goes
+  // to the Typelessity DPA, honestly labelled «Data processing (DPA)», and the question form carries its own
+  // Art. 13 notice under the fields (e2e/legal-links-and-notice.spec.ts).
+  '/legal/privacy': 'https://webappski.com/en/legal/dpa-typelessity',
+  '/legal/terms': 'https://webappski.com/en/legal/terms-typelessity',
   // Typelessity's own DPA — /en/legal/dpa is TypelessForm's, a different service (A27, 24.09).
   '/legal/dpa': 'https://webappski.com/en/legal/dpa-typelessity',
   // No standalone sub-processor page on webappski; the list is Appendix B of that DPA.

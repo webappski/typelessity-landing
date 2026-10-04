@@ -3,12 +3,12 @@
   "redirects": [
     {
       "source": "/legal/privacy",
-      "destination": "https://webappski.com/en/legal/product-privacy",
+      "destination": "https://webappski.com/en/legal/dpa-typelessity",
       "permanent": true
     },
     {
       "source": "/legal/terms",
-      "destination": "https://webappski.com/en/legal/terms",
+      "destination": "https://webappski.com/en/legal/terms-typelessity",
       "permanent": true
     },
     {

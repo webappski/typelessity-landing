@@ -57,42 +57,58 @@ test('contact: configured CONTACT_* are used as they are, with no warning', asyn
   assert.equal(warnings.length, 0);
 });
 
-// A36 (2026-09-25): the waitlist form is the only caller of /api/contact, and the pilot-only
-// validation answered every waitlist request with 400 «Company is required». The body below is
-// built by the same function the form posts with, so a drift between them shows up here.
+// A36 (2026-09-25): the question form is the only caller of /api/contact, and the pilot-only
+// validation answered every request with 400 «Company is required». The body below is built by the
+// same function the form posts with, so a drift between them shows up here. (The protocol name
+// `waitlist_request` stays; nothing visitor- or owner-facing says «waitlist» any more — c8 2026-10-03.)
 const WAITLIST = waitlistRequestBody({
   email: 'owner@clinic.example',
   website: 'https://clinic.example',
   plan: 'starter',
   industry: 'hospitality',
   message: 'Two locations, about 300 bookings a month.',
+  consent: true,
 });
 
-test('waitlist: the body the form sends is emailed as a waitlist request', async () => {
+test('question form: the body the form sends is emailed as a question', async () => {
   const { status, sent } = await submit({}, WAITLIST);
   assert.equal(status, 200);
   assert.equal(sent.length, 1, 'waitlist requests are emailed only, never written to the pilot leads table');
   const mail = sent[0];
   assert.equal(mail.url, 'https://api.resend.com/emails');
-  assert.equal(mail.body['subject'], '[Waitlist] starter');
+  assert.equal(mail.body['subject'], '[Question] starter');
   assert.equal(mail.body['reply_to'], WAITLIST.email);
   const text = String(mail.body['text']);
   for (const value of [WAITLIST.email, WAITLIST.website, WAITLIST.industry, WAITLIST.message, WAITLIST.product, WAITLIST.source]) {
     assert.ok(text.includes(String(value)), `the email must carry ${value}`);
   }
-  assert.ok(!/Pilot/.test(`${mail.body['subject']} ${text}`), 'a waitlist request is not labelled as a pilot signup');
+  assert.ok(!/Pilot/.test(`${mail.body['subject']} ${text}`), 'a question is not labelled as a pilot signup');
+  assert.ok(!/waitlist/i.test(`${mail.body['subject']} ${text}`), 'the letter does not call the request a waitlist entry');
+  assert.match(text, /^New question from typelessity\.com/);
+  assert.match(text, /Consent:\s+given on the form/, 'the letter records that the box was ticked');
 });
 
-test('waitlist: without RESEND_API_KEY the endpoint answers 503 and sends nothing', async () => {
+test('question form: without RESEND_API_KEY the endpoint answers 503 and sends nothing', async () => {
   const { status, sent } = await submit({ RESEND_API_KEY: undefined }, WAITLIST);
   assert.equal(status, 503);
   assert.equal(sent.length, 0);
 });
 
-test('waitlist: email and plan are required', async () => {
-  for (const missing of ['email', 'plan'] as const) {
-    const { status, sent } = await submit({}, { ...WAITLIST, [missing]: '' });
-    assert.equal(status, 400, `without ${missing} the request is refused`);
-    assert.equal(sent.length, 0);
+test('question form: an email address and the consent are required — a plan is not', async () => {
+  const noEmail = await submit({}, { ...WAITLIST, email: '' });
+  assert.equal(noEmail.status, 400, 'without an email the request is refused');
+  assert.equal(noEmail.sent.length, 0);
+
+  // The box beside the privacy notice: a body without it — unticked, absent or not a boolean — sends nothing.
+  for (const consent of [false, undefined, 'true', 1]) {
+    const { status, sent } = await submit({}, { ...WAITLIST, consent });
+    assert.equal(status, 400, `consent ${JSON.stringify(consent)} is refused`);
+    assert.equal(sent.length, 0, 'nothing is emailed without consent');
   }
+
+  const noPlan = await submit({}, { ...WAITLIST, plan: '' });
+  assert.equal(noPlan.status, 200, 'a visitor with only a question needs no plan');
+  assert.equal(noPlan.sent.length, 1);
+  assert.equal(noPlan.sent[0].body['subject'], '[Question] no plan');
+  assert.match(String(noPlan.sent[0].body['text']), /Plan:\s+no plan chosen/);
 });

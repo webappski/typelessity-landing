@@ -9,12 +9,13 @@ interface ContactPayload {
   industry?: string;
   monthlyBookings?: string;
   message?: string;
-  // Waitlist form (/pricing): type 'waitlist_request', no company or volume.
+  // Question form (/pricing): type 'waitlist_request' (the protocol name — never shown), no company or volume.
   type?: string;
   website?: string;
   plan?: string;
   product?: string;
   source?: string;
+  consent?: boolean;
 }
 
 interface ResendBody {
@@ -158,13 +159,16 @@ export default async function handler(req: Request): Promise<Response> {
   }
 }
 
-// The waitlist form asks only for email and plan. It is emailed, not stored: the Supabase leads
-// table is shaped for pilot requests.
+// The question form asks for an email address and the visitor's consent; a plan is optional (a
+// visitor may only have a question). It is emailed, not stored: the Supabase leads table is shaped
+// for pilot requests.
 async function waitlist(body: ContactPayload): Promise<Response> {
   const email = (body.email ?? '').trim();
   const plan = (body.plan ?? '').trim();
   if (!email || !isEmail(email)) return bad('Valid email is required');
-  if (!plan) return bad('Plan is required');
+  // The privacy notice under the form says the data is used on the visitor's consent. The form
+  // cannot be sent without the box, and a request that did not come from the form is refused too.
+  if (body.consent !== true) return bad('Consent is required');
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_API_KEY) {
@@ -174,19 +178,20 @@ async function waitlist(body: ContactPayload): Promise<Response> {
   const field = (v: string | undefined) => (v ?? '').trim() || '—';
   const message = (body.message ?? '').trim();
   const text = [
-    `New Waitlist request`,
+    `New question from typelessity.com`,
     ``,
     `Email:    ${email}`,
-    `Plan:     ${plan}`,
+    `Plan:     ${plan || 'no plan chosen'}`,
     `Website:  ${field(body.website)}`,
     `Industry: ${field(body.industry)}`,
     `Product:  ${field(body.product)}`,
     `Source:   ${field(body.source)}`,
+    `Consent:  given on the form (box ticked next to the privacy notice)`,
     message ? `\n${message}` : '',
   ].join('\n');
 
   const { from, to } = mailRoute();
-  const payload: ResendBody = { from, to, subject: `[Waitlist] ${plan}`, text, reply_to: email };
+  const payload: ResendBody = { from, to, subject: `[Question] ${plan || 'no plan'}`, text, reply_to: email };
   try {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',

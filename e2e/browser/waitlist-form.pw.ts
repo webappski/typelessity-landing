@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// A36 (2026-09-25): the waitlist form told every visitor to «check your connection», even when the
+// A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
 // server had answered and a retry would fail the same way — the request was lost. A server refusal
 // now points to an email with the request already in it; only a request that got no answer at all
 // talks about the connection. /api/contact is stubbed; the page is the real SSR build.
@@ -15,6 +15,57 @@ async function fillAndSubmit(page: Page) {
   await page.check('input[name=consent]');
   await page.click('.cf button[type=submit]');
 }
+
+// c8 2026-10-03 (legal + CRO verdicts on the landing release): the consent box was decorative — an
+// unticked form was sent — and the plan select forced a visitor with a question to claim a paid plan.
+// The box now blocks the send, the endpoint refuses a body without it, and a plan is optional.
+test('the send button stays off and nothing is posted until the consent box is ticked', async ({ page }) => {
+  const posts: unknown[] = [];
+  await page.route('**/api/contact', async (route) => {
+    posts.push(route.request().postDataJSON());
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+  await page.goto('/pricing');
+  await page.fill('#cf-email', 'owner@clinic.example');
+  const send = page.locator('.cf button[type=submit]');
+  await expect(page.locator('input[name=consent]')).not.toBeChecked();
+  await expect(send).toBeDisabled();
+  // Neither a forced click nor Enter in a field can send a form whose consent box is empty.
+  await send.click({ force: true });
+  await page.press('#cf-email', 'Enter');
+  await page.waitForTimeout(300);
+  expect(posts, 'a request left without the consent box ticked').toHaveLength(0);
+
+  await page.check('input[name=consent]');
+  await expect(send).toBeEnabled();
+  await send.click();
+  await expect(page.locator('.cf__success')).toBeVisible();
+  expect(posts).toHaveLength(1);
+  expect(posts[0]).toMatchObject({ email: 'owner@clinic.example', consent: true, plan: '', type: 'waitlist_request' });
+
+});
+
+test('a visitor with only a question needs no plan, and unticking the box switches the button off again', async ({ page }) => {
+  await page.goto('/pricing');
+  await expect(page.locator('#cf-plan')).not.toHaveAttribute('required', /.*/);
+  await expect(page.locator('label[for=cf-plan]')).not.toContainText('*');
+  await page.fill('#cf-email', 'owner@clinic.example');
+  await page.check('input[name=consent]');
+  await expect(page.locator('.cf button[type=submit]')).toBeEnabled();
+  await page.uncheck('input[name=consent]');
+  await expect(page.locator('.cf button[type=submit]')).toBeDisabled();
+});
+
+test('the privacy notice is on the form and says who, why, on what basis, to whom, how long and which rights', async ({ page }) => {
+  await page.goto('/pricing');
+  const notice = page.locator('#cf-notice');
+  await expect(notice).toBeVisible();
+  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Standard Contractual Clauses/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
+    await expect(notice).toContainText(part);
+  }
+  await expect(page.locator('.cf')).not.toContainText(/waitlist/i);
+  await expect(page.locator('.cf a[href*="product-privacy"]')).toHaveCount(0);
+});
 
 test('a server refusal offers an email with the request already in it', async ({ page }) => {
   await page.route('**/api/contact', (route) =>

@@ -62,6 +62,36 @@
     }
   }
 
+  // The send button is off until the consent box is ticked (and while a request is on its way): show it.
+  .vc-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  // Art. 13 notice: read before the box is ticked. --text-secondary on --bg-primary is 5.85:1.
+  &__notice {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    line-height: 1.55;
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    p { margin: 0 0 8px; &:last-child { margin-bottom: 0; } }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a { color: var(--accent); border-bottom: 1px solid currentColor; }
+  }
+
   &__msg {
     margin: 0;
     padding: 12px 16px;
