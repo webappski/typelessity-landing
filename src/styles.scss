@@ -14,7 +14,7 @@
   left: 0;
   z-index: 1000;
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   padding: 10px 16px;
   border-radius: 0 0 8px 0;
   font-size: 14px;
@@ -87,27 +87,27 @@ pre {
 
 .vc-btn-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   box-shadow: 0 6px 20px -8px rgba(255, 107, 43, 0.55);
 
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 14px 32px -10px rgba(255, 107, 43, 0.6);
     background: var(--accent-hover);
-    color: #fff;
+    color: var(--text-on-accent);
   }
 }
 
 .vc-btn-accent {
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   box-shadow: 0 8px 24px -8px rgba(255, 107, 43, 0.55);
 
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 14px 32px -10px rgba(255, 107, 43, 0.6);
     background: var(--accent-hover);
-    color: #fff;
+    color: var(--text-on-accent);
   }
 }
 

@@ -6,13 +6,18 @@
   --bg-primary: #282838;
   --bg-secondary: #313142;
   --bg-card: #3A3A4C;
-  --bg-card-hover: #434356;
+  --bg-card-hover: #3D3D50; // was #434356: --text-secondary on it was 4.14:1, on #3D3D50 it is 4.54:1 (A107)
   --bg-code: #2E2E3E;
 
   // ── Text ──
   --text-primary: #F0F0F5;
-  --text-secondary: #A3A3B8;
-  --text-muted: #7C7C92;
+  // A107 (c8 2026-10-03): the same two values as typelessform.com (5dafb2a), and muted is raised to the level of
+  // secondary — #9a9ab0 stayed at 4.03:1 on --bg-card (#3A3A4C). #a8a8bd is 6.20:1 on --bg-primary, 5.46:1 on
+  // --bg-secondary, 4.76:1 on --bg-card. Muted and secondary no longer differ in colour; size and weight carry the hierarchy.
+  --text-secondary: #a8a8bd;
+  --text-muted: #a8a8bd;
+  // Text and icons on a tangerine fill (--accent, --accent-hover): 5.09:1 and 6.00:1. White was 2.84:1 (A131).
+  --text-on-accent: #282838;
 
   // ── Accent (single warm tangerine) ──
   --accent: #FF6B2B;
