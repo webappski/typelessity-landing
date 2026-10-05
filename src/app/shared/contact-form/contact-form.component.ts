@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { getIndustriesByCategory } from '../../lib/industries';
 import { WaitlistPayload, waitlistRequestBody } from './waitlist-request';
 
 
@@ -46,9 +47,13 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
           <label for="cf-industry">Industry / Use Case (optional)</label>
           <select id="cf-industry" name="industry" [(ngModel)]="model.industry">
             <option value="">Select your industry</option>
-            <option value="hospitality">Hospitality & Restaurants</option>
-            <option value="transfer">Transfers & Mobility</option>
-            <option value="freight">Freight & Logistics</option>
+            @for (group of industryGroups; track group.category) {
+              <optgroup [label]="group.category">
+                @for (industry of group.industries; track industry.slug) {
+                  <option [value]="industry.slug">{{ industry.name }}</option>
+                }
+              </optgroup>
+            }
             <option value="other">Other</option>
           </select>
         </div>
@@ -59,24 +64,28 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
         <div class="cf__notice" id="cf-notice" role="note" aria-labelledby="cf-notice-h">
           <h3 id="cf-notice-h">Privacy notice for this form</h3>
           <p>
-            <strong>Controller:</strong> Webappski, ul. Staniszewskiego 19b, 81-603 Gdynia, Poland — the operator named in the
-            <a href="https://webappski.com/en/legal/dpa-typelessity" target="_blank" rel="noopener">Typelessity DPA</a>.
+            <strong>Controller:</strong> Victoria Isayeuskaya, sole proprietorship (jednoosobowa działalność gospodarcza), the owner of webappski.com,
+            ul. Staniszewskiego 19b, 81-603 Gdynia, Poland, VAT ID (EU): PL5862405795.
             Contact: <a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a>.
           </p>
           <p>
             <strong>Why:</strong> we use the email address, website, plan, industry and message you enter only to answer your question.
-            <strong>Basis:</strong> your consent (Art. 6(1)(a) GDPR), given by ticking the box below; you can withdraw it at any time by writing to us.
+            <strong>Basis:</strong> your consent (Art. 6(1)(a) GDPR), given by ticking the box below. You can withdraw it at any time by writing to
+            info&#64;webappski.com; this does not affect processing before the withdrawal.
           </p>
           <p>
             <strong>Who receives it:</strong> Resend, which delivers the message (United States, under Standard Contractual Clauses),
-            and our email hosting provider.
-            <strong>How long:</strong> as long as needed to deal with your question; Resend keeps a delivery log for 30 days.
+            and our mail routing and mailbox providers, Cloudflare and Google (United States).
+            A copy of the safeguards is available from info&#64;webappski.com; see also
+            <a href="https://resend.com/legal/dpa" target="_blank" rel="noopener">Resend's DPA</a>.
+            <strong>How long:</strong> we keep the details you send (email address, website, plan, industry and message) until your question is answered and for 12 months after our last message,
+            then delete them; if you withdraw consent we delete them sooner. Resend keeps a delivery log for 30 days.
           </p>
           <p>
             <strong>Your rights:</strong> access, correction, erasure, restriction, portability and objection — write to
             info&#64;webappski.com. You can complain to the Polish supervisory authority, UODO (uodo.gov.pl), or to your own.
             Giving us this data is voluntary; without an email address we cannot reply. No automated decisions are made.
-            Notice of 3 October 2026.
+            Notice of 5 October 2026.
           </p>
         </div>
         <div class="cf__row">
@@ -115,6 +124,9 @@ export class ContactFormComponent {
   };
 
   protected readonly status = signal<Status>('idle');
+
+  // The industries the site has a page for, grouped as /industries groups them — the list cannot drift from the pages.
+  protected readonly industryGroups = Object.entries(getIndustriesByCategory()).map(([category, industries]) => ({ category, industries }));
 
   protected async submit(): Promise<void> {
     if (this.status() === 'sending') return;

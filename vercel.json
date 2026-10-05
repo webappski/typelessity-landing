@@ -30,6 +30,11 @@
       "source": "/blog/forms-vs-conversation-study",
       "destination": "/blog",
       "permanent": true
+    },
+    {
+      "source": "/industries/beauty-aesthetic-clinics",
+      "destination": "/industries",
+      "permanent": true
     }
   ],
   "headers": [

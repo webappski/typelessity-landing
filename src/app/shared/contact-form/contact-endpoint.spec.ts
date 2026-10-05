@@ -1,14 +1,24 @@
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import handler, { FALLBACK_FROM, FALLBACK_TO } from '../../../../api/contact';
 import { waitlistRequestBody } from './waitlist-request';
 
-// A36 (c8, 2026-09-24): with CONTACT_TO unset the pilot form mailed hello@typelessity.com, a domain
+// A36 (c8, 2026-09-24): with CONTACT_TO unset the form mailed hello@typelessity.com, a domain
 // with no MX record — every request was lost. The real handler runs here; only the network is stubbed.
+//
+// The body below is built by the same function the form posts with, so a drift between them shows up here.
+// (The protocol name `waitlist_request` stays; nothing visitor- or owner-facing says «waitlist» any more — c8 2026-10-03.)
+const WAITLIST = waitlistRequestBody({
+  email: 'owner@clinic.example',
+  website: 'https://clinic.example',
+  plan: 'starter',
+  industry: 'hospitality',
+  message: 'Two locations, about 300 bookings a month.',
+  consent: true,
+});
 
-const VALID = { email: 'owner@clinic.example', company: 'Clinic', industry: 'Health', monthlyBookings: '100' };
-
-async function submit(env: Record<string, string | undefined>, body: object = VALID) {
+async function submit(env: Record<string, string | undefined>, body: object = WAITLIST) {
   const saved = { ...process.env };
   const sent: { url: string; body: Record<string, unknown> }[] = [];
   const warnings: string[] = [];
@@ -43,7 +53,7 @@ test('contact: with CONTACT_* unset the request goes to a mailbox that exists, f
   assert.equal(mail.body['to'], FALLBACK_TO);
   assert.equal(mail.body['to'], 'info@webappski.com');
   assert.match(String(mail.body['from']), /@webappski\.com>$/);
-  assert.equal(mail.body['reply_to'], VALID.email);
+  assert.equal(mail.body['reply_to'], WAITLIST.email);
   assert.ok(!/typelessity\.com/.test(`${FALLBACK_FROM} ${FALLBACK_TO}`), 'typelessity.com receives and sends no mail');
   assert.equal(warnings.length, 1, 'exactly one log line says the env is missing');
   assert.match(warnings[0], /CONTACT_FROM and CONTACT_TO not set/);
@@ -58,18 +68,7 @@ test('contact: configured CONTACT_* are used as they are, with no warning', asyn
 });
 
 // A36 (2026-09-25): the question form is the only caller of /api/contact, and the pilot-only
-// validation answered every request with 400 «Company is required». The body below is built by the
-// same function the form posts with, so a drift between them shows up here. (The protocol name
-// `waitlist_request` stays; nothing visitor- or owner-facing says «waitlist» any more — c8 2026-10-03.)
-const WAITLIST = waitlistRequestBody({
-  email: 'owner@clinic.example',
-  website: 'https://clinic.example',
-  plan: 'starter',
-  industry: 'hospitality',
-  message: 'Two locations, about 300 bookings a month.',
-  consent: true,
-});
-
+// validation answered every request with 400 «Company is required».
 test('question form: the body the form sends is emailed as a question', async () => {
   const { status, sent } = await submit({}, WAITLIST);
   assert.equal(status, 200);
@@ -86,6 +85,11 @@ test('question form: the body the form sends is emailed as a question', async ()
   assert.ok(!/waitlist/i.test(`${mail.body['subject']} ${text}`), 'the letter does not call the request a waitlist entry');
   assert.match(text, /^New question from typelessity\.com/);
   assert.match(text, /Consent:\s+given on the form/, 'the letter records that the box was ticked');
+  // The letter names the version of the notice the visitor saw (Art. 7(1): the consent can be shown). The date lives in
+  // the form's template and here; they must say the same day.
+  const noticeDate = readFileSync(new URL('./contact-form.component.ts', import.meta.url), 'utf8').match(/Notice of (\d{1,2} \w+ \d{4})/)?.[1];
+  assert.ok(noticeDate, 'the form carries no «Notice of <date>» line');
+  assert.ok(text.includes(`privacy notice of ${noticeDate}`), `the letter names a notice other than the form's («Notice of ${noticeDate}»)`);
 });
 
 test('question form: without RESEND_API_KEY the endpoint answers 503 and sends nothing', async () => {
@@ -111,4 +115,18 @@ test('question form: an email address and the consent are required — a plan is
   assert.equal(noPlan.sent.length, 1);
   assert.equal(noPlan.sent[0].body['subject'], '[Question] no plan');
   assert.match(String(noPlan.sent[0].body['text']), /Plan:\s+no plan chosen/);
+});
+
+// F9 (judge r2, 2026-10-04): an older branch took a body without `type` — a pilot signup with a company and a
+// monthly volume — emailed it and wrote it to Supabase `leads` with no consent check. No form posts it any more, so
+// it is gone: a body that is not the question form is refused and nothing leaves the function.
+test('a body that is not the question form is refused: no type, another type, a pilot-shaped body', async () => {
+  const pilotShaped = { email: 'owner@clinic.example', company: 'Clinic', industry: 'Health', monthlyBookings: '100', consent: true };
+  const noType = { ...WAITLIST, type: undefined };
+  const otherType = { ...WAITLIST, type: 'pilot_signup' };
+  for (const [what, body] of Object.entries({ pilotShaped, noType, otherType })) {
+    const { status, sent } = await submit({ SUPABASE_URL: 'https://example.supabase.co', SUPABASE_SERVICE_KEY: 'service-key' }, body);
+    assert.equal(status, 400, `${what} must be refused`);
+    assert.equal(sent.length, 0, `${what}: nothing is emailed or stored`);
+  }
 });

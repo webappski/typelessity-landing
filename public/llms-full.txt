@@ -50,7 +50,7 @@ The Free Pilot is open, and every tier starts with it: sign in at https://webapp
 
 **Pro — €149/mo.** Up to 2,000 submissions/month, up to 10 websites, support by email.
 
-**Enterprise — €399/mo.** Up to 6,000 submissions/month and unlimited sites. An uptime commitment, a named contact and pricing above 6,000 submissions are agreed per contract on request. Hosted only — no on-premise or self-hosted build, no custom AI provider. Support by email, as on every tier.
+**Enterprise — €399/mo.** Up to 6,000 submissions/month and unlimited sites. A named contact and pricing above 6,000 submissions are agreed per contract on request. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it. Hosted only — no on-premise or self-hosted build, no custom AI provider. Support by email, as on every tier.
 
 We do not publish a conversion-lift number. The only honest answer for a specific business is an A/B test on its own traffic.
 

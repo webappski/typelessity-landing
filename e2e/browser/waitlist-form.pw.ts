@@ -1,16 +1,20 @@
 import { test, expect, type Page } from '@playwright/test';
+import { ALL_INDUSTRIES } from '../../src/app/lib/industries';
 
 // A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
 // server had answered and a retry would fail the same way — the request was lost. A server refusal
 // now points to an email with the request already in it; only a request that got no answer at all
 // talks about the connection. /api/contact is stubbed; the page is the real SSR build.
 
+// The industry the tests pick is one the site has a page for — the select is built from those pages.
+const INDUSTRY = ALL_INDUSTRIES[0];
+
 async function fillAndSubmit(page: Page) {
   await page.goto('/pricing');
   await page.fill('#cf-email', 'owner@clinic.example');
   await page.fill('#cf-website', 'https://clinic.example');
   await page.selectOption('#cf-plan', 'pro');
-  await page.selectOption('#cf-industry', 'hospitality');
+  await page.selectOption('#cf-industry', INDUSTRY.slug);
   await page.fill('#cf-message', 'Two locations, about 300 bookings a month.');
   await page.check('input[name=consent]');
   await page.click('.cf button[type=submit]');
@@ -60,9 +64,11 @@ test('the privacy notice is on the form and says who, why, on what basis, to who
   await page.goto('/pricing');
   const notice = page.locator('#cf-notice');
   await expect(notice).toBeVisible();
-  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Standard Contractual Clauses/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
+  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Standard Contractual Clauses/, /Cloudflare and Google/, /A copy of the safeguards is available from info@webappski\.com/, /does not affect processing before the withdrawal/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
     await expect(notice).toContainText(part);
   }
+  await expect(notice.locator('a[href="https://resend.com/legal/dpa"]')).toHaveCount(1);
+  await expect(notice.locator('a[href*="dpa-typelessity"]'), 'the notice does not send the visitor to the processor agreement').toHaveCount(0);
   await expect(page.locator('.cf')).not.toContainText(/waitlist/i);
   await expect(page.locator('.cf a[href*="product-privacy"]')).toHaveCount(0);
 });
@@ -82,7 +88,7 @@ test('a server refusal offers an email with the request already in it', async ({
   const params = new URLSearchParams(href!.slice(href!.indexOf('?') + 1));
   expect(params.get('subject')).toBe('Typelessity question — pro');
   const body = params.get('body') ?? '';
-  for (const value of ['owner@clinic.example', 'https://clinic.example', 'pro', 'hospitality', 'Two locations, about 300 bookings a month.']) {
+  for (const value of ['owner@clinic.example', 'https://clinic.example', 'pro', INDUSTRY.slug, 'Two locations, about 300 bookings a month.']) {
     expect(body).toContain(value);
   }
 });
@@ -94,4 +100,21 @@ test('a request that gets no answer asks to check the connection', async ({ page
   const error = page.locator('.cf__msg--err');
   await expect(error).toContainText('check your connection');
   await expect(error.getByRole('link')).toHaveCount(0);
+});
+
+// CRO r2 (2026-10-04, R2-N1): the form still offered Hospitality / Transfers / Freight, a list from the waitlist era, while
+// the site has 36 industry pages and no Transfers or Freight among them. The select is built from the pages.
+test('the industry select offers every industry page of the site, grouped as /industries groups them, plus «Other» — nothing else', async ({ page }) => {
+  await page.goto('/pricing');
+  const options = await page.locator('#cf-industry option').evaluateAll((nodes) =>
+    nodes.map((n) => ({ value: (n as HTMLOptionElement).value, label: (n.textContent ?? '').trim() })),
+  );
+  const real = options.filter((o) => o.value && o.value !== 'other');
+  expect(real.map((o) => o.value).sort()).toEqual(ALL_INDUSTRIES.map((i) => i.slug).sort());
+  for (const o of real) expect(o.label).toBe(ALL_INDUSTRIES.find((i) => i.slug === o.value)!.name);
+  expect(options.filter((o) => o.value === 'other')).toHaveLength(1);
+  expect(options.map((o) => o.label).join(' | ')).not.toMatch(/Transfers|Freight|Hospitality & Restaurants/);
+  const groups = await page.locator('#cf-industry optgroup').evaluateAll((nodes) => nodes.map((n) => (n as HTMLOptGroupElement).label));
+  expect(groups.length).toBeGreaterThan(1);
+  expect(new Set(groups).size).toBe(groups.length);
 });

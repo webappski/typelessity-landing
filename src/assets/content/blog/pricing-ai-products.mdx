@@ -14,7 +14,7 @@ faqs:
   - q: "How does Typelessity make the unit economics work on free pilots?"
     a: "A pilot is capped at 50 submissions a month, so its marginal cost (OpenAI fees and infrastructure) is bounded. The real constraint is human attention per pilot, not compute, and setup is a self-serve wizard rather than an integration project we run. The model breaks for high-touch customers above a certain count."
   - q: "What does Enterprise include, and what is agreed per contract?"
-    a: "Enterprise is published: €399 a month for up to 6,000 submissions, with unlimited sites. Volume above 6,000 submissions a month, an uptime commitment and a named contact are agreed per contract, on request; the standard terms carry no uptime commitment. There is no on-premise deployment."
+    a: "Enterprise is published: €399 a month for up to 6,000 submissions, with unlimited sites. Volume above 6,000 submissions a month and a named contact are agreed per contract, on request. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it. There is no on-premise deployment."
   - q: "When is the free-pilot model the wrong choice for an AI product?"
     a: "When marginal cost per user is high (GPU-heavy generative video), when the customer base is huge and pilot-quality support cannot scale, or when the product is naturally self-serve and metered (per-API-call, per-token). For lower-touch products, publish a free tier with usage metering. The free-pilot model fits white-glove B2B AI specifically."
 ---
@@ -70,8 +70,9 @@ If the integration cost per customer were higher, the pilot model would not work
 Enterprise is published like every other tier: €399 a month for up to 6,000 submissions, with unlimited sites. What a list price cannot fix is agreed per contract, on request:
 
 - **Volume** above 6,000 submissions a month.
-- **An uptime commitment** — the standard terms carry none.
 - **A named contact person.**
+
+An uptime commitment is not on that list. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it.
 
 There is no on-premise or sovereign deployment: Typelessity is hosted only, with the service in Frankfurt and the database in Ireland (see /blog/gdpr-compliance). For tier shape, see /pricing.
 
@@ -128,7 +129,7 @@ Every feature, on a real customer-facing site, up to 50 submissions a month, set
 A pilot is capped at 50 submissions a month, so its cost is bounded. The real constraint is human attention per pilot, not compute; self-serve setup is the prerequisite.
 
 **What does Enterprise include, and what is agreed per contract?**
-€399 a month for up to 6,000 submissions and unlimited sites. Volume above that, an uptime commitment and a named contact are agreed per contract, on request.
+€399 a month for up to 6,000 submissions and unlimited sites. Volume above that and a named contact are agreed per contract, on request. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it.
 
 **When is the free-pilot model the wrong choice?**
 High marginal cost per user, huge customer base, or natively usage-priced products. Publish a metered free tier instead.

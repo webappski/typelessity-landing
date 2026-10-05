@@ -167,7 +167,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Residential real estate',
     hero: {
       eyebrow: 'For real estate agencies',
-      title: 'Buyers describe what they want. The widget books a viewing.',
+      title: 'Buyers describe what they want. The widget collects a request for a viewing.',
       subtitle:
         'Bedrooms, neighborhood, price range, must-haves — all extracted. A viewing request is collected with the details your agent needs.',
     },
@@ -227,7 +227,7 @@ export const industriesBatch3: IndustryContent[] = [
     name: 'Veterinary clinics',
     hero: {
       eyebrow: 'For veterinary clinics',
-      title: 'Pet owners describe what\'s wrong. The widget books the vet.',
+      title: 'Pet owners describe what\'s wrong. The widget collects a request for a visit.',
       subtitle:
         'Species, breed, age, symptom, urgency — captured in one message.',
     },

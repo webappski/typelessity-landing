@@ -1,15 +1,14 @@
 // Vercel Function: POST /api/contact
-// Body: { email, company, industry, monthlyBookings, message? }
-// Side effects: sends a Resend email (if RESEND_API_KEY) + inserts into Supabase leads (if SUPABASE_URL+SUPABASE_SERVICE_KEY).
-// Without env vars: returns 503 with a clear "not configured" message so deploy succeeds and integration owners can wire it.
+// The only caller is the question form on /pricing (type 'waitlist_request' — the protocol name, never shown).
+// Body: { type, email, consent: true, plan?, website?, industry?, message?, product?, source? }
+// Side effect: one Resend email to the question mailbox. Nothing is stored: the form has no database behind it.
+// Without RESEND_API_KEY: returns 503 with a clear "not configured" message so deploy succeeds and integration owners can wire it.
+// Any other body — no type, another type — is refused: there is no other form.
 
 interface ContactPayload {
   email?: string;
-  company?: string;
   industry?: string;
-  monthlyBookings?: string;
   message?: string;
-  // Question form (/pricing): type 'waitlist_request' (the protocol name — never shown), no company or volume.
   type?: string;
   website?: string;
   plan?: string;
@@ -70,104 +69,18 @@ export default async function handler(req: Request): Promise<Response> {
     return bad('Invalid JSON');
   }
 
-  if (body.type === 'waitlist_request') return waitlist(body);
-
-  const email = (body.email ?? '').trim();
-  const company = (body.company ?? '').trim();
-  const industry = (body.industry ?? '').trim();
-  const monthlyBookings = (body.monthlyBookings ?? '').trim();
-  const message = (body.message ?? '').trim();
-
-  if (!email || !isEmail(email)) return bad('Valid email is required');
-  if (!company) return bad('Company is required');
-  if (!industry) return bad('Industry is required');
-  if (!monthlyBookings) return bad('Monthly bookings volume is required');
-
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-  if (!RESEND_API_KEY && !(SUPABASE_URL && SUPABASE_SERVICE_KEY)) {
-    return bad('Contact endpoint is not configured (missing RESEND_API_KEY and Supabase env vars)', 503);
-  }
-
-  const tasks: Promise<unknown>[] = [];
-
-  if (RESEND_API_KEY) {
-    const text = [
-      `New Pilot signup`,
-      ``,
-      `Email:    ${email}`,
-      `Company:  ${company}`,
-      `Industry: ${industry}`,
-      `Volume:   ${monthlyBookings}`,
-      message ? `\n${message}` : '',
-    ].join('\n');
-
-    const { from, to } = mailRoute();
-    const payload: ResendBody = {
-      from,
-      to,
-      subject: `[Pilot] ${company} (${industry})`,
-      text,
-      reply_to: email,
-    };
-
-    tasks.push(
-      fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'authorization': `Bearer ${RESEND_API_KEY}`,
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      }).then((r) => {
-        if (!r.ok) throw new Error(`resend ${r.status}`);
-      }),
-    );
-  }
-
-  if (SUPABASE_URL && SUPABASE_SERVICE_KEY) {
-    tasks.push(
-      fetch(`${SUPABASE_URL}/rest/v1/leads`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_SERVICE_KEY,
-          'authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'content-type': 'application/json',
-          'prefer': 'return=minimal',
-        },
-        body: JSON.stringify({
-          email,
-          company,
-          industry,
-          monthly_bookings: monthlyBookings,
-          message: message || null,
-          source: 'pricing-form',
-        }),
-      }).then((r) => {
-        if (!r.ok) throw new Error(`supabase ${r.status}`);
-      }),
-    );
-  }
-
-  try {
-    await Promise.all(tasks);
-    return ok();
-  } catch {
-    return bad('Submission failed', 502);
-  }
+  if (body.type !== 'waitlist_request') return bad('Unknown request type');
+  return waitlist(body);
 }
 
 // The question form asks for an email address and the visitor's consent; a plan is optional (a
-// visitor may only have a question). It is emailed, not stored: the Supabase leads table is shaped
-// for pilot requests.
+// visitor may only have a question). It is emailed, not stored.
 async function waitlist(body: ContactPayload): Promise<Response> {
   const email = (body.email ?? '').trim();
   const plan = (body.plan ?? '').trim();
   if (!email || !isEmail(email)) return bad('Valid email is required');
   // The privacy notice under the form says the data is used on the visitor's consent. The form
-  // cannot be sent without the box, and a request that did not come from the form is refused too.
+  // cannot be sent without the box, and a body that carries no consent is refused here too.
   if (body.consent !== true) return bad('Consent is required');
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
@@ -186,7 +99,7 @@ async function waitlist(body: ContactPayload): Promise<Response> {
     `Industry: ${field(body.industry)}`,
     `Product:  ${field(body.product)}`,
     `Source:   ${field(body.source)}`,
-    `Consent:  given on the form (box ticked next to the privacy notice)`,
+    `Consent:  given on the form, box ticked next to the privacy notice of 5 October 2026`,
     message ? `\n${message}` : '',
   ].join('\n');
 

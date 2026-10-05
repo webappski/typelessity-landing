@@ -100,13 +100,13 @@ import { PRICING_FAQ } from './pricing.content';
           <tr><td>Service and database in the EU (Frankfurt, Ireland); OpenAI processes in the US under the 2021 SCCs</td><td>✓</td><td>✓</td></tr>
           <tr><td>Hosted by us — there is no on-premise or self-hosted build</td><td>✓</td><td>✓</td></tr>
           <tr><td>AI provider: OpenAI, through our account (no own key or other provider)</td><td>✓</td><td>✓</td></tr>
-          <tr><td>Uptime commitment (SLA)</td><td>None</td><td>By contract, on request</td></tr>
+          <tr><td>Uptime commitment (SLA)</td><td>None</td><td>None yet</td></tr>
           <tr><td>Named contact person</td><td>—</td><td>By contract, on request</td></tr>
           <tr><td>Pricing above 6,000 submissions a month</td><td>—</td><td>By contract, on request</td></tr>
         </tbody>
       </table>
       <p class="pricing-diff__note">
-        Free Pilot has no time limit. Upgrade when monthly submissions pass your tier's cap (50 / 500 / 2,000 / 6,000): request the plan under Billing in the Webappski portal and it is invoiced. Contract terms such as an uptime commitment are agreed with Enterprise customers on request.
+        Free Pilot has no time limit. Upgrade when monthly submissions pass your tier's cap (50 / 500 / 2,000 / 6,000): request the plan under Billing in the Webappski portal and it is invoiced. Enterprise customers can agree a named contact and pricing above 6,000 submissions by contract, on request. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it.
       </p>
     </section>
 

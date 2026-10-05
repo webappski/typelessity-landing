@@ -68,7 +68,7 @@ export const industries: IndustryContent[] = [
     category: 'Beauty & Wellness',
     name: 'Tattoo & piercing studios',
     hero: {
-      title: 'Clients describe their piece. The widget books a consultation.',
+      title: 'Clients describe their piece. The widget collects a request for a consultation.',
       subtitle: 'Style, size, placement, artist preference — all extracted from one message.',
     },
     exampleConversations: [
@@ -111,7 +111,7 @@ export const industries: IndustryContent[] = [
     name: 'Accounting & tax firms',
     hero: {
       title: 'From "I need help with my taxes" to a booked consultation',
-      subtitle: 'Clients describe their situation — small business, freelancer, late filing, audit — and the widget books with the right specialist.',
+      subtitle: 'Clients describe their situation — small business, freelancer, late filing, audit — and the widget collects the details your firm needs to route them to the right specialist.',
     },
     exampleConversations: [
       {

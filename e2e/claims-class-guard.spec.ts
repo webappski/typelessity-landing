@@ -82,7 +82,9 @@ before(async () => {
 
 // ── 1. the pre-launch offer ──────────────────────────────────────────────────────────────────────
 // A class, not a list: any wording that sells a quote-only Enterprise, hands-on engineering, an early-adopter
-// programme or an SLA tier. Every published tier has a price; the SLA is «by contract, on request».
+// programme or an SLA tier. Every published tier has a price. There is no SLA: «no availability SLA in the standard terms yet;
+// one becomes possible once the hosting plans support it» (DPA Appendix A(b), Terms §2.3; founder 2026-10-05 — an uptime
+// commitment is never «agreed by contract, on request»).
 const OLD_OFFER: readonly RegExp[] = [
   /Enterprise quote/i, /Custom Enterprise/i, /Enterprise \(custom\)/i, /engineering[- ]supported/i,
   /early[- ]adopters?/i, /\bSLA tier/i, /Pilot \(Free\)/i, /Pilot \(free\)/i, /Free pilot \+ Enterprise/i,
@@ -115,6 +117,33 @@ test('the four posts that carry a Pricing line name the published tiers', () => 
   }
   const agents = visibleText(pages.get('blog/designing-for-ai-agents/index.html')!);
   assert.match(agents, /Free Pilot, Starter, Pro, Enterprise \(four published tiers\)/);
+});
+
+// The same class, in the words the pages used for it: an uptime commitment or SLA «agreed by/per contract» or «on request». The DPA
+// (Appendix A(b)) says the processor gives no availability SLA and will not until the underlying plans support one; Terms §2.3
+// says there is no uptime commitment. A named contact and volume above 6,000 submissions are still «by contract, on request».
+const SLA_BY_CONTRACT: readonly RegExp[] = [
+  /\b(?:uptime commitment|SLA)\b[^.;\n]{0,90}\b(?:by|per) contract/i,
+  /\b(?:by|per) contract\b[^.;\n]{0,60}\b(?:uptime commitment|SLA)\b/i,
+  /\buptime commitment\b[^.;\n]{0,60}\bon request/i,
+];
+// A table row is read cell by cell: the row «Uptime commitment (SLA) | None | By contract, on request» is the same promise,
+// and the neighbouring row «Named contact person | — | By contract, on request» is not.
+const SLA_TABLE_ROW = /Uptime commitment \(SLA\)\s*<\/td>\s*<td[^>]*>[^<]*<\/td>\s*<td[^>]*>\s*By contract/i;
+
+test('no page, post or llms file offers an uptime commitment or SLA «by contract» or «on request»', () => {
+  const offenders: string[] = [];
+  for (const [path, body] of pages) {
+    const isHtml = path.endsWith('.html');
+    // The end of a cell, item or paragraph ends the sentence: «None yet» in one cell must not run into «By contract» in the next row.
+    const text = isHtml ? visibleText(body.replace(/<\/(?:td|th|tr|li|p)>/gi, '. ')) : body;
+    for (const re of SLA_BY_CONTRACT) {
+      const at = text.search(re);
+      if (at >= 0) offenders.push(`${path}: ${re} — …${text.slice(Math.max(0, at - 50), at + 130).replace(/\s+/g, ' ')}…`);
+    }
+    if (isHtml && SLA_TABLE_ROW.test(body)) offenders.push(`${path}: the SLA row of the table says «By contract» for Enterprise`);
+  }
+  assert.deepEqual(offenders, []);
 });
 
 // ── 2. speed, latency and setup time of our product ──────────────────────────────────────────────
@@ -305,4 +334,39 @@ test('the comparison table keeps only cells that quote a vendor page, and names 
   const row = (label: string) => rows.find((r) => r[0] === label)!;
   assert.equal(row('Languages')[3], '65+', 'Cal.com states 65+ languages');
   assert.match(row('Voice input')[5], /AI Voice Booking/, 'SimplyBook.me sells AI Voice Booking');
+});
+
+// ── r2 (judges, 2026-10-04). Two more members of the classes above that the number-and-speed word lists did not reach ──
+// F5: a post told readers Typelessity «leads» on conversion and on time to a deployed widget — the 28.09 class (speed and
+// uplift of OUR product without a measurement) in list form, with no number and no speed word in it; one sentence in a
+// post said the same of the salon's «customer-facing conversion», and a post description said «25+ languages work the same
+// day». The Updated notes that say the conversion claim is gone are not this claim and match none of these.
+test('posts: Typelessity is not named the leader on conversion or on time to deploy, and no description says «work the same day»', () => {
+  const claims: readonly RegExp[] = [/\bconversion\s*→/i, /Time to a deployed/i, /customer-facing conversion/i, /work the same day/i];
+  const offenders: string[] = [];
+  for (const [path, body] of pages) {
+    if (!isBlog(path)) continue;
+    // Both readings: «<strong>conversion</strong> → Typelessity» matches only in the visible text, and a post description sits in
+    // <meta> and in the JSON-LD, which only the raw bytes carry.
+    for (const text of [visibleText(body), body]) {
+      for (const re of claims) {
+        const at = text.search(re);
+        if (at >= 0) offenders.push(`${path}: ${re} — …${text.slice(Math.max(0, at - 60), at + 90).replace(/\s+/g, ' ')}…`);
+      }
+    }
+  }
+  assert.deepEqual(offenders, []);
+});
+
+// F8: the engine collects the fields and delivers a booking or a request; whether a specialist, a coach, a court, a
+// test drive or a viewing is booked is the business's act. Industry pages say «collects», like their neighbours.
+test('industry pages: the widget collects a request or the details — it does not book a specialist, a coach, a test drive or a viewing', () => {
+  const offenders: string[] = [];
+  for (const [path, body] of pages) {
+    if (!/^industries\/(?:[^/]+\/)?index\.html$/.test(path)) continue;
+    for (const s of sentences(visibleText(body))) {
+      if (/\bwidget books\b|\bbooks (?:with|the right|a coach|a test drive|a viewing|a consultation|the session|the vet)\b/i.test(s)) offenders.push(`${path}: ${s.slice(0, 160)}`);
+    }
+  }
+  assert.deepEqual(offenders, []);
 });

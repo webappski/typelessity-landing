@@ -11,7 +11,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Personal training',
     hero: {
       eyebrow: 'For personal trainers',
-      title: 'Clients describe their goal. The widget books the session.',
+      title: 'Clients describe their goal. The widget collects a request for a session.',
       subtitle:
         'Weight loss, strength, mobility, sport-specific — clients describe what they want; the widget collects their goal, experience level and availability for an intro session.',
     },
@@ -31,7 +31,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Gyms & fitness centers',
     hero: {
       title: 'Tour bookings, trial classes, member onboarding — one widget',
-      subtitle: 'Prospects ask about membership, classes, or trials. The widget captures intent and books the right next step.',
+      subtitle: 'Prospects ask about membership, classes, or trials. The widget captures intent and collects the details your team needs for the next step.',
     },
     exampleConversations: [
       {
@@ -85,7 +85,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Tennis, golf & sports coaching',
     hero: {
       title: 'Lessons, clinics, and court bookings — conversational',
-      subtitle: 'Players describe their level, goal, and availability; the widget books a coach or court.',
+      subtitle: 'Players describe their level, goal, and availability; the widget collects a request for a coach or court.',
     },
     exampleConversations: [
       {
@@ -241,7 +241,7 @@ export const industriesBatch2: IndustryContent[] = [
     name: 'Dealership test drives',
     hero: {
       title: 'From the car they like to a booked test drive',
-      subtitle: 'Prospects describe the vehicle they\'re interested in; the widget books a test drive with a salesperson.',
+      subtitle: 'Prospects describe the vehicle they\'re interested in; the widget collects a request for a test drive with a salesperson.',
     },
     exampleConversations: [
       {
