@@ -144,7 +144,7 @@ test('a body that is not a JSON object is refused: null, an array, a string, a n
 
 test('a field that is not a string is refused: numbers, objects, arrays, null', async () => {
   const wrong: unknown[] = [42, true, { a: 1 }, ['x'], null];
-  for (const field of ['type', ...Object.keys(LIMITS)]) { // a field given a limit is a field that is checked for its type
+  for (const field of Object.keys(WAITLIST).filter((k) => k !== 'consent')) { // every string field the form sends must be checked for its type
     for (const value of wrong) {
       const { status, sent } = await submit({}, { ...WAITLIST, [field]: value });
       assert.equal(status, 400, `${field}: ${JSON.stringify(value)} must be refused`);
