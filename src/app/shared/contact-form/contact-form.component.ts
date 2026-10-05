@@ -27,11 +27,19 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
         <div class="cf__grid">
           <div class="cf__row">
             <label for="cf-email">Email *</label>
-            <input id="cf-email" name="email" type="email" required autocomplete="email" placeholder="your@email.com" [(ngModel)]="model.email" />
+            <!-- pattern, not Angular's email validator: it is the endpoint's own rule (something@something.something, no spaces),
+                 so what the form lets through the server accepts, and an address the validator would not know (müller@…) is not turned away. -->
+            <input id="cf-email" name="email" type="email" required pattern="[^ @]+@[^ @]+[.][^ @]+" maxlength="254" autocomplete="email" placeholder="your@email.com"
+              [(ngModel)]="model.email" #email="ngModel" (keydown.enter)="email.control.markAsTouched()"
+              [class.invalid]="email.invalid && email.touched" [attr.aria-invalid]="email.invalid && email.touched ? 'true' : null"
+              [attr.aria-describedby]="email.invalid && email.touched ? 'cf-email-error' : null" />
+            @if (email.invalid && email.touched) {
+              <div class="cf__error" id="cf-email-error" role="alert">Enter a valid email address.</div>
+            }
           </div>
           <div class="cf__row">
             <label for="cf-website">Website URL (optional)</label>
-            <input id="cf-website" name="website" type="url" autocomplete="url" placeholder="https://yourwebsite.com" [(ngModel)]="model.website" />
+            <input id="cf-website" name="website" type="url" maxlength="2048" autocomplete="url" placeholder="https://yourwebsite.com" [(ngModel)]="model.website" />
           </div>
         </div>
         <div class="cf__row">
@@ -59,7 +67,7 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
         </div>
         <div class="cf__row">
           <label for="cf-message">Message (optional)</label>
-          <textarea id="cf-message" name="message" rows="3" placeholder="Tell us about your booking flow or requirements" [(ngModel)]="model.message"></textarea>
+          <textarea id="cf-message" name="message" rows="3" maxlength="5000" placeholder="Tell us about your booking flow or requirements" [(ngModel)]="model.message"></textarea>
         </div>
         <div class="cf__notice" id="cf-notice" role="note" aria-labelledby="cf-notice-h">
           <h3 id="cf-notice-h">Privacy notice for this form</h3>
@@ -74,9 +82,12 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
             info&#64;webappski.com; this does not affect processing before the withdrawal.
           </p>
           <p>
-            <strong>Who receives it:</strong> Resend, which delivers the message (United States, under Standard Contractual Clauses),
-            and our mail routing and mailbox providers, Cloudflare and Google (United States).
-            A copy of the safeguards is available from info&#64;webappski.com; see also
+            <strong>Who receives it:</strong> four providers from the United States, each under the safeguard named:
+            Resend, which delivers the message (Standard Contractual Clauses and the EU-US Data Privacy Framework);
+            Vercel, which hosts the form's function and so reads your request, in a region that is not fixed (Standard Contractual Clauses and the Data Privacy Framework);
+            Cloudflare, which routes our mail (Standard Contractual Clauses and the Data Privacy Framework);
+            Google, which holds our mailbox (the Data Privacy Framework).
+            A copy of the safeguards for all four is available from info&#64;webappski.com; see also
             <a href="https://resend.com/legal/dpa" target="_blank" rel="noopener">Resend's DPA</a>.
             <strong>How long:</strong> we keep the details you send (email address, website, plan, industry and message) until your question is answered and for 12 months after our last message,
             then delete them; if you withdraw consent we delete them sooner. Resend keeps a delivery log for 30 days.

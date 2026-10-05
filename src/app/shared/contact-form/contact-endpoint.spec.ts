@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
-import handler, { FALLBACK_FROM, FALLBACK_TO } from '../../../../api/contact';
+import handler, { FALLBACK_FROM, FALLBACK_TO, LIMITS } from '../../../../api/contact';
+import { ALL_INDUSTRIES } from '../../lib/industries';
 import { waitlistRequestBody } from './waitlist-request';
 
 // A36 (c8, 2026-09-24): with CONTACT_TO unset the form mailed hello@typelessity.com, a domain
@@ -13,12 +14,12 @@ const WAITLIST = waitlistRequestBody({
   email: 'owner@clinic.example',
   website: 'https://clinic.example',
   plan: 'starter',
-  industry: 'hospitality',
+  industry: ALL_INDUSTRIES[0].slug,
   message: 'Two locations, about 300 bookings a month.',
   consent: true,
 });
 
-async function submit(env: Record<string, string | undefined>, body: object = WAITLIST) {
+async function submit(env: Record<string, string | undefined>, body: unknown = WAITLIST) {
   const saved = { ...process.env };
   const sent: { url: string; body: Record<string, unknown> }[] = [];
   const warnings: string[] = [];
@@ -128,5 +129,84 @@ test('a body that is not the question form is refused: no type, another type, a 
     const { status, sent } = await submit({ SUPABASE_URL: 'https://example.supabase.co', SUPABASE_SERVICE_KEY: 'service-key' }, body);
     assert.equal(status, 400, `${what} must be refused`);
     assert.equal(sent.length, 0, `${what}: nothing is emailed or stored`);
+  }
+});
+
+// C1 (code-review r3, 2026-10-05): a body of `null` or a number in a field threw before any check and answered 500; a
+// plan of 200k characters went into the subject line. The body is now checked as a whole before anything is read from it.
+test('a body that is not a JSON object is refused: null, an array, a string, a number', async () => {
+  for (const [what, body] of Object.entries({ null: null, array: [], 'array with the form body': [WAITLIST], string: 'waitlist_request', number: 42 })) {
+    const { status, sent } = await submit({}, body);
+    assert.equal(status, 400, `${what} must be refused, not crash`);
+    assert.equal(sent.length, 0, `${what}: nothing is emailed`);
+  }
+});
+
+test('a field that is not a string is refused: numbers, objects, arrays, null', async () => {
+  const wrong: unknown[] = [42, true, { a: 1 }, ['x'], null];
+  for (const field of ['email', 'website', 'plan', 'industry', 'message', 'product', 'source', 'type']) {
+    for (const value of wrong) {
+      const { status, sent } = await submit({}, { ...WAITLIST, [field]: value });
+      assert.equal(status, 400, `${field}: ${JSON.stringify(value)} must be refused`);
+      assert.equal(sent.length, 0, `${field}: ${JSON.stringify(value)} — nothing is emailed`);
+    }
+  }
+});
+
+test('lengths are bounded: one character over the limit is refused, the limit itself goes through', async () => {
+  const fits = (field: keyof typeof LIMITS) =>
+    field === 'email' ? `${'a'.repeat(LIMITS.email - '@b.co'.length)}@b.co` : 'x'.repeat(LIMITS[field]);
+  for (const field of ['email', 'website', 'message', 'product', 'source'] as const) {
+    const over = field === 'email' ? `a${fits(field)}` : `${fits(field)}x`;
+    const refused = await submit({}, { ...WAITLIST, [field]: over });
+    assert.equal(refused.status, 400, `${field} of ${over.length} characters must be refused (limit ${LIMITS[field]})`);
+    assert.equal(refused.sent.length, 0);
+    const accepted = await submit({}, { ...WAITLIST, [field]: fits(field) });
+    assert.equal(accepted.status, 200, `${field} of exactly ${LIMITS[field]} characters must be accepted`);
+  }
+  const huge = await submit({}, { ...WAITLIST, plan: 'p'.repeat(200_000) });
+  assert.equal(huge.status, 400, 'a plan of 200k characters must not reach the subject line');
+  assert.equal(huge.sent.length, 0);
+});
+
+test('plan and industry must be values the form offers', async () => {
+  for (const plan of ['platinum', 'STARTER', ' pro', 'starter\r\nBcc: x@y.z']) {
+    const { status, sent } = await submit({}, { ...WAITLIST, plan });
+    assert.equal(status, 400, `plan ${JSON.stringify(plan)} must be refused`);
+    assert.equal(sent.length, 0);
+  }
+  for (const plan of ['', 'starter', 'pro', 'enterprise']) {
+    assert.equal((await submit({}, { ...WAITLIST, plan })).status, 200, `plan ${JSON.stringify(plan)} is on the form`);
+  }
+  for (const industry of ['Hospitality', 'hospitality', 'Health', 'x'.repeat(65)]) {
+    const { status, sent } = await submit({}, { ...WAITLIST, industry });
+    assert.equal(status, 400, `industry ${JSON.stringify(industry)} is not a page of the site`);
+    assert.equal(sent.length, 0);
+  }
+  for (const industry of ['', 'other', ...ALL_INDUSTRIES.map((i) => i.slug)]) {
+    assert.equal((await submit({}, { ...WAITLIST, industry })).status, 200, `industry ${JSON.stringify(industry)} is on the form`);
+  }
+});
+
+// The form must not let a visitor type what the endpoint then refuses: the inputs carry the endpoint's limits as maxlength.
+test('the form fields carry the endpoint limits as maxlength', () => {
+  const source = readFileSync(new URL('./contact-form.component.ts', import.meta.url), 'utf8');
+  for (const [id, limit] of [['cf-email', LIMITS.email], ['cf-website', LIMITS.website], ['cf-message', LIMITS.message]] as const) {
+    const tag = source.match(new RegExp(`<(?:input|textarea)[^>]*id="${id}"[^>]*>`))?.[0];
+    assert.ok(tag, `no #${id} in the form`);
+    assert.match(tag, new RegExp(`maxlength="${limit}"`), `#${id} does not carry maxlength="${limit}"`);
+  }
+});
+
+// R2-W2: the form turns an address away at the field with the rule the endpoint applies, so nothing the form lets through is
+// then answered with a 400. Both sides get the same addresses.
+test('the email pattern of the form and the email rule of the endpoint accept and refuse the same addresses', async () => {
+  const source = readFileSync(new URL('./contact-form.component.ts', import.meta.url), 'utf8');
+  const pattern = source.match(/<input[^>]*id="cf-email"[^>]*\spattern="([^"]+)"/)?.[1];
+  assert.ok(pattern, 'the email input carries no pattern');
+  const form = new RegExp(`^(?:${pattern})$`); // what Angular's PatternValidator does with the attribute
+  for (const address of ['abc', 'abc@def', 'a@b.co', 'a b@c.co', 'a@b .co', 'a@@b.co', '@b.co', 'a@.co', 'müller@müller.de', 'x+tag@sub.example.org']) {
+    const server = (await submit({}, { ...WAITLIST, email: address })).status === 200;
+    assert.equal(form.test(address), server, `«${address}»: the form says ${form.test(address)}, the endpoint says ${server}`);
   }
 });

@@ -48,6 +48,9 @@
 
     textarea { resize: vertical; min-height: 80px; }
 
+    // A field the visitor has left with a value the form will not send: red border, the reason under it (design-system PATTERNS §2).
+    input.invalid { border-color: #FCA5A5; }
+
     label:has(input[type='checkbox']) {
       display: flex;
       gap: 10px;
@@ -70,7 +73,8 @@
     transform: none;
   }
 
-  // Art. 13 notice: read before the box is ticked. --text-secondary on --bg-primary is 5.85:1.
+  // Art. 13 notice: read before the box is ticked. It sits on --bg-secondary: --text-secondary there is 5.46:1 (A107), and its
+  // links take --accent-hover, 5.28:1 — --accent on that fill is 4.48:1, under the 4.5:1 of WCAG AA (code-review C4, 2026-10-05).
   &__notice {
     padding: 14px 16px;
     border: 1px solid var(--border);
@@ -89,7 +93,13 @@
 
     p { margin: 0 0 8px; &:last-child { margin-bottom: 0; } }
     strong { color: var(--text-primary); font-weight: 600; }
-    a { color: var(--accent); border-bottom: 1px solid currentColor; }
+    a { color: var(--accent-hover); border-bottom: 1px solid currentColor; }
+  }
+
+  &__error {
+    color: #FCA5A5;
+    font-size: 13px;
+    line-height: 1.4;
   }
 
   &__msg {

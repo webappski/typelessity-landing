@@ -49,6 +49,54 @@ test('the send button stays off and nothing is posted until the consent box is t
 
 });
 
+// R2-W2 (code-review r2, 2026-10-05): the email field had `required` and nothing else, so «abc» plus the box enabled Send, the
+// server answered 400 and the visitor read «We couldn't send your request». The field now says what is wrong, where it is.
+test('an email that is not an address is stopped at the field: the reason shows, nothing is posted, a fixed address sends', async ({ page }) => {
+  const posts: unknown[] = [];
+  await page.route('**/api/contact', async (route) => {
+    posts.push(route.request().postDataJSON());
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+  await page.goto('/pricing');
+  const email = page.locator('#cf-email');
+  const error = page.locator('#cf-email-error');
+  const send = page.locator('.cf button[type=submit]');
+  await expect(error, 'no error before the visitor has touched the field').toHaveCount(0);
+
+  // Enter in the field is an attempt to send: with the address wrong the button is off, nothing leaves, and the reason shows at once.
+  await email.fill('abc');
+  await page.press('#cf-email', 'Enter');
+  await expect(error).toBeVisible();
+  expect(posts, 'Enter in the field sent «abc»').toHaveLength(0);
+
+  for (const wrong of ['abc', 'abc@def']) {
+    await email.fill(wrong);
+    await page.check('input[name=consent]'); // the focus leaves the field
+    await expect(error).toBeVisible();
+    await expect(error).toHaveText('Enter a valid email address.');
+    await expect(error).toHaveAttribute('role', 'alert');
+    await expect(email).toHaveAttribute('aria-invalid', 'true');
+    await expect(email).toHaveAttribute('aria-describedby', 'cf-email-error');
+    await expect(send).toBeDisabled();
+    await send.click({ force: true });
+    await page.press('#cf-email', 'Enter');
+    await page.waitForTimeout(200);
+    expect(posts, `a request left with «${wrong}» as the address`).toHaveLength(0);
+    await page.uncheck('input[name=consent]');
+  }
+
+  await email.fill('owner@clinic.example');
+  await page.check('input[name=consent]');
+  await expect(error, 'the error goes as soon as the address is right').toHaveCount(0);
+  await expect(email).not.toHaveAttribute('aria-invalid', /.*/);
+  await expect(email).not.toHaveAttribute('aria-describedby', /.*/);
+  await expect(send).toBeEnabled();
+  await send.click();
+  await expect(page.locator('.cf__success')).toBeVisible();
+  expect(posts).toHaveLength(1);
+  expect(posts[0]).toMatchObject({ email: 'owner@clinic.example', consent: true });
+});
+
 test('a visitor with only a question needs no plan, and unticking the box switches the button off again', async ({ page }) => {
   await page.goto('/pricing');
   await expect(page.locator('#cf-plan')).not.toHaveAttribute('required', /.*/);
@@ -64,7 +112,7 @@ test('the privacy notice is on the form and says who, why, on what basis, to who
   await page.goto('/pricing');
   const notice = page.locator('#cf-notice');
   await expect(notice).toBeVisible();
-  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Standard Contractual Clauses/, /Cloudflare and Google/, /A copy of the safeguards is available from info@webappski\.com/, /does not affect processing before the withdrawal/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
+  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Vercel/, /Cloudflare/, /Google/, /Standard Contractual Clauses/, /Data Privacy Framework/, /A copy of the safeguards for all four is available from info@webappski\.com/, /does not affect processing before the withdrawal/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
     await expect(notice).toContainText(part);
   }
   await expect(notice.locator('a[href="https://resend.com/legal/dpa"]')).toHaveCount(1);

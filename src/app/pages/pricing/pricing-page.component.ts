@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
@@ -13,7 +12,7 @@ import { PRICING_FAQ } from './pricing.content';
   selector: 'app-pricing-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ContactFormComponent, PadNumberPipe, RouterLink],
+  imports: [ContactFormComponent, PadNumberPipe],
   styleUrl: './pricing-page.component.scss',
   template: `
     <section class="vc-wrap pricing-hero">

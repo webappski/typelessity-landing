@@ -4,6 +4,10 @@
 // Side effect: one Resend email to the question mailbox. Nothing is stored: the form has no database behind it.
 // Without RESEND_API_KEY: returns 503 with a clear "not configured" message so deploy succeeds and integration owners can wire it.
 // Any other body — no type, another type — is refused: there is no other form.
+// The body is checked before anything is read from it: a JSON object, every field a string, lengths bounded,
+// `plan` and `industry` one of the values the form's selects offer. Any miss is a 400 and nothing is sent.
+
+import { ALL_INDUSTRIES } from '../src/app/lib/industries';
 
 interface ContactPayload {
   email?: string;
@@ -59,17 +63,44 @@ function isEmail(v: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+// The form's textarea and inputs carry the same numbers as maxlength (a guard in contact-endpoint.spec.ts keeps them equal).
+// email: the longest address SMTP carries (RFC 5321, 254); website: the 2 KB a URL is safely given; the rest is what a question needs.
+export const LIMITS = { email: 254, website: 2048, message: 5000, plan: 64, industry: 64, product: 64, source: 64 } as const;
+// The <option> values of the plan select in contact-form.component.ts; '' is «just a question».
+const PLANS: ReadonlySet<string> = new Set(['', 'starter', 'pro', 'enterprise']);
+// The industry select is built from ALL_INDUSTRIES, plus «Other» and the empty choice.
+const INDUSTRIES: ReadonlySet<string> = new Set(['', 'other', ...ALL_INDUSTRIES.map((i) => i.slug)]);
+
+const TEXT_FIELDS = ['type', 'email', 'website', 'plan', 'industry', 'message', 'product', 'source'] as const;
+
+/** The body as a ContactPayload, or the reason it is refused. Nothing reads a field before this has passed. */
+function readPayload(raw: unknown): ContactPayload | string {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return 'Body must be a JSON object';
+  const body = raw as Record<string, unknown>;
+  for (const k of TEXT_FIELDS) {
+    if (body[k] !== undefined && typeof body[k] !== 'string') return `${k} must be a string`;
+  }
+  if (body['type'] !== 'waitlist_request') return 'Unknown request type';
+  for (const k of Object.keys(LIMITS) as (keyof typeof LIMITS)[]) {
+    if (((body[k] as string | undefined) ?? '').length > LIMITS[k]) return `${k} is too long`;
+  }
+  if (!PLANS.has((body['plan'] as string | undefined) ?? '')) return 'Unknown plan';
+  if (!INDUSTRIES.has((body['industry'] as string | undefined) ?? '')) return 'Unknown industry';
+  return body as ContactPayload;
+}
+
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') return bad('Method not allowed', 405);
 
-  let body: ContactPayload;
+  let raw: unknown;
   try {
-    body = (await req.json()) as ContactPayload;
+    raw = await req.json();
   } catch {
     return bad('Invalid JSON');
   }
 
-  if (body.type !== 'waitlist_request') return bad('Unknown request type');
+  const body = readPayload(raw);
+  if (typeof body === 'string') return bad(body);
   return waitlist(body);
 }
 

@@ -91,9 +91,8 @@ test('the question form carries its Art. 13 notice, and the consent box is requi
     'the purpose': /only to answer your question/,
     'the legal basis': /your consent \(Art\. 6\(1\)\(a\) GDPR\)/,
     'withdrawal, and that it leaves earlier processing as it was': /withdraw it at any time by writing to info@webappski\.com; this does not affect processing before the withdrawal/,
-    'the recipient': /Resend, which delivers the message \(United States, under Standard Contractual Clauses\)/,
-    'the mail routing and mailbox providers': /our mail routing and mailbox providers, Cloudflare and Google \(United States\)/,
-    'where a copy of the safeguards is available': /A copy of the safeguards is available from info@webappski\.com; see also Resend's DPA/,
+    'the recipients, each with its own safeguard (see the recipients test below)': /Who receives it: four providers from the United States, each under the safeguard named: Resend.+Vercel.+Cloudflare.+Google/,
+    'where a copy of the safeguards for every recipient is available': /A copy of the safeguards for all four is available from info@webappski\.com; see also Resend's DPA/,
     'the retention, a number and not «as long as needed»': /we keep the details you send \(email address, website, plan, industry and message\) until your question is answered and for 12 months after our last message, then delete them; if you withdraw consent we delete them sooner\. Resend keeps a delivery log for 30 days/,
     'the rights': /access, correction, erasure, restriction, portability and objection/,
     'the authority': /UODO/,
@@ -117,6 +116,59 @@ test('the question form carries its Art. 13 notice, and the consent box is requi
   assert.match(box, /required/, 'the consent box is not required');
   assert.match(html, /I agree that Webappski uses these details to answer my question, as set out in the privacy notice above/);
   assert.doesNotMatch(html, /Preferred Plan \*/, 'a plan is no longer required to ask a question');
+});
+
+// code-review C2 (2026-10-05): the notice named Resend, Cloudflare and Google but not Vercel, which hosts the function that reads the
+// request, and gave a safeguard for Resend only (WP260: every recipient, and the safeguard for each transfer outside the EEA).
+// The bases are what the providers publish — Resend DPA §6.2 and §11.1 (SCC Module Two, DPF), Vercel DPA Schedule 3 (SCC) and
+// vercel.com/docs/security/compliance («Vercel is certified under the EU-U.S. Data Privacy Framework»), Cloudflare DPA §6.2(a) and §6.4
+// (SCC Module Two, DPF), Google's DPF page policies.google.com/privacy/frameworks (DPF; the SCCs it mentions are in its business
+// contracts, and which Google contract holds our mailbox is not confirmed, so none is claimed) — read 2026-10-05.
+function noticeText(): string {
+  const html = files.get('pricing/index.html')!;
+  const notice = html.match(/<div[^>]*class="cf__notice"[\s\S]*?<\/div>/)?.[0];
+  assert.ok(notice, '/pricing has no privacy notice in the form');
+  return notice.replace(/<[^>]+>/g, ' ').replace(/&#64;/g, '@').replace(/&#39;/g, "'").replace(/\s+/g, ' ');
+}
+
+test('every recipient the notice names has its own safeguard, and the notice names every third party the code sends the request to', async () => {
+  const text = noticeText();
+  const paragraph = text.match(/Who receives it: (.+?) A copy of the safeguards/)?.[1];
+  assert.ok(paragraph, 'the notice has no «Who receives it» part');
+  const items = paragraph.replace(/^[^:]+:\s*/, '').split(/;\s*/);
+  assert.ok(items.length >= 4, `only ${items.length} recipients named`);
+  const named = new Map<string, string>();
+  for (const item of items) {
+    const m = item.match(/^(\w+), which .+ \(([^()]+)\)\.?$/);
+    assert.ok(m, `«${item}» names a recipient with no safeguard in brackets`);
+    assert.match(m[2], /Standard Contractual Clauses|Data Privacy Framework/, `${m[1]}: «${m[2]}» is no transfer safeguard`);
+    named.set(m[1], m[2]);
+  }
+  // Third parties the code really calls: the host of every fetch() in the function, and the platform the function runs on.
+  const fn = await readFile(new URL('../api/contact.ts', import.meta.url), 'utf8');
+  const hosts = [...fn.matchAll(/fetch\('https:\/\/([^/']+)/g)].map((m) => m[1]);
+  assert.deepEqual(hosts, ['api.resend.com'], 'the function calls a host this test does not know — the notice must name it');
+  assert.ok(named.has('Resend'), 'api.resend.com is called, Resend is not named');
+  assert.ok(named.has('Vercel'), 'the function runs on Vercel (api/contact.ts, vercel.json), Vercel is not named');
+  assert.ok(named.has('Cloudflare') && named.has('Google'), 'the mail routing and mailbox providers are not named');
+});
+
+test('the fields the notice says are used are the fields the form sends and the letter carries — not only the same list as «How long»', async () => {
+  const text = noticeText();
+  const payloadSrc = await readFile(new URL('../src/app/shared/contact-form/waitlist-request.ts', import.meta.url), 'utf8');
+  const body = payloadSrc.match(/export interface WaitlistPayload \{([\s\S]*?)\n\}/)?.[1] ?? '';
+  const sent = [...body.matchAll(/^\s*(\w+)\??:/gm)].map((m) => m[1]).filter((k) => k !== 'consent').sort(); // the box is consent, not a detail used
+  assert.ok(sent.length >= 5, `WaitlistPayload yields ${JSON.stringify(sent)}`);
+  const used = text.match(/we use the (.+?) you enter only to answer your question/)?.[1];
+  assert.ok(used, 'the notice does not list what is used');
+  const said = used.split(/,\s*|\s+and\s+/).map((f) => (f === 'email address' ? 'email' : f)).sort();
+  assert.deepEqual(said, sent, `the notice says «${used}», the form sends ${sent.join(', ')}`);
+  const fn = await readFile(new URL('../api/contact.ts', import.meta.url), 'utf8');
+  const labels = [...fn.matchAll(/`(\w+):\s+\$\{/g)].map((m) => m[1].toLowerCase());
+  for (const field of sent) {
+    if (field === 'message') assert.ok(fn.includes('${message}'), 'the letter does not carry the message');
+    else assert.ok(labels.includes(field), `the form sends «${field}», the letter has no «${field}:» line`);
+  }
 });
 
 test('nothing a visitor reads on /pricing calls the question form a waitlist', () => {
