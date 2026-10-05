@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { ALL_INDUSTRIES } from '../../src/app/lib/industries';
+import { EMAIL_PATTERN } from '../../src/app/shared/contact-form/waitlist-request';
 
 // A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
 // server had answered and a retry would fail the same way — the request was lost. A server refusal
@@ -69,11 +70,18 @@ test('an email that is not an address is stopped at the field: the reason shows,
   await expect(error).toBeVisible();
   expect(posts, 'Enter in the field sent «abc»').toHaveLength(0);
 
-  for (const wrong of ['abc', 'abc@def']) {
+  // The input carries the endpoint's own rule, and the white space the endpoint refuses is refused at the field too (W-1): a tab, a
+  // no-break space and U+2028 inside an address once passed the form and came back as a 400.
+  await expect(email).toHaveAttribute('pattern', EMAIL_PATTERN);
+  for (const wrong of ['abc', 'abc@def', 'a\tb@c.co', 'a\u00a0b@c.co', 'a@b.c\u2028d']) {
     await email.fill(wrong);
     await page.check('input[name=consent]'); // the focus leaves the field
     await expect(error).toBeVisible();
-    await expect(error).toHaveText('Enter a valid email address.');
+    // GOV.UK error message: the sentence says what the format is, and a screen reader hears «Error:» before it (a visually hidden span).
+    await expect(error).toHaveText('Error: Enter an email address in the correct format, like name@example.com');
+    const hidden = error.locator('.cf__visually-hidden');
+    await expect(hidden).toHaveText('Error:');
+    expect((await hidden.boundingBox())!.width, 'the «Error:» is hidden, not shown').toBeLessThanOrEqual(1);
     await expect(error).toHaveAttribute('role', 'alert');
     await expect(email).toHaveAttribute('aria-invalid', 'true');
     await expect(email).toHaveAttribute('aria-describedby', 'cf-email-error');
@@ -95,6 +103,29 @@ test('an email that is not an address is stopped at the field: the reason shows,
   await expect(page.locator('.cf__success')).toBeVisible();
   expect(posts).toHaveLength(1);
   expect(posts[0]).toMatchObject({ email: 'owner@clinic.example', consent: true });
+});
+
+// T-1 (code-review r2, 2026-10-05): C4 moved the notice links from --accent (4.48:1 on --bg-secondary) to --accent-hover (5.28:1) and
+// nothing measured it. The links of the notice are measured as the browser paints them, against the surface of the notice.
+test('every link in the privacy notice is 4.5:1 or better on the notice surface', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/pricing', { waitUntil: 'networkidle' });
+  const links = await page.locator('#cf-notice a').evaluateAll((nodes) => {
+    const parse = (s: string) => { const a = s.match(/rgba?\(([^)]+)\)/)![1].split(',').map((x) => parseFloat(x)); return { r: a[0], g: a[1], b: a[2], a: a.length > 3 ? a[3] : 1 }; };
+    const lin = (c: number) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+    const lum = (c: { r: number; g: number; b: number }) => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+    const surface = parse(getComputedStyle(document.querySelector('#cf-notice')!).backgroundColor);
+    return nodes.map((a) => {
+      const text = parse(getComputedStyle(a).color);
+      const [hi, lo] = [lum(text), lum(surface)].sort((p, q) => q - p);
+      return { label: (a.textContent ?? '').trim(), surfaceAlpha: surface.a, ratio: (hi + 0.05) / (lo + 0.05) };
+    });
+  });
+  expect(links.length, 'the notice carries its links: info@, the adequacy decision, both DPAs').toBeGreaterThanOrEqual(4);
+  for (const l of links) {
+    expect(l.surfaceAlpha, 'the notice surface is opaque, so the ratio is measured against what is painted').toBe(1);
+    expect(l.ratio, `«${l.label}» in the notice`).toBeGreaterThanOrEqual(4.5);
+  }
 });
 
 test('a visitor with only a question needs no plan, and unticking the box switches the button off again', async ({ page }) => {

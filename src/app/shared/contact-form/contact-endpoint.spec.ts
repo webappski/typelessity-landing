@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
-import handler, { FALLBACK_FROM, FALLBACK_TO, LIMITS } from '../../../../api/contact';
+import handler, { FALLBACK_FROM, FALLBACK_TO, LIMITS, PLANS } from '../../../../api/contact';
 import { ALL_INDUSTRIES } from '../../lib/industries';
-import { waitlistRequestBody } from './waitlist-request';
+import { EMAIL_PATTERN, waitlistRequestBody } from './waitlist-request';
 
 // A36 (c8, 2026-09-24): with CONTACT_TO unset the form mailed hello@typelessity.com, a domain
 // with no MX record — every request was lost. The real handler runs here; only the network is stubbed.
@@ -144,7 +144,7 @@ test('a body that is not a JSON object is refused: null, an array, a string, a n
 
 test('a field that is not a string is refused: numbers, objects, arrays, null', async () => {
   const wrong: unknown[] = [42, true, { a: 1 }, ['x'], null];
-  for (const field of ['email', 'website', 'plan', 'industry', 'message', 'product', 'source', 'type']) {
+  for (const field of ['type', ...Object.keys(LIMITS)]) { // a field given a limit is a field that is checked for its type
     for (const value of wrong) {
       const { status, sent } = await submit({}, { ...WAITLIST, [field]: value });
       assert.equal(status, 400, `${field}: ${JSON.stringify(value)} must be refused`);
@@ -198,15 +198,30 @@ test('the form fields carry the endpoint limits as maxlength', () => {
   }
 });
 
-// R2-W2: the form turns an address away at the field with the rule the endpoint applies, so nothing the form lets through is
-// then answered with a 400. Both sides get the same addresses.
-test('the email pattern of the form and the email rule of the endpoint accept and refuse the same addresses', async () => {
+// R2-W2 and W-1 (code-review r2, 2026-10-05): the form turns an address away at the field with the endpoint's own rule, so nothing the
+// form lets through is then answered with a 400. The first version of the form's pattern excluded only the ASCII space while the endpoint
+// excluded any white space: «a<TAB>b@c.co» passed the form and came back as «We couldn't send your request». Now there is one rule,
+// EMAIL_PATTERN: the form binds it as the input's pattern, the endpoint anchors it.
+test('the form and the endpoint apply one email rule — white space of any kind inside an address is refused by both', async () => {
   const source = readFileSync(new URL('./contact-form.component.ts', import.meta.url), 'utf8');
-  const pattern = source.match(/<input[^>]*id="cf-email"[^>]*\spattern="([^"]+)"/)?.[1];
-  assert.ok(pattern, 'the email input carries no pattern');
-  const form = new RegExp(`^(?:${pattern})$`); // what Angular's PatternValidator does with the attribute
-  for (const address of ['abc', 'abc@def', 'a@b.co', 'a b@c.co', 'a@b .co', 'a@@b.co', '@b.co', 'a@.co', 'müller@müller.de', 'x+tag@sub.example.org']) {
+  assert.match(source, /\[pattern\]="emailPattern"/, 'the email input does not bind the shared pattern');
+  assert.match(source, /emailPattern = EMAIL_PATTERN/, 'the form does not take its pattern from EMAIL_PATTERN');
+  assert.doesNotMatch(source, /\spattern="/, 'the form carries a literal pattern of its own next to the shared rule');
+  const form = new RegExp(`^${EMAIL_PATTERN}$`); // Angular's PatternValidator anchors a string pattern like this
+  const refusedBoth = ['a\tb@c.co', 'a\u00a0b@c.co', 'a@b.c\u2028d', 'a\u2029b@c.co', 'a\nb@c.co', 'a b@c.co'];
+  const samples = [...refusedBoth, 'abc', 'abc@def', 'a@b.co', 'a@b .co', 'a@@b.co', '@b.co', 'a@.co', 'müller@müller.de', 'x+tag@sub.example.org'];
+  for (const address of samples) {
     const server = (await submit({}, { ...WAITLIST, email: address })).status === 200;
-    assert.equal(form.test(address), server, `«${address}»: the form says ${form.test(address)}, the endpoint says ${server}`);
+    assert.equal(form.test(address), server, `«${JSON.stringify(address)}»: the form says ${form.test(address)}, the endpoint says ${server}`);
+    if (refusedBoth.includes(address)) assert.equal(server, false, `${JSON.stringify(address)} has white space inside and must be refused`);
   }
+});
+
+// W-2: the plan select of the form offers exactly the plans the endpoint accepts.
+test('the option values of the plan select are the PLANS the endpoint accepts', () => {
+  const source = readFileSync(new URL('./contact-form.component.ts', import.meta.url), 'utf8');
+  const select = source.match(/<select id="cf-plan"[\s\S]*?<\/select>/)?.[0];
+  assert.ok(select, 'no plan select in the form');
+  const offered = [...select.matchAll(/<option value="([^"]*)"/g)].map((m) => m[1]).sort();
+  assert.deepEqual(offered, [...PLANS].sort(), 'the form offers a plan the endpoint refuses, or the endpoint takes one the form does not offer');
 });

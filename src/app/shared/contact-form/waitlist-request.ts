@@ -3,6 +3,14 @@
 // (A36, 2026-09-25). `type: 'waitlist_request'` is the protocol name the endpoint switches on; it
 // is not shown to anyone — the letter and its subject say «Question» (c8, 2026-10-03).
 
+/**
+ * The one rule for an email address: something@something.something, no white space anywhere (`\s` — a space, a tab,
+ * a no-break space, U+2028 …). The form binds it as the input's `pattern` and the endpoint anchors it, so what the form lets
+ * through the endpoint accepts. Not Angular's `email` validator: it lets `a@b` through, which the endpoint refuses, and it
+ * turns away `müller@müller.de`, which the endpoint takes. A string, not a RegExp, because the template binds it.
+ */
+export const EMAIL_PATTERN = '[^\\s@]+@[^\\s@]+\\.[^\\s@]+';
+
 export interface WaitlistPayload {
   email: string;
   website?: string;

@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { getIndustriesByCategory } from '../../lib/industries';
-import { WaitlistPayload, waitlistRequestBody } from './waitlist-request';
+import { EMAIL_PATTERN, WaitlistPayload, waitlistRequestBody } from './waitlist-request';
 
 
 // 'offline' — no response reached us (status 0): retrying on a working connection can help.
@@ -27,14 +27,13 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
         <div class="cf__grid">
           <div class="cf__row">
             <label for="cf-email">Email *</label>
-            <!-- pattern, not Angular's email validator: it is the endpoint's own rule (something@something.something, no spaces),
-                 so what the form lets through the server accepts, and an address the validator would not know (müller@…) is not turned away. -->
-            <input id="cf-email" name="email" type="email" required pattern="[^ @]+@[^ @]+[.][^ @]+" maxlength="254" autocomplete="email" placeholder="your@email.com"
+            <!-- The pattern is the endpoint's own rule (EMAIL_PATTERN, one constant for both): what the form lets through the server accepts. -->
+            <input id="cf-email" name="email" type="email" required [pattern]="emailPattern" maxlength="254" autocomplete="email" placeholder="your@email.com"
               [(ngModel)]="model.email" #email="ngModel" (keydown.enter)="email.control.markAsTouched()"
               [class.invalid]="email.invalid && email.touched" [attr.aria-invalid]="email.invalid && email.touched ? 'true' : null"
               [attr.aria-describedby]="email.invalid && email.touched ? 'cf-email-error' : null" />
             @if (email.invalid && email.touched) {
-              <div class="cf__error" id="cf-email-error" role="alert">Enter a valid email address.</div>
+              <div class="cf__error" id="cf-email-error" role="alert"><span class="cf__visually-hidden">Error: </span>Enter an email address in the correct format, like name@example.com</div>
             }
           </div>
           <div class="cf__row">
@@ -137,6 +136,8 @@ export class ContactFormComponent {
     message: '',
     consent: false,
   };
+
+  protected readonly emailPattern = EMAIL_PATTERN;
 
   protected readonly status = signal<Status>('idle');
 

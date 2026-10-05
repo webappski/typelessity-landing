@@ -96,6 +96,19 @@
     a { color: var(--accent-hover); border-bottom: 1px solid currentColor; }
   }
 
+  // Read by a screen reader, not shown (GOV.UK error message: the «Error:» before the text).
+  &__visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   &__error {
     color: #FCA5A5;
     font-size: 13px;

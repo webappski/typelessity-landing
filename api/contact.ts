@@ -8,6 +8,7 @@
 // `plan` and `industry` one of the values the form's selects offer. Any miss is a 400 and nothing is sent.
 
 import { ALL_INDUSTRIES } from '../src/app/lib/industries';
+import { EMAIL_PATTERN } from '../src/app/shared/contact-form/waitlist-request';
 
 interface ContactPayload {
   email?: string;
@@ -59,19 +60,22 @@ function ok(): Response {
   });
 }
 
+// The same rule the form binds as the email input's pattern (EMAIL_PATTERN, anchored here).
+const EMAIL_RULE = new RegExp(`^${EMAIL_PATTERN}$`);
 function isEmail(v: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  return EMAIL_RULE.test(v);
 }
 
 // The form's textarea and inputs carry the same numbers as maxlength (a guard in contact-endpoint.spec.ts keeps them equal).
 // email: the longest address SMTP carries (RFC 5321, 254); website: the 2 KB a URL is safely given; the rest is what a question needs.
 export const LIMITS = { email: 254, website: 2048, message: 5000, plan: 64, industry: 64, product: 64, source: 64 } as const;
 // The <option> values of the plan select in contact-form.component.ts; '' is «just a question».
-const PLANS: ReadonlySet<string> = new Set(['', 'starter', 'pro', 'enterprise']);
+export const PLANS: ReadonlySet<string> = new Set(['', 'starter', 'pro', 'enterprise']);
 // The industry select is built from ALL_INDUSTRIES, plus «Other» and the empty choice.
 const INDUSTRIES: ReadonlySet<string> = new Set(['', 'other', ...ALL_INDUSTRIES.map((i) => i.slug)]);
 
-const TEXT_FIELDS = ['type', 'email', 'website', 'plan', 'industry', 'message', 'product', 'source'] as const;
+// `type` is checked on its own below; every other text field has a limit.
+const TEXT_FIELDS = ['type', ...(Object.keys(LIMITS) as (keyof typeof LIMITS)[])];
 
 /** The body as a ContactPayload, or the reason it is refused. Nothing reads a field before this has passed. */
 function readPayload(raw: unknown): ContactPayload | string {
