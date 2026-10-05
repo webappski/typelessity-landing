@@ -112,10 +112,12 @@ test('the privacy notice is on the form and says who, why, on what basis, to who
   await page.goto('/pricing');
   const notice = page.locator('#cf-notice');
   await expect(notice).toBeVisible();
-  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Vercel/, /Cloudflare/, /Google/, /Standard Contractual Clauses/, /Data Privacy Framework/, /A copy of the safeguards for all four is available from info@webappski\.com/, /does not affect processing before the withdrawal/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
+  for (const part of [/Controller/, /info@webappski\.com/, /Art\. 6\(1\)\(a\)/, /Resend/, /Vercel/, /Cloudflare/, /Google/, /Standard Contractual Clauses/, /Data Privacy Framework/, /adequacy decision of 10 July 2023/, /A copy is available from info@webappski\.com/, /does not affect processing before the withdrawal/, /30 days/, /erasure/, /UODO/, /voluntary/]) {
     await expect(notice).toContainText(part);
   }
   await expect(notice.locator('a[href="https://resend.com/legal/dpa"]')).toHaveCount(1);
+  await expect(notice.locator('a[href="https://www.cloudflare.com/cloudflare-customer-dpa/"]')).toHaveCount(1);
+  await expect(notice.locator('a[href*="eu-us-data-transfers_en"]')).toHaveCount(1);
   await expect(notice.locator('a[href*="dpa-typelessity"]'), 'the notice does not send the visitor to the processor agreement').toHaveCount(0);
   await expect(page.locator('.cf')).not.toContainText(/waitlist/i);
   await expect(page.locator('.cf a[href*="product-privacy"]')).toHaveCount(0);

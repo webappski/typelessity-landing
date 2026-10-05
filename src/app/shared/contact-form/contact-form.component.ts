@@ -77,18 +77,22 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
             Contact: <a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a>.
           </p>
           <p>
-            <strong>Why:</strong> we use the email address, website, plan, industry and message you enter only to answer your question.
+            <strong>Why:</strong> we use the email address, website, plan, industry and message you enter only to answer your question and to continue the conversation if you write again within the period under «How long».
             <strong>Basis:</strong> your consent (Art. 6(1)(a) GDPR), given by ticking the box below. You can withdraw it at any time by writing to
             info&#64;webappski.com; this does not affect processing before the withdrawal.
           </p>
           <p>
-            <strong>Who receives it:</strong> four providers from the United States, each under the safeguard named:
-            Resend, which delivers the message (Standard Contractual Clauses and the EU-US Data Privacy Framework);
-            Vercel, which hosts the form's function and so reads your request, in a region that is not fixed (Standard Contractual Clauses and the Data Privacy Framework);
-            Cloudflare, which routes our mail (Standard Contractual Clauses and the Data Privacy Framework);
-            Google, which holds our mailbox (the Data Privacy Framework).
-            A copy of the safeguards for all four is available from info&#64;webappski.com; see also
-            <a href="https://resend.com/legal/dpa" target="_blank" rel="noopener">Resend's DPA</a>.
+            <strong>Who receives it:</strong>
+            Resend, which delivers the message (Plus Five Five, Inc., United States);
+            Vercel, which runs the form's function and so reads your request (Vercel Inc., United States; the region is not fixed);
+            Cloudflare, which routes our mail (Cloudflare, Inc., United States);
+            Google, which holds our mailbox (Google may process it in the United States).
+            <strong>Transfers to the United States</strong> rest on the European Commission's
+            <a href="https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection/eu-us-data-transfers_en" target="_blank" rel="noopener">adequacy decision of 10 July 2023</a>
+            for the EU-US Data Privacy Framework (Art. 45 GDPR): Resend, Vercel, Cloudflare and Google LLC state that they are certified under it.
+            Resend and Cloudflare also apply the EU Standard Contractual Clauses (Art. 46 GDPR). A copy is available from info&#64;webappski.com,
+            and both publish them in their DPAs: <a href="https://resend.com/legal/dpa" target="_blank" rel="noopener">Resend's DPA</a>,
+            <a href="https://www.cloudflare.com/cloudflare-customer-dpa/" target="_blank" rel="noopener">Cloudflare's DPA</a>.
             <strong>How long:</strong> we keep the details you send (email address, website, plan, industry and message) until your question is answered and for 12 months after our last message,
             then delete them; if you withdraw consent we delete them sooner. Resend keeps a delivery log for 30 days.
           </p>

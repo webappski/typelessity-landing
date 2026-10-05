@@ -91,8 +91,10 @@ test('the question form carries its Art. 13 notice, and the consent box is requi
     'the purpose': /only to answer your question/,
     'the legal basis': /your consent \(Art\. 6\(1\)\(a\) GDPR\)/,
     'withdrawal, and that it leaves earlier processing as it was': /withdraw it at any time by writing to info@webappski\.com; this does not affect processing before the withdrawal/,
-    'the recipients, each with its own safeguard (see the recipients test below)': /Who receives it: four providers from the United States, each under the safeguard named: Resend.+Vercel.+Cloudflare.+Google/,
-    'where a copy of the safeguards for every recipient is available': /A copy of the safeguards for all four is available from info@webappski\.com; see also Resend's DPA/,
+    'the recipients, each with its legal entity and country (see the recipients test below)': /Who receives it: Resend, which delivers the message \(Plus Five Five, Inc\., United States\); Vercel, which runs the form's function and so reads your request \(Vercel Inc\., United States; the region is not fixed\); Cloudflare, which routes our mail \(Cloudflare, Inc\., United States\); Google, which holds our mailbox \(Google may process it in the United States\)\./,
+    'the transfer basis: the adequacy decision of 10 July 2023 for the DPF, named as Art. 45, and who is certified': /Transfers to the United States rest on the European Commission's adequacy decision of 10 July 2023 for the EU-US Data Privacy Framework \(Art\. 45 GDPR\): Resend, Vercel, Cloudflare and Google LLC state that they are certified under it\./,
+    'the SCC, named as Art. 46, for the recipients that apply them, with where a copy is and where it is published': /Resend and Cloudflare also apply the EU Standard Contractual Clauses \(Art\. 46 GDPR\)\. A copy is available from info@webappski\.com, and both publish them in their DPAs: Resend's DPA ?, Cloudflare's DPA ?\./,
+    'the second purpose, tied to the retention period': /only to answer your question and to continue the conversation if you write again within the period under «How long»/,
     'the retention, a number and not «as long as needed»': /we keep the details you send \(email address, website, plan, industry and message\) until your question is answered and for 12 months after our last message, then delete them; if you withdraw consent we delete them sooner\. Resend keeps a delivery log for 30 days/,
     'the rights': /access, correction, erasure, restriction, portability and objection/,
     'the authority': /UODO/,
@@ -104,6 +106,8 @@ test('the question form carries its Art. 13 notice, and the consent box is requi
   assert.doesNotMatch(text, /operator named in the Typelessity DPA/, 'the notice sends the visitor to a processor agreement to learn who the controller is');
   assert.doesNotMatch(notice, /dpa-typelessity/, 'the notice links the Typelessity DPA, where the same person is the processor, not the controller');
   assert.match(notice, /href="https:\/\/resend\.com\/legal\/dpa"/, "the notice does not link Resend's DPA");
+  assert.match(notice, /href="https:\/\/www\.cloudflare\.com\/cloudflare-customer-dpa\/"/, "the notice does not link Cloudflare's DPA");
+  assert.match(notice, /href="https:\/\/commission\.europa\.eu\/[^"]*eu-us-data-transfers_en"/, 'the notice does not link the Commission page on the adequacy decision');
   assert.doesNotMatch(text, /as long as needed/, 'the retention is a period, not the generic formula');
   // Art. 13(2)(a): the retention covers what «Why» says is used — every field the form sends, not a subset (judge r2, c8 2026-10-05).
   const used = text.match(/we use the (.+?) you enter only to answer your question/)?.[1];
@@ -118,12 +122,15 @@ test('the question form carries its Art. 13 notice, and the consent box is requi
   assert.doesNotMatch(html, /Preferred Plan \*/, 'a plan is no longer required to ask a question');
 });
 
-// code-review C2 (2026-10-05): the notice named Resend, Cloudflare and Google but not Vercel, which hosts the function that reads the
-// request, and gave a safeguard for Resend only (WP260: every recipient, and the safeguard for each transfer outside the EEA).
-// The bases are what the providers publish — Resend DPA §6.2 and §11.1 (SCC Module Two, DPF), Vercel DPA Schedule 3 (SCC) and
-// vercel.com/docs/security/compliance («Vercel is certified under the EU-U.S. Data Privacy Framework»), Cloudflare DPA §6.2(a) and §6.4
-// (SCC Module Two, DPF), Google's DPF page policies.google.com/privacy/frameworks (DPF; the SCCs it mentions are in its business
-// contracts, and which Google contract holds our mailbox is not confirmed, so none is claimed) — read 2026-10-05.
+// code-review C2 and legal re-read r3 (2026-10-05): the notice named Resend, Cloudflare and Google but not Vercel, which runs the function
+// that reads the request (WP260: every recipient). Its first rewrite called the EU-US DPF a «safeguard» for all four and promised SCC to
+// Vercel and Google; the DPF is the Commission's adequacy decision (Art. 45) — only the mention is owed — and a copy is owed for the SCC (Art. 46).
+// So: the recipients are named with their legal entity and country; the DPF sentence names Art. 45 and the decision's date; the SCC sentence
+// lists only the recipients whose published DPA applies them — Resend DPA §6.2.2 (Module Two) and Cloudflare DPA §6.2(a) — each with its DPA linked.
+// Vercel's DPA carries the SCC only for Pro and Enterprise teams (tier of this project unconfirmed) and Google's Cloud DPA covers Workspace and
+// Cloud, not a consumer Gmail, so neither is claimed. Certified under the DPF per their own pages: Resend DPA §11.1, Cloudflare DPA §6.4,
+// vercel.com/docs/security/compliance, policies.google.com/privacy/frameworks (Google LLC) — read 2026-10-05; the list at
+// dataprivacyframework.gov is checked by hand.
 function noticeText(): string {
   const html = files.get('pricing/index.html')!;
   const notice = html.match(/<div[^>]*class="cf__notice"[\s\S]*?<\/div>/)?.[0];
@@ -131,26 +138,36 @@ function noticeText(): string {
   return notice.replace(/<[^>]+>/g, ' ').replace(/&#64;/g, '@').replace(/&#39;/g, "'").replace(/\s+/g, ' ');
 }
 
-test('every recipient the notice names has its own safeguard, and the notice names every third party the code sends the request to', async () => {
+test('the notice names every recipient with its entity, states the DPF as Art. 45 and the SCC as Art. 46 for those that apply them, and names every third party the code sends the request to', async () => {
+  const html = files.get('pricing/index.html')!;
+  const noticeHtml = html.match(/<div[^>]*class="cf__notice"[\s\S]*?<\/div>/)![0];
   const text = noticeText();
-  const paragraph = text.match(/Who receives it: (.+?) A copy of the safeguards/)?.[1];
-  assert.ok(paragraph, 'the notice has no «Who receives it» part');
-  const items = paragraph.replace(/^[^:]+:\s*/, '').split(/;\s*/);
-  assert.ok(items.length >= 4, `only ${items.length} recipients named`);
-  const named = new Map<string, string>();
-  for (const item of items) {
-    const m = item.match(/^(\w+), which .+ \(([^()]+)\)\.?$/);
-    assert.ok(m, `«${item}» names a recipient with no safeguard in brackets`);
-    assert.match(m[2], /Standard Contractual Clauses|Data Privacy Framework/, `${m[1]}: «${m[2]}» is no transfer safeguard`);
-    named.set(m[1], m[2]);
-  }
+  // (a) a recipient is «Name, which … (entity, country)» — no safeguard is required inside the item
+  const recipients = text.match(/Who receives it: (.+?) Transfers to the United States/)?.[1];
+  assert.ok(recipients, 'the notice has no «Who receives it» part followed by «Transfers to the United States»');
+  const named = new Map([...recipients.matchAll(/(\w+), which [^()]+\(([^()]+)\)/g)].map((m) => [m[1], m[2]] as const));
+  for (const [name, what] of named) assert.match(what, /United States/, `${name}: «${what}» names no country`);
   // Third parties the code really calls: the host of every fetch() in the function, and the platform the function runs on.
   const fn = await readFile(new URL('../api/contact.ts', import.meta.url), 'utf8');
   const hosts = [...fn.matchAll(/fetch\('https:\/\/([^/']+)/g)].map((m) => m[1]);
   assert.deepEqual(hosts, ['api.resend.com'], 'the function calls a host this test does not know — the notice must name it');
-  assert.ok(named.has('Resend'), 'api.resend.com is called, Resend is not named');
-  assert.ok(named.has('Vercel'), 'the function runs on Vercel (api/contact.ts, vercel.json), Vercel is not named');
-  assert.ok(named.has('Cloudflare') && named.has('Google'), 'the mail routing and mailbox providers are not named');
+  assert.deepEqual([...named.keys()].sort(), ['Cloudflare', 'Google', 'Resend', 'Vercel'], 'recipients named: Resend (api.resend.com), Vercel (the function runs there), Cloudflare and Google (the mail)');
+  // (b) the DPF is the adequacy decision: Art. 45 and the date of the decision, never a «safeguard»
+  assert.match(text, /adequacy decision of 10 July 2023 for the EU-US Data Privacy Framework \(Art\. 45 GDPR\)/, 'the DPF sentence does not name Art. 45 and the decision of 10 July 2023');
+  assert.doesNotMatch(text, /safeguard/i, 'the DPF is an adequacy decision (Art. 45), not a safeguard under Art. 46');
+  // (c) the SCC sentence lists only the recipients whose DPA is linked here; Vercel and Google are not among them
+  const scc = text.match(/under it\. (.+?) also apply the EU Standard Contractual Clauses \(Art\. 46 GDPR\)/)?.[1];
+  assert.ok(scc, 'the notice does not say who applies the Standard Contractual Clauses (Art. 46 GDPR)');
+  const dpaLinks: Readonly<Record<string, string>> = { Resend: 'https://resend.com/legal/dpa', Cloudflare: 'https://www.cloudflare.com/cloudflare-customer-dpa/' };
+  const sccNames = scc.split(/,\s*|\s+and\s+/);
+  for (const n of sccNames) {
+    assert.ok(dpaLinks[n], `${n} is named as applying the SCC, and no DPA of theirs is known to this test — Vercel's DPA carries the SCC only for Pro and Enterprise teams, Google's covers Workspace and Cloud, not a consumer Gmail`);
+    assert.ok(noticeHtml.includes(`href="${dpaLinks[n]}"`), `${n} is named as applying the SCC, its DPA is not linked`);
+  }
+  assert.deepEqual(sccNames.sort(), ['Cloudflare', 'Resend'], 'the SCC are claimed for Resend and Cloudflare, whose DPAs say so');
+  // (d) one copy is offered, once — not «for all four»
+  assert.doesNotMatch(text, /all four/, 'the notice promises something «for all four» again');
+  assert.equal([...text.matchAll(/A copy is available from info@webappski\.com/g)].length, 1);
 });
 
 test('the fields the notice says are used are the fields the form sends and the letter carries — not only the same list as «How long»', async () => {
