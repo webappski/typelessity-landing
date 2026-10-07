@@ -17,7 +17,7 @@ import { ALL_INDUSTRIES } from '../src/app/lib/industries';
 //    routing and mailbox providers instead of «our email hosting provider» (13(1)(e)), and no longer sends the visitor
 //    to the DPA — a processor agreement for customers, where the operator is the processor — to learn who the controller is;
 //  - founder 2026-10-05 (judge answer (a), option i): the controller is named as the canonical legal documents name her —
-//    Victoria Isayeuskaya, sole proprietorship, address, VAT ID — and the retention is 12 months after the last message.
+//    Lizaveta Isayeuskaya, sole proprietorship, address, VAT ID — and the retention is 12 months after the last message.
 // This reads the prerendered pages and the llms files — what a visitor and a crawler receive. Run `npm run build` first.
 
 const DIST = process.env['LANDING_DIST']
@@ -86,7 +86,7 @@ test('the question form carries its Art. 13 notice, and the consent box is requi
   assert.ok(notice, '/pricing has no privacy notice in the form');
   const text = notice.replace(/<[^>]+>/g, ' ').replace(/&#64;/g, '@').replace(/&#39;/g, "'").replace(/\s+/g, ' ');
   const mustSay: Readonly<Record<string, RegExp>> = {
-    'the controller, by the name of the canonical legal documents, with address and VAT ID': /Controller: Victoria Isayeuskaya, sole proprietorship \(jednoosobowa działalność gospodarcza\), the owner of webappski\.com, ul\. Staniszewskiego 19b, 81-603 Gdynia, Poland, VAT ID \(EU\): PL5862405795/,
+    'the controller, by the name of the canonical legal documents, with address and VAT ID': /Controller: Lizaveta Isayeuskaya, sole proprietorship \(jednoosobowa działalność gospodarcza\), the owner of webappski\.com, ul\. Leona Staniszewskiego 19a, 81-603 Gdynia, Poland, VAT ID \(EU\): PL5862379862/,
     'a contact': /info@webappski\.com/,
     'the purpose': /only to answer your question/,
     'the legal basis': /your consent \(Art\. 6\(1\)\(a\) GDPR\)/,

@@ -71,8 +71,8 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
         <div class="cf__notice" id="cf-notice" role="note" aria-labelledby="cf-notice-h">
           <h3 id="cf-notice-h">Privacy notice for this form</h3>
           <p>
-            <strong>Controller:</strong> Victoria Isayeuskaya, sole proprietorship (jednoosobowa działalność gospodarcza), the owner of webappski.com,
-            ul. Staniszewskiego 19b, 81-603 Gdynia, Poland, VAT ID (EU): PL5862405795.
+            <strong>Controller:</strong> Lizaveta Isayeuskaya, sole proprietorship (jednoosobowa działalność gospodarcza), the owner of webappski.com,
+            ul. Leona Staniszewskiego 19a, 81-603 Gdynia, Poland, VAT ID (EU): PL5862379862.
             Contact: <a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a>.
           </p>
           <p>
