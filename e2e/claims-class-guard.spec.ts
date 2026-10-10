@@ -182,17 +182,115 @@ test('no speed word describes the product anywhere — pages, posts, llms files'
   assert.deepEqual(offenders, [], 'speed words describe the product');
 });
 
-test('no duration describes how fast the product is or how long setup takes — pages and llms files', () => {
+// The portfolio advertisement offers Webappski's work, not a measured setup time for Typelessity.
+// Exclude only the complete, unchanged canonical card on the root page; malformed or expanded ads fail closed.
+const PILOT_TEXT = 'Free pilot By application 30 days of work on your AI visibility Apply for the free pilot No contract. No card. No price.';
+const PILOT_HREF = 'https://webappski.com/en/free-aeo-pilot?utm_source=typelessity.com&utm_campaign=free-pilot&utm_medium=banner';
+const OPEN_TAG = /<[a-z][\w:-]*\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi;
+
+function attribute(tag: string, name: string): string | undefined {
+  const attrs = [...tag.matchAll(/\s([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)]
+    .filter((m) => m[1].toLowerCase() === name);
+  return attrs.length === 1 ? (attrs[0][2] ?? attrs[0][3]).replace(/&amp;/g, '&') : undefined;
+}
+
+function classToken(tag: string, name: string): boolean {
+  return attribute(tag, 'class')?.split(/\s+/).includes(name) ?? false;
+}
+
+function withoutCanonicalPilot(path: string, html: string): string {
+  if (path !== 'index.html') return html;
+  const openings = [...html.matchAll(OPEN_TAG)].filter((m) => attribute(m[0], 'data-testid') === 'free-pilot-offer');
+  if (openings.length !== 1) return html;
+  const opening = openings[0];
+  if (!/^<aside\b/i.test(opening[0]) || !classToken(opening[0], 'pilot-offer') ||
+      attribute(opening[0], 'aria-labelledby') !== 'free-pilot-offer-title') return html;
+  const start = opening.index!;
+  let asideDepth = 0;
+  // Consume comments and raw-text elements before interpreting tags as real ancestry.
+  const prefixTokens = /<!--[\s\S]*?-->|<(script|style|textarea|title|xmp|iframe|noembed|noframes)\b(?:"[^"]*"|'[^']*'|[^'">])*>[\s\S]*?<\/\1\s*>|<\/?[a-z][\w:-]*\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi;
+  for (const tag of html.slice(0, start).matchAll(prefixTokens)) {
+    if (/^<\/?aside\b/i.test(tag[0])) asideDepth += /^<\//.test(tag[0]) ? -1 : 1;
+  }
+  if (asideDepth !== 0) return html;
+  const contentStart = start + opening[0].length;
+  const closing = /<\/aside\s*>/gi;
+  closing.lastIndex = contentStart;
+  const end = closing.exec(html);
+  if (!end) return html;
+  const content = html.slice(contentStart, end.index);
+  if (/<\/?(?:aside|li|script|style)\b/i.test(content)) return html;
+  const fragment = html.slice(start, end.index + end[0].length);
+  const tags = [...content.matchAll(OPEN_TAG)].map((m) => m[0]);
+  const titles = tags.filter((t) => attribute(t, 'id') === 'free-pilot-offer-title');
+  const links = tags.filter((t) => /^<a\b/i.test(t));
+  if (titles.length !== 1 || !/^<p\b/i.test(titles[0]) || !classToken(titles[0], 'pilot-offer__title')) return html;
+  if (links.length !== 1 || !classToken(links[0], 'pilot-offer__button') ||
+      attribute(links[0], 'data-testid') !== 'pilot-hook-button' || attribute(links[0], 'href') !== PILOT_HREF ||
+      /\s(?:target|download|onclick)\b/i.test(links[0])) return html;
+  if (visibleText(fragment).trim() !== PILOT_TEXT) return html;
+  return html.slice(0, start) + html.slice(end.index + end[0].length);
+}
+
+function durationOffenders(files: Iterable<readonly [string, string]>): string[] {
   const offenders: string[] = [];
-  for (const [path, body] of pages) {
+  for (const [path, body] of files) {
     if (isBlog(path) || path.endsWith('.xml')) continue; // posts: see the next test
-    const text = path.endsWith('.html') ? visibleText(body) : body;
+    const text = path.endsWith('.html') ? visibleText(withoutCanonicalPilot(path, body)) : body;
     for (const s of sentences(text)) {
       if (!DURATION.test(s) || CONFIG_FACT.test(s)) continue;
       offenders.push(`${path}: ${s.slice(0, 160)}`);
     }
   }
-  assert.deepEqual(offenders, [], 'a duration of our product has no measurement or contract behind it');
+  return offenders;
+}
+
+test('no duration describes how fast the product is or how long setup takes — pages and llms files', () => {
+  assert.deepEqual(durationOffenders(pages), [], 'a duration of our product has no measurement or contract behind it');
+});
+
+test('the real built portfolio card is distinct from product duration claims; mutations remain guarded', () => {
+  const html = pages.get('index.html')!;
+  const qualified = withoutCanonicalPilot('index.html', html);
+  assert.notEqual(qualified, html, 'the actual built canonical card must qualify');
+  assert.deepEqual(durationOffenders([['index.html', html]]), []);
+  assert.equal(withoutCanonicalPilot('pricing/index.html', html), html, 'never exempt another route');
+  const quotedTag = html.replace('<aside', '<div data-note="<aside>"></div><aside');
+  assert.notEqual(withoutCanonicalPilot('index.html', quotedTag), quotedTag, 'quoted text in another tag is not ancestry');
+  const commentedTag = html.replace('<aside', '<!-- <aside> --><aside');
+  assert.notEqual(withoutCanonicalPilot('index.html', commentedTag), commentedTag, 'comment text is not ancestry');
+  const card = html.slice(html.indexOf('<aside'), html.indexOf('</aside>') + '</aside>'.length);
+  assert.match(card, /data-testid="free-pilot-offer"/);
+  const outsideClaim = 'Typelessity setup takes 30 days.';
+  // Terminate the preceding navigation/heading text so the guard reports this injected sentence itself.
+  const outside = html.replace(card, `${card}<p>. ${outsideClaim}</p>`);
+  assert.ok(durationOffenders([['index.html', outside]]).some((s) => s.includes(outsideClaim)), 'outside claim must be identified');
+  const insideClaim = 'Typelessity installs in 5 minutes.';
+  const inside = html.replace(card, card.replace('</aside>', `<p>${insideClaim}</p></aside>`));
+  assert.equal(withoutCanonicalPilot('index.html', inside), inside, 'expanded card must not qualify');
+  assert.ok(durationOffenders([['index.html', inside]]).some((s) => s.includes(insideClaim)), 'inside claim must be identified');
+  const mutations = [
+    ['wrong destination', card.replace('https://webappski.com/en/free-aeo-pilot', 'https://example.invalid/pilot')],
+    ['conversation list', card.replace('</aside>', `<li class="conv">${insideClaim}</li></aside>`)],
+    ['nested aside', card.replace('</aside>', '<aside></aside></aside>')],
+    ['outer aside', `<aside>${card}</aside>`],
+    ['outer aside with quoted closing tag', `<aside><div data-note="</aside>">${card}</div></aside>`],
+    ['outer aside with commented closing tag', `<aside><!-- </aside> -->${card}</aside>`],
+    ['outer aside with script text', `<aside><script>const tag="</aside>";</script>${card}</aside>`],
+    ['outer aside with style text', `<aside><style>.note::after{content:"</aside>"}</style>${card}</aside>`],
+    ['incomplete aside', card.replace('</aside>', '')],
+    ['duplicate card', card + card],
+    ['script content', card.replace('</aside>', '<script>void 0;</script></aside>')],
+    ['style content', card.replace('</aside>', '<style>.pilot-offer{}</style></aside>')],
+  ] as const;
+  for (const [name, changedCard] of mutations) {
+    const mutated = html.replace(card, changedCard);
+    assert.equal(withoutCanonicalPilot('index.html', mutated), mutated, `${name} must be rejected explicitly`);
+    // The existing conversation helper strips li.conv; rejection must retain the real ad's duration,
+    // rather than pretend the scanner can see that hidden list item's injected phrase.
+    assert.match(visibleText(mutated), /30 days of work on your AI visibility/, `${name} must retain the guarded duration`);
+    assert.ok(durationOffenders([['index.html', mutated]]).length > 0, `${name} must keep the guard red`);
+  }
 });
 
 test('posts: no duration of the product, no setup time, no «time to live» row', () => {
