@@ -97,11 +97,13 @@
     padding-bottom: 24px;
     &__title { font-size: 24px; }
     &__action { max-width: none; }
+    // Full-width button from 850px down, so the centred note sits under it (768–850 too).
+    &__button { width: 100%; }
   }
 }
 
 @media (max-width: 767px) {
-  .pilot-offer__button { width: 100%; padding: 8px 32px; }
+  .pilot-offer__button { padding: 8px 32px; }
 }
 
 // ── Hero ─────────────────────────────────────────

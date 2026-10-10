@@ -270,6 +270,8 @@ test('the real built portfolio card is distinct from product duration claims; mu
   assert.equal(withoutCanonicalPilot('index.html', inside), inside, 'expanded card must not qualify');
   assert.ok(durationOffenders([['index.html', inside]]).some((s) => s.includes(insideClaim)), 'inside claim must be identified');
   const mutations = [
+    ['changed title', card.replace('30 days of work on your AI visibility', '30 days of work on your AI visibility, guaranteed')],
+    ['new-tab link', card.replace('<a ', '<a target="_blank" ')],
     ['wrong destination', card.replace('https://webappski.com/en/free-aeo-pilot', 'https://example.invalid/pilot')],
     ['conversation list', card.replace('</aside>', `<li class="conv">${insideClaim}</li></aside>`)],
     ['nested aside', card.replace('</aside>', '<aside></aside></aside>')],

@@ -24,7 +24,7 @@ test('home has the exact compact offer and a real application anchor', async ({ 
   expect(await offer.evaluate((node, hero) => !!(node.compareDocumentPosition(document.querySelector(hero)!) & Node.DOCUMENT_POSITION_FOLLOWING), HERO)).toBe(true);
 });
 
-for (const width of [320, 390, 850, 1024, 1440]) {
+for (const width of [320, 390, 800, 850, 1024, 1440]) {
   test(`offer is contained, padded and separated from hero at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto('/');
@@ -38,6 +38,10 @@ for (const width of [320, 390, 850, 1024, 1440]) {
       const copy = card.querySelector('.pilot-offer__copy')!.getBoundingClientRect();
       const action = card.querySelector('.pilot-offer__action')!.getBoundingClientRect();
       const link = card.querySelector('a')!.getBoundingClientRect();
+      // Where the note's text actually sits, not its block box: it must read as the button's caption.
+      const noteRange = document.createRange();
+      noteRange.selectNodeContents(card.querySelector('.pilot-offer__note')!);
+      const note = noteRange.getBoundingClientRect();
       const badgeStyle = getComputedStyle(card.querySelector('.pilot-offer__badge')!);
       const rgb = (color: string) => color.match(/[\d.]+/g)!.map(Number);
       const foreground = rgb(badgeStyle.color);
@@ -56,6 +60,8 @@ for (const width of [320, 390, 850, 1024, 1440]) {
         heroGap: hero.top - rect.bottom, paddingBottom: parseFloat(style.paddingBottom),
         borderLeft: parseFloat(style.borderLeftWidth), radius: parseFloat(style.borderRadius),
         buttonHeight: link.height, buttonLeft: link.left, buttonRight: link.right,
+        buttonCenter: link.left + link.width / 2, noteCenter: note.left + note.width / 2,
+        noteLeft: note.left, noteRight: note.right,
         copyRight: copy.right, copyBottom: copy.bottom, actionLeft: action.left, actionTop: action.top,
         viewportWidth: innerWidth, scrollWidth: document.documentElement.scrollWidth,
         cardOverflow: card.scrollWidth > card.clientWidth + 1, badgeContrast };
@@ -70,6 +76,10 @@ for (const width of [320, 390, 850, 1024, 1440]) {
     expect(metrics.buttonHeight).toBeGreaterThanOrEqual(44);
     expect(metrics.buttonLeft).toBeGreaterThan(metrics.left);
     expect(metrics.buttonRight).toBeLessThan(metrics.right);
+    // The note is centred under the button and never wider than it (code review 2026-10-10, 768–850px).
+    expect(Math.abs(metrics.noteCenter - metrics.buttonCenter)).toBeLessThanOrEqual(1);
+    expect(metrics.noteLeft).toBeGreaterThanOrEqual(metrics.buttonLeft - 1);
+    expect(metrics.noteRight).toBeLessThanOrEqual(metrics.buttonRight + 1);
     expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
     expect(metrics.cardOverflow).toBe(false);
     expect(metrics.badgeContrast).toBeGreaterThanOrEqual(4.5);
