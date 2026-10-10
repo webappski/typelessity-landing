@@ -8,8 +8,8 @@
 //      they are — they check the prerendered bytes a crawler receives, which a browser does not.
 //   4. `npm run e2e:browser` runs them.
 //
-// The web server is the real SSR build (`npm run build` first). With a server already on :4000
-// it is reused.
+// The web server is the real SSR build (`npm run build` first). Each run starts a fresh
+// server with loopback hosts allowed; an occupied :4000 fails instead of reusing stale settings.
 
 import { defineConfig, devices } from '@playwright/test';
 
@@ -25,9 +25,11 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
+    // Angular SSR must accept this local QA host instead of returning a CSR shell.
+    env: { NG_ALLOWED_HOSTS: 'localhost,127.0.0.1' },
     command: 'PORT=4000 npm run serve:ssr:typelessity-landing',
     url: 'http://localhost:4000',
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 60_000,
   },
 });
