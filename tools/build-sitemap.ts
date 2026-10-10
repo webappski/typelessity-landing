@@ -19,7 +19,9 @@ interface Url {
 }
 
 const STATIC_PATHS: Url[] = [
-  { path: '/', changefreq: 'weekly', priority: 1.0 },
+  // Fixed date of the last significant change to the home page (the Free Pilot card, 2026-10-10),
+  // not the build time: a lastmod that moves on every build tells a crawler nothing.
+  { path: '/', changefreq: 'weekly', priority: 1.0, lastmod: '2026-10-10' },
   { path: '/how-it-works', changefreq: 'monthly', priority: 0.9 },
   { path: '/pricing', changefreq: 'monthly', priority: 0.9 },
   { path: '/industries', changefreq: 'weekly', priority: 0.9 },
