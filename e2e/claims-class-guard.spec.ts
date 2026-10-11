@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { HOME } from '../src/app/pages/home/home.content';
+import { BADGE } from './free-pilot-copy';
 
 // A45e (c8 2026-10-03): the second CRO and promises/legal verdicts on the landing release found four classes
 // the earlier guards (A45, A45c) did not reach, because those guards listed phrases instead of reading the class:
@@ -184,7 +185,7 @@ test('no speed word describes the product anywhere — pages, posts, llms files'
 
 // The portfolio advertisement offers Webappski's work, not a measured setup time for Typelessity.
 // Exclude only the complete, unchanged canonical card on the root page; malformed or expanded ads fail closed.
-const PILOT_TEXT = 'Free pilot By application 30 days of work on your AI visibility Apply for the free pilot No contract. No card. No price.';
+const PILOT_TEXT = `${BADGE} By application 30 days of work on your AI visibility Apply for the free pilot No contract. No card. No price.`;
 const PILOT_HREF = 'https://webappski.com/en/free-aeo-pilot?utm_source=typelessity.com&utm_campaign=free-pilot&utm_medium=banner';
 const OPEN_TAG = /<[a-z][\w:-]*\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi;
 
@@ -271,6 +272,7 @@ test('the real built portfolio card is distinct from product duration claims; mu
   assert.ok(durationOffenders([['index.html', inside]]).some((s) => s.includes(insideClaim)), 'inside claim must be identified');
   const mutations = [
     ['changed title', card.replace('30 days of work on your AI visibility', '30 days of work on your AI visibility, guaranteed')],
+    ['old badge without Webappski', card.replace(BADGE, 'Free pilot')],
     ['new-tab link', card.replace('<a ', '<a target="_blank" ')],
     ['wrong destination', card.replace('https://webappski.com/en/free-aeo-pilot', 'https://example.invalid/pilot')],
     ['conversation list', card.replace('</aside>', `<li class="conv">${insideClaim}</li></aside>`)],

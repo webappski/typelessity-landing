@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { join } from 'node:path';
+import { BADGE, COPY } from '../free-pilot-copy';
 
 const HREF = 'https://webappski.com/en/free-aeo-pilot?utm_source=typelessity.com&utm_campaign=free-pilot&utm_medium=banner';
-const COPY = ['Free pilot', 'By application', '30 days of work on your AI visibility', 'Apply for the free pilot', 'No contract. No card. No price.'];
 const HERO = '.home-hero__grid';
 
 // The local app renders normally; only unrelated external services are blocked.
@@ -24,6 +24,15 @@ test('home has the exact compact offer and a real application anchor', async ({ 
   expect(await offer.evaluate((node, hero) => !!(node.compareDocumentPosition(document.querySelector(hero)!) & Node.DOCUMENT_POSITION_FOLLOWING), HERO)).toBe(true);
 });
 
+test('the badge names Webappski and the application link leaves for webappski.com', async ({ page }) => {
+  await page.goto('/');
+  // The badge comes first: it is the requirement. The host below is weaker than the exact HREF checked
+  // in the test above, so it is not an independent guard; it states the brief's wording.
+  await expect(page.getByTestId('free-pilot-offer').locator('.pilot-offer__badge')).toHaveText(BADGE);
+  const href = await page.getByTestId('pilot-hook-button').getAttribute('href');
+  expect(new URL(href!).hostname).toBe('webappski.com');
+});
+
 for (const width of [320, 390, 800, 850, 1024, 1440]) {
   test(`offer is contained, padded and separated from hero at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
@@ -42,7 +51,11 @@ for (const width of [320, 390, 800, 850, 1024, 1440]) {
       const noteRange = document.createRange();
       noteRange.selectNodeContents(card.querySelector('.pilot-offer__note')!);
       const note = noteRange.getBoundingClientRect();
-      const badgeStyle = getComputedStyle(card.querySelector('.pilot-offer__badge')!);
+      const badge = card.querySelector('.pilot-offer__badge')!;
+      const badgeStyle = getComputedStyle(badge);
+      // The pill must not break inside: its text height without the vertical padding stays within 1.5 lines.
+      const badgeTextHeight = badge.getBoundingClientRect().height - parseFloat(badgeStyle.paddingTop) - parseFloat(badgeStyle.paddingBottom);
+      const badgeLineHeight = parseFloat(badgeStyle.lineHeight);
       const rgb = (color: string) => color.match(/[\d.]+/g)!.map(Number);
       const foreground = rgb(badgeStyle.color);
       const background = rgb(badgeStyle.backgroundColor);
@@ -64,7 +77,7 @@ for (const width of [320, 390, 800, 850, 1024, 1440]) {
         noteLeft: note.left, noteRight: note.right,
         copyRight: copy.right, copyBottom: copy.bottom, actionLeft: action.left, actionTop: action.top,
         viewportWidth: innerWidth, scrollWidth: document.documentElement.scrollWidth,
-        cardOverflow: card.scrollWidth > card.clientWidth + 1, badgeContrast };
+        cardOverflow: card.scrollWidth > card.clientWidth + 1, badgeContrast, badgeTextHeight, badgeLineHeight };
     }, HERO);
     expect(metrics.left).toBeGreaterThanOrEqual(0);
     expect(metrics.right).toBeLessThanOrEqual(width);
@@ -83,6 +96,9 @@ for (const width of [320, 390, 800, 850, 1024, 1440]) {
     expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
     expect(metrics.cardOverflow).toBe(false);
     expect(metrics.badgeContrast).toBeGreaterThanOrEqual(4.5);
+    // `line-height: normal` parses to NaN and would let the next line pass silently.
+    expect(metrics.badgeLineHeight).toBeGreaterThan(0);
+    expect(metrics.badgeTextHeight).toBeLessThanOrEqual(1.5 * metrics.badgeLineHeight);
     if (width <= 850) expect(metrics.actionTop).toBeGreaterThanOrEqual(metrics.copyBottom + 16);
     else expect(metrics.actionLeft).toBeGreaterThanOrEqual(metrics.copyRight + 32);
     if (process.env['PILOT_PROOF_DIR'] && [390, 1440].includes(width)) {
@@ -125,7 +141,7 @@ test('built home exposes the compact offer and link without JavaScript', async (
   const html = await response.text();
   const fragment = html.match(/<aside\b[^>]*data-testid="free-pilot-offer"[^>]*>[\s\S]*?<\/aside>/)?.[0];
   expect(fragment, 'offer must exist in real prerendered HTML').toBeTruthy();
-  for (const text of ['Free pilot', 'By application', '30 days of work on your AI visibility', 'Apply for the free pilot', 'No contract. No card. No price.']) expect(fragment).toContain(text);
+  for (const text of COPY) expect(fragment).toContain(text);
   const href = fragment!.match(/href="([^"]+)"/)?.[1].replace(/&amp;/g, '&');
   expect(href).toBe('https://webappski.com/en/free-aeo-pilot?utm_source=typelessity.com&utm_campaign=free-pilot&utm_medium=banner');
   const context = await browser.newContext({ javaScriptEnabled: false, baseURL: response.url() });
