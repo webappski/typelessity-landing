@@ -1,37 +1,108 @@
 #!/usr/bin/env bash
-# typelessity-landing pre-push hook — runs FULL tier before push.
+# typelessity-landing pre-push hook — runs EVERY tier before a push.
+# A push to main deploys to production at once (Vercel) and the repo has no CI in
+# GitHub Actions, so this hook is the only guard. Order:
+#   guards (pushed SHA = HEAD, tracked files = HEAD) · unit · unit-rerun (main/master only)
+#   · build · e2e · e2e:browser
+# e2e and e2e:browser read the built dist/, so they run after build, and build + e2e +
+# e2e:browser share ONE machine lock (heavy-run, R60) so nobody rebuilds dist mid-check.
+# Output contract: first line "[pre-push] HEAD <sha>", last line "[pre-push] exit <code>".
 # Bypass: `git push --no-verify` (only for fast hotfix to non-shared branch).
 
-remote="$1"
-url="$2"
+HEAVY="$HOME/Projects/webappski-ops/scripts/heavy-run.sh"
+SELF="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+PASSED=""
 
-while read local_ref local_sha remote_ref remote_sha; do
-  if [[ "$local_ref" == refs/tags/* ]]; then
-    echo "[pre-push] pushing tag $local_ref — skipping test run"
-    exit 0
+# Inside the machine lock this same file runs again with PRE_PUSH_LOCKED=1: it prints no
+# HEAD / exit lines of its own, the outer run owns them.
+finish() {
+  [ -n "$PRE_PUSH_LOCKED" ] || echo "[pre-push] exit $1"
+  exit "$1"
+}
+
+blocked() { # blocked <step> [detail]
+  echo ""
+  echo "[pre-push] BLOCKED — $1 failed"
+  [ -n "$2" ] && echo "[pre-push] $2"
+  finish 1
+}
+
+run_step() { # run_step <name> <command...>
+  local name="$1"
+  shift
+  echo "[pre-push] $name: $*"
+  "$@" </dev/null || blocked "$name"
+  PASSED="${PASSED:+$PASSED, }$name"
+}
+
+if [ -n "$PRE_PUSH_LOCKED" ]; then
+  # The build runs generators (blog index, sitemap) that can rewrite tracked files.
+  # What gets pushed must be what was tested, so a changed tree blocks the push.
+  before=$(git status --porcelain)
+  run_step build npm run build
+  after=$(git status --porcelain)
+  if [ "$before" != "$after" ]; then
+    changed=$(diff <(printf '%s\n' "$before") <(printf '%s\n' "$after") | sed -n 's/^[<>] //p' | paste -sd';' -)
+    echo ""
+    echo "[pre-push] BLOCKED — build changed tracked files: $changed"
+    finish 1
+  fi
+  run_step e2e npm run e2e
+  run_step e2e:browser npm run e2e:browser
+  finish 0
+fi
+
+HEAD_SHA=$(git rev-parse HEAD)
+echo "[pre-push] HEAD $HEAD_SHA"
+
+# Pushing only tags skips the run. A branch pushed together with tags (--follow-tags) does not.
+refs=0
+non_tags=0
+while read -r local_ref local_sha remote_ref remote_sha || [ -n "$local_ref" ]; do # a last line without "\n" still counts
+  [ -n "$local_ref" ] || continue
+  refs=$((refs + 1))
+  [[ "$local_ref" == refs/tags/* ]] && continue
+  non_tags=$((non_tags + 1))
+  case "$local_sha" in *[!0]*) ;; *) continue ;; esac # all zeros = a deletion, nothing is pushed
+  if [ "$local_sha" != "$HEAD_SHA" ]; then
+    echo ""
+    echo "[pre-push] BLOCKED — pushing $local_sha but HEAD is $HEAD_SHA — check out what you push"
+    finish 1
   fi
 done
-
-echo "[pre-push] running npm test (full tier)..."
-EXIT=0
-npm test || EXIT=$?
-
-if [ $EXIT -ne 0 ]; then
-  echo ""
-  echo "[pre-push] BLOCKED — tests failed. Fix before push OR use --no-verify for non-shared branch."
-  exit 1
+if [ "$refs" -gt 0 ] && [ "$non_tags" -eq 0 ]; then
+  echo "[pre-push] pushing only tags — skipping test run"
+  finish 0
 fi
+
+if ! git diff --quiet HEAD; then
+  echo ""
+  echo "[pre-push] BLOCKED — tracked files differ from HEAD — the run would not test what is pushed: $(git diff --name-only HEAD | paste -sd';' -)"
+  finish 1
+fi
+
+run_step unit npm test
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
-  echo "[pre-push] running deterministic check (2nd run for main/master)..."
-  EXIT2=0
-  npm test || EXIT2=$?
-  if [ $EXIT2 -ne 0 ]; then
-    echo "[pre-push] BLOCKED — flake detected (pass on run 1, fail on run 2). Investigate before push to main."
-    exit 1
-  fi
+  echo "[pre-push] unit-rerun: npm test (2nd run for main/master)"
+  npm test </dev/null || blocked unit-rerun "flake detected — passed on run 1, failed on run 2. Investigate before push to main."
+  PASSED="$PASSED, unit-rerun"
 fi
 
-echo "[pre-push] all tests passed (deterministic)"
-exit 0
+echo "[pre-push] locked tiers (one machine lock): build, e2e, e2e:browser"
+if [ -x "$HEAVY" ]; then
+  PRE_PUSH_LOCKED=1 "$HEAVY" --wait --prio 1 bash "$SELF" </dev/null
+else
+  echo "[pre-push] heavy-run.sh not found at $HEAVY — running the locked tiers directly"
+  PRE_PUSH_LOCKED=1 bash "$SELF" </dev/null
+fi
+rc=$?
+case "$rc" in
+  0) PASSED="$PASSED, build, e2e, e2e:browser" ;;
+  1) finish 1 ;; # the locked run has already printed which tier failed
+  *) blocked heavy-run "the locked tiers did not run (exit $rc; 9 = machine lock not obtained in 30 minutes)" ;;
+esac
+
+echo "[pre-push] all tiers passed: $PASSED"
+finish 0
