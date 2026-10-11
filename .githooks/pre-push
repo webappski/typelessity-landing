@@ -7,7 +7,6 @@
 # e2e and e2e:browser read the built dist/, so they run after build, and build + e2e +
 # e2e:browser share ONE machine lock (heavy-run, R60) so nobody rebuilds dist mid-check.
 # Output contract: first line "[pre-push] HEAD <sha>", last line "[pre-push] exit <code>".
-# Bypass: `git push --no-verify` (only for fast hotfix to non-shared branch).
 
 HEAVY="$HOME/Projects/webappski-ops/scripts/heavy-run.sh"
 SELF="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"

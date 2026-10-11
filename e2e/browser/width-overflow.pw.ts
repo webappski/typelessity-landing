@@ -138,6 +138,25 @@ test('sitemap.xml is built and complete', () => {
   expect(missingPosts, 'blog posts that the sitemap does not list').toEqual([]);
 });
 
+// The article body hyphenates (`hyphens: auto` on its paragraphs), and inline code wraps on a phone since
+// the width fix. `hyphens` is inherited, so without its own `none` the code would come out as «de-pendsOn»
+// (seen on a frame of this very article, 2026-10-11). The computed value is the proof, at the width where
+// the code wraps.
+test('/blog/cascade-corrections @320: inline code is not hyphenated inside a hyphenating paragraph', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: HEIGHT });
+  await page.goto('/blog/cascade-corrections');
+  await settle(page);
+  const codes = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.blog-post__body p code, .blog-post__body li code, .blog-post__body td code')).map((code) => {
+      const paragraph = code.closest('p');
+      return { text: code.textContent, hyphens: getComputedStyle(code).hyphens, paragraph: paragraph ? getComputedStyle(paragraph).hyphens : null };
+    }));
+  expect(codes.length, 'inline code elements in the article body').toBeGreaterThan(0);
+  expect(codes.filter((c) => c.paragraph !== null && c.paragraph !== 'auto'), 'paragraphs holding inline code must hyphenate (otherwise the check below proves nothing)').toEqual([]);
+  expect(codes.some((c) => c.paragraph === 'auto'), 'at least one inline code sits in a hyphenating paragraph').toBe(true);
+  expect(codes.filter((c) => c.hyphens !== 'none'), 'inline code that may be hyphenated').toEqual([]);
+});
+
 if (!sitemapError && paths.length > 0) {
   for (const width of WIDTHS) {
     for (const path of paths) {
