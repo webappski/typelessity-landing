@@ -763,7 +763,8 @@
 
 // ── Responsive ──────────────────────────────────
 @media (max-width: 860px) {
-  .home-hero__grid { grid-template-columns: 1fr; gap: 40px; }
+  // minmax(0, 1fr), not 1fr: a bare 1fr track grows with its widest child and cuts the heading off on a phone.
+  .home-hero__grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .home-hero__right { min-height: auto; }
   .home-answer__grid { grid-template-columns: 1fr; gap: 28px; }
   .home-stats__row { grid-template-columns: repeat(2, 1fr); }

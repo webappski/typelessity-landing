@@ -9,6 +9,9 @@
   position: relative;
   display: grid;
   grid-template-rows: 1fr;
+  // A bare column grows to the widest JSON line below (white-space: pre) and pushes the cards out of the
+  // hero column on a phone; minmax(0, 1fr) lets it shrink, so the JSON scrolls inside its card instead.
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   padding: 18px;
   border-radius: var(--radius-lg);
@@ -140,6 +143,7 @@
     margin: 0;
     color: var(--text-primary);
     white-space: pre;
+    overflow-x: auto;
   }
 
   &__tag {

@@ -353,7 +353,11 @@
     border-radius: 4px;
     color: var(--text-primary);
     border: 1px solid rgba(255, 255, 255, 0.04);
-    white-space: nowrap;
+    // A long value (key=value pairs, a quoted sentence) wraps; nowrap scrolled the whole page sideways on a phone.
+    // The body hyphenates, but an identifier like dependsOn must not come out as «de-pendsOn».
+    white-space: normal;
+    overflow-wrap: anywhere;
+    hyphens: none;
   }
 
   // ── Pre / code blocks ──
