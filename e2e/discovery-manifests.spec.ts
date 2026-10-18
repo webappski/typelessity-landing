@@ -2,7 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { LANDING_LANGUAGES, NOT_SUPPORTED_LANGUAGES } from './claims-dictionary';
 
 // R42/R36 smoke for the discovery manifests (llms.txt / llms-full.txt). These are the first
 // files an AI crawler reads, and they are served verbatim — whatever URL they print is the URL
@@ -133,4 +134,42 @@ test('manifests still link the one legal page this domain serves', async () => {
       assert.ok(body.includes(ONSITE_LEGAL_URL), `${name} dropped ${ONSITE_LEGAL_URL}, a real page here`);
     }
   });
+});
+
+// L0 (18.10): what the manifests say about languages and industries is checked against the code and the build,
+// not against a list of old phrases. The 25 chat-window languages are LANDING_LANGUAGES (SUPPORTED_LOCALES of the
+// product, types.ts:219-245 @ 027a177); the seven industry pages are the ones the redesign keeps (QUEUE L1б, L8).
+const INDUSTRY_SLUGS = [
+  'beauty-hair-salons', 'hospitality-restaurants', 'fitness-yoga-studios', 'automotive-driving-schools',
+  'automotive-repair', 'fitness-gyms', 'education-tutoring',
+] as const;
+
+test('llms.txt names exactly the 25 chat-window languages of the code, with no "+" and no unsupported language', async () => {
+  await withServer(async (base) => {
+    const [[, short], [, full]] = await fetchManifests(base);
+    const languageLine = short.split('\n').find((l) => l.startsWith('- **Languages:**')) ?? '';
+    assert.ok(languageLine.includes('25 languages'), `llms.txt Languages line does not say "25 languages": ${languageLine}`);
+    for (const lang of LANDING_LANGUAGES) assert.ok(languageLine.includes(lang), `llms.txt Languages line is missing ${lang}`);
+    assert.equal(LANDING_LANGUAGES.length, 25);
+    const listed = languageLine.match(/\(([^)]*)\)/)?.[1].split(',').map((x) => x.trim()) ?? [];
+    assert.deepEqual(listed, [...LANDING_LANGUAGES], 'llms.txt lists a different set of languages than the code');
+    for (const [name, body] of [['llms.txt', short], ['llms-full.txt', full]]) {
+      assert.ok(!/\b25\+/.test(body), `${name} still says 25+`);
+      for (const lang of NOT_SUPPORTED_LANGUAGES) assert.ok(!body.includes(lang), `${name} names ${lang}, which the code does not support`);
+      assert.ok(body.includes('25 languages'), `${name} never says "25 languages"`);
+    }
+  });
+});
+
+test('manifests link the seven industry pages, never the bare /industries hub, and every page is in the build', async () => {
+  await withServer(async (base) => {
+    for (const [name, body] of await fetchManifests(base)) {
+      assert.ok(!/\/industries(?![/\w-])/.test(body), `${name} still prints the bare /industries address`);
+      const printed = [...new Set([...body.matchAll(/typelessity\.com\/industries\/([a-z0-9-]+)/g)].map((m) => m[1]))].sort();
+      assert.deepEqual(printed, [...INDUSTRY_SLUGS].sort(), `${name} prints a different set of industry pages than the seven`);
+    }
+  });
+  for (const slug of INDUSTRY_SLUGS) {
+    assert.ok(existsSync(new URL(`industries/${slug}/index.html`, DIST)), `dist has no page for ${slug}`);
+  }
 });

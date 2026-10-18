@@ -1,9 +1,11 @@
 import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { HOME } from '../src/app/pages/home/home.content';
 import { BADGE } from './free-pilot-copy';
+import { CLAIM_CLASSES, countClaims, type ClaimCounts } from './claims-dictionary';
 
 // A45e (c8 2026-10-03): the second CRO and promises/legal verdicts on the landing release found four classes
 // the earlier guards (A45, A45c) did not reach, because those guards listed phrases instead of reading the class:
@@ -471,4 +473,91 @@ test('industry pages: the widget collects a request or the details — it does n
     }
   }
   assert.deepEqual(offenders, []);
+});
+
+// ── L0 (18.10): the dictionary of words the site does not print — seo-lead §6 as classes K1–K14 ──────────
+// The words live in e2e/claims-dictionary.ts. The llms files are held hard: 0 matches, in public/ and in dist.
+// The built HTML is held by a ratchet, because the pages still carry these words until L4–L9 rewrite them:
+// e2e/claims-dictionary-baseline.json lists {page: {class: count}}. A new page or class, or a higher count, is red
+// (nothing new may appear); a LOWER count with the baseline not lowered is red too (the way ESLint reports
+// unused suppressions, eslint.org/docs/latest/use/suppressions). CLAIMS_BASELINE=write creates the file once (it
+// must not exist); CLAIMS_BASELINE=prune lowers counts and drops entries, and fails on any growth. A .txt path
+// is never written to the baseline. L10 requires the baseline to be empty.
+const BASELINE = new URL('./claims-dictionary-baseline.json', import.meta.url);
+const PUBLIC_DIR = new URL('../public/', import.meta.url);
+
+function describeCounts(c: ClaimCounts): string {
+  return Object.entries(c).map(([k, n]) => `${k}×${n}`).join(' ');
+}
+
+test('dictionary: each class catches its mutants and lets its legal form through', () => {
+  for (const c of CLAIM_CLASSES) {
+    for (const m of c.mutants) assert.ok(countClaims(m)[c.id] > 0, `${c.id} (${c.name}) does not catch «${m}»`);
+    assert.deepEqual(countClaims(c.legal), {}, `${c.id} (${c.name}) flags its own legal form «${c.legal}»`);
+  }
+  assert.deepEqual(CLAIM_CLASSES.map((c) => c.id), Array.from({ length: 14 }, (_, i) => `K${i + 1}`));
+});
+
+test('dictionary: public/*.txt print none of the words — 0 matches, no ratchet', async () => {
+  const txt = (await readdir(PUBLIC_DIR)).filter((n) => n.endsWith('.txt'));
+  assert.ok(txt.includes('llms.txt') && txt.includes('llms-full.txt'), 'public/ lost an llms file');
+  const offenders: string[] = [];
+  for (const name of txt) {
+    const found = countClaims(await readFile(new URL(name, PUBLIC_DIR), 'utf8'));
+    if (Object.keys(found).length) offenders.push(`public/${name}: ${describeCounts(found)}`);
+  }
+  assert.deepEqual(offenders, [], 'a word of the dictionary is back in a public text file');
+});
+
+test('dictionary: the built .txt files print none of the words — 0 matches, no ratchet', () => {
+  const offenders: string[] = [];
+  let seen = 0;
+  for (const [path, body] of everything) {
+    if (!path.endsWith('.txt')) continue;
+    seen++;
+    const found = countClaims(body);
+    if (Object.keys(found).length) offenders.push(`${path}: ${describeCounts(found)}`);
+  }
+  assert.ok(seen >= 3, `expected llms.txt, llms-full.txt and the IndexNow key in the build, saw ${seen} .txt files`);
+  assert.deepEqual(offenders, [], 'a word of the dictionary is in a built .txt file');
+});
+
+test('dictionary: the built HTML only holds the words the baseline lists, and only as many', async () => {
+  const current: Record<string, ClaimCounts> = {};
+  for (const [path, body] of pages) {
+    if (!path.endsWith('.html')) continue;
+    const found = countClaims(body);
+    if (Object.keys(found).length) current[path] = found;
+  }
+  const mode = process.env['CLAIMS_BASELINE'];
+  const exists = existsSync(BASELINE);
+  if (mode === 'write') {
+    assert.ok(!exists, 'CLAIMS_BASELINE=write creates the baseline once; it exists — use CLAIMS_BASELINE=prune to lower it');
+    await writeFile(BASELINE, JSON.stringify(current, null, 2) + '\n');
+    return;
+  }
+  assert.ok(exists, 'e2e/claims-dictionary-baseline.json is missing');
+  const baseline = JSON.parse(await readFile(BASELINE, 'utf8')) as Record<string, ClaimCounts>;
+  assert.deepEqual(Object.keys(baseline).filter((p) => p.endsWith('.txt')), [], 'the baseline lists a .txt path — those are held at 0');
+  const grew: string[] = [];
+  const stale: string[] = [];
+  for (const [path, found] of Object.entries(current)) {
+    for (const [cls, n] of Object.entries(found)) {
+      const allowed = baseline[path]?.[cls] ?? 0;
+      if (n > allowed) grew.push(`${path} ${cls}: ${allowed} → ${n}`);
+    }
+  }
+  for (const [path, counts] of Object.entries(baseline)) {
+    for (const [cls, n] of Object.entries(counts)) {
+      const now = current[path]?.[cls] ?? 0;
+      if (now < n) stale.push(`${path} ${cls}: baseline ${n}, now ${now}`);
+    }
+  }
+  if (mode === 'prune') {
+    assert.deepEqual(grew, [], 'CLAIMS_BASELINE=prune only lowers; a word grew or appeared');
+    await writeFile(BASELINE, JSON.stringify(current, null, 2) + '\n');
+    return;
+  }
+  assert.deepEqual(grew, [], 'a word of the dictionary appeared or grew in the built HTML');
+  assert.deepEqual(stale, [], 'the count went down — run CLAIMS_BASELINE=prune npx tsx --test e2e/claims-class-guard.spec.ts in the same commit');
 });
