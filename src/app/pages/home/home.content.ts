@@ -140,44 +140,50 @@ export const HOME = {
   pricing: {
     title: 'Simple, Transparent Pricing',
     sub: 'Choose the plan that fits your business needs.',
+    // The numbers are the product's (packages/api/src/lib/developer-tiers.ts: 50/500/2000/6000 booking requests a month,
+    // 1/5/10/unlimited sites, 0/39/149/399 €); e2e/pricing-faq-facts.spec.ts reads that file and compares. `period` is
+    // drawn on /pricing only; the home page draws name, price, sub and cta (L4 turns the period on there).
     tiers: [
       {
-        name: 'Free Pilot', price: '€0', sub: 'Test Typelessity on your site risk-free.', featured: false,
+        name: 'Free Pilot', price: '€0', sub: 'Test Typelessity on your site risk-free.',
         comingSoon: false,
         bullets: [
-          'Up to 50 submissions/month',
-          'Supports 25+ Languages',
+          'Up to 50 booking requests a month',
+          'Customers speak or type their request',
+          '1 site',
           'Support by email',
         ],
         // comingSoon: true renders a disabled «Coming soon» button instead of the link.
         cta: 'Start free pilot', slug: 'free-pilot',
       },
       {
-        name: 'Starter', price: '€39', sub: 'Perfect for small businesses.', featured: false,
+        name: 'Starter', price: '€39', period: '/ month', sub: 'Perfect for small businesses.',
         comingSoon: false,
         bullets: [
-          'Up to 500 submissions/month',
-          'Supports 25+ Languages',
+          'Up to 500 booking requests a month',
+          'Customers speak or type their request',
+          'Up to 5 sites',
           'Support by email',
         ],
         cta: 'Start with the free pilot', slug: 'starter',
       },
       {
-        name: 'Pro', price: '€149', sub: 'For growing companies with higher volume.', featured: true,
+        name: 'Pro', price: '€149', period: '/ month', sub: 'For growing companies with higher volume.',
         comingSoon: false,
         bullets: [
-          'Up to 2,000 submissions/month',
-          'Supports 25+ Languages',
+          'Up to 2,000 booking requests a month',
+          'Customers speak or type their request',
+          'Up to 10 sites',
           'Support by email',
         ],
         cta: 'Start with the free pilot', slug: 'pro',
       },
       {
-        name: 'Enterprise', price: '€399', sub: 'For large organizations with high volume and contract terms.', featured: false,
+        name: 'Enterprise', price: '€399', period: '/ month', sub: 'For large organizations with high volume and contract terms.',
         comingSoon: false,
         bullets: [
-          'Up to 6,000 submissions/month',
-          'Supports 25+ Languages',
+          'Up to 6,000 booking requests a month',
+          'Customers speak or type their request',
           'Unlimited sites',
           'Support by email',
         ],
@@ -186,6 +192,8 @@ export const HOME = {
     ] as const,
   },
 
+  // L6: the FAQ lives on /faq now (src/app/pages/faq/faq.content.ts, seven groups). Home keeps only what it draws: the Product
+  // preview. Its five vendor comparisons go with L4 (the home page rebuild); FL-L6-2.
   faq: [
     { category: 'Product', q: 'What is Typelessity?', a: 'Typelessity is an AI conversational booking widget that replaces traditional multi-step booking forms with a single natural-language chat. It supports 25+ languages, voice input transcribed by OpenAI gpt-4o-mini-transcribe, and enrichment APIs. It is configured per industry — supported verticals (configurations) include beauty, hospitality, fitness, automotive and education.' },
     { category: 'Product', q: 'How does Typelessity differ from Calendly?', a: 'Calendly is a scheduling-link tool — it shares a calendar and lets people pick a slot. Typelessity replaces an entire booking form with a conversation that can collect any structured data: service, staff member, dates, slots, addresses, vehicle types, party size, and any other field you configure. Use Calendly for simple meeting links, Typelessity when the booking has more than two or three fields.' },
@@ -193,53 +201,8 @@ export const HOME = {
     { category: 'Product', q: 'How does Typelessity differ from Cal.ai?', a: 'Cal.ai is an outbound AI phone-calling feature built into Cal.com Workflows — it places lifelike phone calls to book meetings, send reminders and follow up with leads who have not scheduled yet, billed per minute. Typelessity works the other direction: it is an inbound conversational widget on your own site that collects a complete, structured booking through chat in 25+ languages and submits it to your backend. They sit at different layers and pair well — Cal.ai can follow up by phone after Typelessity captured the booking. Use Cal.ai when your gap is outbound reminder and confirmation calls on top of Cal.com; use Typelessity when your gap is the inbound intake form itself.' },
     { category: 'Product', q: 'How does Typelessity differ from Botpress?', a: 'Botpress is a chatbot framework — you build conversation flows yourself with a visual editor, and you maintain that bot. Typelessity is a ready-made booking widget you set up yourself in the Webappski portal, with a single GPT call extracting every field at once and a review step before anything is sent. Use Botpress when you need a custom-built bot for a non-booking use case. Use Typelessity when you specifically want to replace a booking form and would rather set it up yourself in the portal wizard than build conversation flows.' },
     { category: 'Product', q: 'How does Typelessity differ from NoForm.ai?', a: 'NoForm.ai is a top-of-funnel lead-qualification tool — it captures interest and routes leads to sales. Typelessity completes a structured booking with all required fields (service, date, time, name, contact, party size, etc.) and submits it to your booking system. Use NoForm for marketing lead capture. Use Typelessity when the user is ready to book, not just inquire.' },
-    { category: 'AI Behavior', q: 'Does Typelessity work in non-English languages?', a: 'Yes. Typelessity supports 25+ languages out of the box including English, Russian, German, French, Spanish, Italian, Polish, Portuguese, Dutch, Turkish, Arabic, Hebrew, Japanese, Korean, and Chinese. The configuration language sets the response language; user input can be in any supported language and will be translated and normalized automatically.' },
-    { category: 'AI Behavior', q: 'How accurate is the data extraction?', a: 'Typelessity uses OpenAI (currently gpt-5.4-mini) with a unified prompt that reads each field\'s aiHint. We have not published a measured extraction accuracy for the current model, so we do not quote one. The system never uses hardcoded regex patterns — GPT reads the config and extracts based on semantic context. Code-side guards drop any field the configuration does not define, and the visitor reviews every field before the booking is sent.' },
-    { category: 'AI Behavior', q: "What does 'enrichment' mean?", a: 'Enrichment is an API call that triggers when a specific field is filled. For example: when a user asks for brake pads, Typelessity calls GET /mechanics?service=brakes, receives a list of mechanics, and presents them as interactive cards. Each call times out after 10 seconds by default (configurable). Failures are non-fatal — the AI falls back to asking the user directly.' },
-    { category: 'Integration', q: 'How long does integration take?', a: 'We have not measured a typical setup time, so we do not quote one. Setup is a wizard in the Webappski portal that you complete yourself. Step by step: Your business → Questions → Data & delivery → Messages → Review → Install. Or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back (Your business → Your AI’s answer → Review → Install). Before you publish you can try the widget as a customer; the Install step gives you the embed code for your platform.' },
-    { category: 'Privacy', q: 'Is Typelessity GDPR compliant?', a: 'You are the controller and Typelessity is your processor under a DPA, so here is what we do on our side. The widget asks every visitor for consent before any AI processing begins. The service runs in the EU (Vercel, Frankfurt) and its database is in the EU (Supabase, Ireland); OpenAI, which understands the conversation and transcribes voice, processes in the United States under the 2021 Standard Contractual Clauses. An abandoned conversation is deleted within 48 hours of the visitor\'s last message; one that led to a booking is kept until the business erases it. OpenAI keeps the conversation text for up to 30 days to check for abuse, then deletes it. No data is used for model training.' },
-    { category: 'AI Behavior', q: 'Does Typelessity support voice input?', a: 'Yes. Voice input is transcribed by OpenAI gpt-4o-mini-transcribe. Users tap the microphone, speak naturally, and the transcription is fed into the same extraction pipeline as typed text. Voice works in all 25+ supported languages.' },
-    { category: 'AI Behavior', q: 'How does Typelessity handle corrections?', a: 'If a user changes a previously filled field, the system detects the correction (GPT signals it via a "correction" key), then walks the dependency graph and clears any downstream fields that depended on the changed value. Destructive cascades show a confirmation: "Changing X will also clear Y, Z. Proceed?"' },
-    { category: 'AI Behavior', q: 'What is the per-turn latency?', a: 'We have not measured it on the current model, so we do not quote a number. Each turn makes one AI call to OpenAI (currently gpt-5.4-mini); when an enrichment triggers, a second call presents the API results, which adds time.' },
-    { category: 'Integration', q: 'Can I self-host Typelessity?', a: 'No. Typelessity is a hosted service: the service runs on Vercel in Frankfurt and the database on Supabase in Ireland, and there is no on-premise or self-hosted build. The widget is a Lit web component and the API is a Next.js service; conversations are understood by OpenAI through our account.' },
     { category: 'Product', q: 'Does Typelessity replace my booking system?', a: 'No. Typelessity replaces the booking form, not the booking backend. It collects structured data via conversation and submits it to your existing system by email, webhook or REST POST. Your CRM, calendar, payment processor, and staff scheduler stay exactly as they are.' },
-    { category: 'Pricing', q: 'How much does Typelessity cost?', a: 'Free Pilot (€0): up to 50 submissions/month — full feature access. Starter (€39/mo): up to 500 submissions/month. Pro (€149/mo): up to 2,000 submissions/month. Enterprise (€399/mo): up to 6,000 submissions/month and unlimited sites; a named contact and other contract terms are agreed on request. Support is by email on every plan.' },
-    { category: 'AI Behavior', q: 'Will conversational booking convert better than my current form?', a: 'Head-to-head A/B testing is the only honest answer. Typelessity does not include A/B testing tooling — to measure lift, run the widget and your existing form side by side with your own analytics. We do not publish a hero conversion-lift number on this site because every claim of that shape we have seen in the AI-booking space is either uncited or based on a study with assumptions that do not transfer.' },
     { category: 'Product', q: 'What industries is Typelessity best for?', a: 'Any service business that takes appointments. Supported verticals (configurations) include beauty salons, hospitality, fitness, automotive services and education. The same engine handles every vertical — configuration changes the field schema, prompts, and enrichments per tenant.' },
     { category: 'Product', q: 'Does Typelessity work for AI agents (not humans)?', a: 'Not through a dedicated endpoint yet. We publish the JSON shapes of a session and a booking on /for-ai-agents. A dedicated /agent endpoint (a synchronous turn-by-turn API with the same field-extraction pipeline) is designed there, but it is not built and has no release date.' },
-
-    // ── Security ──
-    { category: 'Security', q: 'Is data encrypted in transit and at rest?', a: 'Yes. Every connection the service receives and makes uses TLS — browser to service, service to database, service to each sub-processor — and a booking endpoint must be an https:// URL; plain http:// is refused. The database is encrypted at rest by the database platform, and integration secrets you store, such as an API key for your booking system, carry a second, application-level AES-256-GCM encryption on top.' },
-    { category: 'Security', q: 'Where is conversation data physically stored?', a: 'Our own storage is in the EU. The service runs on Vercel in Frankfurt (fra1) and the database is Supabase on AWS in Ireland (eu-west-1). Two providers process outside the EEA: OpenAI (conversation understanding and speech-to-text) and Resend (delivery of request emails), both in the United States under the 2021 Standard Contractual Clauses. Appendix B of the Typelessity DPA names each one.' },
-    { category: 'Security', q: 'How long is conversation data retained?', a: 'An abandoned conversation — no booking and no activity for 24 hours — is removed by a job that runs once a night, so it is gone within 48 hours of the visitor\'s last message. A conversation that led to a booking or a forwarded request has no automatic expiry: it is kept until the business erases it. The record that the visitor consented, with their IP address and browser, is kept for 3 years and then deleted by the same nightly job. Voice audio is never saved — it exists only while it is being transcribed.' },
-    { category: 'Security', q: 'Is OpenAI training on my customer conversations?', a: 'No. OpenAI does not use data sent to its API to train its models unless the account opts in, and ours has not. OpenAI keeps the text for up to 30 days to check for abuse, then deletes it — the consent notice in the widget tells every visitor this. The Typelessity DPA also forbids us from using conversation content to train any AI model, ours or anyone else\'s.' },
-    { category: 'Security', q: 'What is the breach notification process?', a: 'We notify the business without undue delay and in any event within 48 hours of becoming aware of a personal data breach, add details in phases as they are established, and help the business meet its own 72-hour deadline to the supervisory authority. Security reports: info@webappski.com.' },
-
-    // ── Compliance ──
-    { category: 'Compliance', q: 'Do you provide a DPA (Data Processing Agreement)?', a: 'Yes. The Typelessity DPA is accepted in the Webappski portal before any visitor data is processed.' },
-    { category: 'Compliance', q: 'Which sub-processors does Typelessity use?', a: 'The current list is Appendix B of the Typelessity DPA, published at /legal/sub-processors: Vercel (hosting, EU — Frankfurt), Supabase (database, EU — AWS Ireland), OpenAI (conversation understanding and speech-to-text) and Resend (delivery of request emails). Each entry names the contracting entity, where the data is processed and the transfer mechanism. Changes are notified at least 30 days in advance.' },
-    { category: 'Compliance', q: 'How do I handle right-to-erasure (GDPR Article 17) requests?', a: 'Send a written instruction to info@webappski.com naming the conversation. We erase the conversation and its messages and strip the personal content from its delivery record, leaving a skeleton with no visitor data (status and timing) so you keep proof of what was delivered. A copy already delivered to your own mailbox or system is yours to delete. Requests covering more than one conversation are handled within 10 working days.' },
-    { category: 'Compliance', q: 'Does the widget use analytics or cookies, and does consent depend on the visitor\'s region?', a: 'No analytics and no cookies. The widget asks every visitor for consent before the assistant works — typing or speaking — the same way in every region; there is no region-specific mode. The consent is recorded on our side and remembered in the visitor\'s browser storage so they are not asked again, and it can be withdrawn at any time from the privacy panel inside the widget.' },
-    { category: 'Compliance', q: 'Is Typelessity certified for US healthcare (HIPAA)?', a: 'No, and we do not target healthcare. The Typelessity DPA does not allow health data (special-category data under GDPR Article 9), so booking medical care is not a supported use case, in the US or in the EU. There is no HIPAA attestation and no BAA.' },
-
-    // ── For Developers ──
-    { category: 'For Developers', q: 'What does the embed snippet look like in production?', a: 'Two lines: a <script type="module"> tag that loads the widget from typelessity-widget.vercel.app, and a <typelessity-widget api-url="https://typelessity.vercel.app"> element where the widget should appear. It is a web component, so the same code works in plain HTML, WordPress, React or Vue; the Install step in the Webappski portal shows the exact code for your platform.' },
-    { category: 'For Developers', q: 'How does the widget submit to my backend?', a: 'From our server, not from the visitor\'s browser, in one of two ways: (a) your endpoint — we send the extracted fields as JSON, shaped by the field mapping in your config, with the headers you set (for example an API key) plus X-Idempotency-Key and X-Request-ID; (b) email — the request goes to the address you set. There is no HMAC signature.' },
-    { category: 'For Developers', q: 'What is the JSON shape of a submitted booking?', a: 'Your endpoint receives the extracted fields as JSON, shaped by the field mapping in your config; a field you did not map is sent under its own id. There is no separate booking envelope and no schemaVersion field.' },
-    { category: 'For Developers', q: 'Can I customize the AI prompt itself?', a: 'You customize via `aiHint` per field — a short instruction telling GPT what each field means semantically. The system prompt is single, unified, and not editable per tenant; that\'s the architectural guarantee behind the anti-hallucination guards.' },
-    { category: 'For Developers', q: 'How does cascade-aware correction work?', a: 'Field dependencies are declared in config (e.g. the `mechanic` field has `dependsOn: ["service"]`), and a field filled from an enrichment also depends on that enrichment\'s inputs. When the user changes an upstream field, the system walks the dependency graph via DFS and clears downstream-stale values. If any of them already holds a value, it asks first: "Changing Service will also clear: Mechanic, Time slot. Do you want to proceed?"' },
-    { category: 'For Developers', q: 'What happens if an enrichment API call fails?', a: 'Non-fatal. Each enrichment times out after 10 seconds by default (configurable). On failure the widget shows "Failed to load data" with a Retry button and the conversation goes on; a failed enrichment is retried on later turns, up to 3 attempts. Errors are logged on our side.' },
-    { category: 'For Developers', q: 'Is there an /agent endpoint for autonomous AI agents?', a: 'Not yet. Its design is published on /for-ai-agents: a synchronous turn-by-turn API with the same field-extraction pipeline as the human-facing widget, just without the chat UI. It is not built and has no release date.' },
-    { category: 'For Developers', q: 'How do I test the integration before going live?', a: 'Before you publish, the Webappski portal lets you try the widget as a customer. There is no separate test tenant and no synthetic test data: to check field mapping and delivery without touching production, point the booking endpoint at a test URL of your own first, then switch it to your production URL.' },
-
-    // ── Competitor Migration ──
-    { category: 'Competitor Migration', q: 'We use Calendly today — how do we migrate?', a: 'You keep Calendly for the slot pick if it works for you; Typelessity replaces the intake form that captures the service, requirements, contact info and preferences before the slot. Typelessity sends the intake JSON to your CRM or to any endpoint you set.' },
-    { category: 'Competitor Migration', q: 'We use SimplyBook.me — what changes?', a: 'SimplyBook stays as your booking backend (calendar, staff, payments). Typelessity replaces only the front-end form. The migration is one config: map Typelessity field outputs to SimplyBook\'s booking API.' },
-    { category: 'Competitor Migration', q: 'We have a custom HTML form — how do we replace it?', a: 'Field mapping in your tenant config maps Typelessity extraction output to your existing API\'s expected JSON shape. We never ask you to rewrite the backend. If your form is multi-step with conditional fields, the cascade dependency feature replaces the conditional logic on the front-end side.' },
-    { category: 'Competitor Migration', q: 'We tried Botpress and it was hard — what is different about Typelessity?', a: 'Botpress is a chatbot framework: you build the flow yourself, you maintain it. Typelessity is ready-made — you set up a booking-specific flow yourself in the portal wizard, with code-side guards already wired up: fields outside your configuration are dropped and a changed value becomes a correction. Use Botpress when you need a custom general-purpose bot; use Typelessity when the use case is bookings specifically.' },
-    { category: 'Competitor Migration', q: 'We use NoForm.ai for lead capture — does Typelessity replace it?', a: 'Different layer. NoForm is top-of-funnel marketing lead capture; Typelessity is structured booking with all required fields completed before submit. The two can run side by side: NoForm on the marketing site, Typelessity on the booking page.' },
-    { category: 'Competitor Migration', q: 'How does Typelessity compare to Acuity Scheduling?', a: 'Acuity is in the same class as Calendly — strong for slot picking, weak for multi-field intake. Typelessity replaces the intake; Acuity can stay as the slot backend. If your bookings are simple (1 service, 1 duration, just pick a time), Acuity alone is fine — use Typelessity when bookings have 5+ fields.' },
-    { category: 'Competitor Migration', q: 'We use Setmore — when should we switch?', a: 'When your bookings have grown past simple slot-picking. Setmore handles the calendar well; Typelessity adds natural-language intake on top. Migration is the same as SimplyBook: keep Setmore as backend, replace the intake form.' },
-    { category: 'Competitor Migration', q: 'We already have a chatbot — can it coexist?', a: 'Yes. Typelessity is booking-specific and routable. A general chatbot can hand off to Typelessity when intent classification detects a booking ("I want to schedule X"). The handoff is a single redirect with optional context pre-fill via URL params.' },
   ] as const satisfies readonly { category: FaqCategory; q: string; a: string }[],
 } as const;

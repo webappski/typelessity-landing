@@ -98,6 +98,9 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
     patterns: [/AI receptionist/i, /answers (calls|WhatsApp|SMS)/i, /voice AI/i, /talks back/i],
     mutants: ['Your AI receptionist', 'It answers calls', 'It answers WhatsApp', 'Voice AI for salons', 'The widget talks back'],
     legal: 'It does the front-desk job of taking a booking, on your website. Speak or type.',
+    // The visitors' own question, answered with an honest «no, not on the phone» (seo-lead §2.12; L6 decision D8, a gate
+    // for the judges' round: confirm or ask to rephrase the question, as K4 was). The claim «Typelessity is an AI receptionist» stays caught.
+    allowed: [/\bIs (Typelessity|it) an AI receptionist\?/gi],
   },
   {
     id: 'K10', name: 'phone quality beyond the code',

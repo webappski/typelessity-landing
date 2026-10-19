@@ -70,8 +70,10 @@ export function websiteLd(): Json {
 /**
  * The one product node (`#software`). `offers` are the tiers the page shows (HOME.pricing.tiers), so it is passed
  * only where those prices are visible text: `/` and `/pricing`; `/for-ai-agents` states none (`{ offers: false }`).
+ * `period` adds `priceSpecification` with `unitCode: 'MON'` to the tiers that print «/ month» (L2 decision R2, L6): only where
+ * that text is visible, so /pricing passes it and / does not yet (L4). `MON` = month, UN/CEFACT Recommendation 20.
  */
-export function softwareApplicationLd(opts: { offers?: boolean } = {}): Json {
+export function softwareApplicationLd(opts: { offers?: boolean; period?: boolean } = {}): Json {
   const withOffers = opts.offers !== false;
   return {
     '@context': 'https://schema.org',
@@ -101,6 +103,16 @@ export function softwareApplicationLd(opts: { offers?: boolean } = {}): Json {
             priceCurrency: 'EUR',
             url: canonicalUrl('/pricing'),
             availability: 'https://schema.org/InStock',
+            ...(opts.period && 'period' in tier
+              ? {
+                  priceSpecification: {
+                    '@type': 'UnitPriceSpecification',
+                    price: tier.price.replace('€', ''),
+                    priceCurrency: 'EUR',
+                    unitCode: 'MON',
+                  },
+                }
+              : {}),
           })),
         }
       : {}),

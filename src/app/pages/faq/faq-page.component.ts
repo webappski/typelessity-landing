@@ -1,36 +1,35 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { KeyValuePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { slugify } from '../../core/utils/slugify';
 import { IconComponent } from '../../shared/icon/icon.component';
-import { HOME, type FaqCategory } from '../home/home.content';
-
-type FaqItem = { q: string; a: string };
+import { pilotSignupUrl } from '../home/home.content';
+import { FAQ_GROUPS } from './faq.content';
 
 @Component({
   selector: 'app-faq-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [KeyValuePipe, IconComponent],
+  imports: [RouterLink, IconComponent],
   styleUrl: './faq-page.component.scss',
   template: `
     <section class="vc-wrap faq-hero">
       <div class="vc-kicker faq-eyebrow"><span class="vc-kicker-bar"></span>FAQ</div>
-      <h1>Common questions</h1>
-      <p class="vc-section-sub">{{ HOME.faq.length }} self-contained answers. First sentence works as a stand-alone citation.</p>
-      <nav class="faq-jump" aria-label="Jump to category">
-        @for (cat of categoryNav(); track cat.key) {
-          <a [href]="'#' + slug(cat.key)">{{ cat.key }} <span class="faq-jump__count">{{ cat.count }}</span></a>
+      <h1>Typelessity FAQ</h1>
+      <p class="vc-section-sub">Answers about Typelessity: what it does, AI behaviour, setup, data protection, pricing, security and switching from another booking tool. Every group links to the page that has the full answer.</p>
+      <nav class="faq-jump" aria-label="Jump to group">
+        @for (g of groups; track g.id) {
+          <a [href]="'#' + g.id">{{ g.title }} <span class="faq-jump__count">{{ g.items.length }}</span></a>
         }
       </nav>
     </section>
 
-    @for (group of grouped() | keyvalue: keepOrder; track group.key) {
-      <section class="vc-wrap faq-cat" [id]="slug(group.key)">
-        <h2>{{ group.key }}</h2>
+    @for (g of groups; track g.id) {
+      <section class="vc-wrap faq-cat" [id]="g.id">
+        <h2>{{ g.title }}</h2>
         <div class="faq-list">
-          @for (qa of group.value; track qa.q) {
+          @for (qa of g.items; track qa.q) {
             <details [id]="slug(qa.q)">
               <summary>
                 <span class="faq-list__q">{{ qa.q }}</span>
@@ -40,52 +39,42 @@ type FaqItem = { q: string; a: string };
             </details>
           }
         </div>
+        <p class="faq-cat__more">
+          @if (g.more.external) {
+            <a class="faq-cat__more-link" [href]="g.more.href">{{ g.more.label }} →</a>
+          } @else {
+            <a class="faq-cat__more-link" [routerLink]="g.more.href">{{ g.more.label }} →</a>
+          }
+        </p>
       </section>
     }
 
     <section class="vc-wrap faq-todo">
       <p>Need a question we missed? <a href="mailto:info&#64;webappski.com">Email us</a>.</p>
     </section>
+
+    <section class="vc-wrap how-cta">
+      <h2>Try it free on your website</h2>
+      <div class="how-cta__actions">
+        <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('faq', 'free-pilot')">Get it free</a>
+        <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">See how it works</a>
+      </div>
+    </section>
   `,
 })
 export class FaqPageComponent implements OnInit {
   protected readonly t = inject(TranslationService);
   private readonly seo = inject(SeoService);
+  protected readonly groups = FAQ_GROUPS;
+  protected readonly slug = slugify;
+  protected readonly signupUrl = pilotSignupUrl;
 
   ngOnInit(): void {
     this.seo.apply({
       title: this.t.t('seo.faq.title'),
+      titleHasBrand: true,
       description: this.t.t('seo.faq.description'),
       path: '/faq',
     });
   }
-
-  protected readonly HOME = HOME;
-
-  protected readonly grouped = computed<Record<FaqCategory, FaqItem[]>>(() => {
-    const out: Record<FaqCategory, FaqItem[]> = {
-      Product: [],
-      'AI Behavior': [],
-      Integration: [],
-      Privacy: [],
-      Pricing: [],
-      Security: [],
-      Compliance: [],
-      'For Developers': [],
-      'Competitor Migration': [],
-    };
-    for (const qa of HOME.faq) {
-      out[qa.category].push({ q: qa.q, a: qa.a });
-    }
-    return out;
-  });
-
-  protected readonly categoryNav = computed(() =>
-    (Object.entries(this.grouped()) as [FaqCategory, FaqItem[]][])
-      .filter(([, items]) => items.length > 0)
-      .map(([key, items]) => ({ key, count: items.length })),
-  );
-
-  protected readonly keepOrder = (): number => 0;
-  protected readonly slug = slugify;
 }

@@ -48,33 +48,6 @@
     transform: translateY(-4px);
   }
 
-  &--featured {
-    border: 1px solid var(--accent);
-    background: linear-gradient(180deg, rgba(255, 107, 43, 0.08) 0%, var(--bg-card) 40%);
-
-    &:hover { border-color: var(--accent-hover); }
-
-    // The card's top is tinted by the gradient (accent over card): grey there is 4.34:1, so the name takes the primary colour.
-    .tier__name { color: var(--text-primary); }
-
-    .tier__price { color: var(--text-primary); }
-  }
-
-  &__badge {
-    position: absolute;
-    top: -12px;
-    left: 24px;
-    background: var(--accent);
-    color: var(--text-on-accent);
-    padding: 5px 12px;
-    font-family: var(--font-display);
-    font-size: 11.5px;
-    letter-spacing: 0.04em;
-    font-weight: 700;
-    border-radius: 999px;
-    text-transform: uppercase;
-  }
-
   &__name {
     font-size: 14px;
     color: var(--text-secondary);
@@ -85,6 +58,10 @@
   }
 
   &__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 8px;
     font-family: var(--font-display);
     font-size: clamp(36px, 6vw, 52px);
     font-weight: 700;
@@ -92,6 +69,14 @@
     line-height: 1;
     margin-bottom: 8px;
     color: var(--text-primary);
+  }
+
+  &__period {
+    white-space: nowrap;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--text-secondary);
   }
 
   &__sub {
@@ -125,78 +110,30 @@
   }
 }
 
-// ── Onboarding 4-step ──────────────────────────
-.pricing-onboarding { padding-block: 60px; }
+.pricing-faq { padding-block: 60px; }
 
-.onboarding {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  counter-reset: onboarding;
+// What counts as a booking request and what happens past the limit: two plain lines under the tiers (L6)
+.pricing-counts {
+  padding-block: 0 40px;
+  max-width: 920px;
 
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
+  p {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0 0 12px;
+    max-width: 72ch;
+    text-wrap: pretty;
   }
 
-  li {
-    counter-increment: onboarding;
-    padding: 24px 26px 26px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    position: relative;
-    transition: border-color 0.2s;
-
-    &:hover { border-color: var(--border-accent); }
-
-    &::before {
-      content: counter(onboarding, decimal-leading-zero);
-      position: absolute;
-      top: 18px;
-      right: 22px;
-      font-family: var(--font-display);
-      font-size: 12px;
-      color: var(--ink);
-      letter-spacing: 0.06em;
-      font-weight: 700;
-    }
-
-    strong {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-      color: var(--text-primary);
-    }
-
-    p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-  }
-
-  &__day {
-    display: inline-block;
-    font-family: var(--font-display);
-    font-size: 11px;
-    color: var(--ink);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 10px;
-    padding: 3px 10px;
-    background: var(--accent-subtle);
-    border: 1px solid var(--border-accent);
-    border-radius: 6px;
-    font-weight: 700;
-  }
+  strong { color: var(--text-primary); font-weight: 600; }
 }
 
-// ── FAQ ────────────────────────────────────────
-.pricing-faq { padding-block: 60px; }
+.pricing-install {
+  padding-block: 0 56px;
+
+  a { font-weight: 600; }
+}
 
 .faq {
   display: flex;
@@ -253,54 +190,25 @@
   .home-tiers { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 700px) {
-  .home-tiers, .onboarding { grid-template-columns: 1fr; }
+  .home-tiers { grid-template-columns: 1fr; }
 }
 
-// ── What changes at Enterprise diff table ──
-.pricing-diff {
-  padding-block: 60px;
-}
-.pricing-diff__table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  font-size: 0.92rem;
-  th, td {
-    padding: 0.85rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-secondary);
-  }
-  th {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
+.how-cta {
+  padding-block: 80px;
+  text-align: center;
+
+  h2 {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-size: clamp(24px, 4vw, 40px);
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    color: var(--text-primary);
   }
-  td:first-child { color: var(--text-primary); }
-  th:nth-child(2), td:nth-child(2),
-  th:nth-child(3), td:nth-child(3) {
-    text-align: center;
-    width: 6rem;
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
-  tbody tr:last-child td { border-bottom: 0; }
-  // Phones: the value columns hold short words («None», «Unlimited», «By contract, on request»),
-  // so they narrow and the capability column gets the width.
-  @media (max-width: 480px) {
-    th, td { padding: 0.75rem 0.5rem; }
-    th { font-size: 0.66rem; letter-spacing: 0; }
-    th:nth-child(2), td:nth-child(2),
-    th:nth-child(3), td:nth-child(3) { width: 4.5rem; }
-  }
-}
-.pricing-diff__note {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
 }

@@ -42,14 +42,6 @@
   "blog/whisper-vs-webspeech/index.html": {
     "K1": 1
   },
-  "faq/index.html": {
-    "K1": 8,
-    "K4": 2,
-    "K5": 1,
-    "K6": 1,
-    "K7": 2,
-    "K12": 1
-  },
   "for-ai-agents/index.html": {
     "K1": 2,
     "K5": 1,
@@ -61,11 +53,5 @@
     "K5": 7,
     "K7": 6,
     "K8": 1
-  },
-  "pricing/index.html": {
-    "K1": 6,
-    "K6": 1,
-    "K7": 2,
-    "K12": 3
   }
 }

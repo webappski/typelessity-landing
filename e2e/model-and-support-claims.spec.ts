@@ -98,8 +98,7 @@ const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   // first scenario), which the real widget replaced in the hero slot; the demo scenarios of L4 are held by the script scan below.
   'index.html': [/mailto:info@webappski\.com/, /on model calls and on booking submission/,
     /supported verticals \(configurations\)/i],
-  'pricing/index.html': [/they differ in submission volume \(see cards above\) and the number of websites/,
-    /same support by email/, /other terms are by contract, on request/],
+  'pricing/index.html': [/Customers speak or type their request/, /Support by email/, /contract terms agreed on request/],
   'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /DPA is accepted in the Webappski portal before any visitor data is processed/],
   'for-ai-agents/index.html': [/mailto:info@webappski\.com/, /is designed to take an intent like this/, /bookingResult/,
     /booking \| request/],

@@ -7,6 +7,7 @@ import { countClaims } from './claims-dictionary';
 import { SEVEN } from './industries-seven';
 import { HOME } from '../src/app/pages/home/home.content';
 import { PRICING_FAQ } from '../src/app/pages/pricing/pricing.content';
+import { FAQ_GROUPS } from '../src/app/pages/faq/faq.content';
 
 // L2 «Разметка JSON-LD» — the contract of the structured data a crawler receives, read from the BUILT bytes
 // (run `npm run build` first). No mocks: every .html in dist, including 404.html and index.csr.html.
@@ -277,10 +278,29 @@ test('J5 offers: the visible table, the markup on / and /pricing, nothing where 
     assert.deepEqual(bad, []);
   });
 
-  await t.test('(г) no billingDuration and no priceSpecification anywhere in dist (L6 sets the period with the visible text)', () => {
+  await t.test('(г) the period is visible ⇔ it is in the markup: a tier with «/ month» on the page has priceSpecification unitCode MON (UN/CEFACT Rec 20: month), and only such a tier; no billingDuration anywhere', () => {
     const bad: string[] = [];
-    for (const [rel, ld] of LD) for (const n of ld.all) for (const k of ['billingDuration', 'priceSpecification']) if (k in n) bad.push(`${rel}: ${k}`);
+    for (const [rel, ld] of LD) for (const n of ld.all) if ('billingDuration' in n) bad.push(`${rel}: billingDuration`);
+    for (const [rel, ld] of LD) {
+      const node = ld.top.find((n) => n['@id'] === SOFTWARE_ID);
+      const offers = (node && Array.isArray(node['offers']) ? node['offers'] : []) as Obj[];
+      if (!offers.length) continue;
+      const cards = [...HTML.get(rel)!.matchAll(/<article\b[^>]*class="[^"]*\btier\b[^"]*"[\s\S]*?<\/article>/g)].map((m) => m[0]);
+      const shown = new Set(cards.filter((c) => /class="tier__period"[^>]*>\s*\/\s*month/.test(c)).map((c) => c.match(/class="tier__name"[^>]*>\s*([^<]*?)\s*</)?.[1] ?? '?'));
+      const marked = new Set(offers.filter((o) => isObj(o['priceSpecification']) && o['priceSpecification']['unitCode'] === 'MON').map((o) => String(o['name'])));
+      for (const o of offers) {
+        const spec = o['priceSpecification'];
+        if (spec === undefined) continue;
+        assert.ok(isObj(spec) && spec['@type'] === 'UnitPriceSpecification' && String(spec['price']) === String(o['price']) && spec['priceCurrency'] === 'EUR', `${rel}: ${String(o['name'])} priceSpecification is not a UnitPriceSpecification of its own price in EUR`);
+      }
+      for (const n of shown) if (!marked.has(n)) bad.push(`${rel}: «/ month» is shown for ${n}, the markup has no unitCode MON`);
+      for (const n of marked) if (!shown.has(n)) bad.push(`${rel}: unitCode MON for ${n}, the page does not show «/ month»`);
+    }
     assert.deepEqual(bad, []);
+    // on /pricing the three paid tiers (and only they) carry it; on / the period is not shown yet, so nothing is marked (L4 turns it on)
+    const priced = (rel: string) => ((LD.get(rel)!.top.find((n) => n['@id'] === SOFTWARE_ID)!['offers'] as Obj[]).filter((o) => isObj(o['priceSpecification'])).map((o) => String(o['name'])));
+    assert.deepEqual(priced('pricing/index.html'), ['Starter', 'Pro', 'Enterprise']);
+    assert.deepEqual(priced('index.html'), []);
   });
 });
 
@@ -390,9 +410,11 @@ const pageText = (rel: string) => decode(visible(HTML.get(rel)!).replace(/<!--[\
 const squash = (s: string) => s.replace(/\s+/g, ' ').trim();
 
 test('J11 the questions stay on the page as plain text when their markup goes', async (t) => {
-  await t.test('/faq shows every HOME.faq question', () => {
+  await t.test('/faq shows every question of the seven groups (faq.content.ts)', () => {
     const text = pageText('faq/index.html');
-    assert.deepEqual(HOME.faq.map((x) => squash(x.q)).filter((q) => !text.includes(q)), []);
+    const all = FAQ_GROUPS.flatMap((g) => g.items);
+    assert.ok(all.length >= 30, `${all.length} questions`);
+    assert.deepEqual(all.map((x) => squash(x.q)).filter((q) => !text.includes(q)), []);
   });
   await t.test('/ shows every question of the category the home page previews (Product)', () => {
     const text = pageText('index.html');

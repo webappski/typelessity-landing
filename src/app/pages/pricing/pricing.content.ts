@@ -1,14 +1,30 @@
 // Pricing page content (EN). Translations to ru/de/pl pending.
+// The numbers (prices, booking requests a month, sites) are the tier cards' (HOME.pricing.tiers); they come from the
+// product's developer-tiers.ts and e2e/pricing-faq-facts.spec.ts reads that file. Nothing here repeats them as a literal,
+// except the capsule and the answers below, which that spec reads too.
+
+export const PRICING_PAGE = {
+  kicker: 'Pricing',
+  h1: 'Typelessity pricing: free pilot, then from €39',
+  capsule:
+    'Free Pilot €0 (up to 50 booking requests a month), Starter €39 (500), Pro €149 (2,000) and Enterprise €399 (6,000) a month. Every plan starts with the free pilot. 1, 5, 10 or unlimited sites, by plan.',
+  pilotLine: 'Free pilot: 50 booking requests a month, no time limit.',
+  // Counted from the product: confirm/route.ts (a confirmed request is +1), session.repository.ts (a practice run in the
+  // portal has no key and is not counted), developer-key.repository.ts (the month resets on the 1st), confirm-integration.ts
+  // and quota-notice.ts (past the limit a request goes to the owner by email, is not counted, and does not reach his system).
+  whatCountsLabel: 'What counts:',
+  whatCounts: 'one booking request your customer sends. An abandoned conversation and a practice run in the portal do not count. The count starts again on the 1st of each month.',
+  afterLimitLabel: 'After the limit:',
+  afterLimit:
+    'requests are not refused. Each new one reaches you by email, is not counted and does not go to your booking system; whether a conversation is over the limit is decided when it starts. On Free Pilot, Starter and Pro, move to the next plan in the Webappski portal (invoiced) to keep requests going to your system.',
+  install: { label: 'How to install it', href: '/install' },
+  aboutH2: 'About the price',
+} as const;
 
 export const PRICING_FAQ = [
-  { q: 'How do I start?', a: 'Start with the Free Pilot: sign in to the Webappski portal and set up Typelessity there — step by step, or with your own AI filling it in. Every tier — Free Pilot (€0), Starter (€39/mo), Pro (€149/mo) and Enterprise (€399/mo) — starts with the free pilot.' },
-  { q: 'What does the Free Pilot include?', a: 'Up to 50 submissions/month, full access to every feature (25+ languages, voice input, enrichment APIs, custom branding, webhook integration), and support by email. It is intended for risk-free evaluation on a real site.' },
+  { q: 'Is the pilot really free?', a: 'Yes. The free pilot has no time limit: up to 50 booking requests a month. You pay only if you need more.' },
+  { q: 'What does Enterprise add?', a: 'Up to 6,000 booking requests a month, unlimited sites, and a named contact and other contract terms agreed on request.' },
   { q: 'How do I move to a paid plan?', a: 'Start with the free pilot. When you want a paid plan, request it under Billing in the Webappski portal; it is invoiced.' },
-  { q: 'How are paid plans different?', a: 'Starter (€39/mo, up to 500 submissions/month, up to 5 websites). Pro (€149/mo, up to 2,000 submissions/month, up to 10 websites). Enterprise (€399/mo, up to 6,000 submissions/month, unlimited websites; a named contact and other contract terms agreed on request). All plans share the same engine and the same support by email; the tier defines the submission volume and the number of websites.' },
-  { q: 'How does setup work?', a: 'Setup is a wizard in the Webappski portal that you complete yourself. Step by step: Your business → Questions → Data & delivery → Messages → Review → Install. Or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back (Your business → Your AI’s answer → Review → Install). Before you publish you can try the widget as a customer; the Install step gives you the embed code for your platform.' },
-  { q: 'Do you charge per booking, per session, or per AI call?', a: 'Paid tiers are priced by monthly submission volume; there is no per-AI-call charge.' },
   { q: 'Can I run my own GPT key?', a: 'No. Typelessity runs every conversation through its own OpenAI account; using your own OpenAI key or another AI provider is not offered.' },
-  { q: 'What happens if GPT is down?', a: 'The model call is retried once. If it still fails, the widget stays in the chat and asks the visitor for the next field directly; there is no separate form mode. Enrichment failures are non-fatal — the AI continues with whatever data it has.' },
-  { q: 'Do you store user input?', a: 'Yes, in the EU. An abandoned conversation is deleted within 48 hours of the visitor\'s last message; one that led to a booking is kept until you ask us to erase it, by written instruction to info@webappski.com. OpenAI keeps the conversation text for up to 30 days to check for abuse, then deletes it. No data is used for model training.' },
-  { q: 'Is there a commitment?', a: 'No. Pilot is free and capped at 50 submissions/month. Paid plans bill monthly with no long-term commitment; other terms are by contract, on request.' },
+  { q: 'Is there an uptime commitment or a self-hosted build?', a: 'No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it. Typelessity is hosted by us; there is no on-premise or self-hosted build.' },
 ] as const satisfies readonly { q: string; a: string }[];

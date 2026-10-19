@@ -2,6 +2,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { HOME, type FaqCategory } from './home.content';
 import { PRICING_FAQ } from '../pricing/pricing.content';
+import { FAQ_GROUPS } from '../faq/faq.content';
+
+// L6: the FAQ moved to /faq (faq.content.ts, seven groups); HOME.faq keeps the Product preview home draws. The data
+// answers below are read in both places: a claim does not escape a guard by moving to the other list.
+const FAQ_ALL: readonly { q: string; a: string }[] = [...HOME.faq, ...FAQ_GROUPS.flatMap((g) => g.items)];
 
 test('HOME.faq: every item has a known category', () => {
   const allowed: ReadonlySet<FaqCategory> = new Set([
@@ -28,6 +33,20 @@ test('HOME.faq: every question is unique (used as track-by key in templates)', (
   }
 });
 
+test('FAQ_GROUPS: the seven groups of the page, every question unique across the page, every group links to the page with the full answer', () => {
+  assert.deepEqual(FAQ_GROUPS.map((g) => g.id), ['product', 'ai-behavior', 'integration', 'privacy', 'pricing', 'security', 'competitor-migration']);
+  const seen = new Set<string>();
+  for (const g of FAQ_GROUPS) {
+    assert.ok(g.items.length > 0, `group ${g.id} is empty`);
+    assert.ok(g.more.href.startsWith('/') || g.more.href.startsWith('https://'), `group ${g.id} has no link`);
+    for (const qa of g.items) {
+      assert.ok(!seen.has(qa.q), `duplicate FAQ question: "${qa.q}"`);
+      seen.add(qa.q);
+    }
+  }
+  assert.equal(FAQ_GROUPS.find((g) => g.id === 'integration')?.more.href, '/install');
+});
+
 test('HOME.faq: at least one question per Product category (drives /home preview)', () => {
   const productCount = HOME.faq.filter((qa) => qa.category === 'Product').length;
   assert.ok(productCount >= 3, `Product category needs ≥3 entries, found ${productCount}`);
@@ -35,7 +54,7 @@ test('HOME.faq: at least one question per Product category (drives /home preview
 
 // A27 (c8, 2026-09-24): two Compliance answers promised what the product does not do.
 function answer(fragment: RegExp): string {
-  const qa = HOME.faq.find((item) => fragment.test(item.q));
+  const qa = FAQ_ALL.find((item) => fragment.test(item.q));
   assert.ok(qa, `no FAQ question matches ${fragment}`);
   return qa.a;
 }
@@ -53,7 +72,7 @@ test('HOME.faq: the sub-processor answer lists exactly what Appendix B of the Ty
 test('HOME.faq: no answer promises region-aware consent or analytics cookies — the widget has neither', () => {
   // Consent is asked from every visitor the same way (typelessity widget, consent.service.ts);
   // there is no region detection anywhere in the widget, the API or shared.
-  for (const qa of HOME.faq) {
+  for (const qa of FAQ_ALL) {
     assert.ok(!/region-aware|CCPA/i.test(qa.a), `"${qa.q}" promises region-aware consent`);
     assert.ok(!/analytics cookies/i.test(qa.a), `"${qa.q}" promises analytics cookies`);
   }
@@ -64,9 +83,10 @@ test('HOME.howItWorks.phases: numbers are sequential 01..04', () => {
   assert.deepEqual([...nums], ['01', '02', '03', '04']);
 });
 
-test('HOME.pricing: exactly one tier marked featured', () => {
-  const featured = HOME.pricing.tiers.filter((t) => t.featured);
-  assert.equal(featured.length, 1);
+test('HOME.pricing: no tier is marked featured — the four cards are equal (L6, seo-lead §2.5)', () => {
+  const featured = HOME.pricing.tiers.filter((t) => 'featured' in t);
+  assert.equal(featured.length, 0);
+  assert.deepEqual(HOME.pricing.tiers.filter((t) => 'period' in t).map((t) => t.name), ['Starter', 'Pro', 'Enterprise']);
 });
 
 // A34 (c8, 2026-09-24): the data answers said what the product does not do — «24 hours» for
@@ -81,6 +101,7 @@ import { PRICING_FAQ } from '../pricing/pricing.content';
 
 const DATA_SURFACES: readonly { name: string; text: string }[] = [
   { name: 'home FAQ', text: HOME.faq.map((qa) => qa.a).join('\n') },
+  { name: 'faq page', text: FAQ_GROUPS.flatMap((g) => g.items).map((qa) => qa.a).join('\n') },
   { name: 'pricing FAQ', text: PRICING_FAQ.map((qa) => qa.a).join('\n') },
   { name: '/legal/security', text: readFileSync('src/app/pages/legal/legal-page.component.ts', 'utf8') },
   { name: 'llms-full.txt', text: readFileSync('public/llms-full.txt', 'utf8') },
@@ -135,7 +156,7 @@ test('enterprise claims: no SLA figure, on-premise, residency tier, custom provi
     /planned for a future Enterprise/i, /gpt-4\.1-nano/i, /Whisper/, /200.800 ?ms/, />95%/,
   ];
   const surfaces = [
-    ...HOME.faq.map((qa) => ({ name: qa.q, text: qa.a })),
+    ...FAQ_ALL.map((qa) => ({ name: qa.q, text: qa.a })),
     ...HOME.tldr.bullets.map(([k, v]) => ({ name: `tldr ${k}`, text: v })),
     ...PRICING_FAQ.map((qa) => ({ name: `pricing: ${qa.q}`, text: qa.a })),
   ];
@@ -143,8 +164,8 @@ test('enterprise claims: no SLA figure, on-premise, residency tier, custom provi
     for (const re of banned) assert.ok(!re.test(text), `${name} still says ${re}`);
   }
   assert.match(answer(/self-host/i), /^No\.[\s\S]*no on-premise or self-hosted build/);
-  assert.match(answer(/How much does Typelessity cost/i), /agreed on request/);
-  assert.doesNotMatch(answer(/GDPR compliant/i), /^Yes\b/, 'a compliance status is not ours to guarantee');
+  assert.match(PRICING_FAQ.find((qa) => /What does Enterprise add/i.test(qa.q))?.a ?? '', /agreed on request/);
+  assert.doesNotMatch(answer(/handle GDPR/i), /^Yes\b/, 'a compliance status is not ours to guarantee');
 });
 
 // A45b (founder 2026-09-25): the terms define no support levels, so every tier says the one thing
@@ -161,7 +182,7 @@ test('A45b: one support line on every tier, no dated /agent, audit log, GDPR-nat
     /400.650 tokens/, /configured by us/i, /same day, not after weeks/i, /config in a few hours/i, /^Setup time\b/,
   ];
   const surfaces = [
-    ...HOME.faq.map((qa) => ({ name: qa.q, text: qa.a })),
+    ...FAQ_ALL.map((qa) => ({ name: qa.q, text: qa.a })),
     ...PRICING_FAQ.map((qa) => ({ name: `pricing: ${qa.q}`, text: qa.a })),
     ...HOME.architecture.pillars.map((p) => ({ name: `pillar ${p.h}`, text: p.b })),
     ...HOME.pricing.tiers.map((t) => ({ name: `tier ${t.name}`, text: t.bullets.join(' · ') })),
@@ -172,9 +193,8 @@ test('A45b: one support line on every tier, no dated /agent, audit log, GDPR-nat
   for (const { name, text } of surfaces) {
     for (const re of banned) assert.ok(!re.test(text), `${name} still says ${re}`);
   }
-  const outage = PRICING_FAQ.find((qa) => /What happens if GPT is down/i.test(qa.q));
-  assert.ok(outage, 'pricing FAQ lost the outage question');
-  assert.match(outage.a, /retried once[\s\S]*no separate form mode/);
+  // L6: «What happens if GPT is down?» left the pricing page (not a pricing question); nothing on the site promises a form mode.
+  for (const qa of PRICING_FAQ) assert.doesNotMatch(qa.a, /form mode|fallback form/i, `pricing: ${qa.q}`);
 });
 
 
@@ -184,7 +204,7 @@ test('A45b: one support line on every tier, no dated /agent, audit log, GDPR-nat
 // enrichments per config (the 10 s timeout is a default), no HMAC signature, no dev tenant, no
 // calendar step, no schemaVersion, and the booking is sent from our server, not the browser.
 test('A45c: no medical example and no promise the engine does not back', () => {
-  const text = JSON.stringify(HOME) + JSON.stringify(PRICING_FAQ);
+  const text = JSON.stringify(HOME) + JSON.stringify(PRICING_FAQ) + JSON.stringify(FAQ_GROUPS);
   const banned: readonly RegExp[] = [
     /cardiolog/i, /GET \/doctors/i, /patientName|patient_name/, /dentist|dental/i, /\bdoctors?\b/i, /specialty/i,
     /EU clinics/i, /cost tracking/i, /up to 5 (enrichments )?per config/i, /optional HMAC/i, /dev tenant/i,
@@ -193,8 +213,7 @@ test('A45c: no medical example and no promise the engine does not back', () => {
     /production vertical/i, /\bUsed by\b/, /widely reported/i, /GDPR-compliant/i, /home services, travel/, /bk_a8f3e1/, /auto-detects/i, /via webhook or REST/i,
   ];
   for (const re of banned) assert.doesNotMatch(text, re);
-  const answer = (q: RegExp) => HOME.faq.find((qa) => q.test(qa.q))?.a ?? '';
+  const answer = (q: RegExp) => FAQ_ALL.find((qa) => q.test(qa.q))?.a ?? '';
   assert.match(answer(/HIPAA/), /DPA does not allow health data/);
   assert.match(answer(/How does the widget submit/), /From our server[\s\S]*There is no HMAC signature/);
-  assert.match(answer(/cascade-aware correction work/), /Changing Service will also clear: Mechanic, Time slot/);
 });

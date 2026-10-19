@@ -210,7 +210,7 @@
   <header class="vc-section-h">
     <div class="vc-kicker"><span class="vc-kicker-bar"></span>FAQ</div>
     <h2>Top questions</h2>
-    <p class="vc-section-sub">All {{ c.faq.length }} answers grouped by topic on the <a routerLink="/faq">FAQ page</a>.</p>
+    <p class="vc-section-sub">All {{ faqCount }} answers grouped by topic on the <a routerLink="/faq">FAQ page</a>.</p>
   </header>
   <div class="home-faq__list">
     @for (qa of faqPreview; track qa.q; let i = $index) {
