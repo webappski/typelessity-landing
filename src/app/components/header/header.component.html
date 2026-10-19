@@ -11,6 +11,7 @@
 
     <nav class="vc-nav-links" aria-label="Primary">
       <a routerLink="/how-it-works" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.howItWorks') }}</a>
+      <a routerLink="/install" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.install') }}</a>
       <a routerLink="/pricing" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.pricing') }}</a>
       <a routerLink="/blog" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.blog') }}</a>
       <a routerLink="/faq" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.faq') }}</a>
@@ -41,6 +42,7 @@
   @if (mobileMenuOpen()) {
     <div class="vc-mobile-menu" id="mobile-menu">
       <a routerLink="/how-it-works" (click)="closeMenu()">{{ t.t('nav.howItWorks') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a routerLink="/install" (click)="closeMenu()">{{ t.t('nav.install') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <a routerLink="/pricing" (click)="closeMenu()">{{ t.t('nav.pricing') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <a routerLink="/blog" (click)="closeMenu()">{{ t.t('nav.blog') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <a routerLink="/faq" (click)="closeMenu()">{{ t.t('nav.faq') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>

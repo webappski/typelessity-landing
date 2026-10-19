@@ -13,6 +13,11 @@ export const routes: Routes = [
       import('./pages/how-it-works/how-it-works-page.component').then((m) => m.HowItWorksPageComponent),
   },
   {
+    path: 'install',
+    loadComponent: () =>
+      import('./pages/install/install-page.component').then((m) => m.InstallPageComponent),
+  },
+  {
     path: 'pricing',
     loadComponent: () =>
       import('./pages/pricing/pricing-page.component').then((m) => m.PricingPageComponent),

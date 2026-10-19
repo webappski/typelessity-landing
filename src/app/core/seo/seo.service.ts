@@ -9,6 +9,8 @@ export interface SeoInput {
   title: string;
   description: string;
   path: string;
+  /** The title already says the brand in its own words: no « — Typelessity» is added (only /how-it-works). */
+  titleHasBrand?: true;
   ogImage?: string;
   type?: 'website' | 'article';
   publishedAt?: string;
@@ -23,7 +25,7 @@ export class SeoService {
   private readonly doc = inject(DOCUMENT);
 
   apply(input: SeoInput): void {
-    const fullTitle = `${input.title} — ${SITE_NAME}`;
+    const fullTitle = input.titleHasBrand ? input.title : `${input.title} — ${SITE_NAME}`;
     const url = canonicalUrl(input.path);
     const ogImage = input.ogImage ?? `${SITE_URL}/og-image.jpg`;
 

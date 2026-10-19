@@ -9,6 +9,7 @@ const HEROES = [
   { path: '/faq', section: '.faq-hero' },
   { path: '/industries', section: '.industries-hero' },
   { path: '/how-it-works', section: '.how-hero' },
+  { path: '/install', section: '.install-hero' },
 ];
 
 for (const viewport of [{ width: 1280, height: 900 }, { width: 375, height: 812 }]) {

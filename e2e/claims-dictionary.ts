@@ -81,9 +81,11 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
       /integrates with/i,
       /connects to (Booksy|Google Calendar|Calendly|SimplyBook)/i,
       /checks your booking system(?![^.]{0,60}if [^.]{0,30}has an API)/i,
+      // L5: «asks it / your booking system what is free» is the same promise in other words; the condition may come before or after, in the same sentence.
+      /(?<!if [^.]{0,60}has an API[^.]{0,30})asks? (?:it|your booking system) what is free(?![^.]{0,60}if [^.]{0,30}has an API)/i,
     ],
-    mutants: ['Sends a webhook', 'It integrates with any backend', 'Connects to Booksy', 'It checks your booking system for free slots.'],
-    legal: 'It checks your booking system for free slots if your booking system has an API. By email or as a REST POST to your endpoint.',
+    mutants: ['Sends a webhook', 'It integrates with any backend', 'Connects to Booksy', 'It checks your booking system for free slots.', 'It asks your booking system what is free.'],
+    legal: 'It checks your booking system for free slots if your booking system has an API. If your booking system has an API, it asks it what is free. It asks your booking system what is free, if that system has an API. By email or as a REST POST to your endpoint.',
   },
   {
     id: 'K8', name: 'booking confirmed on the email path',
@@ -105,8 +107,8 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
   },
   {
     id: 'K11', name: 'setup time, savings and conversion claims without a measurement',
-    patterns: [/set up in \d+ minutes/i, /saves? \d+ hours/i, /\+\d+ ?% conversion/i, /fewer no-shows/i],
-    mutants: ['Set up in 5 minutes', 'Saves 10 hours a week', '+23% conversions', 'Fewer no-shows'],
+    patterns: [/set up in \d+ minutes/i, /saves? \d+ hours/i, /\+\d+ ?% conversion/i, /fewer no-shows/i, /\b(in|under|within) \d+ minutes\b/i],
+    mutants: ['Set up in 5 minutes', 'Saves 10 hours a week', '+23% conversions', 'Fewer no-shows', 'Install it in 5 minutes'],
     legal: 'We have not measured setup time or conversion.',
   },
   {

@@ -8,6 +8,7 @@ import type { TranslationMap } from './translation.types';
 export const EN: TranslationMap = {
   // ── Navigation ──
   'nav.howItWorks': 'How It Works',
+  'nav.install': 'Install',
   'nav.pricing': 'Pricing',
   'nav.faq': 'FAQ',
   'nav.blog': 'Blog',
@@ -30,8 +31,10 @@ export const EN: TranslationMap = {
   // ── SEO meta (title is suffixed with " — Typelessity" by SeoService; descriptions ≤155 chars) ──
   'seo.home.title': 'Bookings through conversation, not forms',
   'seo.home.description': 'AI booking widget that replaces forms with chat. 25+ languages, voice input. Consent before any AI processing; service and database in the EU.',
-  'seo.howItWorks.title': 'How it works — 4 phases · single GPT call · enrichment APIs',
-  'seo.howItWorks.description': 'Chat → Select → Review → Confirm. One AI call per turn, enrichment APIs, cascade-aware corrections, no hardcoded regex.',
+  'seo.howItWorks.title': 'How Typelessity works: from chat to booking request',
+  'seo.howItWorks.description': 'Chat, select, review, send: the AI booking assistant turns one sentence into a booking request; if your booking system has an API, it asks it what is free.',
+  'seo.install.title': 'Add an AI booking widget to your website',
+  'seo.install.description': 'Set up Typelessity in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system.',
   'seo.pricing.title': 'Pricing — Free Pilot, Starter, Pro, Enterprise',
   'seo.pricing.description': 'Free Pilot €0, Starter €39, Pro €149, Enterprise €399 a month. Every tier starts with the free pilot; Enterprise has unlimited sites.',
   'seo.industries.title': 'Industries — AI booking for service verticals',

@@ -11,7 +11,7 @@ import { EMBED_SNIPPET, WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/cor
 // Run `npm run build` first (it prerenders dist/).
 
 const DIST = new URL('../dist/typelessity-landing/browser/', import.meta.url);
-const PAGES = ['index.html', 'pricing/index.html', 'faq/index.html', 'how-it-works/index.html', 'for-ai-agents/index.html'];
+const PAGES = ['index.html', 'pricing/index.html', 'faq/index.html', 'how-it-works/index.html', 'install/index.html', 'for-ai-agents/index.html'];
 const SURFACES = [...PAGES, 'llms.txt', 'llms-full.txt'];
 const PRE_LAUNCH = /coming soon|launching soon|launches soon|at launch|pre-?order|waitlist|get notified|private development|personal onboarding/i;
 
@@ -46,7 +46,7 @@ test('the embed code shown is the one the portal hands out', async () => {
   for (const path of [...SURFACES]) {
     assert.ok(!(await read(path)).includes('cdn.typelessity.com'), `${path} points at cdn.typelessity.com, which does not resolve`);
   }
-  for (const path of ['index.html', 'how-it-works/index.html']) {
+  for (const path of ['index.html', 'how-it-works/index.html', 'install/index.html']) {
     const body = unescape(await read(path));
     assert.ok(body.includes(`<script type="module" src="${WIDGET_SCRIPT_URL}"></script>`), `${path} lacks the portal's script tag`);
     assert.ok(body.includes(`<typelessity-widget api-url="${WIDGET_API_URL}"></typelessity-widget>`), `${path} lacks the portal's widget tag`);

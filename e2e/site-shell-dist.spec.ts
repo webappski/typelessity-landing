@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 
 // L3 (S4): what a crawler and a no-JavaScript visitor receive of the new shell — the bytes of every .html of the build. The
 // behaviour a person sees (themes, menu, fonts) is site-shell-theme.pw.ts; this reads the HTML itself.
-//   (a) the header and the footer carry no link to /industries, /install or /gdpr; the footer keeps the parents, the
+//   (a) the header and the footer carry no link to /industries or /gdpr; the footer keeps the parents, the
 //       security page and the contact address (D1, D2, F4);
 //   (b) <html> carries no data-theme: nothing on the server decides a visitor's theme;
 //   (c) the inline script that applies the stored theme stands in <head> BEFORE the first stylesheet or <style> (no flash),
@@ -46,11 +46,11 @@ async function load(): Promise<Map<string, string>> {
 }
 
 const hrefs = (html: string) => [...html.matchAll(/<a\b[^>]*\shref="([^"]*)"/gi)].map((m) => m[1]!.replace(/&#38;|&amp;/g, '&').replace(/&#64;/g, '@'));
-const FORBIDDEN = /^\/(industries|install|gdpr)(\/|$|\?|#)/;
+const FORBIDDEN = /^\/(industries|gdpr)(\/|$|\?|#)/;
 // A page with a body has a header and a footer; index.csr.html is the empty shell the server falls back to.
 const withShell = (all: Map<string, string>) => [...all].filter(([, html]) => /<footer[^>]*class="vc-footer"/.test(html));
 
-test('(a) the header and the footer of every page have no link to /industries, /install or /gdpr', async () => {
+test('(a) the header and the footer of every page have no link to /industries or /gdpr', async () => {
   const all = withShell(await load());
   assert.ok(all.length >= 10, `${all.length} pages with a footer`);
   const offenders: string[] = [];
@@ -61,6 +61,19 @@ test('(a) the header and the footer of every page have no link to /industries, /
     for (const h of [...hrefs(header), ...hrefs(footer)]) if (FORBIDDEN.test(h)) offenders.push(`${path}: ${h}`);
   }
   assert.deepEqual(offenders, []);
+});
+
+test('(a) the header and the footer of every page link to /install (L5)', async () => {
+  const problems: string[] = [];
+  const all = withShell(await load());
+  assert.ok(all.length >= 10, `${all.length} pages with a footer`);
+  for (const [path, html] of all) {
+    const header = hrefs(html.match(/<header\b[\s\S]*?<\/header>/)?.[0] ?? '');
+    const footer = hrefs(html.match(/<footer[^>]*class="vc-footer"[\s\S]*?<\/footer>/)?.[0] ?? '');
+    if (!header.includes('/install')) problems.push(`${path}: the header has no /install`);
+    if (!footer.includes('/install')) problems.push(`${path}: the footer has no /install`);
+  }
+  assert.deepEqual(problems, []);
 });
 
 test('(a) the footer of every page keeps webappski.com, typelessform.com, /legal/security and the contact address', async () => {

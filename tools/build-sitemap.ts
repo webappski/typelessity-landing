@@ -30,12 +30,13 @@ interface Url {
 const STATIC_PATHS: Url[] = [
   // The home grid and the FAQ answer name the seven industries that remain; /industries lists them (L1б, 2026-10-19).
   { path: '/', lastmod: '2026-10-19' },
-  { path: '/how-it-works', lastmod: '2026-10-04' },
+  { path: '/how-it-works', lastmod: '2026-10-19' },
+  { path: '/install', lastmod: '2026-10-19' },
   { path: '/pricing', lastmod: '2026-10-19' },
   { path: '/industries', lastmod: '2026-10-19' },
   { path: '/for-ai-agents', lastmod: '2026-10-19' },
   { path: '/faq', lastmod: '2026-10-19' },
-  { path: '/about', lastmod: '2026-10-04' },
+  { path: '/about', lastmod: '2026-10-19' },
   { path: '/blog', lastmod: '2026-10-19' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here

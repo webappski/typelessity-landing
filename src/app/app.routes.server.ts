@@ -5,6 +5,7 @@ import { BLOG_SLUGS } from './lib/blog-manifest.generated';
 const STATIC_PAGES = [
   '',
   'how-it-works',
+  'install',
   'pricing',
   'industries',
   'for-ai-agents',

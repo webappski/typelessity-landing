@@ -155,7 +155,7 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
   // the FAQ answers live with the home content (L1б: the home date was a literal that had fallen a day behind)
   const pages: Array<[string, string, string?, string[]?]> = [
     ['/', 'home', 'home', ['src/app/lib/industries/']],
-    ['/how-it-works', 'how-it-works', 'howItWorks'], ['/pricing', 'pricing', 'pricing'],
+    ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'],
     ['/industries', 'industries', 'industries', ['src/app/lib/industries/']],
     ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq', ['src/app/pages/home/home.content.ts']],
     ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],

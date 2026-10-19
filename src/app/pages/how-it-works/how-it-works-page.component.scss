@@ -264,55 +264,6 @@
   .how-phase__grid { grid-template-columns: 1fr; }
 }
 
-// ── Inside one GPT call ──
-.how-inside {
-  padding-block: 60px;
-}
-.how-inside__grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 1fr;
-  @media (min-width: 860px) { grid-template-columns: 1fr 1fr; }
-
-  > * { min-width: 0; }
-}
-.how-inside__h {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-  color: var(--text-primary);
-}
-.how-inside__code {
-  background: var(--bg-code);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  padding: 1.25rem;
-  border-radius: var(--radius);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  line-height: 1.55;
-  overflow-x: auto;
-  white-space: pre;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-  min-width: 0;
-  max-width: 100%;
-}
-.how-inside__note {
-  margin-top: 1.5rem;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
-  code {
-    background: var(--bg-code);
-    color: var(--text-primary);
-    border: 1px solid var(--border);
-    padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.85em;
-  }
-}
-
 .how-edge {
   padding-block: 60px;
   .edge {
@@ -352,5 +303,74 @@
     padding: 0.1rem 0.4rem;
     border-radius: 4px;
     font-size: 0.85em;
+  }
+}
+
+.how-say {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 36px;
+
+  @media (max-width: 860px) { grid-template-columns: 1fr; }
+
+  &__card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    min-width: 0;
+  }
+
+  &__h {
+    font-family: var(--font-display);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+
+  &__bubble {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.55;
+    color: var(--text-primary);
+  }
+
+  &__code {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text-primary);
+    white-space: pre;
+    overflow-x: auto;
+  }
+}
+
+.how-phases-head { padding-block: 40px 0; }
+
+.how-instead {
+  padding-block: 50px;
+  border-top: 1px solid var(--border);
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 32px);
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+    line-height: 1.15;
+    color: var(--text-primary);
+  }
+
+  &__p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    margin: 0 0 12px;
+    max-width: 72ch;
+    text-wrap: pretty;
   }
 }

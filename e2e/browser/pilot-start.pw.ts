@@ -63,5 +63,5 @@ test('hero, closing call and header lead to the portal', async ({ page }) => {
   expectPortalLink(await page.locator('.home-cta__actions a').first().getAttribute('href'), 'home-cta', 'free-pilot');
   expectPortalLink(await page.locator('header a.vc-btn-primary').first().getAttribute('href'), 'nav', 'free-pilot');
   await page.goto('/how-it-works');
-  expectPortalLink(await page.getByRole('link', { name: 'Start free pilot' }).getAttribute('href'), 'how-it-works', 'free-pilot');
+  expectPortalLink(await page.locator('main').getByRole('link', { name: 'Get it free' }).getAttribute('href'), 'how-it-works', 'free-pilot');
 });

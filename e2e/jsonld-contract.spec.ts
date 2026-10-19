@@ -92,7 +92,7 @@ const frontmatter = (slug: string) => matter(readFileSync(join(BLOG_DIR, `${slug
 
 const sortedUnique = (xs: string[]) => [...new Set(xs)].sort();
 
-test('J0 the doors map: which JSON-LD each of the 29 pages carries, both ways', async (t) => {
+test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', async (t) => {
   await t.test('every block of every page parses (a broken block is red, not skipped)', () => {
     const bad = [...LD].flatMap(([rel, ld]) => ld.errors.map((e) => `${rel}: ${e}`));
     assert.deepEqual(bad, []);
@@ -109,6 +109,7 @@ test('J0 the doors map: which JSON-LD each of the 29 pages carries, both ways', 
       'faq/index.html': [],
       'blog/index.html': [],
       'how-it-works/index.html': [],
+      'install/index.html': [],
       '404.html': [],
       'index.csr.html': [],
     };
@@ -123,7 +124,7 @@ test('J0 the doors map: which JSON-LD each of the 29 pages carries, both ways', 
     }
     for (const rel of Object.keys(expected)) if (!LD.has(rel)) bad.push(`${rel}: in the map, not in dist`);
     assert.deepEqual(bad, []);
-    assert.equal(LD.size, 29, `${LD.size} .html files in dist`);
+    assert.equal(LD.size, 30, `${LD.size} .html files in dist`);
   });
 });
 

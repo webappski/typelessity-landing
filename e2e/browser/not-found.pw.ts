@@ -13,8 +13,8 @@ const H1 = /<h1[^>]*>\s*This page doesn't exist\s*<\/h1>/;
 const sitemapPaths = (): string[] =>
   [...readFileSync(join(BROWSER, 'sitemap.xml'), 'utf8').matchAll(/<loc>https:\/\/typelessity\.com([^<]*)<\/loc>/g)].map((m) => m[1] || '/');
 
-// /install and /gdpr become pages in L5 and L7; they are 404 checks only while no page answers there.
-const GONE = ['/zz-404-check', '/zz/a/b/c', '/install', '/gdpr', '/compare'];
+// /gdpr becomes a page in L7; it is a 404 check only while no page answers there. /install became a page in L5.
+const GONE = ['/zz-404-check', '/zz/a/b/c', '/gdpr', '/compare'];
 
 test('an unknown address answers exactly 404 with the 404 screen', async ({ request }) => {
   const listed = new Set(sitemapPaths());
