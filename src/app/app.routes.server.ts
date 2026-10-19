@@ -69,5 +69,10 @@ export const serverRoutes: ServerRoute[] = [
     path: 'legal/security',
     renderMode: RenderMode.Prerender,
   },
-  { path: '**', renderMode: RenderMode.Server },
+  // Prerendered, then moved by tools/build-404.ts to dist/404.html (and dist/404/ removed): the page the
+  // platform serves for an address with no file. The local SSR server still answers /404 itself.
+  { path: '404', renderMode: RenderMode.Prerender },
+  // The local mirror of the platform's 404: an unknown address answers 404 with the 404 screen instead of
+  // 200 with a foreign page. It proves the Angular layer only; the platform is proved on the preview.
+  { path: '**', renderMode: RenderMode.Server, status: 404 },
 ];

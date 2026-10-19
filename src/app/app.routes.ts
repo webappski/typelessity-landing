@@ -65,6 +65,13 @@ export const routes: Routes = [
       import('./pages/legal/legal-page.component').then((m) => m.LegalPageComponent),
   },
   {
+    // Prerendered to /404 so postbuild can turn it into dist/404.html, the page Vercel serves for an
+    // address with no file (tools/build-404.ts). Listed before '**' so the route is its own entry.
+    path: '404',
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
+  },
+  {
     path: '**',
     loadComponent: () =>
       import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),

@@ -1,57 +1,49 @@
 {
   "about/index.html": {
-    "K1": 2,
+    "K1": 1,
     "K5": 1
   },
   "blog/25-languages-one-prompt/index.html": {
-    "K1": 11
+    "K1": 10
   },
   "blog/best-ai-booking-beauty-salons-2026/index.html": {
-    "K1": 7,
+    "K1": 6,
     "K7": 4
   },
   "blog/best-ai-booking-transfer-services-2026/index.html": {
-    "K1": 7,
+    "K1": 6,
     "K7": 4
   },
   "blog/best-ai-booking-widgets-2026/index.html": {
-    "K1": 7,
+    "K1": 6,
     "K4": 4,
     "K7": 5,
     "K8": 1
   },
-  "blog/cascade-corrections/index.html": {
-    "K1": 1
-  },
   "blog/designing-for-ai-agents/index.html": {
-    "K1": 2,
+    "K1": 1,
     "K4": 2
   },
   "blog/gdpr-compliance/index.html": {
-    "K1": 1,
     "K5": 1,
     "K13": 4
   },
   "blog/index.html": {
-    "K1": 2,
+    "K1": 1,
     "K12": 1
   },
-  "blog/latency-budgets/index.html": {
-    "K1": 1
-  },
   "blog/pricing-ai-products/index.html": {
-    "K1": 1,
     "K7": 1,
     "K12": 11
   },
   "blog/single-gpt-call/index.html": {
-    "K1": 2
+    "K1": 1
   },
   "blog/whisper-vs-webspeech/index.html": {
-    "K1": 3
+    "K1": 2
   },
   "faq/index.html": {
-    "K1": 17,
+    "K1": 16,
     "K4": 3,
     "K5": 2,
     "K6": 2,
@@ -59,18 +51,18 @@
     "K12": 2
   },
   "for-ai-agents/index.html": {
-    "K1": 5,
+    "K1": 4,
     "K5": 2,
     "K7": 2,
     "K8": 1
   },
   "how-it-works/index.html": {
-    "K1": 3,
+    "K1": 2,
     "K6": 1,
     "K8": 1
   },
   "index.html": {
-    "K1": 24,
+    "K1": 23,
     "K4": 3,
     "K5": 9,
     "K6": 1,
@@ -78,122 +70,11 @@
     "K8": 1,
     "K12": 1
   },
-  "industries/automotive-detailing/index.html": {
-    "K1": 1
-  },
-  "industries/automotive-driving-schools/index.html": {
-    "K1": 1
-  },
-  "industries/automotive-repair/index.html": {
-    "K1": 1
-  },
-  "industries/automotive-test-drives/index.html": {
-    "K1": 1
-  },
-  "industries/beauty-hair-salons/index.html": {
-    "K1": 1
-  },
-  "industries/beauty-nail-salons/index.html": {
-    "K1": 1
-  },
-  "industries/beauty-spas/index.html": {
-    "K1": 1
-  },
-  "industries/beauty-tattoo-studios/index.html": {
-    "K1": 1
-  },
-  "industries/education-language-schools/index.html": {
-    "K1": 1
-  },
-  "industries/education-music-schools/index.html": {
-    "K1": 1
-  },
-  "industries/education-test-prep/index.html": {
-    "K1": 1
-  },
-  "industries/education-tutoring/index.html": {
-    "K1": 1
-  },
-  "industries/fitness-gyms/index.html": {
-    "K1": 1
-  },
-  "industries/fitness-martial-arts/index.html": {
-    "K1": 1
-  },
-  "industries/fitness-personal-training/index.html": {
-    "K1": 1
-  },
-  "industries/fitness-sports-coaching/index.html": {
-    "K1": 1
-  },
-  "industries/fitness-yoga-studios/index.html": {
-    "K1": 1
-  },
-  "industries/home-cleaning/index.html": {
-    "K1": 1
-  },
-  "industries/home-handyman/index.html": {
-    "K1": 1
-  },
-  "industries/home-hvac/index.html": {
-    "K1": 1
-  },
-  "industries/home-landscaping/index.html": {
-    "K1": 1
-  },
-  "industries/home-moving/index.html": {
-    "K1": 1
-  },
-  "industries/hospitality-event-venues/index.html": {
-    "K1": 1
-  },
-  "industries/hospitality-hotels/index.html": {
-    "K1": 1
-  },
-  "industries/hospitality-restaurants/index.html": {
-    "K1": 1
-  },
   "industries/hospitality-tours/index.html": {
-    "K1": 3
-  },
-  "industries/index.html": {
-    "K1": 1
-  },
-  "industries/pet-grooming/index.html": {
-    "K1": 1
-  },
-  "industries/pet-training/index.html": {
-    "K1": 1
-  },
-  "industries/pet-veterinary/index.html": {
-    "K1": 1
-  },
-  "industries/professional-accounting/index.html": {
-    "K1": 1
-  },
-  "industries/professional-coaching/index.html": {
-    "K1": 1
-  },
-  "industries/professional-financial-advisors/index.html": {
-    "K1": 1
-  },
-  "industries/professional-legal/index.html": {
-    "K1": 1
-  },
-  "industries/realestate-commercial/index.html": {
-    "K1": 1
-  },
-  "industries/realestate-property-management/index.html": {
-    "K1": 1
-  },
-  "industries/realestate-residential/index.html": {
-    "K1": 1
-  },
-  "legal/security/index.html": {
-    "K1": 1
+    "K1": 2
   },
   "pricing/index.html": {
-    "K1": 8,
+    "K1": 7,
     "K6": 1,
     "K7": 3,
     "K12": 5

@@ -4,8 +4,9 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { HOME } from '../src/app/pages/home/home.content';
+import { EN } from '../src/app/i18n/translations.en';
 import { BADGE } from './free-pilot-copy';
-import { CLAIM_CLASSES, countClaims, type ClaimCounts } from './claims-dictionary';
+import { CLAIM_CLASSES, countClaims, LANDING_LANGUAGES, type ClaimCounts } from './claims-dictionary';
 
 // A45e (c8 2026-10-03): the second CRO and promises/legal verdicts on the landing release found four classes
 // the earlier guards (A45, A45c) did not reach, because those guards listed phrases instead of reading the class:
@@ -560,4 +561,14 @@ test('dictionary: the built HTML only holds the words the baseline lists, and on
   }
   assert.deepEqual(grew, [], 'a word of the dictionary appeared or grew in the built HTML');
   assert.deepEqual(stale, [], 'the count went down — run CLAIMS_BASELINE=prune npx tsx --test e2e/claims-class-guard.spec.ts in the same commit');
+});
+
+// The footer line is on every page (and on the 404 shell). It names the language count from the code, not a
+// literal: «25+» is a claim the dictionary refuses (K1), and a count that drifts from the 25 the chat window
+// has would be the same claim by another number.
+test('footer.tagline names the language count of the code, without «+»', () => {
+  const tagline = EN['footer.tagline'];
+  assert.deepEqual(countClaims(tagline), {});
+  assert.ok(tagline.includes(`${LANDING_LANGUAGES.length} languages`), `no «${LANDING_LANGUAGES.length} languages» in «${tagline}»`);
+  assert.ok(!tagline.includes('+'), `a «+» in «${tagline}»`);
 });

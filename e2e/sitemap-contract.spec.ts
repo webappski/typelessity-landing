@@ -1,46 +1,124 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { BLOG_POSTS } from '../src/app/lib/blog-manifest.generated';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { join, relative } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import matter from 'gray-matter';
 
-// The home page carries a fixed lastmod: the date of its last significant change (the Free Pilot
-// card, 2026-10-10), not the build time. Google, «Build and submit a sitemap» (read 2026-10-10):
-// «The <lastmod> value should reflect the date and time of the last significant update to the page»,
-// and Google uses it only if it is «consistently and verifiably … accurate». Every other entry
-// keeps what it had: posts their own updatedAt ?? publishedAt, the rest no lastmod; 56 URLs.
-// Reads the built bytes a crawler receives. Run `npm run build` first.
+// What a crawler receives as sitemap.xml. Google, «Build and submit a sitemap» (read 2026-10-19):
+// <lastmod> is the date of the last significant update and is used only if consistently and verifiably
+// accurate; <changefreq> and <priority> are ignored. So: a verifiable lastmod on every URL, nothing else.
+// Reads the built bytes (run `npm run build` first). LANDING_DIST points at another copy of dist.
 
-const SITEMAP = new URL('../dist/typelessity-landing/browser/sitemap.xml', import.meta.url);
-const ROOT_LOC = 'https://typelessity.com';
-const ROOT_LASTMOD = '2026-10-10';
-const URL_COUNT = 56;
+const ROOT = new URL('..', import.meta.url).pathname;
+const BROWSER = process.env['LANDING_DIST'] ?? join(ROOT, 'dist', 'typelessity-landing', 'browser');
+const SITE = 'https://typelessity.com';
+const HOME_LASTMOD = '2026-10-10'; // the Free Pilot card; the home page is rewritten by L4, which sets its own date
 
-async function entries(): Promise<{ loc: string; lastmod?: string }[]> {
-  let xml: string;
-  try {
-    xml = await readFile(SITEMAP, 'utf8');
-  } catch {
-    throw new Error(`${SITEMAP.pathname} missing — run \`npm run build\` before this check.`);
-  }
-  return [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, block]) => ({
-    loc: block.match(/<loc>([^<]*)<\/loc>/)![1],
-    lastmod: block.match(/<lastmod>([^<]*)<\/lastmod>/)?.[1],
-  }));
+function read(name: string): string {
+  const p = join(BROWSER, name);
+  if (!existsSync(p)) throw new Error(`${p} missing — run \`npm run build\` before this check.`);
+  return readFileSync(p, 'utf8');
 }
+const xml = read('sitemap.xml');
+const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, b]) => ({
+  loc: b.match(/<loc>([^<]*)<\/loc>/)![1],
+  lastmods: [...b.matchAll(/<lastmod>([^<]*)<\/lastmod>/g)].map((m) => m[1]),
+}));
+const pathOf = (loc: string) => loc.slice(SITE.length) || '/';
 
-test('sitemap: the home page has its fixed lastmod', async () => {
-  const roots = (await entries()).filter((e) => e.loc === ROOT_LOC);
-  assert.equal(roots.length, 1, 'exactly one home entry');
-  assert.equal(roots[0].lastmod, ROOT_LASTMOD);
+test('sitemap: every URL has exactly one lastmod, a real calendar date, not later than tomorrow (UTC)', () => {
+  assert.ok(entries.length >= 50, `only ${entries.length} URLs`);
+  // The date of a commit is local (Warsaw); between 00:00 and 02:00 there it is already «tomorrow» in UTC.
+  const limit = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+  const bad: string[] = [];
+  for (const e of entries) {
+    const d = e.lastmods[0];
+    if (e.lastmods.length !== 1 || !/^\d{4}-\d{2}-\d{2}$/.test(d ?? '')) { bad.push(`${e.loc}: lastmod ${JSON.stringify(e.lastmods)}`); continue; }
+    if (new Date(`${d}T00:00:00Z`).toISOString().slice(0, 10) !== d) bad.push(`${e.loc}: ${d} is not a calendar date`);
+    else if (d > limit) bad.push(`${e.loc}: ${d} is in the future`);
+  }
+  assert.deepEqual(bad, []);
+  assert.equal(entries.find((e) => e.loc === SITE)?.lastmods[0], HOME_LASTMOD);
 });
 
-test('sitemap: 56 unique URLs, posts keep their own date, no other entry has a lastmod', async () => {
-  const all = await entries();
-  assert.equal(all.length, URL_COUNT);
-  assert.equal(new Set(all.map((e) => e.loc)).size, URL_COUNT, 'no duplicate URLs');
-  const posts = new Map(BLOG_POSTS.map((p) => [`${ROOT_LOC}/blog/${p.slug}`, p.updatedAt ?? p.publishedAt]));
-  for (const e of all) {
-    if (e.loc === ROOT_LOC) continue;
-    assert.equal(e.lastmod, posts.get(e.loc), `${e.loc}: lastmod changed`);
+test('sitemap: no changefreq, no priority, one namespace, no duplicate or foreign URL', () => {
+  assert.doesNotMatch(xml, /<changefreq>|<priority>/);
+  assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
+  assert.equal(new Set(entries.map((e) => e.loc)).size, entries.length, 'duplicate <loc>');
+  for (const e of entries) assert.match(e.loc, /^https:\/\/typelessity\.com(\/[^?#]*)?$/, `${e.loc}: foreign host, query or fragment`);
+});
+
+/** Pages the build prerenders: /index.html and /<path>/index.html; the 404 shell and the CSR shell are not pages. */
+function prerenderedPaths(): string[] {
+  const out: string[] = [];
+  const walk = (dir: string) => {
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name);
+      if (statSync(full).isDirectory()) walk(full);
+      else if (name === 'index.html') out.push('/' + relative(BROWSER, dir).split('\\').join('/'));
+    }
+  };
+  walk(BROWSER);
+  return out.map((p) => (p === '/.' || p === '/' ? '/' : p)).sort();
+}
+
+test('sitemap: the set of addresses is the set of prerendered pages, each page canonical to itself', () => {
+  const pages = prerenderedPaths();
+  const listed = entries.map((e) => pathOf(e.loc)).sort();
+  assert.deepEqual(listed, pages);
+  for (const p of pages) {
+    const html = read(p === '/' ? 'index.html' : `${p.slice(1)}/index.html`);
+    const canonical = html.match(/<link[^>]*rel="canonical"[^>]*href="([^"]*)"/)?.[1] ?? html.match(/<link[^>]*href="([^"]*)"[^>]*rel="canonical"/)?.[1];
+    assert.equal(canonical, `${SITE}${p === '/' ? '' : p}`, `${p}: canonical`);
   }
+});
+
+test('sitemap: no address is the source of a redirect in vercel.json', () => {
+  const vj = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8')) as { redirects: { source: string }[] };
+  for (const e of entries) for (const r of vj.redirects) {
+    assert.ok(!new RegExp(`^${r.source}$`).test(pathOf(e.loc)), `${e.loc} is redirected by ${r.source}`);
+  }
+});
+
+test('sitemap: posts carry updatedAt ?? publishedAt read from the article files, not from the manifest', () => {
+  const dir = join(ROOT, 'src', 'assets', 'content', 'blog');
+  const files = readdirSync(dir).filter((f) => f.endsWith('.mdx'));
+  assert.ok(files.length >= 10);
+  for (const f of files) {
+    const fm = matter(readFileSync(join(dir, f), 'utf8')).data as { publishedAt: string; updatedAt?: string };
+    const e = entries.find((x) => x.loc === `${SITE}/blog/${f.replace(/\.mdx$/, '')}`);
+    if (!e) continue; // a retired post is not listed
+    assert.equal(e.lastmods[0], String(fm.updatedAt ?? fm.publishedAt), f);
+  }
+});
+
+function git(...args: string[]): string {
+  for (const bin of ['/usr/bin/git', 'git']) {
+    try { return execFileSync(bin, args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { /* next */ }
+  }
+  return '';
+}
+
+test('sitemap: a page is not dated before its last edit (the formula of D7: page folder and its seo.* keys)', (t) => {
+  const shallow = git('rev-parse', '--is-shallow-repository') !== 'false';
+  if (shallow) return t.skip('shallow clone or no git: the formula needs history');
+  const pages: Array<[string, string, string?]> = [
+    ['/how-it-works', 'how-it-works', 'howItWorks'], ['/pricing', 'pricing', 'pricing'], ['/industries', 'industries', 'industries'],
+    ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq'], ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],
+    ['/legal/security', 'legal'],
+  ];
+  const bad: string[] = [];
+  for (const [path, dir, key] of pages) {
+    const dates = [git('log', '-1', '--format=%cs', '--', `src/app/pages/${dir}/`)];
+    if (key) dates.push(git('log', '-1', '--format=%cs', `-G'seo\\.${key}\\.`, '--', 'src/app/i18n/translations.en.ts'));
+    const need = dates.filter(Boolean).sort().at(-1) ?? '';
+    const got = entries.find((e) => pathOf(e.loc) === path)?.lastmods[0] ?? '';
+    if (got < need) bad.push(`${path}: lastmod ${got || '(none)'} < last edit ${need}`);
+  }
+  const lib = git('log', '-1', '--format=%cs', '--', 'src/app/lib/industries/');
+  for (const e of entries.filter((x) => pathOf(x.loc).startsWith('/industries/'))) {
+    if ((e.lastmods[0] ?? '') < lib) bad.push(`${pathOf(e.loc)}: lastmod ${e.lastmods[0]} < industries data edit ${lib}`);
+  }
+  assert.deepEqual(bad, []);
 });
