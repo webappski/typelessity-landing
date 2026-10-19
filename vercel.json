@@ -3,6 +3,21 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/typelessity-landing/browser",
+  "routes": [
+    {
+      "src": "^/industries/(?:automotive-detailing|automotive-test-drives|beauty-nail-salons|beauty-spas|beauty-tattoo-studios|education-language-schools|education-music-schools|education-test-prep|fitness-martial-arts|fitness-personal-training|fitness-sports-coaching|home-cleaning|home-handyman|home-hvac|home-landscaping|home-moving|hospitality-event-venues|hospitality-hotels|hospitality-tours|pet-grooming|pet-training|pet-veterinary|professional-accounting|professional-coaching|professional-financial-advisors|professional-legal|realestate-commercial|realestate-property-management|realestate-residential|beauty-aesthetic-clinics)/?$",
+      "status": 410,
+      "dest": "/404.html",
+      "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), geolocation=(), microphone=(self)" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cal.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.resend.com https://*.supabase.co https://cal.com; frame-src https://cal.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/legal/privacy",
@@ -32,11 +47,6 @@
     {
       "source": "/blog/forms-vs-conversation-study",
       "destination": "/blog",
-      "permanent": true
-    },
-    {
-      "source": "/industries/beauty-aesthetic-clinics",
-      "destination": "/industries",
       "permanent": true
     }
   ],

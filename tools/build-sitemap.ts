@@ -28,13 +28,13 @@ interface Url {
 // A page rewritten by a later task sets its own date in that task. e2e/sitemap-contract.spec.ts fails
 // when a date is earlier than the result of these two commands.
 const STATIC_PATHS: Url[] = [
-  // Fixed date of the last significant change to the home page (the Free Pilot card, 2026-10-10).
-  { path: '/', lastmod: '2026-10-10' },
+  // The home grid and the FAQ answer name the seven industries that remain; /industries lists them (L1б, 2026-10-19).
+  { path: '/', lastmod: '2026-10-19' },
   { path: '/how-it-works', lastmod: '2026-10-04' },
   { path: '/pricing', lastmod: '2026-10-05' },
-  { path: '/industries', lastmod: '2026-10-04' },
-  { path: '/for-ai-agents', lastmod: '2026-10-04' },
-  { path: '/faq', lastmod: '2026-09-27' },
+  { path: '/industries', lastmod: '2026-10-19' },
+  { path: '/for-ai-agents', lastmod: '2026-10-19' },
+  { path: '/faq', lastmod: '2026-10-19' },
   { path: '/about', lastmod: '2026-10-04' },
   { path: '/blog', lastmod: '2026-10-11' },
   // Only /legal/security is a page on this domain. The other legal documents live on
@@ -43,8 +43,9 @@ const STATIC_PATHS: Url[] = [
   { path: '/legal/security', lastmod: '2026-10-04' },
 ];
 
-// One date for all industry pages: git log -1 --format=%cs -- src/app/lib/industries/
-const INDUSTRIES_LASTMOD = '2026-10-05';
+// One date for all industry pages: git log -1 --format=%cs -- src/app/lib/industries/ (29 pages taken down, the seven that remain
+// were not rewritten, but the set a crawler sees changed: 2026-10-19).
+const INDUSTRIES_LASTMOD = '2026-10-19';
 
 /** A post's date is its own: the last update, else the day it was published. */
 export function lastmodForPost(post: { publishedAt: string; updatedAt?: string }): string {

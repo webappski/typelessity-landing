@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { ALL_INDUSTRIES } from '../src/app/lib/industries';
+import { EXPECTED_PAGES, SEVEN } from './industries-seven';
 
 // r64 frames of the landing release (c8, 2026-10-04) found two wording defects the claims guards do not read:
 //   1. «Why {{ industry.name }} needs Typelessity» on every industry page: the industry names are plural
@@ -61,12 +62,12 @@ before(async () => {
   for (const f of files) {
     if (f.pathname.endsWith('.html')) pages.set(f.pathname.slice(DIST.pathname.length), await readFile(f, 'utf8'));
   }
-  assert.ok(pages.size > 50, `expected the prerendered site under dist/browser, found ${pages.size} html files`);
+  assert.ok(pages.size >= EXPECTED_PAGES, `expected the prerendered site under dist/browser (at least ${EXPECTED_PAGES} html files), found ${pages.size}`);
 });
 
 test('every industry page is built and the guard reads all of them, not a sample', () => {
-  assert.ok(ALL_INDUSTRIES.length >= 30, `only ${ALL_INDUSTRIES.length} industries in the data`);
-  const missing = ALL_INDUSTRIES.filter((i) => !pages.has(`industries/${i.slug}/index.html`)).map((i) => i.slug);
+  assert.equal(ALL_INDUSTRIES.length, SEVEN.length, `${ALL_INDUSTRIES.length} industries in the data, the site keeps ${SEVEN.length}`);
+  const missing = SEVEN.filter((i) => !pages.has(`industries/${i.slug}/index.html`)).map((i) => i.slug);
   assert.deepEqual(missing, [], `industry pages not prerendered: ${missing.join(', ')}`);
 });
 
@@ -92,7 +93,7 @@ test('the «Why …» heading on each industry page does not depend on the indus
     if (capitals.length) problems.push(`${industry.slug}: «${heading}» has a capital mid-phrase: ${capitals.join(', ')}`);
   }
   assert.deepEqual(problems, []);
-  assert.ok(headings.size >= 30, `only ${headings.size} pages carried the heading`);
+  assert.equal(headings.size, SEVEN.length, `${headings.size} pages carried the heading, expected ${SEVEN.length}`);
   assert.equal(new Set(headings.values()).size, 1, `the heading differs between pages: ${[...new Set(headings.values())].join(' | ')}`);
 });
 

@@ -8,12 +8,13 @@ import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService, SITE_URL } from '../../core/seo/seo.service';
 import { breadcrumbLd, faqLd } from '../../core/seo/schemas';
 import { getIndustryBySlug } from '../../lib/industries';
+import { NotFoundComponent } from '../not-found/not-found.component';
 
 @Component({
   selector: 'app-industry-detail-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, JsonPipe],
+  imports: [RouterLink, JsonPipe, NotFoundComponent],
   styleUrl: './industry-detail-page.component.scss',
   template: `
     @let i = industry();
@@ -101,10 +102,8 @@ import { getIndustryBySlug } from '../../lib/industries';
         }
       </article>
     } @else {
-      <section class="vc-wrap" style="padding-block: 80px;">
-        <h1>Industry not found</h1>
-        <p><a routerLink="/industries">Back to industries</a></p>
-      </section>
+      <!-- A taken-down or mistyped address: the same screen a crawler gets with the 404 (the platform answers 410 or 404). -->
+      <app-not-found />
     }
   `,
 })

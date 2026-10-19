@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { ALL_INDUSTRIES } from '../../src/app/lib/industries';
+import { SEVEN } from '../industries-seven';
 import { EMAIL_PATTERN } from '../../src/app/shared/contact-form/waitlist-request';
 
 // A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
@@ -8,7 +8,7 @@ import { EMAIL_PATTERN } from '../../src/app/shared/contact-form/waitlist-reques
 // talks about the connection. /api/contact is stubbed; the page is the real SSR build.
 
 // The industry the tests pick is one the site has a page for — the select is built from those pages.
-const INDUSTRY = ALL_INDUSTRIES[0];
+const INDUSTRY = SEVEN[0];
 
 async function fillAndSubmit(page: Page) {
   await page.goto('/pricing');
@@ -184,15 +184,15 @@ test('a request that gets no answer asks to check the connection', async ({ page
 });
 
 // CRO r2 (2026-10-04, R2-N1): the form still offered Hospitality / Transfers / Freight, a list from the waitlist era, while
-// the site has 36 industry pages and no Transfers or Freight among them. The select is built from the pages.
+// the site has seven industry pages and no Transfers or Freight among them. The select is built from the pages.
 test('the industry select offers every industry page of the site, grouped as /industries groups them, plus «Other» — nothing else', async ({ page }) => {
   await page.goto('/pricing');
   const options = await page.locator('#cf-industry option').evaluateAll((nodes) =>
     nodes.map((n) => ({ value: (n as HTMLOptionElement).value, label: (n.textContent ?? '').trim() })),
   );
   const real = options.filter((o) => o.value && o.value !== 'other');
-  expect(real.map((o) => o.value).sort()).toEqual(ALL_INDUSTRIES.map((i) => i.slug).sort());
-  for (const o of real) expect(o.label).toBe(ALL_INDUSTRIES.find((i) => i.slug === o.value)!.name);
+  expect(real.map((o) => o.value).sort()).toEqual(SEVEN.map((i) => i.slug).sort());
+  for (const o of real) expect(o.label).toBe(SEVEN.find((i) => i.slug === o.value)!.name);
   expect(options.filter((o) => o.value === 'other')).toHaveLength(1);
   expect(options.map((o) => o.label).join(' | ')).not.toMatch(/Transfers|Freight|Hospitality & Restaurants/);
   const groups = await page.locator('#cf-industry optgroup').evaluateAll((nodes) => nodes.map((n) => (n as HTMLOptGroupElement).label));

@@ -35,7 +35,7 @@ export const EN: TranslationMap = {
   'seo.pricing.title': 'Pricing — Free Pilot, Starter, Pro, Enterprise',
   'seo.pricing.description': 'Free Pilot €0, Starter €39, Pro €149, Enterprise €399 a month. Every tier starts with the free pilot; Enterprise has unlimited sites.',
   'seo.industries.title': 'Industries — AI booking for service verticals',
-  'seo.industries.description': 'Configured for legal, beauty, hospitality, real estate, automotive, education and more. Same engine, different config per industry.',
+  'seo.industries.description': 'AI booking assistant pages for hair salons, restaurants, yoga studios, gyms, driving schools, auto repair and tutoring.',
   'seo.faq.title': 'FAQ — Common questions',
   'seo.faq.description': 'Self-contained answers about Typelessity — product, pricing, AI behavior, integration, privacy. First sentence works as a stand-alone citation.',
   'seo.about.title': 'About — Forms are an artifact of constrained UI',

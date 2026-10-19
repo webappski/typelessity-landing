@@ -10,7 +10,8 @@ export const ALL_INDUSTRIES: IndustryContent[] = [
   ...industriesBatch3,
 ];
 
-// Total: 8 + 14 + 14 = 36 industry pages (the cosmetic-clinic page is gone: it invited health data, A45e)
+// Total: 1 + 4 + 2 = 7 industry pages (L1б, 2026-10-19: 29 thin pages were taken down and answer 410; the cosmetic-clinic
+// page went earlier, it invited health data, A45e). e2e/industries-seven.ts holds the written list the tests check this against.
 
 export function getIndustryBySlug(slug: string): IndustryContent | undefined {
   return ALL_INDUSTRIES.find((i) => i.slug === slug);

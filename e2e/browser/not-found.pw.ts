@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { expectedSitemapCount, RETIRED_SLUGS } from '../industries-seven';
 
 // The Angular layer of the 404: the SSR server answers an unknown address with status 404 and the
 // «This page doesn't exist» screen. Vercel does not run here: that the platform serves dist/404.html
@@ -33,7 +34,7 @@ test('a query string and a trailing slash do not turn an unknown address into a 
 
 test('every address of the sitemap, with and without a query string, answers 200 and is not the 404 screen', async ({ request }) => {
   const paths = sitemapPaths();
-  expect(paths.length).toBeGreaterThanOrEqual(50);
+  expect(paths.length).toBe(expectedSitemapCount());
   for (const p of paths) {
     for (const url of [p, `${p}?utm_source=x`]) {
       const res = await request.get(url, { maxRedirects: 0 });
@@ -71,9 +72,21 @@ test('/404 on the SSR server is not a server error and is the 404 screen, not an
 // Known defect, not repaired in L1 (card §1): after hydration the client router knows blog/:slug,
 // industries/:slug and legal/:doc, so a bot gets 404 but a visitor sees an article, an industry or the
 // Security page. test.fail() keeps it visible and turns red when someone fixes it (then drop .fail).
-test.fail('after hydration an unknown blog, industry or legal address shows the 404 screen', async ({ page }) => {
-  for (const p of ['/blog/no-such-post', '/industries/no-such-slug', '/legal/foo']) {
+test.fail('after hydration an unknown blog or legal address shows the 404 screen', async ({ page }) => {
+  for (const p of ['/blog/no-such-post', '/legal/foo']) {
     await page.goto(p);
     await expect(page.locator('app-not-found'), p).toHaveCount(1);
+  }
+});
+
+// L1б (FL-04, industries part): a retired or unknown industry address showed «Industry not found» after hydration while
+// the platform answers 410 or 404. The detail page now renders the same 404 screen. The status of the response is not
+// asserted: the SSR mirror answers 200 for /industries/<x> (the platform serves a static file or the 410 rule).
+test('after hydration an unknown or retired industry address shows the 404 screen, not «Industry not found»', async ({ page }) => {
+  for (const p of ['/industries/no-such-slug', '/industries/home-cleaning', `/industries/${RETIRED_SLUGS[0]}`, '/industries/beauty-aesthetic-clinics']) {
+    await page.goto(p);
+    await expect(page.locator('app-not-found'), p).toHaveCount(1);
+    await expect(page.locator('h1'), p).toHaveText("This page doesn't exist");
+    await expect(page.getByText('Industry not found'), p).toHaveCount(0);
   }
 });

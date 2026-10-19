@@ -2,7 +2,7 @@ import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { ALL_INDUSTRIES } from '../src/app/lib/industries';
+import { EXPECTED_PAGES, SEVEN_SLUGS } from './industries-seven';
 
 // A45e (c8 2026-10-03; legal verdict B1, Art. 13 and Art. 28 document identity):
 //  - every «Terms» link on the landing led to the TypelessForm Terms of Service, and every «Privacy» link to a
@@ -61,7 +61,7 @@ test('no page, llms file or bundle links the TypelessForm privacy policy or Term
 
 test('the footer, on every prerendered page, leads «Terms» to the Typelessity Terms and the page-wide data link to the Typelessity DPA', () => {
   const pages = [...files].filter(([p]) => p.endsWith('index.html'));
-  assert.ok(pages.length > 50);
+  assert.ok(pages.length >= EXPECTED_PAGES, `only ${pages.length} pages, expected at least ${EXPECTED_PAGES}`);
   for (const [path, body] of pages) {
     const footer = body.match(/<footer[^>]*class="vc-footer"[\s\S]*?<\/footer>/)?.[0] ?? '';
     assert.ok(footer, `${path}: no footer`);
@@ -203,7 +203,7 @@ test('the industry select of the question form lists every industry page and «O
   assert.ok(select, '/pricing has no industry select');
   const options = [...select.matchAll(/<option[^>]*\svalue="([^"]*)"[^>]*>([^<]*)<\/option>/g)].map((m) => ({ value: m[1], label: m[2].replace(/&amp;/g, '&').trim() }));
   const real = options.filter((o) => o.value && o.value !== 'other');
-  assert.deepEqual(real.map((o) => o.value).sort(), ALL_INDUSTRIES.map((i) => i.slug).sort());
+  assert.deepEqual(real.map((o) => o.value).sort(), [...SEVEN_SLUGS].sort());
   assert.equal(options.filter((o) => o.value === 'other').length, 1, 'exactly one «Other»');
   assert.doesNotMatch(options.map((o) => o.label).join(' | '), /Transfers|Freight|Hospitality & Restaurants/);
 });

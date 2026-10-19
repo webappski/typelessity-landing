@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { HOME } from '../src/app/pages/home/home.content';
 import { EN } from '../src/app/i18n/translations.en';
 import { BADGE } from './free-pilot-copy';
+import { EXPECTED_PAGES, RETIRED_TERMS, SEVEN, SEVEN_SLUGS } from './industries-seven';
 import { CLAIM_CLASSES, countClaims, LANDING_LANGUAGES, type ClaimCounts } from './claims-dictionary';
 
 // A45e (c8 2026-10-03): the second CRO and promises/legal verdicts on the landing release found four classes
@@ -81,7 +82,7 @@ before(async () => {
   everything = await loadAll(DIST, ['.html', '.txt', '.xml', '.js', '.json']);
   bundles = await loadAll(SERVER_DIST, ['.mjs', '.js', '.json']);
   pages = new Map([...everything].filter(([p]) => p.endsWith('.html') || p.endsWith('.txt')));
-  assert.ok(pages.size > 50, `expected the prerendered site under dist/browser, found ${pages.size} text files`);
+  assert.ok(pages.size >= EXPECTED_PAGES, `expected the prerendered site under dist/browser (at least ${EXPECTED_PAGES} text files), found ${pages.size}`);
 });
 
 // ── 1. the pre-launch offer ──────────────────────────────────────────────────────────────────────
@@ -350,23 +351,54 @@ test('no page, post, llms file or sitemap entry invites health data', () => {
   assert.deepEqual(offenders, [], 'a page invites health data');
 });
 
-test('the clinics page is not built and /industries shows one page fewer', () => {
+test('the clinics page is not built and /industries lists the seven kept pages', () => {
   assert.equal(pages.has('industries/beauty-aesthetic-clinics/index.html'), false, 'dist still holds the clinics page');
   const industries = visibleText(pages.get('industries/index.html')!);
   assert.doesNotMatch(industries, /Aesthetic|cosmetic/i);
   const count = Number(industries.match(/AI booking that fits (\d+) verticals/)?.[1]);
   const listed = [...pages.keys()].filter((p) => /^industries\/[^/]+\/index\.html$/.test(p)).length;
   assert.equal(count, listed, 'the heading counts a different number of verticals than the build holds');
-  assert.equal(listed, 36);
+  // the expectation is the written list of the seven kept pages, not the data the build was made from (L1б)
+  assert.equal(listed, SEVEN.length);
+  assert.equal(count, SEVEN.length);
 });
 
 test('the home page names exactly the verticals that have a page', () => {
   const html = pages.get('index.html')!;
   const claimed = Number(visibleText(html).match(/Configured for (\d+) verticals/)?.[1]);
-  const chips = (html.match(/class="home-industries__cell"/g) ?? []).length;
+  const chips = (html.match(/class="home-industries__cell"/g) ?? []).length; // the «All N industries →» tile has the --more class too
   const built = [...pages.keys()].filter((p) => /^industries\/[^/]+\/index\.html$/.test(p)).length;
   assert.equal(claimed, built, 'the heading counts a different number of verticals than the build holds');
   assert.equal(chips, built, 'the home page lists a vertical that has no page, or leaves one out');
+  assert.equal(built, SEVEN.length, 'the site builds a different number of industry pages than the seven it keeps');
+});
+
+// L1б: the 29 industries and 4 categories taken down must not be named on the pages that list or summarise the
+// verticals. Case does not matter; the class is the names of the retired industries and categories plus the phrases
+// that named them ('legal' alone is a fair word: «legal basis», «legal blockers»). The post
+// best-ai-booking-widgets-2026 still lists «legal practices, real estate» — it belongs to L9 (todo, not blocking).
+const RETIRED_GUARDED = ['index.html', 'industries/index.html', 'faq/index.html', 'for-ai-agents/index.html'];
+const RETIRED_TODO: Record<string, string> = { 'blog/best-ai-booking-widgets-2026/index.html': 'L9' };
+
+test('the home, hub, FAQ and for-ai-agents pages name none of the retired industries or categories', () => {
+  const offenders: string[] = [];
+  for (const path of RETIRED_GUARDED) {
+    const html = pages.get(path);
+    assert.ok(html !== undefined, `${path} is not built`);
+    const text = visibleText(html).toLowerCase();
+    // the meta description is not visible text; it names the verticals too
+    const meta = (html.match(/<meta[^>]+(?:name="description"|property="og:description")[^>]*>/gi) ?? []).join(' ').toLowerCase();
+    for (const term of RETIRED_TERMS) if (text.includes(term) || meta.includes(term)) offenders.push(`${path}: «${term}»`);
+  }
+  assert.deepEqual(offenders, [], 'a retired industry or category is still named');
+  for (const [path, owner] of Object.entries(RETIRED_TODO)) assert.ok(pages.has(path), `${path} (todo ${owner}) is gone — drop it from RETIRED_TODO`);
+});
+
+test('every kept industry is named on the hub by its name, and in the right category', () => {
+  const html = pages.get('industries/index.html')!;
+  const text = visibleText(html);
+  for (const i of SEVEN) assert.ok(text.includes(i.name), `${i.slug}: «${i.name}» is not on the hub`);
+  assert.deepEqual(SEVEN_SLUGS.filter((slug) => !html.includes(`href="/industries/${slug}"`)), [], 'the hub does not link a kept page');
 });
 
 test('the gdpr post says medicine only in the form «not allowed»', () => {

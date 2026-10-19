@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import handler, { FALLBACK_FROM, FALLBACK_TO, LIMITS, PLANS } from '../../../../api/contact';
-import { ALL_INDUSTRIES } from '../../lib/industries';
+import { RETIRED_SLUGS, SEVEN_SLUGS } from '../../../../e2e/industries-seven';
 import { EMAIL_PATTERN, waitlistRequestBody } from './waitlist-request';
 
 // A36 (c8, 2026-09-24): with CONTACT_TO unset the form mailed hello@typelessity.com, a domain
@@ -14,7 +14,7 @@ const WAITLIST = waitlistRequestBody({
   email: 'owner@clinic.example',
   website: 'https://clinic.example',
   plan: 'starter',
-  industry: ALL_INDUSTRIES[0].slug,
+  industry: SEVEN_SLUGS[0],
   message: 'Two locations, about 300 bookings a month.',
   consent: true,
 });
@@ -183,8 +183,14 @@ test('plan and industry must be values the form offers', async () => {
     assert.equal(status, 400, `industry ${JSON.stringify(industry)} is not a page of the site`);
     assert.equal(sent.length, 0);
   }
-  for (const industry of ['', 'other', ...ALL_INDUSTRIES.map((i) => i.slug)]) {
+  for (const industry of ['', 'other', ...SEVEN_SLUGS]) {
     assert.equal((await submit({}, { ...WAITLIST, industry })).status, 200, `industry ${JSON.stringify(industry)} is on the form`);
+  }
+  // L1б: the 30 retired pages left the select; a tab opened before the release may still send one, and it is refused
+  for (const industry of RETIRED_SLUGS) {
+    const { status, sent } = await submit({}, { ...WAITLIST, industry });
+    assert.equal(status, 400, `industry ${industry} is a retired page and must be refused`);
+    assert.equal(sent.length, 0, `industry ${industry}: a mail was sent`);
   }
 });
 
