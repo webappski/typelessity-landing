@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // The four tiers are compared side by side, so their start buttons are one size, on one line of
 // text and on one level — the cards' bottom edge — whatever the text above them (seen uneven on

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { BLOG_POSTS } from '../../src/app/lib/blog-manifest.generated';
@@ -31,7 +31,7 @@ try {
 
 // "Visible" = width and height above 0 and visibility not hidden. "Own text" = a direct child text
 // node whose trim() is not empty. The ancestor walk for the scroll-container skip stops before `body`.
-// Plain JS in a string: it runs in the page, both in the one-shot check and inside the demo sampler.
+// Plain JS in a string: it runs in the page.
 const COLLECT = String.raw`(opts) => {
   const iw = window.innerWidth;
   const r1 = (n) => Math.round(n * 10) / 10;
@@ -83,47 +83,21 @@ const COLLECT = String.raw`(opts) => {
   return { offenders, candidates, scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth };
 }`;
 
-// The hero demo's card must stay inside the hero column; its JSON either fits or scrolls inside its box.
-// The general rule cannot see this: a card is a div without text of its own.
-const CARD = String.raw`() => {
+// L3 (B6, F3): the hero holds the widget slot (the animated demo with its .ld card is gone). The slot — the box the
+// <typelessity-widget> sits in — and the widget element itself must stay inside the hero column. The general rule above
+// cannot see this: a slot is a box without text of its own, and the widget draws inside a shadow root that
+// `body.querySelectorAll` does not enter. The hero layout is L4's; the column edge is the one the old demo test used.
+const SLOT = String.raw`() => {
   const r1 = (n) => Math.round(n * 10) / 10;
+  const host = document.querySelector('typelessity-widget');
   const grid = document.querySelector('.home-hero__grid');
+  if (!host || !grid) return { host: !!host, grid: !!grid, offenders: [] };
   const limit = Math.min(grid.getBoundingClientRect().right - parseFloat(getComputedStyle(grid).paddingRight), window.innerWidth);
   const offenders = [];
-  const inside = (name, el) => { const b = el.getBoundingClientRect(); if (b.right > limit + 0.5) offenders.push(name + ' right ' + r1(b.right) + ' > column edge ' + r1(limit)); };
-  inside('.ld', document.querySelector('.ld'));
-  document.querySelectorAll('.ld__card').forEach((card, i) => inside('.ld__card #' + i, card));
-  const pre = document.querySelector('pre.ld__code');
-  inside('pre.ld__code', pre);
-  const overflowX = getComputedStyle(pre).overflowX;
-  if (pre.scrollWidth > pre.clientWidth && overflowX !== 'auto' && overflowX !== 'scroll') {
-    offenders.push('pre.ld__code spills out of its card: scrollWidth ' + pre.scrollWidth + ' > clientWidth ' + pre.clientWidth + ', overflow-x ' + overflowX);
-  }
-  return { offenders, scenario: pre.textContent.replace(/\s+/g, ' ').trim().slice(0, 40) };
-}`;
-
-// One page.evaluate that polls every 200ms through the whole demo cycle (the demo rotates scenarios on its
-// own timers and the widest JSON line is only on screen part of the time): the cycle is closed when the
-// first scenario comes round again after another one. Capped at 75s so a dead client fails loudly.
-const SAMPLER = String.raw`async (opts) => {
-  const collect = ${COLLECT};
-  const card = ${CARD};
-  const found = new Set();
-  const scenarios = [];
-  let first = null, sawOther = false, closed = false, last = null;
-  const started = Date.now();
-  while (!closed && Date.now() - started < 75000) {
-    const c = card();
-    const m = collect(opts);
-    last = m;
-    c.offenders.concat(m.offenders).forEach((o) => found.add('[demo «' + c.scenario + '»] ' + o));
-    if (!scenarios.includes(c.scenario)) scenarios.push(c.scenario);
-    if (first === null) first = c.scenario;
-    else if (c.scenario !== first) sawOther = true;
-    else if (sawOther) closed = true;
-    if (!closed) await new Promise((resolve) => setTimeout(resolve, 200));
-  }
-  return { offenders: Array.from(found), closed, scenarios: scenarios.length, ms: Date.now() - started, scrollWidth: last.scrollWidth, clientWidth: last.clientWidth };
+  const inside = (name, el) => { const b = el.getBoundingClientRect(); if (b.right > limit + 0.5 || b.left < -0.5) offenders.push(name + ' ' + r1(b.left) + '..' + r1(b.right) + ' outside the column edge ' + r1(limit)); };
+  inside('typelessity-widget', host);
+  if (host.parentElement) inside('the slot of the widget', host.parentElement);
+  return { host: true, grid: true, offenders };
 }`;
 
 const settle = async (page: Page) => {
@@ -183,19 +157,15 @@ if (!sitemapError && paths.length > 0) {
       });
     }
 
-    test(`/ @${width}: the demo card stays inside the hero column through a whole demo cycle`, async ({ page }) => {
-      test.setTimeout(120_000);
+    test(`/ @${width}: the widget slot stays inside the hero column`, async ({ page }) => {
       await page.setViewportSize({ width, height: HEIGHT });
       await page.goto('/');
       await settle(page);
-      await expect(page.locator('pre.ld__code')).toBeAttached();
+      await expect(page.locator('typelessity-widget'), 'the hero holds the widget element').toBeAttached();
       await page.evaluate(async () => { await document.fonts.ready; });
-      const result = await page.evaluate(`(${SAMPLER})(${JSON.stringify({ exceptions: EXCEPTIONS })})`) as {
-        offenders: string[]; closed: boolean; scenarios: number; ms: number; scrollWidth: number; clientWidth: number;
-      };
-      expect(result.closed, `the demo cycle did not come round within 75s (saw ${result.scenarios} scenarios)`).toBe(true);
-      expect(result.offenders, `/ @${width}: scrollWidth ${result.scrollWidth} / clientWidth ${result.clientWidth}; ${result.scenarios} demo scenarios sampled in ${result.ms}ms`).toEqual([]);
-      expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
+      const result = await page.evaluate(`(${SLOT})()`) as { host: boolean; grid: boolean; offenders: string[] };
+      expect(result.grid, 'the hero grid the column edge is read from').toBe(true);
+      expect(result.offenders, `/ @${width}: the widget slot against the hero column`).toEqual([]);
     });
   }
 }

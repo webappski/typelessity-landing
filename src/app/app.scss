@@ -2,8 +2,7 @@
   display: block;
 }
 
-// Fixed header → push main content down by header height
+// The header is sticky and stands in the flow (L3), so main needs no offset of its own.
 main {
-  padding-top: 64px;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 76px);
 }

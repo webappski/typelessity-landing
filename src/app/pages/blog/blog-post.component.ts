@@ -41,18 +41,15 @@ import { getBlogPostBySlug } from '../../lib/blog-manifest.generated';
 
       @if (p) {
         <header class="blog-post__head">
+          <!-- D8 (FL-14): the separator is glued to the item after it (white-space: nowrap), so a wrapped line never ends on « · ». -->
           <div class="blog-post__meta">
             <span class="blog-post__cat">{{ p.category }}</span>
-            <span class="blog-post__sep" aria-hidden="true">/</span>
-            <time [attr.datetime]="p.publishedAt">{{ p.publishedAt | date:'mediumDate' }}</time>
+            &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><time [attr.datetime]="p.publishedAt">{{ p.publishedAt | date:'mediumDate' }}</time></span>
             @if (p.updatedAt && p.updatedAt > p.publishedAt) {
-              <span class="blog-post__sep" aria-hidden="true">/</span>
-              <time [attr.datetime]="p.updatedAt">Updated {{ p.updatedAt | date:'mediumDate' }}</time>
+              &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><time [attr.datetime]="p.updatedAt">Updated {{ p.updatedAt | date:'mediumDate' }}</time></span>
             }
-            <span class="blog-post__sep" aria-hidden="true">/</span>
-            <span class="blog-post__readtime">{{ readingTime(p.body) }} min read</span>
-            <span class="blog-post__sep" aria-hidden="true">/</span>
-            <span>{{ p.author }}</span>
+            &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><span class="blog-post__readtime">{{ readingTime(p.body) }} min read</span></span>
+            &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><span>{{ p.author }}</span></span>
           </div>
           <h1 class="blog-post__title">{{ p.title }}</h1>
           <p class="blog-post__lede">{{ p.description }}</p>

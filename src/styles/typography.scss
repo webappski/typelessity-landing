@@ -1,5 +1,5 @@
-// Typography — DM Sans (body) + Space Mono (display / code)
-// Fonts are loaded via index.html (Google Fonts with preload + system-font fallback).
+// Typography — Montserrat (text, headings) + Space Mono (code only, F9).
+// The files are self-hosted: public/fonts/fonts.css, linked and preloaded in index.html.
 
 html {
   font-size: 16px;
@@ -19,7 +19,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.18;
   color: var(--text-primary);
@@ -34,7 +34,7 @@ h4 { font-size: 16px; }
 
 p { margin: 0; text-wrap: pretty; }
 
-code, pre, kbd, samp { font-family: var(--font-display); }
+code, pre, kbd, samp { font-family: var(--font-mono); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

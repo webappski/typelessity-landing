@@ -94,7 +94,9 @@ const POST_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
 };
 
 const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
-  'index.html': [/mailto:info@webappski\.com/, /GET \/stylists/, /on model calls and on booking submission/,
+  // L3: `/GET \/stylists/` is gone from this list. It was printed only by the hero demo (app-live-demo, the sample API call of its
+  // first scenario), which the real widget replaced in the hero slot; the demo scenarios of L4 are held by the script scan below.
+  'index.html': [/mailto:info@webappski\.com/, /on model calls and on booking submission/,
     /supported verticals \(configurations\)/i],
   'pricing/index.html': [/they differ in submission volume \(see cards above\) and the number of websites/,
     /same support by email/, /other terms are by contract, on request/],
@@ -154,8 +156,9 @@ test('every blog post the build emitted: no old model, unmeasured latency or mis
   }
 });
 
-// A45c. The hero rotates five demos; only the first is prerendered, so the rest are checked in the
-// scripts the build emitted.
+// A45c. The hero used to rotate five demos; only the first was prerendered, so the rest were checked in the scripts the build
+// emitted. L3 (F3.3) removed that rotation — the hero holds the real widget now — but the test stays: it scans every script
+// the build shipped, which is where the demo scenarios of L4 would be written, and a medical demo must not come back through them.
 test('the emitted scripts: no medical demo in the hero rotation', async () => {
   const files = (await readdir(DIST)).filter((f) => f.endsWith('.js'));
   assert.ok(files.length > 0, 'no scripts under dist/browser — run `npm run build` first');

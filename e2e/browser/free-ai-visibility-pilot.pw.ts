@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { join } from 'node:path';
 import { BADGE, COPY } from '../free-pilot-copy';
 
@@ -42,6 +42,8 @@ for (const width of [320, 390, 800, 850, 1024, 1440]) {
     const metrics = await offer.evaluate((node, heroSelector) => {
       const card = node as HTMLElement;
       const rect = card.getBoundingClientRect();
+      // L3 (F18-3): the header is in the flow (sticky) and `main` has no padding-top of its own any more, so the gap is
+      // measured from the bottom edge of the header the way it always was — not from a number the old fixed header implied.
       const header = document.querySelector('header')!.getBoundingClientRect();
       const hero = document.querySelector(heroSelector)!.getBoundingClientRect();
       const copy = card.querySelector('.pilot-offer__copy')!.getBoundingClientRect();
@@ -103,6 +105,36 @@ for (const width of [320, 390, 800, 850, 1024, 1440]) {
     else expect(metrics.actionLeft).toBeGreaterThanOrEqual(metrics.copyRight + 32);
     if (process.env['PILOT_PROOF_DIR'] && [390, 1440].includes(width)) {
       await page.screenshot({ path: join(process.env['PILOT_PROOF_DIR'], `typelessity-${width}.png`) });
+    }
+  });
+}
+
+// L3 (F7): the badge is measured in BOTH themes — the site follows the system theme, and Playwright's default scheme is light,
+// so the test above sees only one. Same formula as the test above: the badge text against the badge fill composited on the card.
+for (const scheme of ['light', 'dark'] as const) {
+  test.describe(`${scheme} theme`, () => {
+    test.use({ colorScheme: scheme });
+    for (const width of [390, 1440]) {
+      test(`the badge is 4.5:1 or better at ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.goto('/');
+        const badgeContrast = await page.getByTestId('free-pilot-offer').evaluate((card) => {
+          const badge = card.querySelector('.pilot-offer__badge')!;
+          const rgb = (color: string) => color.match(/[\d.]+/g)!.map(Number);
+          const foreground = rgb(getComputedStyle(badge).color);
+          const background = rgb(getComputedStyle(badge).backgroundColor);
+          const base = rgb(getComputedStyle(card).backgroundColor);
+          const alpha = background[3] ?? 1;
+          const composite = background.slice(0, 3).map((value, i) => value * alpha + base[i] * (1 - alpha));
+          const luminance = (color: number[]) => color.slice(0, 3).map((value) => {
+            const channel = value / 255;
+            return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+          }).reduce((sum, value, i) => sum + value * [0.2126, 0.7152, 0.0722][i], 0);
+          const light = luminance(foreground), dark = luminance(composite);
+          return (Math.max(light, dark) + 0.05) / (Math.min(light, dark) + 0.05);
+        });
+        expect(badgeContrast).toBeGreaterThanOrEqual(4.5);
+      });
     }
   });
 }

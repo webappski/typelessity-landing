@@ -8,17 +8,17 @@ import type { TranslationMap } from './translation.types';
 export const EN: TranslationMap = {
   // ── Navigation ──
   'nav.howItWorks': 'How It Works',
-  'nav.industries': 'Industries',
   'nav.pricing': 'Pricing',
   'nav.faq': 'FAQ',
   'nav.blog': 'Blog',
   'nav.about': 'About',
-  'nav.getStarted': 'Get Started',
+  'nav.getStarted': 'Get it free',
 
   // ── Footer ──
   'footer.tagline': 'AI conversational booking widget. Replace forms with natural chat in 25 languages.',
   'footer.product': 'Product',
-  'footer.resources': 'Resources',
+  'footer.guides': 'Guides',
+  'footer.allArticles': 'All articles',
   'footer.company': 'Company',
   'footer.forAiAgents': 'For AI Agents',
   'footer.contact': 'Contact',

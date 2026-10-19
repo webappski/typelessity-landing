@@ -10,6 +10,16 @@
 //
 // The web server is the real SSR build (`npm run build` first). Each run starts a fresh
 // server with loopback hosts allowed; an occupied :4000 fails instead of reusing stale settings.
+//
+// L3 (2026-10-19):
+//   - Every spec imports `test` from ./e2e/browser/fixtures, never from '@playwright/test'. The fixture answers the widget
+//     origin from a snapshot of the product's published widget build and the API origin with the product's own 404, and
+//     refuses every other host (F6). global-setup.ts makes the snapshot, prints `widget.js sha256 <hex>` and fails with a
+//     text when the product repo has no build (F16; env TY_WIDGET_DIST, TY_PRODUCT_ROOT). It never skips.
+//   - serviceWorkers: 'block' — a service worker would answer requests before context.route sees them.
+//   - colorScheme is Playwright's default, `light` (F7). The site follows the system theme, so a spec that measures
+//     colour sets `test.use({ colorScheme })` inside its own `test.describe` for BOTH schemes; geometry runs in light.
+//   - The only project is Chromium: specs may use CDP (CSS.getPlatformFontsForNode, DOM.getDocument with pierce).
 
 import { defineConfig, devices } from '@playwright/test';
 
@@ -18,10 +28,12 @@ export default defineConfig({
   testMatch: '**/*.pw.ts',
   fullyParallel: true,
   forbidOnly: !!process.env['CI'],
+  globalSetup: './e2e/browser/global-setup.ts',
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:4000',
     trace: 'retain-on-failure',
+    serviceWorkers: 'block',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {

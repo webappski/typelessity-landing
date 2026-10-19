@@ -1,42 +1,103 @@
-// Design tokens — TypelessForm-aligned dark theme
-// Migration source: Webappski / TypelessForm design system
+// Design tokens — one set, two themes (L3, 2026-10-19). Ported from the redesign mock (assets/site.css:1-40): the new names
+// (--bg, --fg, --ink, …) are the mock's; the old names (--bg-primary, --text-primary, --accent-hover, …) stay as ALIASES of the
+// new surfaces and texts, so every page built before L4–L9 lives in both themes without being rewritten.
+//
+// The theme follows the system until the visitor chooses: light is the default, `prefers-color-scheme: dark` turns dark on
+// unless <html data-theme="light"> says otherwise, and <html data-theme="dark"|"light"> is the visitor's stored choice (the inline
+// script in index.html and the header switch). `color-scheme` lives inside each set, so form controls and scrollbars follow too.
+//
+// Orange: --accent / --accent2 are FILLS only (2.84:1 on white — never a text colour). Orange TEXT is --ink: #A84A09 on light
+// (≥4.66:1 on every light surface, also over --ink-soft), #F68F24 on dark (≥5.27:1). Text on an orange fill is dark
+// (--text-on-accent, A131): the mock's white on #F77300 is 2.84:1 and is NOT taken. Every pair is measured on every address by
+// e2e/browser/gray-text-contrast.pw.ts and orange-button-contrast.pw.ts in both themes.
+
+@mixin dark-tokens {
+  --bg: #0A1120;
+  --bg2: #0D1526;
+  --card: #161E2E;
+  --card-hover: #1B2436;
+  --code-bg: #111A2B;
+  --fg: #F2F4F8;
+  --fg2: rgba(242, 244, 248, 0.74);
+  --fg3: rgba(242, 244, 248, 0.60);
+  --line: rgba(255, 255, 255, 0.09);
+  --ink: #F68F24;
+  --ink-soft: rgba(247, 115, 0, 0.16);
+  --ok: #6EE7B7;
+  --info: #60A5FA;
+  --danger: #FCA5A5;
+  --island: #0F1829;
+  --island-bd: rgba(255, 255, 255, 0.10);
+  --island-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --chip: rgba(255, 255, 255, 0.06);
+  --chip-bd: rgba(255, 255, 255, 0.12);
+  --foot-bg: #162447;
+  --giant: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+  --widget-ring: 0 30px 70px -26px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  color-scheme: dark;
+}
 
 :root {
-  // ── Surfaces ──
-  --bg-primary: #282838;
-  --bg-secondary: #313142;
-  --bg-card: #3A3A4C;
-  --bg-card-hover: #3D3D50; // was #434356: --text-secondary on it was 4.14:1, on #3D3D50 it is 4.54:1 (A107)
-  --bg-code: #2E2E3E;
+  // ── Surfaces (light) ──
+  --bg: #FFFFFF;
+  --bg2: #F7F8FA;
+  --card: #FFFFFF;
+  --card-hover: #F7F8FA;
+  --code-bg: #F7F8FA;
 
-  // ── Text ──
-  --text-primary: #F0F0F5;
-  // A107 (c8 2026-10-03): the same two values as typelessform.com (5dafb2a), and muted is raised to the level of
-  // secondary — #9a9ab0 stayed at 4.03:1 on --bg-card (#3A3A4C). #a8a8bd is 6.20:1 on --bg-primary, 5.46:1 on
-  // --bg-secondary, 4.76:1 on --bg-card. Muted and secondary no longer differ in colour; size and weight carry the hierarchy.
-  --text-secondary: #a8a8bd;
-  --text-muted: #a8a8bd;
-  // Text and icons on a tangerine fill (--accent, --accent-hover): 5.09:1 and 6.00:1. White was 2.84:1 (A131).
+  // ── Text (light) ──
+  --fg: #2B2B2B;
+  --fg2: #4A4A4A;
+  --fg3: #636363;
+  // Text and icons on an orange fill (--accent, --accent2): 5.11:1 and 6.00:1 (A131).
   --text-on-accent: #282838;
 
-  // ── Accent (single warm tangerine) ──
-  --accent: #FF6B2B;
-  --accent-hover: #FF8548;
-  --accent-glow: rgba(255, 107, 43, 0.15);
-  --accent-subtle: rgba(255, 107, 43, 0.08);
+  // ── Accent: fills only ──
+  --accent: #F77300;
+  --accent2: #FA8A01;
+  --accent-glow: rgba(247, 115, 0, 0.15);
+  --accent-subtle: rgba(247, 115, 0, 0.08);
+  // ── Accent as text ──
+  --ink: #A84A09;
+  --ink-soft: rgba(247, 115, 0, 0.10);
 
-  // ── Borders ──
-  --border: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(255, 107, 43, 0.3);
+  // ── Lines ──
+  --line: #E7E9ED;
+  --border-accent: rgba(247, 115, 0, 0.30);
 
   // ── Semantic ──
-  --success: #34D399;
-  --info: #60A5FA;
+  --ok: #166534;
+  --info: #1D4ED8;
+  --danger: #B91C1C;
+
+  // ── Shell (header island, chips, footer) ──
+  --island: #FFFFFF;
+  --island-bd: #E7E9ED;
+  --island-shadow: 0 2px 10px rgba(20, 24, 40, 0.06);
+  --chip: #FFFFFF;
+  --chip-bd: #E7E9ED;
+  --foot-bg: #F1F2F5;
+  --giant: linear-gradient(180deg, rgba(43, 43, 43, 0.06), rgba(43, 43, 43, 0));
+  --widget-ring: 0 24px 60px -24px rgba(20, 24, 40, 0.28), 0 2px 8px rgba(20, 24, 40, 0.06);
+
+  // ── Old names: aliases of the surfaces and texts above ──
+  --bg-primary: var(--bg);
+  --bg-secondary: var(--bg2);
+  --bg-card: var(--card);
+  --bg-card-hover: var(--card-hover);
+  --bg-code: var(--code-bg);
+  --text-primary: var(--fg);
+  --text-secondary: var(--fg2);
+  --text-muted: var(--fg3);
+  --accent-hover: var(--accent2);
+  --border: var(--line);
+  --success: var(--ok);
 
   // ── Typography ──
-  --font-display: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
-  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: var(--font-display);
+  // Text and headings: Montserrat. Code, pre, kbd, samp and the snippet blocks: Space Mono (F9).
+  --font-display: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
   --font-sans: var(--font-body);
 
   // ── Layout ──
@@ -51,7 +112,15 @@
     radial-gradient(ellipse 900px 600px at 85% 0%, var(--accent-glow), transparent 60%),
     radial-gradient(ellipse 700px 500px at 5% 35%, var(--accent-subtle), transparent 60%);
 
-  color-scheme: dark;
+  color-scheme: light;
+}
+
+// The visitor's choice.
+:root[data-theme='dark'] { @include dark-tokens; }
+
+// The system, while nothing is chosen.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { @include dark-tokens; }
 }
 
 // Responsive container padding

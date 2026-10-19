@@ -1,6 +1,6 @@
 // ══════════════════════════════════════
 //  Typelessity Landing — Global Styles
-//  Theme: TypelessForm-aligned dark + tangerine
+//  Theme: two themes (light, dark) from one token set — see styles/tokens.scss
 // ══════════════════════════════════════
 
 @use './styles/reset.scss';
@@ -37,6 +37,20 @@
 
 main:focus { outline: none; }
 
+// ── Theme switch icon: the moon offers dark, the sun offers light ──
+// Global on purpose: a component stylesheet would prefix `:root` with its own attribute and never match.
+.vc-theme-sun { display: none; }
+:root[data-theme='dark'] {
+  .vc-theme-sun { display: block; }
+  .vc-theme-moon { display: none; }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    .vc-theme-sun { display: block; }
+    .vc-theme-moon { display: none; }
+  }
+}
+
 // ── Layout ──
 .vc-wrap, .container {
   max-width: var(--container);
@@ -44,11 +58,12 @@ main:focus { outline: none; }
   padding: 0 var(--container-pad);
 }
 
+// Orange text is --ink, never --accent (a fill, 2.84:1 on white). Hover is an underline, as in the mock (.link:hover).
 a {
-  color: var(--accent);
+  color: var(--ink);
   text-decoration: none;
   transition: color 0.2s;
-  &:hover { color: var(--accent-hover); }
+  &:not([class]):hover { text-decoration: underline; }
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -119,7 +134,7 @@ pre {
   &:hover {
     background: var(--accent-subtle);
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--ink);
   }
 }
 
@@ -173,7 +188,7 @@ pre {
 .vc-accent-magenta .vc-kicker-bar { background: var(--accent); }
 
 .vc-h1-grad {
-  color: var(--accent);
+  color: var(--ink);
   position: relative;
   display: inline-block;
 }

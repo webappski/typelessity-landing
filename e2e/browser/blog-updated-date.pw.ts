@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import matter from 'gray-matter';
@@ -60,16 +60,29 @@ for (const { slug, updatedAt } of POSTS) {
       await expect.soft(times.nth(1), 'B1: the second <time> is visible').toBeVisible();
       await expect.soft(times.nth(1), 'B1: its datetime is updatedAt').toHaveAttribute('datetime', updatedAt);
       await expect.soft(times.nth(1), 'B1: its text').toHaveText(`Updated ${mediumDate(updatedAt)}`);
-      const order = await page.locator('.blog-post__meta').evaluate((meta) =>
-        [...meta.children].map((c) => {
+      // L3 (D8): the separator is glued to the item after it, so the items may sit in a wrapper of their own. The order is read
+      // from the meaningful descendants in document order — a wrapper is walked through, not counted.
+      const order = await page.locator('.blog-post__meta').evaluate((meta) => {
+        const kind = (c: Element) => {
           if (c.tagName === 'TIME') return 'time';
           if (c.classList.contains('blog-post__cat')) return 'cat';
           if (c.classList.contains('blog-post__sep')) return 'sep';
           if (c.classList.contains('blog-post__readtime')) return 'readtime';
-          return 'text';
-        }),
-      );
-      expect.soft(order, 'B1: children of the meta line').toEqual(['cat', 'sep', 'time', 'sep', 'time', 'sep', 'readtime', 'sep', 'text']);
+          return null;
+        };
+        const out: string[] = [];
+        const walk = (el: Element) => {
+          for (const c of el.children) {
+            const k = kind(c);
+            if (k) out.push(k);
+            else if (c.children.length) walk(c);
+            else out.push('text');
+          }
+        };
+        walk(meta);
+        return out;
+      });
+      expect.soft(order, 'B1: the items of the meta line, in document order').toEqual(['cat', 'sep', 'time', 'sep', 'time', 'sep', 'readtime', 'sep', 'text']);
     });
 
     test(`B2 ${slug} @${width}: «Updated» on one line, inside the window, looks like the date of publication${width >= 1000 ? ', the line in one row' : ''}`, async ({ page }) => {

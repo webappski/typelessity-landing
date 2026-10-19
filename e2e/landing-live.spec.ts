@@ -61,3 +61,40 @@ test('the line count of HTML to integrate is the embed code\'s own', async () =>
   }
   assert.match(unescape(await read('index.html')), new RegExp(`>\\s*${lines} lines\\s*<`), `the home stats must say ${lines} lines`);
 });
+
+// L3 (D6, S5, M8, M27): the hero holds the real widget, and the page does not ask for its script. The prerendered HTML carries
+// the element — `<typelessity-widget position="inline" api-url=…>` — and NO <script> tag for widget.js: the loader runs in the
+// browser after the first paint (widget-fonts-csp.pw.ts holds when). Read from the RAW bytes, without `unescape`: the embed
+// code shown inside <pre> on / and /how-it-works is escaped text, and counting it would be counting an example. Only a real
+// tag counts.
+async function everyPage(): Promise<Map<string, string>> {
+  const { readdir } = await import('node:fs/promises');
+  const out = new Map<string, string>();
+  const walk = async (dir: URL): Promise<void> => {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), dir);
+      if (entry.isDirectory()) await walk(url);
+      else if (entry.name.endsWith('.html')) out.set(url.pathname.slice(DIST.pathname.length), await readFile(url, 'utf8'));
+    }
+  };
+  await walk(DIST);
+  return out;
+}
+
+test('no prerendered page carries a <script> tag for widget.js', async () => {
+  const pages = await everyPage();
+  assert.ok(pages.size >= 10, `only ${pages.size} pages read`);
+  const offenders = [...pages].filter(([, html]) => /<script[^>]*widget\.js/i.test(html)).map(([p]) => p);
+  assert.deepEqual(offenders, []);
+});
+
+test('the hero of / holds one <typelessity-widget position="inline"> that talks to the API origin; no other page holds one', async () => {
+  const pages = await everyPage();
+  const tags = (html: string) => [...html.matchAll(/<typelessity-widget\b[^>]*>/gi)].map((m) => m[0]);
+  const home = tags(pages.get('index.html') ?? '');
+  assert.equal(home.length, 1, `${home.length} <typelessity-widget> elements on /`);
+  assert.match(home[0]!, /\sposition="inline"/);
+  assert.ok(home[0]!.includes(`api-url="${WIDGET_API_URL}"`), `the widget on / is not given api-url="${WIDGET_API_URL}" (it would call the origin of the page)`);
+  const others = [...pages].filter(([p, html]) => p !== 'index.html' && p !== 'index.csr.html' && tags(html).length > 0).map(([p]) => p);
+  assert.deepEqual(others, []);
+});

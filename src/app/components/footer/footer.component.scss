@@ -1,18 +1,41 @@
+// The footer of the redesign mock (assets/site.css .foot): three columns and a brand block, a watermark behind them. The class names
+// stay the ones the tests and the pages know (vc-footer, vc-footer-parent, vc-footer-parent-links).
 :host { display: block; }
 
 .vc-footer {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
-  padding: 64px 0 32px;
+  position: relative;
+  overflow: hidden;
+  background: var(--foot-bg);
+  border-top: 1px solid var(--line);
+  padding: 56px 0 44px;
+}
+
+.vc-footer-giant {
+  position: absolute;
+  left: 60px;
+  bottom: -40px;
+  font-family: var(--font-display);
+  font-size: 230px;
+  font-weight: 600;
+  letter-spacing: -0.07em;
+  line-height: 1;
+  white-space: nowrap;
+  background-image: var(--giant);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  pointer-events: none;
+  user-select: none;
 }
 
 .vc-footer-grid {
+  position: relative;
   max-width: var(--container);
   margin: 0 auto;
   padding: 0 var(--container-pad);
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
+  gap: 32px;
 }
 
 .vc-footer-brand {
@@ -21,20 +44,31 @@
   .vc-logo {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: var(--text-primary);
+    gap: 10px;
+    color: var(--fg);
     text-decoration: none;
+  }
+
+  .vc-logo-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #F77300, #FA8A01);
+    color: var(--text-on-accent); // A131
+    display: grid;
+    place-items: center;
   }
 
   .vc-logo-text {
     font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
   }
 
   p {
     font-size: 14px;
-    color: var(--text-muted);
+    color: var(--fg3);
     line-height: 1.6;
     margin: 12px 0;
     max-width: 320px;
@@ -42,18 +76,17 @@
 }
 
 .vc-footer-meta {
-  font-family: var(--font-display);
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--fg3);
   margin-top: 8px;
 }
 
 .vc-footer-parent {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--fg3);
   margin-top: 12px;
 
-  a { color: var(--text-secondary); text-decoration: none; &:hover { color: var(--accent); } }
+  a { color: var(--fg2); text-decoration: none; &:hover { text-decoration: underline; } }
 }
 
 // The links sit on their own line: as an inline box that wrapped to a new line, the 4px margin-left
@@ -67,39 +100,44 @@
 
 .vc-footer-h {
   font-family: var(--font-display);
-  font-size: 13px;
-  letter-spacing: 1px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-primary);
-  font-weight: 700;
-  margin-bottom: 16px;
+  color: var(--fg3);
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
 .vc-footer-links {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   list-style: none;
   padding: 0;
   margin: 0;
 
   a {
-    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+    color: var(--fg2);
     font-size: 14px;
     text-decoration: none;
     transition: color 0.15s;
 
-    &:hover { color: var(--text-primary); }
+    &:hover { color: var(--fg); text-decoration: underline; }
   }
 }
 
 @media (max-width: 860px) {
   .vc-footer-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 32px;
   }
+
+  .vc-footer-giant { font-size: 88px; left: 8px; bottom: -6px; }
 }
 
 @media (max-width: 540px) {
-  .vc-footer-grid { grid-template-columns: 1fr; }
+  .vc-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vc-footer-brand { grid-column: 1 / -1; }
 }

@@ -18,7 +18,7 @@
     max-width: 760px;
 
     code {
-      font-family: var(--font-display);
+      font-family: var(--font-mono);
       font-size: 16px;
       background: var(--bg-secondary);
       padding: 1px 6px;
@@ -64,7 +64,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 20px 24px;
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.65;
   overflow-x: auto;
@@ -116,7 +116,7 @@
   font-size: 14.5px;
 
   a {
-    color: var(--accent);
+    color: var(--ink);
     border-bottom: 1px solid currentColor;
     &:hover { opacity: 0.8; }
   }

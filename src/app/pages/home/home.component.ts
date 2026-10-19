@@ -7,7 +7,7 @@ import { organizationLd, softwareApplicationLd, websiteLd } from '../../core/seo
 import { EMBED_SNIPPET } from '../../core/integrations/embed-snippet';
 import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { IconComponent } from '../../shared/icon/icon.component';
-import { LiveDemoComponent } from '../../widgets/live-demo/live-demo.component';
+import { TypelessityWidgetComponent } from '../../widgets/typelessity-widget/typelessity-widget.component';
 import { ALL_INDUSTRIES } from '../../lib/industries';
 import { HOME, pilotSignupUrl } from './home.content';
 
@@ -15,7 +15,7 @@ import { HOME, pilotSignupUrl } from './home.content';
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LiveDemoComponent, PadNumberPipe, IconComponent],
+  imports: [RouterLink, TypelessityWidgetComponent, PadNumberPipe, IconComponent],
   styleUrl: './home.component.scss',
   templateUrl: './home.component.html',
 })

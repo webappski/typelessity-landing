@@ -1,0 +1,22 @@
+// The frame of the mock (.demo__frame): the widget is a white card in both themes. The min-height is the slot's own, so the
+// widget arriving after the first paint moves nothing.
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.tw-slot {
+  position: relative;
+  min-height: 720px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--widget-ring);
+}
+
+typelessity-widget { display: block; }
+
+@media (max-width: 720px) {
+  .tw-slot { min-height: 640px; }
+}

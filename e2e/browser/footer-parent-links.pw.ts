@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // r64 frames (c8, 2026-10-04): the footer line «A product of Webappski. Sister product: TypelessForm.» wraps, and the
 // links «webappski.com · typelessform.com» used to be an inline box with a 4px margin-left — once it fell onto

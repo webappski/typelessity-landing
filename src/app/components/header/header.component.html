@@ -1,41 +1,50 @@
 <header class="vc-nav">
-  <div class="vc-wrap vc-nav-inner">
+  <div class="vc-nav-inner">
     <a class="vc-logo" routerLink="/">
       <span class="vc-logo-mark" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M4 6h16M12 6v14" stroke="#ff5b1f" stroke-width="2.4" stroke-linecap="round"/>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M12 6v14"/>
         </svg>
       </span>
       <span class="vc-logo-text">Typelessity</span>
     </a>
 
     <nav class="vc-nav-links" aria-label="Primary">
-      <a routerLink="/how-it-works" routerLinkActive="active">{{ t.t('nav.howItWorks') }}</a>
-      <a routerLink="/industries" routerLinkActive="active">{{ t.t('nav.industries') }}</a>
-      <a routerLink="/pricing" routerLinkActive="active">{{ t.t('nav.pricing') }}</a>
-      <a routerLink="/blog" routerLinkActive="active">{{ t.t('nav.blog') }}</a>
-      <a routerLink="/faq" routerLinkActive="active">{{ t.t('nav.faq') }}</a>
+      <a routerLink="/how-it-works" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.howItWorks') }}</a>
+      <a routerLink="/pricing" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.pricing') }}</a>
+      <a routerLink="/blog" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.blog') }}</a>
+      <a routerLink="/faq" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t.t('nav.faq') }}</a>
     </nav>
 
-    <div class="vc-nav-cta">
-      <a class="vc-pill" routerLink="/about">{{ t.t('nav.about') }}</a>
-      <a class="vc-btn vc-btn-primary" [href]="signupUrl">{{ t.t('nav.getStarted') }}</a>
-    </div>
+    <div class="vc-spacer"></div>
 
-    <button class="vc-burger" (click)="toggleMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-label="Toggle menu">
-      <span [class.open]="mobileMenuOpen()"></span>
+    <!-- Both icons are in the markup and CSS picks one by the theme on screen: the server cannot know it, and an icon chosen
+         from storage in the template would not match the server's HTML on hydration. -->
+    <button class="vc-icon-btn vc-theme-toggle" type="button" (click)="toggleTheme()" aria-label="Switch between light and dark theme">
+      <svg class="vc-theme-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="vc-theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6L4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>
+    </button>
+
+    <a class="vc-btn vc-btn-primary vc-nav-cta" [href]="signupUrl">{{ t.t('nav.getStarted') }}</a>
+
+    <button #burger class="vc-icon-btn vc-burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-controls="mobile-menu" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        @if (mobileMenuOpen()) {
+          <path d="M6 6l12 12M18 6L6 18"/>
+        } @else {
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        }
+      </svg>
     </button>
   </div>
 
   @if (mobileMenuOpen()) {
-    <div class="vc-mobile-menu">
-      <a routerLink="/how-it-works" (click)="closeMenu()">{{ t.t('nav.howItWorks') }}</a>
-      <a routerLink="/industries" (click)="closeMenu()">{{ t.t('nav.industries') }}</a>
-      <a routerLink="/pricing" (click)="closeMenu()">{{ t.t('nav.pricing') }}</a>
-      <a routerLink="/blog" (click)="closeMenu()">{{ t.t('nav.blog') }}</a>
-      <a routerLink="/faq" (click)="closeMenu()">{{ t.t('nav.faq') }}</a>
-      <a routerLink="/about" (click)="closeMenu()">{{ t.t('nav.about') }}</a>
-      <a class="vc-btn vc-btn-primary vc-btn-block" [href]="signupUrl" (click)="closeMenu()">{{ t.t('nav.getStarted') }}</a>
+    <div class="vc-mobile-menu" id="mobile-menu">
+      <a routerLink="/how-it-works" (click)="closeMenu()">{{ t.t('nav.howItWorks') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a routerLink="/pricing" (click)="closeMenu()">{{ t.t('nav.pricing') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a routerLink="/blog" (click)="closeMenu()">{{ t.t('nav.blog') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a routerLink="/faq" (click)="closeMenu()">{{ t.t('nav.faq') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block vc-menu-cta" [href]="signupUrl" (click)="closeMenu()">{{ t.t('nav.getStarted') }}</a>
     </div>
   }
 </header>

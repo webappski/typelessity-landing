@@ -1,147 +1,142 @@
-:host { display: block; }
+// The header of the redesign mock (assets/site.css .hdr / .island / .nav / .menu), on the class names the tests and the
+// pages already know. Sticky and in the flow: `main` needs no padding-top of its own.
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
 
 .vc-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  height: 64px;
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border-bottom: 1px solid var(--border);
+  padding: 16px 24px 0;
 }
 
 .vc-nav-inner {
+  position: relative;
+  z-index: 2; // above the open mobile menu, so the burger stays reachable
   max-width: var(--container);
+  height: 60px;
   margin: 0 auto;
-  padding: 0 var(--container-pad);
-  height: 100%;
+  padding: 0 8px 0 18px;
+  border-radius: var(--radius);
+  background: var(--island);
+  border: 1px solid var(--island-bd);
+  box-shadow: var(--island-shadow);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 10px;
 }
 
 .vc-logo {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--text-primary);
+  gap: 10px;
+  color: var(--fg);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .vc-logo-mark {
-  display: inline-flex;
-  color: var(--accent);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #F77300, #FA8A01);
+  color: var(--text-on-accent); // A131: dark on orange; the mock's white is 2.4:1
+  display: grid;
+  place-items: center;
 }
 
 .vc-logo-text {
   font-family: var(--font-display);
   font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
 }
 
 .vc-nav-links {
   display: flex;
-  gap: 32px;
+  align-items: center;
+  gap: 2px;
+  margin-left: 10px;
 
   a {
-    color: var(--text-secondary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--fg2);
     font-size: 14px;
     font-weight: 500;
-    transition: color 0.2s;
     text-decoration: none;
+    transition: color 0.2s;
 
-    &:hover, &.active { color: var(--text-primary); }
+    &:hover { color: var(--fg); }
+    &.active { color: var(--fg); background: var(--ink-soft); }
   }
 }
 
-.vc-nav-cta {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
+.vc-spacer { flex: 1; }
 
-.vc-pill {
-  color: var(--text-secondary);
-  font-size: 14px;
-  padding: 8px 4px;
-  text-decoration: none;
-
-  &:hover { color: var(--text-primary); }
-}
-
-// Override the global .vc-btn-primary inside the nav to be the compact pill
-.vc-nav-cta .vc-btn-primary {
-  padding: 8px 20px;
-  font-size: 13px;
-}
-
-.vc-burger {
-  display: none;
-  background: none;
-  border: 0;
-  width: 32px;
-  height: 32px;
+.vc-icon-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--chip-bd);
+  background: var(--chip);
+  color: var(--fg);
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  position: relative;
-
-  span,
-  span::before,
-  span::after {
-    content: '';
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: var(--text-primary);
-    border-radius: 1px;
-    position: absolute;
-    left: 6px;
-    transition: transform 0.3s, opacity 0.2s;
-  }
-
-  span { top: 15px; }
-  span::before { top: -6px; }
-  span::after { top: 6px; }
-
-  span.open { background: transparent; }
-  span.open::before { transform: rotate(45deg); top: 0; }
-  span.open::after { transform: rotate(-45deg); top: 0; }
 }
 
+// Compact pill inside the header (the global .vc-btn-primary is the large one)
+.vc-nav-cta {
+  padding: 0 16px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.vc-burger { display: none; }
+
+// The open menu covers the page under the header (mock: .menu, fixed, inset 0).
 .vc-mobile-menu {
-  position: absolute;
-  top: 64px;
-  left: 0;
-  right: 0;
-  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px var(--container-pad) 24px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 88px 24px 28px;
+  background: var(--bg);
 
   a:not(.vc-btn) {
-    color: var(--text-secondary);
-    padding: 12px 0;
-    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 68px;
+    border-bottom: 1px solid var(--line);
+    color: var(--fg);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
     text-decoration: none;
-
-    &:hover { color: var(--text-primary); }
   }
 
-  .vc-btn {
+  .vc-menu-cta {
+    margin-top: 24px;
     text-align: center;
     justify-content: center;
-    margin-top: 8px;
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1020px) {
   .vc-nav-links, .vc-nav-cta { display: none; }
-  .vc-burger { display: block; }
-  .vc-mobile-menu { display: flex; }
+  .vc-burger { display: grid; }
+  .vc-nav-inner { padding: 0 6px 0 16px; }
+}
+
+@media (max-width: 720px) {
+  .vc-nav { padding: 12px 12px 0; }
 }

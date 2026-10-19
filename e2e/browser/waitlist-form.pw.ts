@@ -1,6 +1,7 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 import { SEVEN } from '../industries-seven';
 import { EMAIL_PATTERN } from '../../src/app/shared/contact-form/waitlist-request';
+import { CONTRAST_ENGINE } from './contrast-engine';
 
 // A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
 // server had answered and a retry would fail the same way — the request was lost. A server refusal
@@ -107,26 +108,22 @@ test('an email that is not an address is stopped at the field: the reason shows,
 
 // T-1 (code-review r2, 2026-10-05): C4 moved the notice links from --accent (4.48:1 on --bg-secondary) to --accent-hover (5.28:1) and
 // nothing measured it. The links of the notice are measured as the browser paints them, against the surface of the notice.
-test('every link in the privacy notice is 4.5:1 or better on the notice surface', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto('/pricing', { waitUntil: 'networkidle' });
-  const links = await page.locator('#cf-notice a').evaluateAll((nodes) => {
-    const parse = (s: string) => { const a = s.match(/rgba?\(([^)]+)\)/)![1].split(',').map((x) => parseFloat(x)); return { r: a[0], g: a[1], b: a[2], a: a.length > 3 ? a[3] : 1 }; };
-    const lin = (c: number) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
-    const lum = (c: { r: number; g: number; b: number }) => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
-    const surface = parse(getComputedStyle(document.querySelector('#cf-notice')!).backgroundColor);
-    return nodes.map((a) => {
-      const text = parse(getComputedStyle(a).color);
-      const [hi, lo] = [lum(text), lum(surface)].sort((p, q) => q - p);
-      return { label: (a.textContent ?? '').trim(), surfaceAlpha: surface.a, ratio: (hi + 0.05) / (lo + 0.05) };
+// L3 (B4, F1, F2, F7): both themes, and the measure of contrast-engine.ts — the surface is composited layer by layer (so a
+// semi-transparent notice is read as painted) and the link colour keeps its alpha. The old assertion that the surface is opaque
+// is gone with the formula that needed it.
+for (const scheme of ['light', 'dark'] as const) {
+  test.describe(`${scheme} theme`, () => {
+    test.use({ colorScheme: scheme });
+
+    test('every link in the privacy notice is 4.5:1 or better on the notice surface', async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto('/pricing', { waitUntil: 'networkidle' });
+      const { seen, bad } = (await page.evaluate(`(${CONTRAST_ENGINE})(${JSON.stringify({ scope: '#cf-notice a' })})`)) as { seen: number; bad: string[] };
+      expect(seen, 'the notice carries its links: info@, the adequacy decision, both DPAs').toBeGreaterThanOrEqual(4);
+      expect(bad).toEqual([]);
     });
   });
-  expect(links.length, 'the notice carries its links: info@, the adequacy decision, both DPAs').toBeGreaterThanOrEqual(4);
-  for (const l of links) {
-    expect(l.surfaceAlpha, 'the notice surface is opaque, so the ratio is measured against what is painted').toBe(1);
-    expect(l.ratio, `«${l.label}» in the notice`).toBeGreaterThanOrEqual(4.5);
-  }
-});
+}
 
 test('a visitor with only a question needs no plan, and unticking the box switches the button off again', async ({ page }) => {
   await page.goto('/pricing');

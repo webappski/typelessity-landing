@@ -5,13 +5,33 @@
   <title>Typelessity — AI conversational booking widget</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#282838">
+  <!-- The browser bar follows the system theme; a stored choice overrides both (the script below). Values are --bg of each theme. -->
+  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0A1120" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <!-- Fonts: DM Sans (body) + Space Mono (display/code), self-hosted — loading them from
+  <!-- Theme: follows the system until the visitor chooses (the header switch writes localStorage['ty-theme']). This runs before
+       the first stylesheet, so the first painted frame already has the chosen theme. Storage may be blocked: every access is in try. -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ty-theme');
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.setAttribute('data-theme', t);
+          var m = document.querySelectorAll('meta[name=theme-color]');
+          for (var i = 0; i < m.length; i++) m[i].setAttribute('content', t === 'dark' ? '#0A1120' : '#FFFFFF');
+        }
+      } catch (e) { /* no storage: the system theme applies */ }
+    })();
+  </script>
+
+  <!-- Fonts: Montserrat (text, headings) + Space Mono (code), self-hosted — loading them from
        Google sent every visitor's IP there before any consent (A27). public/fonts holds the
-       files and CSS Google serves for the same families and weights (fetched 2026-09-24). -->
+       files and CSS Google serves for the same families and weights (fetched 2026-09-24 for
+       Space Mono, 2026-10-19 for Montserrat; licences: OFL-*.txt beside the files).
+       One preload: the Latin file of Montserrat 400, the URL fonts.css names, with crossorigin. -->
+  <link rel="preload" as="font" type="font/woff2" href="fonts/JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2" crossorigin>
   <link rel="stylesheet" href="fonts/fonts.css">
 </head>
 <body>

@@ -97,9 +97,9 @@ test('the «Why …» heading on each industry page does not depend on the indus
   assert.equal(new Set(headings.values()).size, 1, `the heading differs between pages: ${[...new Set(headings.values())].join(' | ')}`);
 });
 
-test('the hero mock-up says «25+ languages» like the rest of the site, and no page abbreviates a count to «<n> lang»', () => {
-  const home = visibleText(pages.get('index.html') ?? '');
-  assert.match(home, /voice · 25\+ languages/i, 'the mic line of the hero mock-up must read «voice · 25+ languages»');
+// L3 (F3.1): the hero mock-up (`app-live-demo`, «voice · 25+ languages») was replaced by the real widget in the hero slot, so
+// the line it carried is gone with it and is no longer asserted. What stays is the class: no page abbreviates a count to «<n> lang».
+test('no page abbreviates a count to «<n> lang»', () => {
   const offenders = [...pages].filter(([, html]) => /\b\d+\+?\s+lang\b/i.test(visibleText(html))).map(([p]) => p);
   assert.deepEqual(offenders, [], `an abbreviated «<n> lang» is left on: ${offenders.join(', ')}`);
 });

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 import { SEVEN, SEVEN_CATEGORIES, SEVEN_SLUGS } from '../industries-seven';
 
 // L1б: the hub and the home grid show the seven industries that have a page. Each frame the founder-facing check

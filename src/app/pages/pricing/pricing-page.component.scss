@@ -30,9 +30,10 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  // 36px 24px: a four-column card is 245px wide at 1280px, and «Start with the free pilot» (162px at 15px)
-  // has to fit one line inside it (founder 25.09: the button says this on every paid tier).
-  padding: 36px 24px;
+  // 36px 20px: a four-column card is 245px wide at 1280px, and «Start with the free pilot» has to fit one line inside it
+  // (founder 25.09: the button says this on every paid tier). The label is 176px in Montserrat 500 at 15px (L3; it was 162px
+  // in DM Sans), so the card keeps 205px for the button and the button 10px of padding each side.
+  padding: 36px 20px;
   position: relative;
   transition: border-color 0.3s, transform 0.3s;
   // A column, so the start button sits on the card's bottom edge whatever the text above it is —
@@ -40,7 +41,7 @@
   display: flex;
   flex-direction: column;
 
-  > .vc-btn { margin-top: auto; white-space: nowrap; padding-inline: 14px; }
+  > .vc-btn { margin-top: auto; white-space: nowrap; padding-inline: 10px; }
 
   &:hover {
     border-color: var(--border-accent);
@@ -155,7 +156,7 @@
       right: 22px;
       font-family: var(--font-display);
       font-size: 12px;
-      color: var(--accent);
+      color: var(--ink);
       letter-spacing: 0.06em;
       font-weight: 700;
     }
@@ -182,7 +183,7 @@
     display: inline-block;
     font-family: var(--font-display);
     font-size: 11px;
-    color: var(--accent);
+    color: var(--ink);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin-bottom: 10px;
@@ -231,7 +232,7 @@
   &__i {
     font-family: var(--font-display);
     font-size: 12px;
-    color: var(--accent);
+    color: var(--ink);
     min-width: 28px;
     font-weight: 700;
   }

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 
 // A43 (founder 2026-09-25): every tier starts with the free pilot, which is set up in the Webappski
 // portal. Each «start» button leads to the portal login with start=typelessity and the utm_* that tell

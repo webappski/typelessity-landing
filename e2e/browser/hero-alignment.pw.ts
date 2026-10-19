@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // The page heroes are left-aligned, but .vc-section-sub carries `margin: 0 auto` for the centred
 // section headers — so under a left-aligned h1 the subtitle floated to the middle of the column
