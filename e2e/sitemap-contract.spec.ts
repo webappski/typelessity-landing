@@ -155,7 +155,7 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
   // the FAQ answers live with the home content (L1б: the home date was a literal that had fallen a day behind)
   const pages: Array<[string, string, string?, string[]?]> = [
     ['/', 'home', 'home', ['src/app/lib/industries/']],
-    ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'],
+    ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'], ['/gdpr', 'gdpr', 'gdpr'],
     ['/industries', 'industries', 'industries', ['src/app/lib/industries/']],
     ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq', ['src/app/pages/home/home.content.ts']],
     ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],
@@ -163,7 +163,7 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
   ];
   const bad: string[] = [];
   // the pages whose JSON-LD is built in schemas.ts by what their component calls (Р3); /blog, /faq and /how-it-works are not in the list
-  const SCHEMA_PAGES = new Set(['/', '/pricing', '/for-ai-agents', '/about', '/industries', '/legal/security']);
+  const SCHEMA_PAGES = new Set(['/', '/pricing', '/gdpr', '/for-ai-agents', '/about', '/industries', '/legal/security']);
   const nameDates = (dir: string, where: string): string[] => {
     const names = schemaNamesOf(dir);
     const dated = names.map((n) => [n, schemaNameDate(n)] as const);

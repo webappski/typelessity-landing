@@ -1,10 +1,10 @@
 <section class="vc-wrap aiagents-hero">
-  <div class="vc-kicker"><span class="vc-kicker-bar"></span>For AI agents</div>
-  <h1>Typelessity for autonomous agents</h1>
+  <div class="vc-kicker"><span class="vc-kicker-bar"></span>For developers &amp; AI agents</div>
+  <h1>Session and booking JSON shapes</h1>
   <p class="aiagents-hero__lede">
-    The JSON shapes the widget API returns for a session and for a confirmed booking.
+    The JSON shapes of a session and of a submitted booking request, published for developers and for AI agents.
     A dedicated <code>/agent</code> endpoint that would accept structured booking intents and return
-    structured results is designed below — it is not built yet.
+    structured results is designed below — it is not built and has no release date.
   </p>
   <p class="aiagents-hero__status">
     <strong>Status:</strong> the Session and Booking shapes are published today, not versioned yet.
@@ -16,11 +16,12 @@
   <h2>Plain-text definition (for LLM extraction)</h2>
   <p class="aiagents-def">
     Typelessity is an AI conversational booking widget. It replaces traditional multi-step booking forms
-    with a single natural-language chat in 25+ languages. It accepts text and voice input (OpenAI gpt-4o-mini-transcribe),
+    with a single natural-language chat. The chat window comes in 25 languages and the assistant replies in the language set for the business.
+    It accepts text and voice input (OpenAI gpt-4o-mini-transcribe),
     extracts structured fields via a single AI call (OpenAI (currently gpt-5.4-mini)), calls enrichment
-    APIs (e.g. fetch mechanics after a service is filled), and submits the booking to your endpoint or by email.
+    APIs (e.g. fetch mechanics after a service is filled), and submits the booking request to your endpoint or by email.
     It runs across service-business verticals — beauty, hospitality, fitness, automotive and education — driven entirely by per-tenant config.
-    Consent before any AI processing. Service and database in the EU; OpenAI processes in the US under the 2021 SCCs. Free Pilot. Enterprise terms by contract.
+    Consent is asked before the chat starts. Service and database in the EU; OpenAI processes in the US under the 2021 SCCs. Free Pilot. Enterprise terms by contract.
   </p>
 </section>
 
@@ -31,7 +32,7 @@
   <h3>Session</h3>
   <pre class="aiagents-code">{{ sessionSchema }}</pre>
 
-  <h3>Booking (the result of confirming a session)</h3>
+  <h3>Booking (the result of submitting a session)</h3>
   <pre class="aiagents-code">{{ bookingSchema }}</pre>
 </section>
 
@@ -49,7 +50,8 @@
 <section class="vc-wrap aiagents-section">
   <h2>Machine-readable feature list</h2>
   <ul class="aiagents-features">
-    <li><strong>languages_supported:</strong> 25+ (en, ru, de, fr, es, it, pl, pt, nl, tr, ar, he, ja, ko, zh, …)</li>
+    <li><strong>languages_supported:</strong> 25 ({{ languageCodes }})</li>
+    <li><strong>reply_language:</strong> set per business, not detected</li>
     <li><strong>industries_supported:</strong> config-driven, see /industries for current verticals</li>
     <li><strong>extraction_model:</strong> OpenAI (currently gpt-5.4-mini)</li>
     <li><strong>voice_input:</strong> OpenAI gpt-4o-mini-transcribe</li>
@@ -81,6 +83,8 @@
   <ul class="aiagents-links">
     <li><a href="/llms.txt">/llms.txt</a> — markdown summary of every page</li>
     <li><a routerLink="/how-it-works">/how-it-works</a> — full architecture</li>
+    <li><a routerLink="/install">/install</a> — the two lines of HTML, where the requests go, the CSP</li>
+    <li><a routerLink="/gdpr">/gdpr</a> — who processes what, and where</li>
     <li><a routerLink="/industries">/industries</a> — vertical configurations</li>
     <li><a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a> — to ask about the /agent endpoint</li>
   </ul>

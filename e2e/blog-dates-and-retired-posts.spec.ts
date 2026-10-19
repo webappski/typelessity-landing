@@ -65,9 +65,41 @@ test('retired posts: no page, no sitemap URL, no link, and a 301 to /blog', asyn
   }
 });
 
+// L7: the article gdpr-compliance became the page /gdpr. It is a merge, not a retirement: the old address goes to the page that holds
+// its answers, not to /blog (RETIRED above does not cover it). The rule stays at least a year (until 2027-10-19): a link on another
+// site, a bookmark and an index entry still point to the old address, and a rule removed earlier turns them into 404s. Vercel
+// answers a permanent redirect with 308; 301 and 308 are both permanent. There is no local Vercel, so the rule is read, not requested;
+// the preview answers `curl -sI <preview>/blog/gdpr-compliance` → 308, location: /gdpr (card L7 «Как проверить»).
+test('the article gdpr-compliance became /gdpr: no page, no sitemap URL, no link in any page, and a permanent redirect to /gdpr', async () => {
+  const slug = 'gdpr-compliance';
+  const sitemap = await read(new URL('sitemap.xml', DIST));
+  const vercel = JSON.parse(await read(new URL('vercel.json', ROOT))) as {
+    redirects: { source: string; destination: string; permanent?: boolean; statusCode?: number }[];
+  };
+  assert.equal(await exists(new URL(`blog/${slug}/`, DIST)), false, `dist/blog/${slug} still built`);
+  assert.doesNotMatch(sitemap, new RegExp(`/blog/${slug}<`), 'the sitemap still lists the article');
+  assert.match(sitemap, /<loc>https:\/\/typelessity\.com\/gdpr<\/loc>/, 'the sitemap does not list /gdpr');
+  const files: URL[] = [];
+  const walk = async (dir: URL): Promise<void> => {
+    for (const e of await readdir(dir, { withFileTypes: true })) {
+      if (e.isDirectory()) await walk(new URL(`${e.name}/`, dir));
+      else if (/\.(html|txt|xml)$/.test(e.name)) files.push(new URL(e.name, dir));
+    }
+  };
+  await walk(DIST);
+  assert.ok(files.length >= 28, `${files.length} text files in dist`);
+  const linking: string[] = [];
+  for (const f of files) if (new RegExp(`/blog/${slug}\\b`).test(await read(f))) linking.push(f.pathname.slice(DIST.pathname.length));
+  assert.deepEqual(linking, [], 'a page still links to /blog/gdpr-compliance');
+  const rules = vercel.redirects.filter((r) => r.source === `/blog/${slug}`);
+  assert.equal(rules.length, 1, 'vercel.json must hold exactly one rule for /blog/gdpr-compliance');
+  assert.equal(rules[0]!.destination, '/gdpr');
+  assert.ok(rules[0]!.permanent === true || rules[0]!.statusCode === 301 || rules[0]!.statusCode === 308, 'the redirect must be permanent');
+});
+
 test('every post: the date in the header is the date in the structured data, and it is real', async () => {
   const posts = (await readdir(new URL('blog/', DIST), { withFileTypes: true })).filter((e) => e.isDirectory());
-  assert.ok(posts.length >= 11, `expected the 11 posts under dist/blog, found ${posts.length}`);
+  assert.ok(posts.length >= 10, `expected the 10 posts under dist/blog, found ${posts.length}`);
   for (const { name } of posts) {
     const body = await read(new URL(`blog/${name}/index.html`, DIST));
     const shown = body.match(/<time[^>]*datetime="([0-9-]+)"/)?.[1];
@@ -119,7 +151,7 @@ const metaTimes = (html: string): Array<{ datetime: string; text: string }> => {
 };
 
 test('every article header: exactly two <time>, the first is publication', async (t) => {
-  assert.equal(SLUGS.length, 11);
+  assert.equal(SLUGS.length, 10);
   await t.test('two <time> in .blog-post__meta', async () => {
     const bad: string[] = [];
     for (const slug of SLUGS) {

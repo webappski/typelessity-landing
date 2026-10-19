@@ -1,8 +1,4 @@
 {
-  "about/index.html": {
-    "K1": 1,
-    "K5": 1
-  },
   "blog/25-languages-one-prompt/index.html": {
     "K1": 9
   },
@@ -24,10 +20,6 @@
     "K1": 1,
     "K4": 2
   },
-  "blog/gdpr-compliance/index.html": {
-    "K5": 1,
-    "K13": 3
-  },
   "blog/index.html": {
     "K1": 1,
     "K12": 1
@@ -41,11 +33,6 @@
   },
   "blog/whisper-vs-webspeech/index.html": {
     "K1": 1
-  },
-  "for-ai-agents/index.html": {
-    "K1": 2,
-    "K5": 1,
-    "K8": 1
   },
   "index.html": {
     "K1": 12,

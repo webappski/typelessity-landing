@@ -40,6 +40,11 @@
       "permanent": true
     },
     {
+      "source": "/blog/gdpr-compliance",
+      "destination": "/gdpr",
+      "permanent": true
+    },
+    {
       "source": "/blog/what-we-got-wrong",
       "destination": "/blog",
       "permanent": true

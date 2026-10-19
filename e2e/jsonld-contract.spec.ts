@@ -105,6 +105,7 @@ test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', 
       'for-ai-agents/index.html': ['BreadcrumbList', 'Organization', 'SoftwareApplication'],
       'pricing/index.html': ['SoftwareApplication'],
       'about/index.html': ['AboutPage'],
+      'gdpr/index.html': ['BreadcrumbList'],
       'industries/index.html': ['BreadcrumbList'],
       'legal/security/index.html': ['BreadcrumbList'],
       'faq/index.html': [],
@@ -130,8 +131,8 @@ test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', 
 });
 
 test('J1 faqs: no article carries the key, the manifest does not hold it', async (t) => {
-  await t.test('no .mdx frontmatter has a faqs key (11 files incl. gdpr-compliance)', () => {
-    assert.equal(ARTICLES.length, 11);
+  await t.test('no .mdx frontmatter has a faqs key (10 files, gdpr-compliance became /gdpr)', () => {
+    assert.equal(ARTICLES.length, 10);
     const bad = ARTICLES.filter((slug) => 'faqs' in frontmatter(slug).data);
     assert.deepEqual(bad, []);
   });
@@ -426,7 +427,7 @@ test('J11 the questions stay on the page as plain text when their markup goes', 
     const text = pageText('pricing/index.html');
     assert.deepEqual(PRICING_FAQ.map((x) => squash(x.q)).filter((q) => !text.includes(q)), []);
   });
-  await t.test('each of the 11 articles has a visible h2 «FAQ»', () => {
+  await t.test('each of the 10 articles has a visible h2 «FAQ»', () => {
     const bad = ARTICLES.filter((slug) => !/<h2[^>]*>\s*FAQ\s*<\/h2>/i.test(HTML.get(articlePage(slug))!));
     assert.deepEqual(bad, []);
   });

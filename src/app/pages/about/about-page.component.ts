@@ -17,7 +17,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
       <div class="vc-kicker"><span class="vc-kicker-bar"></span>About</div>
       <h1>Forms are an artifact of constrained UI</h1>
       <p class="about-hero__lede">
-        Typelessity is built on a single bet: let users describe what they need in their own words, and the architecture that makes this work is simpler, not more complex, than the form it replaces.
+        Typelessity is an AI booking widget built by Webappski. Alex Isa has been building it since January 2026: who made it, how it works and why a chat replaces the form.
       </p>
     </section>
 
@@ -27,6 +27,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
         <h2>Replace the booking form with one sentence</h2>
         <p class="vc-section-sub">
           Multi-step forms exist because old UI primitives could not parse natural language. They can now. We rebuild the booking surface around that.
+          One AI call per turn reads your field configuration; see <a routerLink="/how-it-works">how it works</a>.
         </p>
       </header>
     </section>
@@ -40,12 +41,12 @@ import { aboutPageLd } from '../../core/seo/schemas';
         <p>
           Engineer turned founder. Started the Typelessity engine in January 2026 and took it from
           specification to the free pilot — single-call extraction architecture, config-driven enrichment, anti-hallucination
-          guards, 25+ language support out of the box. Background in distributed systems and frontend infrastructure.
+          guards, a chat window in 25 languages out of the box. Background in distributed systems and frontend infrastructure.
         </p>
         <p>
           The thesis: AI didn't just make booking <em>better</em> — it changed what's possible. A user can now say
           "Записаться на замену тормозных колодок в пятницу после обеда" and the system extracts the service,
-          the day, the time window and the language in one AI call. The form stops being the contract; the conversation is.
+          the day and the time window in one AI call. The form stops being the contract; the conversation is.
         </p>
         <ul class="founder__links">
           <li><a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a></li>
@@ -71,8 +72,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
         </p>
         <p>
           Typelessity and TypelessForm are separate codebases with their own prompts. They share the approach —
-          the AI reads the field configuration and fills in the fields — and both ask the visitor for consent
-          before any AI processing.
+          the AI reads the field configuration and fills in the fields.
         </p>
       </div>
     </section>
@@ -113,6 +113,7 @@ export class AboutPageComponent implements OnInit {
       title: this.t.t('seo.about.title'),
       description: this.t.t('seo.about.description'),
       path: '/about',
+      titleHasBrand: true,
     });
     this.jsonLd.set('about', aboutPageLd());
   }

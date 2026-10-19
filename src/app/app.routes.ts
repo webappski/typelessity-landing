@@ -23,6 +23,11 @@ export const routes: Routes = [
       import('./pages/pricing/pricing-page.component').then((m) => m.PricingPageComponent),
   },
   {
+    path: 'gdpr',
+    loadComponent: () =>
+      import('./pages/gdpr/gdpr-page.component').then((m) => m.GdprPageComponent),
+  },
+  {
     path: 'industries',
     loadComponent: () =>
       import('./pages/industries/industries-page.component').then((m) => m.IndustriesPageComponent),

@@ -10,7 +10,6 @@ export const EDITORIAL_ORDER: readonly string[] = [
   'latency-budgets',
   'designing-for-ai-agents',
   'whisper-vs-webspeech',
-  'gdpr-compliance',
   'cascade-corrections',
   '25-languages-one-prompt',
   'single-gpt-call',

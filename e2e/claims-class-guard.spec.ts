@@ -401,8 +401,8 @@ test('every kept industry is named on the hub by its name, and in the right cate
   assert.deepEqual(SEVEN_SLUGS.filter((slug) => !html.includes(`href="/industries/${slug}"`)), [], 'the hub does not link a kept page');
 });
 
-test('the gdpr post says medicine only in the form «not allowed»', () => {
-  const text = visibleText(pages.get('blog/gdpr-compliance/index.html')!);
+test('/gdpr says medicine only in the form «not allowed»', () => {
+  const text = visibleText(pages.get('gdpr/index.html')!);
   assert.match(text, /The service refuses a configuration that declares the medical business type/);
   assert.doesNotMatch(text, /Medical example configurations are demos/i);
   assert.doesNotMatch(text, /we can apply for it/i, 'an offer to apply for Zero Data Retention that no contract makes');

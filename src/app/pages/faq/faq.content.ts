@@ -82,7 +82,7 @@ export const FAQ_GROUPS: readonly FaqGroup[] = [
   {
     id: 'privacy',
     title: 'Privacy',
-    more: { href: 'https://webappski.com/en/legal/dpa-typelessity', label: 'Read the DPA', external: true },
+    more: { href: '/gdpr', label: 'Data & privacy' },
     items: [
       { q: 'How does Typelessity handle GDPR?',
         a: 'You are the controller and Typelessity is your processor under a DPA. The widget asks every visitor for consent before the chat starts; the service and database run in the EU; OpenAI and Resend process in the US under the 2021 SCCs.' },

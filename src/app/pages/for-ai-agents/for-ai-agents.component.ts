@@ -23,14 +23,18 @@ export class ForAiAgentsComponent implements OnInit {
       title: this.t.t('seo.forAiAgents.title'),
       description: this.t.t('seo.forAiAgents.description'),
       path: '/for-ai-agents',
+      titleHasBrand: true,
     });
     this.jsonLd.set('organization', organizationLd());
     this.jsonLd.set('software', softwareApplicationLd({ offers: false }));
     this.jsonLd.set('breadcrumb', breadcrumbLd([
       { name: 'Home', path: '/' },
-      { name: 'For AI Agents', path: '/for-ai-agents' },
+      { name: 'For developers & AI agents', path: '/for-ai-agents' },
     ]));
   }
+
+  // The codes of SUPPORTED_LOCALES in packages/shared/src/i18n/types.ts of the product; e2e/gdpr-facts.spec.ts compares the sets.
+  protected readonly languageCodes = 'en, ru, de, fr, es, it, pt, nl, pl, uk, cs, sk, hu, ro, bg, hr, sr, sl, el, tr, sv, da, fi, no, ja';
 
   protected readonly sessionSchema = `{
   "id": "<session id>",

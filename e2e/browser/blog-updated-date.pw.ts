@@ -44,7 +44,7 @@ async function open(page: Page, slug: string): Promise<void> {
 }
 
 test('the fixture reads the 11 articles', () => {
-  expect(POSTS).toHaveLength(11);
+  expect(POSTS).toHaveLength(10);
   for (const p of POSTS) expect(p.updatedAt, p.slug).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 });
 
@@ -125,7 +125,8 @@ for (const { slug, updatedAt } of POSTS) {
 
 test.describe('B3 a visitor in UTC−10 sees the same «Updated» date as the crawler', () => {
   test.use({ timezoneId: 'Pacific/Honolulu' });
-  const { slug, updatedAt } = POSTS.find((p) => p.slug === 'gdpr-compliance') ?? POSTS[0];
+  // an explicit slug: a fallback to POSTS[0] would let the test pass on any article when this one is renamed or retired (L7)
+  const { slug, updatedAt } = POSTS.find((p) => p.slug === 'pricing-ai-products')!;
 
   test(`B3 ${slug}: the hydrated text equals the server text`, async ({ page, request }) => {
     const ssr = await (await request.get(`/blog/${slug}`)).text();

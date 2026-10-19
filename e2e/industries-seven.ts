@@ -66,8 +66,8 @@ export const RETIRED_TERMS: string[] = [
   ...RETIRED_PHRASES,
 ].map((s) => s.toLowerCase());
 
-/** The ten static paths of the sitemap (home, how-it-works, install, pricing, industries, for-ai-agents, faq, about, blog, security). */
-export const STATIC_PATH_COUNT = 10;
+/** The eleven static paths of the sitemap (home, how-it-works, install, pricing, gdpr, industries, for-ai-agents, faq, about, blog, security). */
+export const STATIC_PATH_COUNT = 11;
 
 /** Posts the site publishes: one `.mdx` file each in src/assets/content/blog (counted on disk, not from the generated manifest). */
 export function postCount(): number {

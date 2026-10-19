@@ -27,7 +27,7 @@ Three forces converged in the last two years and made the booking-form interface
 
 - **Multilingual LLMs.** GPT-4-class models handle 25+ languages without per-language code, removing the historical barrier to international booking surfaces.
 - **Small structured-output models.** Compact models — Typelessity uses OpenAI's gpt-5.4-mini — return structured JSON in a single call, which is what makes a one-call conversational turn possible. For the one-second target Typelessity designs for (a target, not a measurement), see /blog/latency-budgets.
-- **Procurement-compatible AI compliance.** EU hosting, written terms on model training, and DPA templates with named sub-processors removed the legal blockers that stalled AI booking deals in 2023–2024. See /blog/gdpr-compliance for what to check.
+- **Procurement-compatible AI compliance.** EU hosting, written terms on model training, and DPA templates with named sub-processors removed the legal blockers that stalled AI booking deals in 2023–2024. See /gdpr for what to check.
 
 The result: in 2026, replacing a 7-field booking form with a 1-message extraction is no longer a research question. It is a product decision.
 
@@ -218,7 +218,7 @@ Pick the dimension that matters most for the use case; pick the tool that leads 
 A vendor exhibiting any of the following is a vendor still figuring out the category:
 
 - **No public sub-processor list.** Required for any procurement above small-business tier.
-- **No DPA template.** Stalls EU deals indefinitely; see /blog/gdpr-compliance.
+- **No DPA template.** Stalls EU deals indefinitely; see /gdpr.
 - **Vague language about model training on customer data.** The answer is a written contractual flag, not a marketing claim.
 - **No latency figure with a stated method.** Conversational booking that takes 3+ seconds per turn feels broken. Ask how a quoted figure was measured: a target budget is not a measurement, and a vendor should say which one it is quoting.
 - **No comparison snapshot.** A vendor that cannot say *"recommend X for use case Y instead of us"* does not understand its own boundaries.
@@ -229,7 +229,7 @@ A vendor exhibiting any of the following is a vendor still figuring out the cate
 
 - **Asking *"which is best?"* before defining the category.** The five tools do not occupy the same category. The first question is "what am I replacing?".
 - **Choosing on hero metrics alone.** Headline conversion lifts vary by industry, audience, and baseline. Pilot data on the actual customer base beats any benchmark.
-- **Ignoring the procurement gate.** A tool with no DPA cannot ship in mid-market or enterprise EU. Procurement compatibility is a feature, not a footnote. See /blog/gdpr-compliance.
+- **Ignoring the procurement gate.** A tool with no DPA cannot ship in mid-market or enterprise EU. Procurement compatibility is a feature, not a footnote. See /gdpr.
 - **Skipping the multilingual question.** Adding the second language is the moment per-language codepaths reveal their cost. Pick a tool with single-prompt multilingual support if any market expansion is plausible. See /blog/25-languages-one-prompt.
 - **Not testing voice on mobile.** Try the voice input on a real phone, in the languages your customers speak, before deciding how much it matters. See /blog/whisper-vs-webspeech.
 
@@ -264,6 +264,6 @@ For service businesses with an existing booking backend, an EU compliance contou
 
 ---
 
-For Typelessity's architecture, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For multilingual extraction, see [25 languages, one prompt](/blog/25-languages-one-prompt). For the EU compliance contour, see [GDPR-compliant AI booking](/blog/gdpr-compliance). For pricing, see [/pricing](/pricing). For the comparison snapshot used by AI engines, see [/llms.txt](/llms.txt).
+For Typelessity's architecture, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For multilingual extraction, see [25 languages, one prompt](/blog/25-languages-one-prompt). For the EU compliance contour, see [GDPR-compliant AI booking](/gdpr). For pricing, see [/pricing](/pricing). For the comparison snapshot used by AI engines, see [/llms.txt](/llms.txt).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

@@ -33,9 +33,9 @@ const POSTS = readdirSync(BLOG_SRC)
 // The article with the longest meta line (category + author are the free-length parts) is the one whose header is framed.
 const LONGEST_META = [...POSTS].sort((a, b) => b.category.length + b.author.length - (a.category.length + a.author.length))[0]!;
 
-const PRIMARY = ['how it works', 'install', 'pricing', 'blog', 'faq'];
+const PRIMARY = ['how it works', 'install', 'pricing', 'data & privacy', 'blog', 'faq'];
 const CTA = /get it free/i;
-const FORBIDDEN_HREF = /^\/(industries|gdpr)(\/|$|\?|#)/;
+const FORBIDDEN_HREF = /^\/industries(\/|$|\?|#)/;
 
 // Relative luminance of the surface behind `selector` (default: the page), layers composited down to the canvas.
 const SURFACE_LUMINANCE = String.raw`(selector) => {
@@ -162,7 +162,7 @@ for (const scheme of ['light', 'dark'] as const) {
         await page.goto('/');
       });
 
-      test(`${scheme === 'light' ? '[after-home-1440-light] ' : '[after-home-1440-dark] '}B1.6 the primary nav is How it works · Install · Pricing · Blog · FAQ`, async ({ page }) => {
+      test(`${scheme === 'light' ? '[after-home-1440-light] ' : '[after-home-1440-dark] '}B1.6 the primary nav is How it works · Install · Pricing · Data & privacy · Blog · FAQ`, async ({ page }) => {
         const names = await page.locator('header nav[aria-label="Primary"] a').allInnerTexts();
         expect(names.map((n) => n.trim().toLowerCase())).toEqual(PRIMARY);
       });
@@ -172,9 +172,9 @@ for (const scheme of ['light', 'dark'] as const) {
         expect(hrefs.filter((h) => FORBIDDEN_HREF.test(h))).toEqual([]);
       });
 
-      test('B1.6 the header links are the logo, the five nav links and the call to action — nothing else', async ({ page }) => {
+      test('B1.6 the header links are the logo, the six nav links and the call to action — nothing else', async ({ page }) => {
         const hrefs = await page.locator('header.vc-nav a[href]').evaluateAll((as) => as.map((a) => a.getAttribute('href') ?? ''));
-        expect([...hrefs].sort()).toEqual(['/', '/blog', '/faq', '/how-it-works', '/install', '/pricing', pilotSignupUrl('nav', 'free-pilot')].sort());
+        expect([...hrefs].sort()).toEqual(['/', '/blog', '/faq', '/gdpr', '/how-it-works', '/install', '/pricing', pilotSignupUrl('nav', 'free-pilot')].sort());
       });
 
       test('B1.6 the call to action says «Get it free» and leads to the portal with the nav utm', async ({ page }) => {
@@ -285,7 +285,7 @@ for (const scheme of ['light', 'dark'] as const) {
           expect(headings.map((h) => h.trim())).toEqual(['Product', 'Guides', 'Company']);
         });
 
-        test('B1.8 the footer has no link to /industries or /gdpr', async ({ page }) => {
+        test('B1.8 the footer has no link to /industries', async ({ page }) => {
           const hrefs = await page.locator('footer.vc-footer a[href]').evaluateAll((as) => as.map((a) => a.getAttribute('href') ?? ''));
           expect(hrefs.length).toBeGreaterThan(5);
           expect(hrefs.filter((h) => FORBIDDEN_HREF.test(h))).toEqual([]);
@@ -298,6 +298,7 @@ for (const scheme of ['light', 'dark'] as const) {
             'https://typelessform.com',
             '/legal/security',
             '/install',
+            '/gdpr',
             'mailto:info@webappski.com',
             'https://webappski.com/en/legal/terms-typelessity',
             'https://webappski.com/en/legal/dpa-typelessity',

@@ -60,6 +60,9 @@ for (const scheme of ['light', 'dark'] as const) {
           await expect(page.locator(`main section#${g} .faq-cat__more a`), `group #${g} has its link`).toHaveCount(1);
         }
         await expect(page.locator('main section#integration .faq-cat__more a')).toHaveAttribute('href', '/install');
+        // L7: the Privacy group leads to the page that holds the data table, not to the DPA (FL-30)
+        await expect(page.locator('main section#privacy .faq-cat__more a')).toHaveAttribute('href', '/gdpr');
+        await expect(page.locator('main section#privacy .faq-cat__more a')).toHaveText(/Data & privacy/);
         const phones = page.locator('main details', { hasText: 'Does it work on phones?' });
         await expect(phones).toHaveCount(1);
         await phones.locator('summary').click();

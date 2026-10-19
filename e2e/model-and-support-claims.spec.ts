@@ -145,7 +145,7 @@ for (const path of PAGES) {
 
 test('every blog post the build emitted: no old model, unmeasured latency or missing mechanics', async () => {
   const slugs = await posts();
-  assert.ok(slugs.length >= 11, `expected the 11 posts under dist/blog, found ${slugs.length}`);
+  assert.ok(slugs.length >= 10, `expected the 10 posts under dist/blog, found ${slugs.length}`);
   for (const slug of Object.keys(POST_TRUTH)) assert.ok(slugs.includes(slug), `dist/blog/${slug} missing`);
   for (const slug of slugs) {
     const path = `blog/${slug}/index.html`;

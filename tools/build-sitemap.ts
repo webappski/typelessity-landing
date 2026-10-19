@@ -33,6 +33,7 @@ const STATIC_PATHS: Url[] = [
   { path: '/how-it-works', lastmod: '2026-10-19' },
   { path: '/install', lastmod: '2026-10-19' },
   { path: '/pricing', lastmod: '2026-10-19' },
+  { path: '/gdpr', lastmod: '2026-10-19' },
   { path: '/industries', lastmod: '2026-10-19' },
   { path: '/for-ai-agents', lastmod: '2026-10-19' },
   { path: '/faq', lastmod: '2026-10-19' },
