@@ -6,15 +6,6 @@ updatedAt: "2026-10-03"
 author: "Alex Isa"
 category: "Compliance"
 tags: ["gdpr", "privacy", "compliance", "eu"]
-faqs:
-  - q: "What should an EU business check before adding an AI booking widget?"
-    a: "Five things: where the conversation is processed and stored, including by the AI provider; whether the provider trains on it and how long it keeps it; how the visitor's consent is asked and withdrawn; how long conversations are kept and how they are erased; and which sub-processors the DPA names. Ask for each answer in writing, from the contract or the code, not from a sales page."
-  - q: "Where does Typelessity process and store conversations?"
-    a: "The service runs on Vercel in Frankfurt (fra1) and the database is Supabase on AWS in Ireland (eu-west-1). OpenAI, which understands the conversation and transcribes voice, processes in the United States, and Resend, which delivers request emails, too — both under the 2021 Standard Contractual Clauses. Appendix B of the Typelessity DPA names each one."
-  - q: "Does OpenAI train on Typelessity conversations?"
-    a: "No. OpenAI does not use data sent to its API for training unless the account opts in, and ours has not. OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it; the transcription endpoint keeps no such copy. Typelessity has no Zero Data Retention approval from OpenAI. The Typelessity DPA also forbids us from using conversation content to train any model."
-  - q: "Can the widget be used for health data?"
-    a: "No. The Typelessity DPA does not allow special-category data under GDPR Article 9, so health details must not be collected through the widget. The service refuses a configuration that declares the medical business type."
 ---
 
 > **Updated 2026-10-03 — what changed:** the health-data answer now says the service refuses a configuration that declares the medical business type; the offer to apply for Zero Data Retention is gone (we hold no approval and have not applied); and the erasure line says what the DPA says: the Portal has no self-service button for it today.

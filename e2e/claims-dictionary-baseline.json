@@ -4,20 +4,20 @@
     "K5": 1
   },
   "blog/25-languages-one-prompt/index.html": {
-    "K1": 10
+    "K1": 9
   },
   "blog/best-ai-booking-beauty-salons-2026/index.html": {
-    "K1": 6,
+    "K1": 5,
     "K7": 4
   },
   "blog/best-ai-booking-transfer-services-2026/index.html": {
-    "K1": 6,
+    "K1": 5,
     "K7": 4
   },
   "blog/best-ai-booking-widgets-2026/index.html": {
-    "K1": 6,
+    "K1": 5,
     "K4": 4,
-    "K7": 5,
+    "K7": 4,
     "K8": 1
   },
   "blog/designing-for-ai-agents/index.html": {
@@ -26,7 +26,7 @@
   },
   "blog/gdpr-compliance/index.html": {
     "K5": 1,
-    "K13": 4
+    "K13": 3
   },
   "blog/index.html": {
     "K1": 1,
@@ -34,26 +34,25 @@
   },
   "blog/pricing-ai-products/index.html": {
     "K7": 1,
-    "K12": 11
+    "K12": 10
   },
   "blog/single-gpt-call/index.html": {
     "K1": 1
   },
   "blog/whisper-vs-webspeech/index.html": {
-    "K1": 2
+    "K1": 1
   },
   "faq/index.html": {
-    "K1": 16,
-    "K4": 3,
-    "K5": 2,
-    "K6": 2,
-    "K7": 4,
-    "K12": 2
+    "K1": 8,
+    "K4": 2,
+    "K5": 1,
+    "K6": 1,
+    "K7": 2,
+    "K12": 1
   },
   "for-ai-agents/index.html": {
-    "K1": 4,
-    "K5": 2,
-    "K7": 2,
+    "K1": 2,
+    "K5": 1,
     "K8": 1
   },
   "how-it-works/index.html": {
@@ -62,18 +61,16 @@
     "K8": 1
   },
   "index.html": {
-    "K1": 23,
-    "K4": 3,
-    "K5": 9,
-    "K6": 1,
-    "K7": 10,
-    "K8": 1,
-    "K12": 1
+    "K1": 13,
+    "K4": 2,
+    "K5": 7,
+    "K7": 6,
+    "K8": 1
   },
   "pricing/index.html": {
-    "K1": 7,
+    "K1": 6,
     "K6": 1,
-    "K7": 3,
-    "K12": 5
+    "K7": 2,
+    "K12": 3
   }
 }

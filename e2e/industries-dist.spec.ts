@@ -50,7 +50,7 @@ test('the home page: seven industry cells (not counting the «all» tile), the n
 });
 
 // The JSON-LD FAQPage and the meta tags are not visible text, so the page-text guard of claims-class-guard does not read
-// them; they are what a crawler quotes. The FAQPage markup itself goes in L2; its answers must not name a retired vertical now.
+// them; they are what a crawler quotes, and they must not name a retired vertical.
 test('scripts and meta tags of the home, hub, FAQ and for-ai-agents pages name none of the retired industries or categories', () => {
   const offenders: string[] = [];
   for (const page of ['index.html', 'industries/index.html', 'faq/index.html', 'for-ai-agents/index.html']) {

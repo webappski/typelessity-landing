@@ -31,20 +31,21 @@ const STATIC_PATHS: Url[] = [
   // The home grid and the FAQ answer name the seven industries that remain; /industries lists them (L1б, 2026-10-19).
   { path: '/', lastmod: '2026-10-19' },
   { path: '/how-it-works', lastmod: '2026-10-04' },
-  { path: '/pricing', lastmod: '2026-10-05' },
+  { path: '/pricing', lastmod: '2026-10-19' },
   { path: '/industries', lastmod: '2026-10-19' },
   { path: '/for-ai-agents', lastmod: '2026-10-19' },
   { path: '/faq', lastmod: '2026-10-19' },
   { path: '/about', lastmod: '2026-10-04' },
-  { path: '/blog', lastmod: '2026-10-11' },
+  { path: '/blog', lastmod: '2026-10-19' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here
   // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.
-  { path: '/legal/security', lastmod: '2026-10-04' },
+  { path: '/legal/security', lastmod: '2026-10-19' },
 ];
 
-// One date for all industry pages: git log -1 --format=%cs -- src/app/lib/industries/ (29 pages taken down, the seven that remain
-// were not rewritten, but the set a crawler sees changed: 2026-10-19).
+// One date for all industry pages: the latest of git log -1 --format=%cs -- src/app/lib/industries/ (29 pages taken down, the seven that remain
+// were not rewritten, but the set a crawler sees changed: 2026-10-19), -- src/app/pages/industries/ and the schemas.ts functions the
+// detail component calls (its Service markup: the FAQ markup went and the provider became a pointer, L2, 2026-10-19).
 const INDUSTRIES_LASTMOD = '2026-10-19';
 
 /** A post's date is its own: the last update, else the day it was published. */

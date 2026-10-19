@@ -29,11 +29,6 @@ export interface IndustryContent {
   jsonLd?: Record<string, unknown>;
 }
 
-export interface BlogPostFAQ {
-  q: string;
-  a: string;
-}
-
 export interface BlogPost {
   slug: string;
   title: string;
@@ -44,6 +39,5 @@ export interface BlogPost {
   category: string;
   tags: string[];
   ogImage?: string;
-  faqs?: BlogPostFAQ[];
   body: string;
 }

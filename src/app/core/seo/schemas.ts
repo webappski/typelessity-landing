@@ -1,4 +1,5 @@
 import { SITE_URL, SITE_NAME, canonicalUrl } from './seo.service';
+import { HOME } from '../../pages/home/home.content';
 
 type Json = Record<string, unknown>;
 
@@ -12,24 +13,33 @@ export function organizationLd(): Json {
     '@id': ORG_ID,
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/favicon.ico`,
+    // 512 x 512 PNG written by tools/gen-favicon.mjs; Google asks for at least 112 x 112 px, crawlable and indexable.
+    logo: `${SITE_URL}/logo-512.png`,
+    // The id is the node Webappski publishes about itself on webappski.com (a literal from the other side of the seam):
+    // webappka src/app/core/aeo-platform/aeo-platform.config.ts:25. e2e/jsonld-contract.spec.ts J4 holds the value.
     parentOrganization: {
       '@type': 'Organization',
-      '@id': 'https://webappski.com/#organization',
+      '@id': 'https://webappski.com/#webappski-org',
       name: 'Webappski',
       url: 'https://webappski.com',
     },
-    sameAs: [
-      'https://webappski.com',
-      'https://typelessform.com',
-    ],
-    founder: { '@id': PERSON_ID },
+    founder: personRef(),
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
       email: 'info@webappski.com',
     },
   };
+}
+
+/** A pointer to the Organization node that reads on its own page: type, id, name and url, nothing more. */
+export function orgRef(): Json {
+  return { '@type': 'Organization', '@id': ORG_ID, name: SITE_NAME, url: SITE_URL };
+}
+
+/** A pointer to the founder's Person node that reads on its own page: type, id, name and url, nothing more. */
+export function personRef(): Json {
+  return { '@type': 'Person', '@id': PERSON_ID, name: 'Alex Isa', url: `${SITE_URL}/about` };
 }
 
 export const PERSON_ALEX_ISA: Json = {
@@ -54,68 +64,46 @@ export function websiteLd(): Json {
     name: SITE_NAME,
     url: canonicalUrl('/'),
     inLanguage: 'en',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/blog?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 
-export function softwareApplicationLd(): Json {
+/**
+ * The one product node (`#software`). `offers` are the tiers the page shows (HOME.pricing.tiers), so it is passed
+ * only where those prices are visible text: `/` and `/pricing`; `/for-ai-agents` states none (`{ offers: false }`).
+ */
+export function softwareApplicationLd(opts: { offers?: boolean } = {}): Json {
+  const withOffers = opts.offers !== false;
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     '@id': `${SITE_URL}/#software`,
     name: SITE_NAME,
     description:
-      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. Supports 25+ languages, voice input via OpenAI gpt-4o-mini-transcribe, and enrichment APIs; submits structured bookings to an existing backend by email, webhook or REST.',
+      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. The chat window comes in 25 languages; the assistant replies in the language you set for the business. Voice input via OpenAI gpt-4o-mini-transcribe, enrichment APIs; the booking goes to your endpoint (REST) or by email.',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     featureList: [
-      'Conversational booking in 25+ languages',
+      'Chat window in 25 languages',
       'Voice input via OpenAI gpt-4o-mini-transcribe',
       'Enrichment APIs (fetch mechanics, slots, routes mid-conversation)',
       'Cascade-aware corrections',
-      'Consent before any AI processing',
+      'Consent asked before the chat starts',
       'Two-line HTML embed (web component)',
-      'Webhook or REST submit to your existing backend',
+      'Booking sent to your endpoint (REST) or by email',
     ],
-    publisher: { '@id': ORG_ID },
-    offers: [
-      {
-        '@type': 'Offer',
-        name: 'Free Pilot',
-        price: '0',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Starter',
-        price: '39',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Pro',
-        price: '149',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Enterprise',
-        price: '399',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-    ],
+    publisher: orgRef(),
+    ...(withOffers
+      ? {
+          offers: HOME.pricing.tiers.map((tier) => ({
+            '@type': 'Offer',
+            name: tier.name,
+            price: tier.price.replace('€', ''),
+            priceCurrency: 'EUR',
+            url: canonicalUrl('/pricing'),
+            availability: 'https://schema.org/InStock',
+          })),
+        }
+      : {}),
   };
 }
 
@@ -128,18 +116,6 @@ export function breadcrumbLd(trail: { name: string; path: string }[]): Json {
       position: idx + 1,
       name: item.name,
       item: canonicalUrl(item.path),
-    })),
-  };
-}
-
-export function faqLd(items: { q: string; a: string }[]): Json {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: items.map(({ q, a }) => ({
-      '@type': 'Question',
-      name: q,
-      acceptedAnswer: { '@type': 'Answer', text: a },
     })),
   };
 }
@@ -170,7 +146,7 @@ export function articleLd(post: {
     inLanguage: 'en',
     ...(wordCount !== undefined ? { wordCount } : {}),
     author: PERSON_ALEX_ISA,
-    publisher: { '@id': ORG_ID },
+    publisher: orgRef(),
     mainEntityOfPage: canonicalUrl(`/blog/${post.slug}`),
     articleSection: post.category,
     keywords: Array.isArray(post.tags) ? post.tags.join(', ') : '',
@@ -184,50 +160,5 @@ export function aboutPageLd(): Json {
     name: 'About Typelessity',
     url: canonicalUrl('/about'),
     mainEntity: PERSON_ALEX_ISA,
-  };
-}
-
-export function productLd(): Json {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    '@id': `${SITE_URL}/#product`,
-    name: SITE_NAME,
-    description: 'AI conversational booking widget that replaces forms with chat.',
-    brand: { '@type': 'Brand', name: SITE_NAME },
-    offers: [
-      {
-        '@type': 'Offer',
-        name: 'Free Pilot',
-        price: '0',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Starter',
-        price: '39',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Pro',
-        price: '149',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        name: 'Enterprise',
-        price: '399',
-        priceCurrency: 'EUR',
-        url: canonicalUrl('/pricing'),
-        availability: 'https://schema.org/InStock',
-      },
-    ],
   };
 }

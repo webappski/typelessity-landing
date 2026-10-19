@@ -25,7 +25,7 @@ export class ForAiAgentsComponent implements OnInit {
       path: '/for-ai-agents',
     });
     this.jsonLd.set('organization', organizationLd());
-    this.jsonLd.set('software', softwareApplicationLd());
+    this.jsonLd.set('software', softwareApplicationLd({ offers: false }));
     this.jsonLd.set('breadcrumb', breadcrumbLd([
       { name: 'Home', path: '/' },
       { name: 'For AI Agents', path: '/for-ai-agents' },

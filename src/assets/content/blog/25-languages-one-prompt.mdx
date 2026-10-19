@@ -6,17 +6,6 @@ updatedAt: "2026-09-27"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["i18n", "prompts", "architecture", "gpt-5.4-mini"]
-faqs:
-  - q: "How does Typelessity support 25+ languages without a per-language codepath?"
-    a: "Typelessity uses one prompt template written in English and a per-industry config. The user message arrives in any language; the model — OpenAI, currently gpt-5.4-mini — normalizes and extracts in one round-trip; the output is structured JSON in a stable schema. Languages are an emergent property of the model, not a feature implemented per locale."
-  - q: "What is actually translated by hand?"
-    a: "About 146 short strings per locale — widget text, the consent notice, review and error messages — in one TypeScript module per locale, across 25 locales. Everything else — extraction, response generation, multilingual normalization — is handled by the model."
-  - q: "Does Typelessity detect the user's language?"
-    a: "No. The reply language is the one set in the business's configuration; the user can write in any supported language and the model extracts the fields from it. There is no detection step and no per-language handler — no regex, no classifier."
-  - q: "How much does latency vary across languages?"
-    a: "We have not measured it, so we quote no numbers. Token counts do vary by language — the same meaning can take more tokens in some scripts than in English — but what that does to latency per language is not measured."
-  - q: "What still needs language-specific code in Typelessity?"
-    a: "Less than this post used to claim. There is no phone-number or date-parsing library in the engine: dates go through the model and our own date utilities. The per-locale widget strings are the language-specific part; everything else is the model."
 ---
 
 > **Updated 2026-09-27 — what changed:** the config example is an auto repair shop, not a clinic — health data is not permitted under the Typelessity DPA — and the claims about the size of a clinic config and the time it takes to add a new vertical are gone: we did not measure either. A config is stored on our side, not a JSON file per client. On 2026-09-25: extraction runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The reply language is the one set in the configuration — it is not detected from the user, and the model returns no language tag. The widget strings are about 146 per locale in a TypeScript module, not 80 in JSON files, and the engine has no phone- or date-parsing library. Latency per language is not measured, so its figures are gone.

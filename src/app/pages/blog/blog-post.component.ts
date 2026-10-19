@@ -18,7 +18,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { articleLd, breadcrumbLd, faqLd } from '../../core/seo/schemas';
+import { articleLd, breadcrumbLd } from '../../core/seo/schemas';
 import { getBlogPostBySlug } from '../../lib/blog-manifest.generated';
 
 @Component({
@@ -45,6 +45,10 @@ import { getBlogPostBySlug } from '../../lib/blog-manifest.generated';
             <span class="blog-post__cat">{{ p.category }}</span>
             <span class="blog-post__sep" aria-hidden="true">/</span>
             <time [attr.datetime]="p.publishedAt">{{ p.publishedAt | date:'mediumDate' }}</time>
+            @if (p.updatedAt && p.updatedAt > p.publishedAt) {
+              <span class="blog-post__sep" aria-hidden="true">/</span>
+              <time [attr.datetime]="p.updatedAt">Updated {{ p.updatedAt | date:'mediumDate' }}</time>
+            }
             <span class="blog-post__sep" aria-hidden="true">/</span>
             <span class="blog-post__readtime">{{ readingTime(p.body) }} min read</span>
             <span class="blog-post__sep" aria-hidden="true">/</span>
@@ -94,7 +98,6 @@ export class BlogPostComponent implements AfterViewInit {
       if (!p) {
         this.jsonLd.remove('article');
         this.jsonLd.remove('breadcrumb');
-        this.jsonLd.remove('article-faq');
         return;
       }
       this.seo.apply({
@@ -113,11 +116,6 @@ export class BlogPostComponent implements AfterViewInit {
         { name: 'Blog', path: '/blog' },
         { name: p.title, path: `/blog/${p.slug}` },
       ]));
-      if (p.faqs && p.faqs.length > 0) {
-        this.jsonLd.set('article-faq', faqLd(p.faqs));
-      } else {
-        this.jsonLd.remove('article-faq');
-      }
     });
   }
 

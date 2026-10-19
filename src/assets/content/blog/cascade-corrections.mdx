@@ -6,17 +6,6 @@ updatedAt: "2026-09-27"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["bugs", "algorithms", "ux", "extraction"]
-faqs:
-  - q: "What is a cascade-aware correction in a booking flow?"
-    a: "A cascade-aware correction is a mid-booking field edit that clears every downstream field whose value depended on the edited one. In Typelessity, changing `service` at an auto repair shop clears `mechanic` and `slot` and drops the enrichment results fetched for the old service — so the booking cannot ship with a mechanic chosen for a different job."
-  - q: "How does Typelessity model field dependencies?"
-    a: "Each field in the Typelessity config can declare a `dependsOn` list of field IDs, and a field filled from an enrichment also depends on that enrichment's inputs. When a filled field changes, a depth-first traversal walks the dependency graph and finds every transitive dependent. Enrichment results that read a cleared field are dropped and fetched again when the user gives the new value. The graph is part of config, not hardcoded per industry."
-  - q: "Why not just clear all later fields when one changes?"
-    a: "Clearing all later fields punishes the user — they re-enter information they did not change. Cascade-aware corrections clear only fields that *depended* on the edited one. Editing `phone_number` does not clear `slot`; editing `service` does."
-  - q: "What does Typelessity tell the user before a cascade clears fields?"
-    a: "If any dependent field already holds a value, Typelessity asks first: 'Changing Service will also clear: Mechanic, Time slot. Do you want to proceed?' The fields are cleared only after the user agrees."
-  - q: "Where else does cascade-aware correction apply?"
-    a: "Any extraction system with cross-field dependencies has the same problem: lead capture forms with state-dependent dropdowns, tax software with line items that affect totals, booking systems with capacity constraints. The mental model is a spreadsheet — when a cell changes, recalculate the dependents."
 ---
 
 > **Updated 2026-09-27 — what changed:** the example is an auto repair booking, not a clinic appointment: health data is not permitted under the Typelessity DPA. The post now describes what the engine does: the dependency list is called `dependsOn`, the user is asked before fields are cleared, and enrichments are fetched again when the user gives a new value — there is no ordered re-run. Gone: a reset message the widget never showed, the claim that abandonment after a cascade drops sharply (we did not measure it), a short code sample presented as the engine's code (it was not), and a cap on enrichments per config (the engine has none).

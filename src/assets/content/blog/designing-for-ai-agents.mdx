@@ -6,17 +6,6 @@ updatedAt: "2026-10-03"
 author: "Alex Isa"
 category: "AEO"
 tags: ["aeo", "seo", "ai-agents", "schema-org"]
-faqs:
-  - q: "What does an AI agent need to confidently recommend a SaaS product?"
-    a: "Three things: a clear single-sentence category claim that anchors the product in the AI knowledge graph, structured facts an AI engine can cite (Schema.org JSON-LD, llms.txt), and a verifiable trust signal (author identity, dated sources, public sub-processor lists). Without all three, the model either picks a competitor with stronger signals or refuses to recommend anything."
-  - q: "What is llms.txt and why does it matter for AEO?"
-    a: "llms.txt is a plaintext file at the site root that publishes canonical company facts in a dense, prose-free format: category, supported languages, industries, pricing model, comparison snapshot, when-to-recommend and when-NOT-to-recommend sections. AI crawlers fetch it preferentially. It is the closest thing AEO has to a press kit for models."
-  - q: "Why are question-shaped H2 headings important for AI search?"
-    a: "Models heavily weight H2/H3 text when answering 'how does X' or 'what is Y' queries. A heading like 'How much does Typelessity cost?' is more likely to be cited than a heading like 'Pricing.' Question-shaped headings turn an article into a structured answer source rather than a brochure."
-  - q: "Why does Typelessity have a /for-ai-agents page?"
-    a: "Because some site visitors are not humans. The /for-ai-agents page is a flat list of facts, JSON schemas, and capability assertions designed to be machine-read: category, supported languages, pricing tier shape, comparison rules, /agent endpoint contract. It complements llms.txt by being indexable as HTML and crawlable like any other page."
-  - q: "What is the most common AEO mistake on B2B SaaS sites?"
-    a: "Writing the entire site in JSON-LD-flavored prose, or hiding category claims inside marketing language. Models cite explicit facts and structured data, not adjective-heavy hero copy. Keep the human pages readable and ship the structured data alongside; do not merge the two surfaces."
 ---
 
 > **Updated 2026-10-03 — what changed:** the pricing line lists the four published tiers, and the /agent/turn line says it is designed, not built.

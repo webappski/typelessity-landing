@@ -20,7 +20,6 @@ interface Frontmatter {
   category: string;
   tags: string[];
   ogImage?: string;
-  faqs?: { q: string; a: string }[];
 }
 
 const files = readdirSync(SRC_DIR).filter((f) => f.endsWith('.mdx'));
@@ -41,7 +40,6 @@ const posts = files
       category: fm.category,
       tags: fm.tags,
       ogImage: fm.ogImage,
-      faqs: fm.faqs,
       body: content.trim(),
     };
   })

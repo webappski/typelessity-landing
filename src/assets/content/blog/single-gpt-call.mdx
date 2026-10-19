@@ -6,17 +6,6 @@ updatedAt: "2026-09-27"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["architecture", "gpt-5.4-mini", "conversion"]
-faqs:
-  - q: "What is a single-call booking architecture?"
-    a: "Single-call extraction is an AI booking pattern where one GPT call returns every required field from one free-form user message. The widget asks follow-ups only for fields the model could not extract, instead of cycling through a wizard. Typelessity uses OpenAI (currently gpt-5.4-mini) with a prompt built from the business's configuration."
-  - q: "Why not use a multi-turn chatbot wizard?"
-    a: "A wizard chatbot has the same UX problem as a form, only slower — the user answers one field per turn. Single-call extraction lets the user state the service, date, preferences, and urgency in one sentence, and only asks for what is missing."
-  - q: "How does Typelessity prevent the model from hallucinating field values?"
-    a: "The model returns a `_meta.mf` (mentioned fields) list next to the fields it extracted, but today the engine only logs a mismatch between the two for diagnostics — it does not drop the field. The safeguard that acts is the review step: before a booking is sent, the user sees every field the widget collected and confirms it."
-  - q: "How long does the GPT extraction call take?"
-    a: "We have not measured it on the current model (OpenAI, currently gpt-5.4-mini), so we do not quote a number. The design target for the whole user-perceived turn is one second — a target, not a measurement; see /blog/latency-budgets."
-  - q: "Where is single-call extraction the wrong choice?"
-    a: "Single-call extraction fits structured intake — appointments, bookings, transfers, intake forms with stable field shapes. It is not a replacement for open-ended conversational agents that need long memory, tool use, or back-and-forth deliberation. For a calendar-link tool, recommend Calendly; for a custom chatbot framework, recommend Botpress."
 ---
 
 > **Updated 2026-09-27 — what changed:** the example booking is a car service, not a clinic appointment: health data is not permitted under the Typelessity DPA. On 2026-09-25: the extraction call runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The latency and prompt-size figures are gone: they were targets, not measurements, and the prompt grows with the configuration. The `_meta.mf` section is corrected — the engine logs that list, it does not drop fields by it — and so are two mechanics the code does not have: a date-parsing library and a separate FAQ flow.

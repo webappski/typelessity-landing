@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { KeyValuePipe } from '@angular/common';
 import { TranslationService } from '../../i18n/translation.service';
-import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { faqLd } from '../../core/seo/schemas';
 import { slugify } from '../../core/utils/slugify';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { HOME, type FaqCategory } from '../home/home.content';
@@ -53,7 +51,6 @@ type FaqItem = { q: string; a: string };
 export class FaqPageComponent implements OnInit {
   protected readonly t = inject(TranslationService);
   private readonly seo = inject(SeoService);
-  private readonly jsonLd = inject(JsonLdService);
 
   ngOnInit(): void {
     this.seo.apply({
@@ -61,7 +58,6 @@ export class FaqPageComponent implements OnInit {
       description: this.t.t('seo.faq.description'),
       path: '/faq',
     });
-    this.jsonLd.set('faq', faqLd(HOME.faq.map(({ q, a }) => ({ q, a }))));
   }
 
   protected readonly HOME = HOME;

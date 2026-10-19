@@ -107,7 +107,48 @@ function git(...args: string[]): string {
   return '';
 }
 
-test('sitemap: a page is not dated before its last edit (the formula of D7: page folder and its seo.* keys)', (t) => {
+// L2 Р3: the structured data of a page lives in `src/app/core/seo/schemas.ts`, not in the page folder, so the formula also
+// reads the functions of that file a page calls — by name, not the whole file (every edit of `articleLd` would otherwise
+// move /about). The names are derived, never listed: (1) what the non-spec .ts files of `src/app/pages/<dir>/` import from
+// `core/seo/schemas`; (2) the other exports of schemas.ts that appear in the body of a name already taken; (2) repeats
+// until the set stops growing (softwareApplicationLd → orgRef → ORG_ID is two steps).
+// The body of a name = from its `^export <kw> <name>` line to the next line that begins with a letter — the very range
+// `git log -L` takes when the file has no diff driver.
+const SCHEMAS = 'src/app/core/seo/schemas.ts';
+const schemasSrc = readFileSync(join(ROOT, SCHEMAS), 'utf8').split('\n');
+const schemaExports = [...schemasSrc.join('\n').matchAll(/^export [a-z]+ (\w+)/gm)].map((m) => m[1]);
+function schemaBody(name: string): string {
+  const at = schemasSrc.findIndex((l) => new RegExp(`^export [a-z]+ ${name}\\b`).test(l));
+  if (at < 0) return '';
+  let end = at + 1;
+  while (end < schemasSrc.length && !/^[A-Za-z]/.test(schemasSrc[end])) end++;
+  return schemasSrc.slice(at, end).join('\n');
+}
+function schemaNamesOf(dir: string): string[] {
+  const base = join(ROOT, 'src', 'app', 'pages', dir);
+  const taken = new Set<string>();
+  const files = existsSync(base) ? readdirSync(base).filter((f) => f.endsWith('.ts') && !f.endsWith('.spec.ts')) : [];
+  for (const f of files) {
+    const src = readFileSync(join(base, f), 'utf8');
+    for (const m of src.matchAll(/import\s*\{([^}]*)\}\s*from\s*'[^']*core\/seo\/schemas'/g)) {
+      for (const id of m[1].split(',').map((x) => x.trim().split(/\s+as\s+/)[0]).filter(Boolean)) taken.add(id);
+    }
+  }
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const name of [...taken]) {
+      const body = schemaBody(name);
+      for (const other of schemaExports) {
+        if (!taken.has(other) && new RegExp(`\\b${other}\\b`).test(body.split('\n').slice(1).join('\n'))) { taken.add(other); grew = true; }
+      }
+    }
+  }
+  return [...taken].sort();
+}
+/** Last commit date of one function of schemas.ts. The regex is BRE, has no quotes inside (execFileSync has no shell: a quote becomes part of it) and `[a-z]*` instead of an alternation. */
+const schemaNameDate = (name: string): string => git('log', '-1', '--format=%cs', '--no-patch', '-L', `:^export [a-z]* ${name}\\b:${SCHEMAS}`);
+
+test('sitemap: a page is not dated before its last edit (the formula of D7: page folder, its seo.* keys and, by name, the schemas.ts functions it calls)', (t) => {
   const shallow = git('rev-parse', '--is-shallow-repository') !== 'false';
   if (shallow) return t.skip('shallow clone or no git: the formula needs history');
   // the fourth member lists files a page's text also comes from: the industry data feeds the home grid and the hub,
@@ -121,16 +162,32 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
     ['/legal/security', 'legal'],
   ];
   const bad: string[] = [];
+  // the pages whose JSON-LD is built in schemas.ts by what their component calls (Р3); /blog, /faq and /how-it-works are not in the list
+  const SCHEMA_PAGES = new Set(['/', '/pricing', '/for-ai-agents', '/about', '/industries', '/legal/security']);
+  const nameDates = (dir: string, where: string): string[] => {
+    const names = schemaNamesOf(dir);
+    const dated = names.map((n) => [n, schemaNameDate(n)] as const);
+    // a name that gave no date (a missing anchor, an unmatched regex) would drop out of the max silently. A name that is not
+    // in the committed schemas.ts yet is new in the commit being made: it has no earlier date, and the page is dated by that commit.
+    const committed = git('show', `HEAD:${SCHEMAS}`);
+    for (const [n, d] of dated) if (!d && new RegExp(`^export [a-z]+ ${n}\\b`, 'm').test(committed)) bad.push(`${where}: schemas.ts function ${n} gave no commit date`);
+    return dated.map(([, d]) => d);
+  };
   for (const [path, dir, key, extra] of pages) {
     const dates = [git('log', '-1', '--format=%cs', '--', `src/app/pages/${dir}/`), ...(extra ?? []).map((f) => git('log', '-1', '--format=%cs', '--', f))];
+    if (SCHEMA_PAGES.has(path)) {
+      if (['/', '/pricing', '/for-ai-agents', '/about'].includes(path)) assert.ok(schemaNamesOf(dir).length > 0, `${path}: no schemas.ts function derived from src/app/pages/${dir}/`);
+      dates.push(...nameDates(dir, path));
+    }
     if (key) dates.push(git('log', '-1', '--format=%cs', `-G'seo\\.${key}\\.`, '--', 'src/app/i18n/translations.en.ts'));
     const need = dates.filter(Boolean).sort().at(-1) ?? '';
     const got = entries.find((e) => pathOf(e.loc) === path)?.lastmods[0] ?? '';
     if (got < need) bad.push(`${path}: lastmod ${got || '(none)'} < last edit ${need}`);
   }
-  const lib = git('log', '-1', '--format=%cs', '--', 'src/app/lib/industries/');
+  // a detail page is also its component (src/app/pages/industries/) and the schemas.ts functions that component calls (Р3)
+  const lib = [git('log', '-1', '--format=%cs', '--', 'src/app/lib/industries/'), git('log', '-1', '--format=%cs', '--', 'src/app/pages/industries/'), ...nameDates('industries', 'industry pages')].filter(Boolean).sort().at(-1) ?? '';
   for (const e of entries.filter((x) => pathOf(x.loc).startsWith('/industries/'))) {
-    if ((e.lastmods[0] ?? '') < lib) bad.push(`${pathOf(e.loc)}: lastmod ${e.lastmods[0]} < industries data edit ${lib}`);
+    if ((e.lastmods[0] ?? '') < lib) bad.push(`${pathOf(e.loc)}: lastmod ${e.lastmods[0]} < industries data, component or schemas.ts edit ${lib}`);
   }
   assert.deepEqual(bad, []);
 });

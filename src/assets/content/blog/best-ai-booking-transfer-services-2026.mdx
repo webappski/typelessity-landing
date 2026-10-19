@@ -7,17 +7,6 @@ author: "Alex Isa"
 category: "Comparison"
 tags: ["comparison", "transfer", "chauffeur", "taxi", "ai-booking"]
 ogImage: "/og-blog-best-ai-booking-widgets-2026.png"
-faqs:
-  - q: "What does an AI booking widget for a transfer service need that a generic one does not?"
-    a: "Five specifics: pickup and dropoff location extraction with geocoding, datetime extraction with timezone awareness ('Friday 10am' must resolve to the local timezone of the pickup), slot availability against a fleet schedule, vehicle-class disambiguation (sedan vs SUV vs van vs luxury), and multilingual extraction (a Russian tourist booking a transfer in Berlin should not require switching language). Generic booking tools miss most of these."
-  - q: "Is Calendly suitable for booking airport transfers?"
-    a: "No. Calendly publishes a calendar link for pre-defined slots; it does not extract pickup and dropoff locations from free-form input, does not handle vehicle-class selection, and does not check fleet availability. A solo chauffeur with three pre-defined daily slots can use Calendly; a transfer service with multiple vehicles, locations, and customer-described pickup points needs a different category of tool."
-  - q: "How does an AI booking widget handle 'I need a transfer from JFK to The Plaza, Friday 10am, Mercedes E-Class, 2 passengers, 3 bags'?"
-    a: "A single-call extraction widget like Typelessity pulls every field from one user message in one GPT round-trip — pickup_location=JFK, dropoff_location=The Plaza Hotel, datetime=Friday 10am (resolved to local timezone), vehicle_class=Mercedes E-Class (mapped to the fleet's E-Class equivalent), passengers=2, bags=3. Enrichment APIs can then call your own endpoint for slot availability before the booking is submitted."
-  - q: "Which AI booking tool is best for international transfer companies?"
-    a: "Tools with single-prompt multilingual extraction handle international booking volume best — Typelessity supports 25+ languages from one config without per-language code, so a French traveler booking a transfer in Madrid does not need to switch UI. Most transfer-specific tools (Limo Anywhere, Booking.com Transfer, Karhoo) localize the UI but do not parse natural-language booking input across languages."
-  - q: "What are the red flags when evaluating AI booking for a transfer service?"
-    a: "No fleet availability check (the widget books a slot the dispatcher cannot fulfill). No multi-stop pickup support. No vehicle-class disambiguation logic. No timezone-aware datetime extraction. Booking output that does not match the dispatcher's existing schema (operator has to re-key every booking). No 'when not to use' guidance. Any of these is a hard stop for a serious transfer operator."
 ---
 
 > **Updated 2026-10-03 — what changed:** the Pricing line now lists the four published tiers (Free Pilot, Starter, Pro, Enterprise); it used to describe a pilot for a few first customers and a quote-only top tier. And enrichment is described as a call to your own endpoint, not as real-time availability. Earlier, on 2026-09-27: the claim that Typelessity converts better is gone — we have no measurement behind it — and the comparison with a clinic now uses a repair shop: health data is not permitted under the Typelessity DPA. On 2026-09-25: Typelessity's voice input is transcribed by OpenAI gpt-4o-mini-transcribe, not Whisper, and the conversation runs on OpenAI (currently gpt-5.4-mini). The latency line now says what it is: a one-second target, not a measurement.

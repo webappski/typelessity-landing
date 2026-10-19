@@ -6,17 +6,6 @@ updatedAt: "2026-09-25"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["performance", "latency", "architecture", "gpt-5.4-mini"]
-faqs:
-  - q: "What is a latency budget for an AI booking widget?"
-    a: "A latency budget is an upper bound on the user-perceived round-trip from action to first visible response, allocated across each phase that contributes to it. Typelessity designs the booking turn for one second, split across network, the model call, enrichment APIs and render. That is a target, not a measurement: we have not measured latency on the current model."
-  - q: "Why does Typelessity treat latency as architectural, not as an optimization pass?"
-    a: "Two model calls in series cannot be optimized into one model call retroactively. If the architecture says 'extract, then clarify with another model call', no amount of caching or streaming gets the round-trip under a second. The choice made at architecture time — one extraction call per turn instead of one per field — decides whether a budget is reachable at all."
-  - q: "What does the widget show while the model is working?"
-    a: "An animated typing indicator. The widget waits for the complete response — it does not stream tokens — and shows no acknowledgement copy while it waits; the only progress text is 'Processing your booking...' when the booking is confirmed."
-  - q: "What is outside the one-second target?"
-    a: "Voice transcription — a separate call to OpenAI gpt-4o-mini-transcribe before the turn — cascade corrections after an edit, and turns where an enrichment loads options and a second model call picks among them. None of these is measured yet."
-  - q: "What is left out of the widget to keep it light?"
-    a: "Third-party analytics. The widget loads no analytics SDK such as PostHog or Mixpanel, and the engine has no analytics endpoint of its own either."
 ---
 
 > **Updated 2026-09-25 — what changed:** the conversation runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named, and voice is transcribed by OpenAI gpt-4o-mini-transcribe, not Whisper. The one-second figure is a target, not a measurement; the latency table this post used to show was not our measurement and is removed. So are claims the code does not back: streamed responses, enrichment running in parallel with the render, an in-house analytics endpoint.

@@ -4,7 +4,8 @@
 //
 //   node tools/gen-favicon.mjs
 //
-// Writes public/favicon.ico (16/32/48 PNG-in-ICO) + /tmp/favicon-preview.png.
+// Writes public/favicon.ico (16/32/48 PNG-in-ICO), public/logo-512.png (the Organization logo in the
+// structured data: Google asks for at least 112 x 112 px, crawlable) + /tmp/favicon-preview.png.
 
 import { deflateSync } from 'node:zlib';
 import { writeFileSync } from 'node:fs';
@@ -151,6 +152,9 @@ if (!(lA === 255 && lr > 230 && lg > 80 && lg < 130 && lb > 20 && lb < 70))
 // --- Emit --------------------------------------------------------------------
 const ico = buildICO([16, 32, 48]);
 writeFileSync(new URL('../public/favicon.ico', import.meta.url), ico);
+const logo = encodePNG(512, renderRGBA(512));
+writeFileSync(new URL('../public/logo-512.png', import.meta.url), logo);
 writeFileSync('/tmp/favicon-preview.png', encodePNG(128, renderRGBA(128)));
 console.log(`favicon.ico written — ${ico.length} bytes, sizes 16/32/48; self-test OK`);
+console.log(`logo-512.png written — ${logo.length} bytes, 512x512`);
 console.log('preview: /tmp/favicon-preview.png (128px)');

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { faqLd, productLd } from '../../core/seo/schemas';
+import { softwareApplicationLd } from '../../core/seo/schemas';
 import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { ContactFormComponent } from '../../shared/contact-form/contact-form.component';
 import { HOME, pilotSignupUrl } from '../home/home.content';
@@ -144,7 +144,6 @@ export class PricingPageComponent implements OnInit {
       description: this.t.t('seo.pricing.description'),
       path: '/pricing',
     });
-    this.jsonLd.set('product', productLd());
-    this.jsonLd.set('faq', faqLd(this.pricingFaq.map(({ q, a }) => ({ q, a }))));
+    this.jsonLd.set('software', softwareApplicationLd());
   }
 }

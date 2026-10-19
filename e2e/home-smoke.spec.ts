@@ -8,7 +8,7 @@ import { join } from 'node:path';
 // installed (see playwright.config.ts scaffold + e2e/README), this serves the REAL prerendered
 // SSR output for "/" over a real HTTP server and asserts the bytes an AI crawler / browser
 // receives. No mocks: it is the actual dist/ index.html the build produced. Covers cards
-// TY-LANDING-SCHEMA (SoftwareApplication.featureList + FAQPage reach <head>) and
+// TY-LANDING-SCHEMA (SoftwareApplication.featureList reaches <head>; FAQPage no longer does, L2) and
 // TY-COMPARE-CALAI (Cal.ai/Cal.com rows render in the comparison section).
 //
 // Run: `npm run build` first (prerenders dist/), then `npm test` (this file is picked up by
@@ -57,7 +57,9 @@ test('home <head> carries SoftwareApplication schema with featureList (TY-LANDIN
     assert.ok(body.includes('application/ld+json'), 'home must emit JSON-LD');
     assert.ok(body.includes('SoftwareApplication'), 'home must emit SoftwareApplication schema');
     assert.ok(body.includes('featureList'), 'SoftwareApplication must carry featureList');
-    assert.ok(body.includes('FAQPage'), 'home must emit FAQPage schema');
+    // L2: Google no longer shows the FAQ rich result, and the markup had grown to 46 questions where 9 are visible.
+    // The questions stay on the page as plain text (e2e/jsonld-contract.spec.ts J11); the markup is gone.
+    assert.ok(!body.includes('FAQPage'), 'home must not emit FAQPage schema');
     assert.ok(body.includes('parentOrganization'), 'Organization must carry parentOrganization (Webappski)');
   });
 });

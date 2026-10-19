@@ -105,7 +105,6 @@ export class LegalPageComponent {
       });
       this.jsonLd.set('breadcrumb', breadcrumbLd([
         { name: 'Home', path: '/' },
-        { name: 'Legal', path: `/legal/${d}` },
         { name: c.title, path: `/legal/${d}` },
       ]));
     });

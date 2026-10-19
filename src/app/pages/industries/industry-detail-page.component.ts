@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService, SITE_URL } from '../../core/seo/seo.service';
-import { breadcrumbLd, faqLd } from '../../core/seo/schemas';
+import { breadcrumbLd, orgRef } from '../../core/seo/schemas';
 import { getIndustryBySlug } from '../../lib/industries';
 import { NotFoundComponent } from '../not-found/not-found.component';
 
@@ -125,7 +125,6 @@ export class IndustryDetailPageComponent {
       const i = this.industry();
       if (!i) {
         this.jsonLd.remove('industry');
-        this.jsonLd.remove('industry-faq');
         this.jsonLd.remove('breadcrumb');
         return;
       }
@@ -140,11 +139,6 @@ export class IndustryDetailPageComponent {
         { name: 'Industries', path: '/industries' },
         { name: i.name, path: `/industries/${i.slug}` },
       ]));
-      if (i.industryFAQ?.length) {
-        this.jsonLd.set('industry-faq', faqLd([...i.industryFAQ]));
-      } else {
-        this.jsonLd.remove('industry-faq');
-      }
     });
   }
 
@@ -154,11 +148,7 @@ export class IndustryDetailPageComponent {
       '@type': 'Service',
       name: `Typelessity for ${name}`,
       description,
-      provider: {
-        '@type': 'Organization',
-        name: 'Typelessity',
-        url: SITE_URL,
-      },
+      provider: orgRef(),
       url: `${SITE_URL}/industries/${slug}`,
       areaServed: 'Worldwide',
     };

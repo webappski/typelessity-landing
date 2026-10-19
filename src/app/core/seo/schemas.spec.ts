@@ -22,11 +22,33 @@ test('softwareApplicationLd source carries description + featureList for AEO ext
   assert.ok(/\bfeatureList:\s*\[/.test(body), 'SoftwareApplication must carry a featureList array');
 });
 
-test('organizationLd source keeps the cross-product sameAs + parentOrganization chain', () => {
-  assert.ok(schemasSrc.includes("'https://typelessform.com'"), 'sameAs must link TypelessForm (Link 2 reciprocity)');
-  assert.ok(schemasSrc.includes("'https://webappski.com'"), 'sameAs must link Webappski');
-  assert.ok(/parentOrganization[\s\S]{0,160}name:\s*'Webappski'/.test(schemasSrc),
-    'parentOrganization must be Webappski');
+// L2 (J9): Organization no longer says «sameAs Webappski and TypelessForm» (that reads as «the same thing»); the
+// link to Webappski is the parent, and the parent is the node Webappski publishes about itself. typelessform.com
+// stays only on the Person. The body of organizationLd is cut at the next `export` of any kind, so a helper or the
+// Person constant placed after it is not read as part of it.
+const exportBody = (name: string): string => {
+  const at = schemasSrc.search(new RegExp(`export (?:function|const) ${name}\\b`));
+  assert.ok(at > -1, `${name} is not exported from schemas.ts`);
+  const rest = schemasSrc.slice(at + 1);
+  const next = rest.search(/\nexport /);
+  return rest.slice(0, next > -1 ? next : rest.length);
+};
+
+test('organizationLd source: no sameAs', () => {
+  assert.ok(!/\bsameAs\b/.test(exportBody('organizationLd')), 'Organization must not carry sameAs');
+});
+
+test('organizationLd source: the parent is the real Webappski node, not #organization', () => {
+  const body = exportBody('organizationLd');
+  assert.ok(body.includes('https://webappski.com/#webappski-org'), 'parentOrganization must point at webappski.com/#webappski-org');
+  assert.ok(!body.includes('https://webappski.com/#organization'), 'a node that webappski.com does not have');
+  assert.ok(/parentOrganization[\s\S]{0,200}name:\s*'Webappski'/.test(body), 'parentOrganization must be Webappski');
+});
+
+test('typelessform.com stays only on the Person', () => {
+  const person = exportBody('PERSON_ALEX_ISA');
+  assert.ok(person.includes("'https://typelessform.com'"), 'the Person keeps typelessform.com (L2 leaves it, schema.org allows an official site)');
+  assert.ok(!schemasSrc.replace(person, '').includes('typelessform.com'), 'typelessform.com appears outside the Person');
 });
 
 test('comparison section includes Cal.ai + Cal.com as columns, honest text-only cells', () => {

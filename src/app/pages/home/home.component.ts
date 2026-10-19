@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { faqLd, organizationLd, softwareApplicationLd, websiteLd } from '../../core/seo/schemas';
+import { organizationLd, softwareApplicationLd, websiteLd } from '../../core/seo/schemas';
 import { EMBED_SNIPPET } from '../../core/integrations/embed-snippet';
 import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { IconComponent } from '../../shared/icon/icon.component';
@@ -40,6 +40,5 @@ export class HomeComponent implements OnInit {
     this.jsonLd.set('org', organizationLd());
     this.jsonLd.set('website', websiteLd());
     this.jsonLd.set('app', softwareApplicationLd());
-    this.jsonLd.set('faq', faqLd(this.c.faq.map(({ q, a }) => ({ q, a }))));
   }
 }
