@@ -7,7 +7,7 @@ import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService, SITE_URL } from '../../core/seo/seo.service';
 import { breadcrumbLd, orgRef } from '../../core/seo/schemas';
-import { getIndustryBySlug } from '../../lib/industries';
+import { ALL_INDUSTRIES, getIndustryBySlug } from '../../lib/industries';
 import { NotFoundComponent } from '../not-found/not-found.component';
 
 @Component({
@@ -21,13 +21,14 @@ import { NotFoundComponent } from '../not-found/not-found.component';
 
     @if (i) {
       <article class="industry vc-wrap">
-        <a class="industry__back" routerLink="/industries">← All industries</a>
-
         <header class="industry__hero">
           @if (i.hero.eyebrow) {
             <div class="vc-kicker"><span class="vc-kicker-bar"></span>{{ i.hero.eyebrow }}</div>
           }
-          <h1>{{ i.hero.title }}</h1>
+          <h1>AI booking assistant for {{ i.audience }}</h1>
+          @if (i.quote) {
+            <p class="industry__quote">“{{ i.quote }}”</p>
+          }
           <p class="industry__sub">{{ i.hero.subtitle }}</p>
           @if (i.hero.cta) {
             <div class="industry__cta">
@@ -36,6 +37,17 @@ import { NotFoundComponent } from '../not-found/not-found.component';
             </div>
           }
         </header>
+
+        @if (i.challenges?.length) {
+          <section class="industry__section">
+            <h2>What gets in the way</h2>
+            <ul class="proof-list">
+              @for (c of i.challenges; track c) {
+                <li>{{ c }}</li>
+              }
+            </ul>
+          </section>
+        }
 
         @if (i.exampleConversations?.length) {
           <section class="industry__section">
@@ -100,6 +112,28 @@ import { NotFoundComponent } from '../not-found/not-found.component';
             </div>
           </section>
         }
+
+        <section class="industry__section">
+          <h2>Read next</h2>
+          <ul class="industry__links">
+            <li><a [routerLink]="'/blog/' + i.article.slug">{{ i.article.title }}</a></li>
+            <li><a routerLink="/how-it-works">How Typelessity works</a></li>
+          </ul>
+        </section>
+
+        <section class="industry__section">
+          <h2>Other industries</h2>
+          <ul class="industry__links">
+            @for (o of neighbours(); track o.slug) {
+              <li><a [routerLink]="'/industries/' + o.slug">{{ o.name }}</a></li>
+            }
+          </ul>
+        </section>
+
+        <div class="industry__final">
+          <a class="vc-btn vc-btn-primary vc-btn-lg" routerLink="/install">Add Typelessity to your website</a>
+          <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/pricing">See pricing</a>
+        </div>
       </article>
     } @else {
       <!-- A taken-down or mistyped address: the same screen a crawler gets with the 404 (the platform answers 410 or 404). -->
@@ -119,6 +153,8 @@ export class IndustryDetailPageComponent {
   );
 
   protected readonly industry = computed(() => getIndustryBySlug(this.slug()));
+  /** The other pages of the site, in the order of the data, never the page itself (card D7). */
+  protected readonly neighbours = computed(() => ALL_INDUSTRIES.filter((o) => o.slug !== this.slug()));
 
   constructor() {
     effect(() => {
@@ -128,15 +164,16 @@ export class IndustryDetailPageComponent {
         this.jsonLd.remove('breadcrumb');
         return;
       }
+      // «AI booking widget for <audience> — Typelessity»: the brand is added by SeoService (card D2).
       this.seo.apply({
-        title: i.hero.title,
-        description: i.hero.subtitle,
+        title: `AI booking widget for ${i.audience}`,
+        description: i.description,
         path: `/industries/${i.slug}`,
       });
-      this.jsonLd.set('industry', i.jsonLd ?? this.buildServiceLd(i.slug, i.name, i.hero.subtitle));
+      this.jsonLd.set('industry', i.jsonLd ?? this.buildServiceLd(i.slug, i.name, i.description));
+      // Home → the trade, as in the mock; the hub is not a step of the path (its fate is the founder's gate, FL-23).
       this.jsonLd.set('breadcrumb', breadcrumbLd([
         { name: 'Home', path: '/' },
-        { name: 'Industries', path: '/industries' },
         { name: i.name, path: `/industries/${i.slug}` },
       ]));
     });

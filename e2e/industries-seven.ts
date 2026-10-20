@@ -81,3 +81,61 @@ export function expectedSitemapCount(): number {
 
 /** Floor for the text files of dist (every sitemap address is a prerendered page; the 404 shell and the txt files come on top). */
 export const EXPECTED_PAGES = STATIC_PATH_COUNT + SEVEN.length + postCount();
+
+// L8 (2026-10-20, card D8): what each of the seven pages says, written out. The tests hold the built page against these
+// literals, not against `ALL_INDUSTRIES`: a page made from the data agrees with the data whatever the data says, so a
+// description copied from the wrong entry would pass. Quotes are the customer's own sentence (card D1); `null` where the
+// old headline was not one. `exampleLang` is the language of the example conversation (`lang` in the data).
+export const SEVEN_PAGES = [
+  {
+    slug: 'beauty-hair-salons', name: 'Hair salons', audience: 'hair salons',
+    description: 'Online booking for hair salons by chat: clients say “balayage and a trim Tuesday morning”, the assistant fills in the details and sends you the request.',
+    quote: 'I want a balayage, can you fit me in Saturday?', capsuleStart: 'Typelessity adds online booking by chat to your salon’s website.',
+    article: { slug: 'best-ai-booking-beauty-salons-2026' }, deep: true, exampleLang: 'es',
+  },
+  {
+    slug: 'hospitality-restaurants', name: 'Restaurants', audience: 'restaurants',
+    description: 'Table reservations by chat on your restaurant’s website: guests say “table for 4 on Saturday at 8” and the assistant sends you the request.',
+    quote: 'Table for 4 on Saturday at 8', capsuleStart: 'Typelessity adds table reservations by chat to your restaurant’s website.',
+    article: { slug: 'best-ai-booking-widgets-2026' }, deep: true, exampleLang: 'en',
+  },
+  {
+    slug: 'fitness-yoga-studios', name: 'Yoga & pilates studios', audience: 'yoga and pilates studios',
+    description: 'Class booking by chat for yoga and pilates studios: students name the class, level and time, and the assistant sends you the request.',
+    quote: 'Do you have a beginner class on weekday mornings?', capsuleStart: 'Typelessity adds class booking by chat to your studio’s website.',
+    article: { slug: 'best-ai-booking-widgets-2026' }, deep: true, exampleLang: 'en',
+  },
+  {
+    slug: 'fitness-gyms', name: 'Gyms & fitness centers', audience: 'gyms',
+    description: 'Tour and trial-class requests by chat for gyms: prospects say what they want, and the assistant sends your team the request with the details.',
+    quote: null, capsuleStart: 'Typelessity adds tour and trial-class requests by chat to your gym’s website.',
+    article: { slug: 'best-ai-booking-widgets-2026' }, deep: false, exampleLang: 'en',
+  },
+  {
+    slug: 'automotive-driving-schools', name: 'Driving schools', audience: 'driving schools',
+    description: 'Lesson booking by chat for driving schools: students name the licence, package and instructor, and the assistant sends you the request.',
+    quote: null, capsuleStart: 'Typelessity adds lesson booking by chat to your driving school’s website.',
+    article: { slug: 'best-ai-booking-widgets-2026' }, deep: true, exampleLang: 'pl',
+  },
+  {
+    slug: 'automotive-repair', name: 'Auto repair shops', audience: 'auto repair shops',
+    description: 'Online booking for auto repair shops by chat: drivers describe the symptom and the car, and the assistant sends you a request with make, model and year.',
+    quote: 'My check engine light is on', capsuleStart: 'Typelessity adds online booking by chat to your repair shop’s website.',
+    article: { slug: 'best-ai-booking-widgets-2026' }, deep: true, exampleLang: 'en',
+  },
+  {
+    slug: 'education-tutoring', name: 'Tutoring services', audience: 'tutoring services',
+    description: 'Tutoring requests by chat: parents describe subject, grade and schedule in one message, and the assistant sends you the request with the details.',
+    quote: null, capsuleStart: 'Typelessity adds tutoring requests by chat to your agency’s website.',
+    article: { slug: 'best-ai-booking-widgets-2026' }, deep: false, exampleLang: 'en',
+  },
+] as const;
+
+/** English names of the example languages the data uses, for the sentence «the example above is in <language>». */
+export const LANGUAGE_NAMES: Record<string, string> = { en: 'English', es: 'Spanish', pl: 'Polish' };
+
+/** The demo websites (card D6). The probe of 20.10 found no widget on either: no page links to them until it does. */
+export const DEMO_HOSTS = ['glow-studio-demo.netlify.app', 'autopro-service-demo.netlify.app'] as const;
+
+/** The order the site lists the seven in (the order of the data: hub, home grid, «Other industries»). The written list above follows SEVEN. */
+export const SITE_ORDER: string[] = ['beauty-hair-salons', 'fitness-gyms', 'fitness-yoga-studios', 'automotive-repair', 'automotive-driving-schools', 'education-tutoring', 'hospitality-restaurants'];

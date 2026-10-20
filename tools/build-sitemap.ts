@@ -29,12 +29,12 @@ interface Url {
 // when a date is earlier than the result of these two commands.
 const STATIC_PATHS: Url[] = [
   // The home grid and the FAQ answer name the seven industries that remain; /industries lists them (L1б, 2026-10-19).
-  { path: '/', lastmod: '2026-10-19' },
+  { path: '/', lastmod: '2026-10-20' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
   { path: '/install', lastmod: '2026-10-19' },
   { path: '/pricing', lastmod: '2026-10-19' },
   { path: '/gdpr', lastmod: '2026-10-19' },
-  { path: '/industries', lastmod: '2026-10-19' },
+  { path: '/industries', lastmod: '2026-10-20' },
   { path: '/for-ai-agents', lastmod: '2026-10-19' },
   { path: '/faq', lastmod: '2026-10-19' },
   { path: '/about', lastmod: '2026-10-19' },
@@ -48,7 +48,8 @@ const STATIC_PATHS: Url[] = [
 // One date for all industry pages: the latest of git log -1 --format=%cs -- src/app/lib/industries/ (29 pages taken down, the seven that remain
 // were not rewritten, but the set a crawler sees changed: 2026-10-19), -- src/app/pages/industries/ and the schemas.ts functions the
 // detail component calls (its Service markup: the FAQ markup went and the provider became a pointer, L2, 2026-10-19).
-const INDUSTRIES_LASTMOD = '2026-10-19';
+// L8 (2026-10-20) rewrote the seven pages (title, H1, capsule, FAQ, neighbours) and one sentence of the hub; the home grid reads the same data.
+const INDUSTRIES_LASTMOD = '2026-10-20';
 
 /** A post's date is its own: the last update, else the day it was published. */
 export function lastmodForPost(post: { publishedAt: string; updatedAt?: string }): string {

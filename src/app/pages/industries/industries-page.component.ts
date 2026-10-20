@@ -19,7 +19,7 @@ import { ALL_INDUSTRIES, getIndustriesByCategory } from '../../lib/industries';
       <h1>AI booking that fits {{ count }} verticals</h1>
       <p class="vc-section-sub">
         Every industry has its own intake fields, urgency signals, and edge cases.
-        Typelessity is configured for each — without forms.
+        Each one has its own setup, without forms.
       </p>
     </section>
 

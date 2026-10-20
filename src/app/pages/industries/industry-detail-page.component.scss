@@ -4,15 +4,6 @@
   padding-block: 50px 90px;
   max-width: 920px;
 
-  &__back {
-    display: inline-block;
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-
-    &:hover { color: var(--text-primary); }
-  }
-
   &__hero {
     padding-bottom: 36px;
     margin-bottom: 36px;
@@ -24,6 +15,20 @@
       letter-spacing: -0.035em;
       margin: 18px 0 18px;
     }
+  }
+
+  // The customer's own sentence, shown the way the example conversation shows one: a block of its own colour with a border.
+  &__quote {
+    display: block;
+    max-width: 30em;
+    margin: 0 0 18px;
+    padding: 14px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-primary);
   }
 
   &__sub {
@@ -38,6 +43,29 @@
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 15.5px;
+    line-height: 1.5;
+
+    a {
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__final {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
   }
 
   &__section {
