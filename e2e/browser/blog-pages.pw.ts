@@ -11,11 +11,11 @@ const SLUGS = [
   'best-ai-booking-widgets-2026', 'best-ai-booking-beauty-salons-2026', 'best-ai-booking-transfer-services-2026', 'pricing-ai-products',
   'latency-budgets', 'designing-for-ai-agents', 'whisper-vs-webspeech', '25-languages-one-prompt', 'single-gpt-call', 'cascade-corrections',
 ];
-const noWiderThanWindow = async (page: import('@playwright/test').Page) => {
+const noWiderThanWindow = async (page: import('./fixtures').Page) => {
   const { scrollWidth, clientWidth } = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
   expect(scrollWidth, 'the page is wider than the window').toBeLessThanOrEqual(clientWidth);
 };
-const shot = async (page: import('@playwright/test').Page, name: string) => {
+const shot = async (page: import('./fixtures').Page, name: string) => {
   if (process.env['L9_FRAMES']) await page.screenshot({ path: `${process.env['L9_FRAMES']}/${name}.png`, fullPage: true });
 };
 

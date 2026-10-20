@@ -6,7 +6,8 @@ import { test, expect } from './fixtures';
 // narrowest viewport that still shows four columns, 1120px the widest that shows two — the label has to
 // stay on one line at both ends of that edge, and on a phone.
 
-for (const path of ['/', '/pricing']) {
+// L4: the tier grid left the home page; the four buttons are compared on /pricing.
+for (const path of ['/pricing']) {
   for (const viewport of [{ width: 1280, height: 900 }, { width: 1121, height: 900 }, { width: 1120, height: 900 }, { width: 1024, height: 900 }, { width: 375, height: 812 }]) {
     test(`${path} at ${viewport.width}px: the tier buttons are one size, on one line of text`, async ({ page }) => {
       await page.setViewportSize(viewport);

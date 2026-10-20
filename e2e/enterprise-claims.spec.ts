@@ -38,10 +38,9 @@ const MODEL_CHECKED = new Set(['index.html', 'pricing/index.html', 'faq/index.ht
 // Each surface must still say the truth that replaced the promise — so a wrong path or an empty
 // page cannot pass the bans by accident.
 const TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
-  // The truth on the home page is the visible Enterprise card (contract terms, €399). The sentence with «6,000 submissions/month
-  // and unlimited sites; a named contact» lived only in the FAQPage markup, which L2 took down; it stays visible on /pricing
-  // and /faq below.
-  'index.html': [/For large organizations with high volume and contract terms/],
+  // The Enterprise card left the home page with the tier grid (L4, D7); its truth («contract terms», €399) stays on /pricing below.
+  // The home page is still scanned for the banned promises: an empty list of lines, not a missing entry.
+  'index.html': [],
   'pricing/index.html': [/<title>Pricing: free pilot, then €39–€399 a month — Typelessity<\/title>/, /Unlimited sites/, /there is no on-premise or self-hosted build/, /a named contact and other contract terms agreed on request/, /No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it/],
   'faq/index.html': [/no on-premise or self-hosted build/],
   'for-ai-agents/index.html': [/hosting_region/, /hosted only, no on-premise build/, /currently gpt-5\.4-mini/, /gpt-4o-mini-transcribe/],

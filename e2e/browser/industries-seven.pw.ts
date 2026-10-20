@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './fixtures';
+import { test, expect, type Page, REDUCED_MOTION } from './fixtures';
 import { SEVEN, SEVEN_CATEGORIES, SEVEN_SLUGS } from '../industries-seven';
 
 // L1б: the hub and the home grid show the seven industries that have a page. Each frame the founder-facing check
@@ -32,21 +32,26 @@ for (const width of WIDTHS) {
       await noHorizontalScroll(page);
     });
 
-    test('the home grid has seven industry cells and one «all» tile that links to the hub', async ({ page }) => {
-      await page.goto('/');
-      const cells = page.locator('.home-industries__cell:not(.home-industries__cell--more)');
-      await expect(cells).toHaveCount(SEVEN.length);
-      expect((await cells.allInnerTexts()).map((t) => t.trim()).sort()).toEqual(SEVEN.map((i) => i.name).sort());
-      const more = page.locator('.home-industries__cell--more a');
-      await expect(more).toHaveText(/All 7 industries/);
-      await expect(more).toHaveAttribute('href', '/industries');
-      await more.scrollIntoViewIfNeeded();
-      await expect(more).toBeVisible();
-      const tops = await page.locator('.home-industries__cell').evaluateAll((cs) => cs.map((c) => { const r = c.getBoundingClientRect(); return { top: Math.round(r.top), left: Math.round(r.left) }; }));
-      expect(tops).toHaveLength(SEVEN.length + 1);
-      if (width === 390) expect(new Set(tops.map((t) => t.left)).size, 'one column on a phone').toBe(1);
-      else expect(new Set(tops.map((t) => t.top)).size, '8 tiles in 4 columns are 2 rows').toBe(2);
-      await noHorizontalScroll(page);
+    // L4: the home page draws one card per industry (a link to that industry's page), no chips and no «all» tile; nothing links to the hub.
+    // Reduced motion: the demo above does not play, so the measure does not land in the middle of a tip.
+    test.describe('home', () => {
+      test.use(REDUCED_MOTION);
+
+      test('the home grid has seven industry cards, each linking to its own page, and no link to the hub', async ({ page }) => {
+        await page.goto('/');
+        const cards = page.locator('#industries a.card--link');
+        await expect(cards).toHaveCount(SEVEN.length);
+        const found = await cards.evaluateAll((as) => as.map((a) => ({ href: a.getAttribute('href') ?? '', name: (a.querySelector('h3')?.textContent ?? '').trim() })));
+        expect(found.map((c) => c.href).sort()).toEqual(SEVEN.map((i) => `/industries/${i.slug}`).sort());
+        expect(found.map((c) => c.name).sort()).toEqual(SEVEN.map((i) => i.name).sort());
+        await expect(page.locator('main a[href="/industries"]'), 'the home page does not link to the hub').toHaveCount(0);
+        await cards.last().scrollIntoViewIfNeeded();
+        await expect(cards.last()).toBeVisible();
+        const tops = await cards.evaluateAll((cs) => cs.map((c) => { const r = c.getBoundingClientRect(); return { top: Math.round(r.top + window.scrollY), left: Math.round(r.left) }; }));
+        if (width === 390) expect(new Set(tops.map((t) => t.left)).size, 'one column on a phone').toBe(1);
+        else expect(new Set(tops.map((t) => t.top)).size, '7 cards in 3 columns are 3 rows').toBe(3);
+        await noHorizontalScroll(page);
+      });
     });
 
     test('the seven kept pages are real pages, and a taken-down address shows the 404 screen', async ({ page }) => {

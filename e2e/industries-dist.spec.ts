@@ -41,12 +41,17 @@ test('the hub: seven cards in the five kept categories, each card in its own cat
   assert.match(decode(html), /fits 7 verticals/);
 });
 
-test('the home page: seven industry cells (not counting the «all» tile), the names of the seven, the link to the hub', () => {
+// L4: the home page draws one card per industry (a link to that industry's own page, "See the setup →"), in the order of the data; the chips,
+// the «All 7 industries» tile and the «Configured for 7 verticals» heading are gone, and so is every link from the home page to the hub.
+test('the home page: seven industry cards, each linking to its own page, the names of the seven, no link to the hub', () => {
   const html = read('index.html');
-  const cells = [...html.matchAll(/<li[^>]*class="home-industries__cell"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => decode(m[1].replace(/<[^>]+>/g, '').trim()));
-  assert.deepEqual([...cells].sort(), SEVEN.map((i) => i.name).sort());
-  assert.match(html, /<li[^>]*class="home-industries__cell home-industries__cell--more"[^>]*>\s*<a[^>]*href="\/industries"[^>]*>\s*All 7 industries/);
-  assert.match(decode(html), /Configured for 7 verticals/);
+  const section = html.match(/<section[^>]*id="industries"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+  const cards = [...section.matchAll(/<a[^>]*class="[^"]*card--link[^"]*"[^>]*href="\/industries\/([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)]
+    .map((m) => ({ slug: m[1]!, name: decode(m[2]!.match(/<h3[^>]*>([\s\S]*?)<\/h3>/)?.[1]?.replace(/<[^>]+>/g, '').trim() ?? '') }));
+  assert.deepEqual(cards.map((c) => c.slug).sort(), SEVEN.map((i) => i.slug).sort());
+  assert.deepEqual(cards.map((c) => c.name).sort(), SEVEN.map((i) => i.name).sort());
+  assert.doesNotMatch(html, /href="\/industries"/, 'a link from the home page to the hub');
+  assert.doesNotMatch(decode(html), /Configured for \d+ verticals|All \d+ industries/);
 });
 
 // The JSON-LD FAQPage and the meta tags are not visible text, so the page-text guard of claims-class-guard does not read

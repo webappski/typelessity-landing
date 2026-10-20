@@ -88,13 +88,20 @@ test('no prerendered page carries a <script> tag for widget.js', async () => {
   assert.deepEqual(offenders, []);
 });
 
-test('the hero of / holds one <typelessity-widget position="inline"> that talks to the API origin; no other page holds one', async () => {
+// L4 (D3): the hero no longer holds the element. The prerender carries the SLOT — a host `[data-widget-host]` with an empty mount point
+// and the status text — and the demo chunk puts `<typelessity-widget config-id=… api-url="https://demo.invalid">` into the mount point
+// after `load` and an idle moment (home-demo.pw.ts holds the browser side). So no page of the build holds the element, and the
+// api-url the widget is given is not the live API origin: the home page never asks the real API (the mock answers, home-demo-contract).
+test('no prerendered page holds a <typelessity-widget> element; the hero of / holds the slot instead', async () => {
   const pages = await everyPage();
   const tags = (html: string) => [...html.matchAll(/<typelessity-widget\b[^>]*>/gi)].map((m) => m[0]);
-  const home = tags(pages.get('index.html') ?? '');
-  assert.equal(home.length, 1, `${home.length} <typelessity-widget> elements on /`);
-  assert.match(home[0]!, /\sposition="inline"/);
-  assert.ok(home[0]!.includes(`api-url="${WIDGET_API_URL}"`), `the widget on / is not given api-url="${WIDGET_API_URL}" (it would call the origin of the page)`);
-  const others = [...pages].filter(([p, html]) => p !== 'index.html' && p !== 'index.csr.html' && tags(html).length > 0).map(([p]) => p);
+  const offenders = [...pages].filter(([, html]) => tags(html).length > 0).map(([p]) => p);
+  assert.deepEqual(offenders, []);
+  const home = pages.get('index.html') ?? '';
+  assert.equal((home.match(/<[a-z]+\s[^>]*\bdata-widget-host=/g) ?? []).length, 1, 'the hero of / holds one slot');
+  assert.equal((home.match(/<[a-z]+\s[^>]*\bdata-widget-mount=/g) ?? []).length, 1);
+  assert.match(home, /The demo chat runs in the real widget and needs JavaScript\./);
+  assert.doesNotMatch(home, /Loading the chat/, 'the prerender says nothing that only becomes true after hydration');
+  const others = [...pages].filter(([p, html]) => p !== 'index.html' && p !== 'index.csr.html' && /<[a-z]+\s[^>]*\bdata-widget-host=/.test(html)).map(([p]) => p);
   assert.deepEqual(others, []);
 });

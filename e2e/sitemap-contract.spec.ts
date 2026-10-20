@@ -151,13 +151,14 @@ const schemaNameDate = (name: string): string => git('log', '-1', '--format=%cs'
 test('sitemap: a page is not dated before its last edit (the formula of D7: page folder, its seo.* keys and, by name, the schemas.ts functions it calls)', (t) => {
   const shallow = git('rev-parse', '--is-shallow-repository') !== 'false';
   if (shallow) return t.skip('shallow clone or no git: the formula needs history');
-  // the fourth member lists files a page's text also comes from: the industry data feeds the home grid and the hub,
-  // the FAQ answers live with the home content (L1б: the home date was a literal that had fallen a day behind)
+  // the fourth member lists files a page's text also comes from: the industry data feeds the home grid and the hub; the home page
+  // also draws its blog cards, its six questions and its languages from files of other pages (L4). The FAQ answers used to live with
+  // the home content; since L4 the home page only reads them from the FAQ's own file (L1б: the home date was a literal that had fallen a day behind)
   const pages: Array<[string, string, string?, string[]?]> = [
-    ['/', 'home', 'home', ['src/app/lib/industries/']],
+    ['/', 'home', 'home', ['src/app/lib/industries/', 'src/app/pages/faq/faq.content.ts', 'src/app/pages/how-it-works/how-it-works.content.ts', 'src/app/core/languages/landing-languages.ts']],
     ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'], ['/gdpr', 'gdpr', 'gdpr'],
     ['/industries', 'industries', 'industries', ['src/app/lib/industries/']],
-    ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq', ['src/app/pages/home/home.content.ts']],
+    ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq'],
     ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],
     ['/legal/security', 'legal'],
   ];

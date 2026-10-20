@@ -51,23 +51,12 @@ test('typelessform.com stays only on the Person', () => {
   assert.ok(!schemasSrc.replace(person, '').includes('typelessform.com'), 'typelessform.com appears outside the Person');
 });
 
-test('comparison section includes Cal.ai + Cal.com as columns, honest text-only cells', () => {
-  const cols = HOME.comparison.columns as readonly string[];
-  assert.ok(cols.includes('Cal.ai'), 'comparison must include a Cal.ai column');
-  assert.ok(cols.includes('Cal.com'), 'comparison must include a Cal.com column');
-  // Every row must have one cell per column (flat array indexed to columns) and no outbound links.
-  for (const row of HOME.comparison.rows) {
-    assert.equal(row.length, cols.length, `row "${row[0]}" cell count must match column count`);
-    for (const cell of row) {
-      assert.ok(typeof cell === 'string' && !cell.includes('<a '),
-        `cell "${cell}" must be plain text with no outbound <a> link (R28)`);
-    }
-  }
-});
-
-test('a Cal.ai differentiation FAQ exists and honestly frames the layer difference', () => {
-  const calai = HOME.faq.find((qa) => /Cal\.ai/i.test(qa.q));
-  assert.ok(calai, 'a "differ from Cal.ai" FAQ must exist');
-  assert.ok(/outbound/i.test(calai!.a) && /(inbound|widget)/i.test(calai!.a),
-    'Cal.ai FAQ must honestly contrast outbound voice vs inbound widget');
+// L4: the home page has no comparison table and no «differ from …» questions (HOME.comparison and the five vendor FAQs are gone;
+// the vendor facts have one owner, the article best-ai-booking-widgets-2026). What these two guards held — honest text-only cells
+// without outbound links, and the Cal.ai answer framed as outbound voice vs inbound widget — has no subject left on the site: the
+// article does not name Cal.ai or Cal.com. The guard that remains is the one that keeps the home content free of them.
+test('the home content carries no vendor comparison: no table, no Cal.ai or Cal.com, no «differ from» question', () => {
+  assert.ok(!('comparison' in HOME), 'HOME.comparison is gone');
+  assert.ok(!('faq' in HOME) || !Array.isArray((HOME as { faq?: unknown }).faq), 'the home content keeps no list of FAQ answers of its own');
+  assert.doesNotMatch(JSON.stringify(HOME), /Cal\.ai|Cal\.com|differ from/i);
 });

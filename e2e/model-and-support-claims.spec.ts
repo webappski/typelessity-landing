@@ -96,15 +96,16 @@ const POST_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
 const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   // L3: `/GET \/stylists/` is gone from this list. It was printed only by the hero demo (app-live-demo, the sample API call of its
   // first scenario), which the real widget replaced in the hero slot; the demo scenarios of L4 are held by the script scan below.
-  'index.html': [/mailto:info@webappski\.com/, /on model calls and on booking submission/,
-    /supported verticals \(configurations\)/i],
+  // L4: «on model calls and on booking submission» (the retry line of the old pillars) moved to llms.txt below; «supported verticals
+  // (configurations)» was printed by the old FAQ answer only and is on no page now (FINDINGS, L4 B1-notes).
+  'index.html': [/mailto:info@webappski\.com/],
   'pricing/index.html': [/Customers speak or type their request/, /Support by email/, /contract terms agreed on request/],
   'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /DPA is accepted in the Webappski portal before any visitor data is processed/],
   'for-ai-agents/index.html': [/mailto:info@webappski\.com/, /is designed to take an intent like this/, /bookingResult/,
     /booking \| request/],
   'how-it-works/index.html': [/Submit endpoint returns 502, 503 or 504/, /brake_pads/],
   'about/index.html': [/mailto:info@webappski\.com/, /Typelessity and TypelessForm are separate codebases/],
-  'llms.txt': [/Support is by email on every tier/, /health data is not permitted under the Typelessity DPA/],
+  'llms.txt': [/Support is by email on every tier/, /health data is not permitted under the Typelessity DPA/, /on model calls and on booking submission/],
   'llms-full.txt': [/Up to 2,000 submissions\/month, up to 10 websites, support by email/,
     /Each vertical has its own configuration/],
 };

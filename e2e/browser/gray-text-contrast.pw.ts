@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './fixtures';
+import { test, expect, type Page, REDUCED_MOTION } from './fixtures';
 import { CONTRAST_ENGINE } from './contrast-engine';
 import { SITEMAP_PATHS_WITH_404 } from './sitemap-paths';
 
@@ -27,13 +27,18 @@ for (const scheme of ['light', 'dark'] as const) {
 
     for (const width of [390, 1280]) {
       for (const path of SITEMAP_PATHS_WITH_404) {
-        test(`${path} at ${width}px — all text is 4.5:1 or better on the surface it sits on`, async ({ page }) => {
-          await page.setViewportSize({ width, height: 844 });
-          await page.goto(path, { waitUntil: 'networkidle' });
-          await page.evaluate(() => document.fonts.ready);
-          const { seen, bad } = await MEASURE(page);
-          expect(seen, 'the page carries text, so the probe measures something').toBeGreaterThan(5);
-          expect(bad).toEqual([]);
+        // L4 (F7): `/` runs the scripted demo, which draws tips and a ring on a clock of its own; the contrast of the page is measured
+        // with the demo still (reduced motion), the other addresses as they were.
+        test.describe(path === '/' ? 'home, demo still' : 'page', () => {
+          if (path === '/') test.use(REDUCED_MOTION);
+          test(`${path} at ${width}px — all text is 4.5:1 or better on the surface it sits on`, async ({ page }) => {
+            await page.setViewportSize({ width, height: 844 });
+            await page.goto(path, { waitUntil: 'networkidle' });
+            await page.evaluate(() => document.fonts.ready);
+            const { seen, bad } = await MEASURE(page);
+            expect(seen, 'the page carries text, so the probe measures something').toBeGreaterThan(5);
+            expect(bad).toEqual([]);
+          });
         });
       }
     }
@@ -49,29 +54,35 @@ for (const scheme of ['light', 'dark'] as const) {
       expect(bad).toEqual([]);
     });
 
-    test('/ at 390px — the open mobile menu is 4.5:1 or better', async ({ page }) => {
-      await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto('/', { waitUntil: 'networkidle' });
-      const burger = page.getByRole('button', { name: /menu/i });
-      await burger.click();
-      await expect(burger).toHaveAttribute('aria-expanded', 'true');
-      const { seen, bad } = await MEASURE(page);
-      expect(seen).toBeGreaterThan(5);
-      expect(bad).toEqual([]);
-    });
+    test.describe('home, demo still', () => {
+      test.use(REDUCED_MOTION);
 
-    test('hovering a phase card keeps its text at 4.5:1', async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.goto('/', { waitUntil: 'networkidle' });
-      const cards = page.locator('.home-phases .phase');
-      const count = await cards.count();
-      expect(count).toBeGreaterThan(0);
-      for (let i = 0; i < count; i++) {
-        await cards.nth(i).hover();
-        await page.waitForTimeout(350);
-        const { bad } = await MEASURE(page);
-        expect(bad, `phase card ${i + 1} hovered`).toEqual([]);
-      }
+      test('/ at 390px — the open mobile menu is 4.5:1 or better', async ({ page }) => {
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.goto('/', { waitUntil: 'networkidle' });
+        const burger = page.getByRole('button', { name: /menu/i });
+        await burger.click();
+        await expect(burger).toHaveAttribute('aria-expanded', 'true');
+        const { seen, bad } = await MEASURE(page);
+        expect(seen).toBeGreaterThan(5);
+        expect(bad).toEqual([]);
+      });
+
+      // L4: the four phase cards left `/` (they live on /how-it-works); the cards that stay under the pointer are the seven industries
+      // and the three articles. Each is hovered in turn and the whole page is measured again.
+      test('hovering an industry card or an article card on / keeps its text at 4.5:1', async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 900 });
+        await page.goto('/', { waitUntil: 'networkidle' });
+        const cards = page.locator('main a.card--link');
+        const count = await cards.count();
+        expect(count, 'seven industries and three articles').toBe(10);
+        for (let i = 0; i < count; i++) {
+          await cards.nth(i).hover();
+          await page.waitForTimeout(350);
+          const { bad } = await MEASURE(page);
+          expect(bad, `card ${i + 1} hovered`).toEqual([]);
+        }
+      });
     });
   });
 }

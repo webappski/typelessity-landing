@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { existsSync, readdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { HOME } from '../src/app/pages/home/home.content';
 import { EN } from '../src/app/i18n/translations.en';
 import { BADGE } from './free-pilot-copy';
 import { EXPECTED_PAGES, RETIRED_TERMS, SEVEN, SEVEN_SLUGS } from './industries-seven';
@@ -363,14 +362,16 @@ test('the clinics page is not built and /industries lists the seven kept pages',
   assert.equal(count, SEVEN.length);
 });
 
-test('the home page names exactly the verticals that have a page', () => {
+// L4 (2026-10-20): the home page no longer counts its verticals in a heading and no longer draws chips plus an «All N industries» tile;
+// it has one card per industry, each linking to that industry's own page, and nothing links to the hub from here.
+test('the home page links exactly the verticals that have a page, each card to its own page, and not to the hub', () => {
   const html = pages.get('index.html')!;
-  const claimed = Number(visibleText(html).match(/Configured for (\d+) verticals/)?.[1]);
-  const chips = (html.match(/class="home-industries__cell"/g) ?? []).length; // the «All N industries →» tile has the --more class too
-  const built = [...pages.keys()].filter((p) => /^industries\/[^/]+\/index\.html$/.test(p)).length;
-  assert.equal(claimed, built, 'the heading counts a different number of verticals than the build holds');
-  assert.equal(chips, built, 'the home page lists a vertical that has no page, or leaves one out');
-  assert.equal(built, SEVEN.length, 'the site builds a different number of industry pages than the seven it keeps');
+  const built = [...pages.keys()].map((p) => p.match(/^industries\/([^/]+)\/index\.html$/)?.[1]).filter((x): x is string => !!x).sort();
+  const linked = [...new Set([...html.matchAll(/href="\/industries\/([^"]+)"/g)].map((m) => m[1]!))].sort();
+  assert.deepEqual(linked, built, 'the home page lists a vertical that has no page, or leaves one out');
+  assert.equal(built.length, SEVEN.length, 'the site builds a different number of industry pages than the seven it keeps');
+  assert.doesNotMatch(html, /href="\/industries"/, 'the home page links to the hub');
+  assert.doesNotMatch(visibleText(html), /Configured for|All \d+ industries/);
 });
 
 // L1б: the 29 industries and 4 categories taken down must not be named on the pages that list or summarise the
@@ -455,30 +456,21 @@ test('the structured data names the embed as the two-line web component it is', 
 });
 
 // ── A56. competitor cells ────────────────────────────────────────────────────────────────────────
-test('the comparison table keeps only cells that quote a vendor page, and names those pages', () => {
-  const text = visibleText(pages.get('index.html')!);
-  for (const banned of ['EN-first', 'Custom build', 'Limited', 'Per voice config', 'Lead-qual only', 'Slot-pick page']) {
-    assert.ok(!text.includes(banned), `the table still says «${banned}», which no vendor page backs`);
+// The table of five vendors left the home page with L4 (card L4 §3): the facts about other vendors have one owner, the article
+// best-ai-booking-widgets-2026 (L9). The cells the vendors' own pages contradicted (A56: Cal.com «EN-first», SimplyBook.me voice)
+// went with the table and are not on any page now; this guard holds the home page to that.
+test('the home page prints no vendor comparison: no table, no vendor name, none of the cells no vendor page backed (A56)', () => {
+  const html = pages.get('index.html')!;
+  const text = visibleText(html);
+  assert.doesNotMatch(html, /<table\b/);
+  for (const vendor of ['Calendly', 'SimplyBook', 'Cal.ai', 'Cal.com', 'Botpress', 'NoForm']) {
+    assert.ok(!text.includes(vendor), `the home page names ${vendor}`);
   }
-  const rows = HOME.comparison.rows;
-  assert.equal(rows.length, 9);
-  for (const row of rows) assert.equal(row.length, HOME.comparison.columns.length, `row ${row[0]} has a missing cell`);
-  for (const host of ['calendly.com/features', 'cal.com/ai', 'simplybook.me/en/features', 'botpress.com', 'noform.ai']) {
-    assert.ok(HOME.comparison.sources.includes(host), `the sources line does not name ${host}`);
-    assert.ok(text.includes(host), `the page does not print ${host}`);
+  for (const banned of ['EN-first', 'Custom build', 'Per voice config', 'Lead-qual only', 'Slot-pick page']) {
+    assert.ok(!text.includes(banned), `the page still says «${banned}», which no vendor page backs`);
   }
-  assert.match(text, /A dash means we found no statement on those pages/);
-  // The three cells the vendors' own pages contradicted.
-  const row = (label: string) => rows.find((r) => r[0] === label)!;
-  assert.equal(row('Languages')[3], '65+', 'Cal.com states 65+ languages');
-  assert.match(row('Voice input')[5], /AI Voice Booking/, 'SimplyBook.me sells AI Voice Booking');
 });
 
-// ── r2 (judges, 2026-10-04). Two more members of the classes above that the number-and-speed word lists did not reach ──
-// F5: a post told readers Typelessity «leads» on conversion and on time to a deployed widget — the 28.09 class (speed and
-// uplift of OUR product without a measurement) in list form, with no number and no speed word in it; one sentence in a
-// post said the same of the salon's «customer-facing conversion», and a post description said «25+ languages work the same
-// day». The Updated notes that say the conversion claim is gone are not this claim and match none of these.
 test('posts: Typelessity is not named the leader on conversion or on time to deploy, and no description says «work the same day»', () => {
   const claims: readonly RegExp[] = [/\bconversion\s*→/i, /Time to a deployed/i, /customer-facing conversion/i, /work the same day/i];
   const offenders: string[] = [];
@@ -594,6 +586,16 @@ test('dictionary: the built HTML only holds the words the baseline lists, and on
   }
   assert.deepEqual(grew, [], 'a word of the dictionary appeared or grew in the built HTML');
   assert.deepEqual(stale, [], 'the count went down — run CLAIMS_BASELINE=prune npx tsx --test e2e/claims-class-guard.spec.ts in the same commit');
+});
+
+// L4 (2026-10-20): the home page was the last page that carried words of the dictionary (its baseline entry was index.html: K1 12, K4 2, K5 7,
+// K7 6, K8 1). It carries none now and the baseline is `{}`; this test says so by name, so that a word coming back to `/` is reported as the
+// home page's, with the class and the count, and not only as «the count grew» of the ratchet.
+test('dictionary: the home page prints none of the words — 0 matches in index.html, nothing is lent to it by the baseline', async () => {
+  const baseline = JSON.parse(await readFile(BASELINE, 'utf8')) as Record<string, ClaimCounts>;
+  assert.deepEqual(baseline, {}, 'the baseline lists a page again: L4 emptied it, L10 requires it empty');
+  const found = countClaims(pages.get('index.html')!);
+  assert.deepEqual(found, {}, `/ prints a word of the dictionary: ${describeCounts(found)}`);
 });
 
 // The footer line is on every page (and on the 404 shell). It names the language count from the code, not a

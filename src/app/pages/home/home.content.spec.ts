@@ -1,36 +1,29 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HOME, type FaqCategory } from './home.content';
+import { HOME } from './home.content';
+import { HOW } from '../how-it-works/how-it-works.content';
 import { PRICING_FAQ } from '../pricing/pricing.content';
 import { FAQ_GROUPS } from '../faq/faq.content';
 
-// L6: the FAQ moved to /faq (faq.content.ts, seven groups); HOME.faq keeps the Product preview home draws. The data
-// answers below are read in both places: a claim does not escape a guard by moving to the other list.
-const FAQ_ALL: readonly { q: string; a: string }[] = [...HOME.faq, ...FAQ_GROUPS.flatMap((g) => g.items)];
+// L6: the FAQ moved to /faq (faq.content.ts, seven groups). L4 (D8): the home page keeps no FAQ of its own (HOME.faq is gone, with
+// its nine questions and five vendor comparisons): it draws six questions of /faq, found by their exact text. The data answers
+// below are read from the FAQ page's list: a claim does not escape a guard by moving to another list.
+const FAQ_ALL: readonly { q: string; a: string }[] = FAQ_GROUPS.flatMap((g) => g.items);
 
-test('HOME.faq: every item has a known category', () => {
-  const allowed: ReadonlySet<FaqCategory> = new Set([
-    'Product',
-    'AI Behavior',
-    'Integration',
-    'Privacy',
-    'Pricing',
-    'Security',
-    'Compliance',
-    'For Developers',
-    'Competitor Migration',
-  ]);
-  for (const qa of HOME.faq) {
-    assert.ok(allowed.has(qa.category), `unknown category for "${qa.q}": ${qa.category}`);
+test('HOME.faq: the six preview questions are questions of /faq, each found exactly once, each different (track-by key in the template)', () => {
+  assert.equal(HOME.faq.questions.length, 6);
+  assert.equal(new Set(HOME.faq.questions).size, HOME.faq.questions.length, 'a question is listed twice');
+  for (const q of HOME.faq.questions) {
+    assert.equal(FAQ_ALL.filter((qa) => qa.q === q).length, 1, `"${q}" is not on /faq exactly once`);
   }
 });
 
-test('HOME.faq: every question is unique (used as track-by key in templates)', () => {
-  const seen = new Set<string>();
-  for (const qa of HOME.faq) {
-    assert.ok(!seen.has(qa.q), `duplicate FAQ question: "${qa.q}"`);
-    seen.add(qa.q);
-  }
+// What HOME.comparison (the table of five vendors) and the five «How does Typelessity differ from …» questions used to guard — the
+// facts about other vendors — now has one owner: the article best-ai-booking-widgets-2026 (L9). The home page names no vendor.
+test('HOME: the home content names no competitor vendor — the vendor facts have one owner, the comparison article', () => {
+  assert.ok(!('comparison' in HOME), 'HOME.comparison is gone');
+  const vendors = /Calendly|SimplyBook|Cal\.ai|Cal\.com|Botpress|NoForm/i;
+  assert.doesNotMatch(JSON.stringify(HOME), vendors);
 });
 
 test('FAQ_GROUPS: the seven groups of the page, every question unique across the page, every group links to the page with the full answer', () => {
@@ -47,10 +40,6 @@ test('FAQ_GROUPS: the seven groups of the page, every question unique across the
   assert.equal(FAQ_GROUPS.find((g) => g.id === 'integration')?.more.href, '/install');
 });
 
-test('HOME.faq: at least one question per Product category (drives /home preview)', () => {
-  const productCount = HOME.faq.filter((qa) => qa.category === 'Product').length;
-  assert.ok(productCount >= 3, `Product category needs ≥3 entries, found ${productCount}`);
-});
 
 // A27 (c8, 2026-09-24): two Compliance answers promised what the product does not do.
 function answer(fragment: RegExp): string {
@@ -59,7 +48,7 @@ function answer(fragment: RegExp): string {
   return qa.a;
 }
 
-test('HOME.faq: the sub-processor answer lists exactly what Appendix B of the Typelessity DPA lists', () => {
+test('FAQ: the sub-processor answer lists exactly what Appendix B of the Typelessity DPA lists', () => {
   // Source: https://webappski.com/en/legal/dpa-typelessity, Appendix B (provider terms read 2026-09-20).
   // "AWS Frankfurt" was never a sub-processor: the database is Supabase on AWS eu-west-1 (Ireland).
   const a = answer(/sub-processors/i);
@@ -69,7 +58,7 @@ test('HOME.faq: the sub-processor answer lists exactly what Appendix B of the Ty
   assert.ok(!/AWS Frankfurt/i.test(a), 'AWS Frankfurt is not a sub-processor');
 });
 
-test('HOME.faq: no answer promises region-aware consent or analytics cookies — the widget has neither', () => {
+test('FAQ: no answer promises region-aware consent or analytics cookies — the widget has neither', () => {
   // Consent is asked from every visitor the same way (typelessity widget, consent.service.ts);
   // there is no region detection anywhere in the widget, the API or shared.
   for (const qa of FAQ_ALL) {
@@ -78,9 +67,13 @@ test('HOME.faq: no answer promises region-aware consent or analytics cookies —
   }
 });
 
-test('HOME.howItWorks.phases: numbers are sequential 01..04', () => {
-  const nums = HOME.howItWorks.phases.map((p) => p.n);
+// L4: the four phases left the home page; /how-it-works owns them (HOW.phases) and the home page prints their names in its stats strip.
+test('HOW.phases: numbers are sequential 01..04, and the home strip prints their names in order', () => {
+  const nums = HOW.phases.map((p) => p.n);
   assert.deepEqual([...nums], ['01', '02', '03', '04']);
+  const strip = HOME.whatItIs.stats.find((s) => s.l.startsWith('Steps:'));
+  assert.equal(strip?.l, `Steps: ${HOW.phases.map((p) => p.name).join(' → ')}`);
+  assert.equal(strip?.n, String(HOW.phases.length));
 });
 
 test('HOME.pricing: no tier is marked featured — the four cards are equal (L6, seo-lead §2.5)', () => {
@@ -100,7 +93,7 @@ import { readFileSync } from 'node:fs';
 import { PRICING_FAQ } from '../pricing/pricing.content';
 
 const DATA_SURFACES: readonly { name: string; text: string }[] = [
-  { name: 'home FAQ', text: HOME.faq.map((qa) => qa.a).join('\n') },
+  { name: 'home FAQ (the six questions of /faq)', text: HOME.faq.questions.map((q) => FAQ_ALL.find((qa) => qa.q === q)?.a ?? '').join('\n') },
   { name: 'faq page', text: FAQ_GROUPS.flatMap((g) => g.items).map((qa) => qa.a).join('\n') },
   { name: 'pricing FAQ', text: PRICING_FAQ.map((qa) => qa.a).join('\n') },
   { name: '/legal/security', text: readFileSync('src/app/pages/legal/legal-page.component.ts', 'utf8') },
@@ -157,7 +150,7 @@ test('enterprise claims: no SLA figure, on-premise, residency tier, custom provi
   ];
   const surfaces = [
     ...FAQ_ALL.map((qa) => ({ name: qa.q, text: qa.a })),
-    ...HOME.tldr.bullets.map(([k, v]) => ({ name: `tldr ${k}`, text: v })),
+    ...HOME.whatItIs.facts.map(([k, v]) => ({ name: `what it is: ${k}`, text: v })),
     ...PRICING_FAQ.map((qa) => ({ name: `pricing: ${qa.q}`, text: qa.a })),
   ];
   for (const { name, text } of surfaces) {
@@ -184,11 +177,10 @@ test('A45b: one support line on every tier, no dated /agent, audit log, GDPR-nat
   const surfaces = [
     ...FAQ_ALL.map((qa) => ({ name: qa.q, text: qa.a })),
     ...PRICING_FAQ.map((qa) => ({ name: `pricing: ${qa.q}`, text: qa.a })),
-    ...HOME.architecture.pillars.map((p) => ({ name: `pillar ${p.h}`, text: p.b })),
+    ...HOW.ai.pillars.map((p) => ({ name: `pillar ${p.h}`, text: p.b })),
     ...HOME.pricing.tiers.map((t) => ({ name: `tier ${t.name}`, text: t.bullets.join(' · ') })),
-    ...HOME.comparison.rows.map((r) => ({ name: `compare ${r[0]}`, text: r.join(' · ') })),
-    { name: 'hero sub', text: HOME.hero.sub },
-    { name: 'hero trustline', text: HOME.hero.trustline },
+    { name: 'hero capsule', text: HOME.hero.capsule },
+    { name: 'hero trust', text: HOME.hero.trust.join(' ') },
   ];
   for (const { name, text } of surfaces) {
     for (const re of banned) assert.ok(!re.test(text), `${name} still says ${re}`);

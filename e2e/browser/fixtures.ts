@@ -13,13 +13,69 @@
 // Page-level page.route() in a spec takes precedence over this context route (Playwright, BrowserContext.route), so
 // specs that stub their own hosts keep working. Origins are imported from the product code the site ships, not typed here.
 // A context a spec makes itself (browser.newContext) is not covered; the guard spec says so.
-import { test as base, expect, type Route } from '@playwright/test';
+import { test as base, expect, type Page, type Route } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../../src/app/core/integrations/embed-snippet';
 import { SNAPSHOT_DIST, readManifest, type Manifest } from './widget-snapshot';
 
 export * from '@playwright/test';
+
+/**
+ * `test.use(REDUCED_MOTION)` — prefers-reduced-motion: reduce. L4 (F7): the home page plays a scripted demo, so a spec that measures `/` runs with
+ * the demo still. NOT `test.use({ reducedMotion })`: in Playwright 1.58 that name is not a test option (it is silently ignored and the page
+ * keeps `no-preference`); a context option has to go through `contextOptions`, as here. home-demo.pw.ts asserts the media query is on.
+ */
+export const REDUCED_MOTION = { contextOptions: { reducedMotion: 'reduce' as const } };
+
+/**
+ * The headers `vercel.json` puts on every page (`/(.*)`): the local server sets none, so a spec that wants to prove anything under them
+ * puts them on the document itself (underPolicy below). Read from the file, not typed here.
+ */
+export const SITE_HEADERS: Record<string, string> = (() => {
+  const config = JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8')) as { headers: { source: string; headers: { key: string; value: string }[] }[] };
+  const rule = config.headers.find((h) => h.source === '/(.*)');
+  const pick = (name: string): string => {
+    const value = rule?.headers.find((h) => h.key.toLowerCase() === name.toLowerCase())?.value;
+    if (!value) throw new Error(`vercel.json has no ${name} on /(.*)`);
+    return value;
+  };
+  return { 'content-security-policy': pick('Content-Security-Policy'), 'permissions-policy': pick('Permissions-Policy') };
+})();
+
+declare global {
+  interface Window { __csp: string[]; __cls: number; __slotAtDcl: number | null }
+}
+
+/**
+ * The CSP and the Permissions-Policy of vercel.json on every document, and the observers the statements read (L3 D6; moved here in L4, D2, so
+ * that widget-fonts-csp.pw.ts and home-demo.pw.ts run under the SAME policy):
+ *   window.__csp  — every `securitypolicyviolation` as «directive blockedURI»;   window.__cls — cumulative layout shift;
+ *   window.__slotAtDcl — the height of the demo slot `[data-widget-host]` at DOMContentLoaded (null when the page has none).
+ * Without this the local server sends no header and «violations 0» and «the microphone is allowed» would be proven under nothing.
+ */
+export async function underPolicy(page: Page): Promise<void> {
+  await page.route('http://localhost:4000/**', async (route) => {
+    if (route.request().resourceType() !== 'document') return route.fallback();
+    const response = await route.fetch();
+    await route.fulfill({ response, headers: { ...response.headers(), ...SITE_HEADERS } });
+  });
+  await page.addInitScript(() => {
+    window.__csp = [];
+    window.__cls = 0;
+    window.__slotAtDcl = null;
+    document.addEventListener('securitypolicyviolation', (e) => window.__csp.push(`${e.violatedDirective} ${e.blockedURI}`), true);
+    try {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as unknown as { hadRecentInput: boolean; value: number }[]) if (!entry.hadRecentInput) window.__cls += entry.value;
+      }).observe({ type: 'layout-shift', buffered: true });
+    } catch { /* an engine without layout-shift: the CLS statement fails on a missing number */ }
+    document.addEventListener('DOMContentLoaded', () => {
+      const slot = document.querySelector('[data-widget-host]');
+      window.__slotAtDcl = slot ? slot.getBoundingClientRect().height : null;
+    });
+  });
+}
 
 export const WIDGET_ORIGIN = new URL(WIDGET_SCRIPT_URL).origin;
 export const API_ORIGIN = new URL(WIDGET_API_URL).origin;

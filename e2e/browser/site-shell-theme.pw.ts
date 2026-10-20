@@ -73,7 +73,8 @@ for (const scheme of ['light', 'dark'] as const) {
     // ── B1.1 the theme follows the system until the visitor chooses (frames after-home-*) ──
     for (const width of [390, 1440]) {
       for (const path of ['/', '/pricing']) {
-        const frame = path === '/' ? `[after-home-${width}-${scheme}] ` : '';
+        // L4: the hero of / is the demo now and its frames are `after-home-{hero,page}-…` (home-demo.pw.ts); this statement — the theme follows the system — keeps its L3 frame under another name
+        const frame = path === '/' ? `[theme-home-${width}-${scheme}] ` : '';
         test(`${frame}B1.1 ${path} at ${width}px, system ${scheme}, nothing stored: <html> has no data-theme and the background is ${scheme}`, async ({ page }) => {
           await page.setViewportSize({ width, height: 900 });
           await page.goto(path);

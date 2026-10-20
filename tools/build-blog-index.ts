@@ -1,5 +1,6 @@
 // Build-time: scan src/assets/content/blog/*.mdx, parse frontmatter,
-// emit src/app/lib/blog-manifest.generated.ts with full BlogPost[] (body inlined for SSR).
+// emit src/app/lib/blog-manifest.generated.ts with full BlogPost[] (body inlined for SSR) and, beside it, the slim
+// src/app/lib/blog-index.generated.ts (no bodies: for pages that only list posts, L4).
 // Run via `npm run build:blog` (also wired as a prebuild step).
 
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -61,3 +62,20 @@ const out =
 
 writeFileSync(OUT_FILE, out, 'utf8');
 console.log(`✓ blog manifest: ${posts.length} posts → ${OUT_FILE.replace(ROOT, '')}`);
+
+// The slim index (L4): the same posts without their bodies, for the pages that only list articles (the home page draws three cards).
+// The manifest above carries every body for SSR (~110 kB, 30 kB gzipped); a page that imported it would ship all of that to draw
+// three titles. The two files are written from the same list in the same run, so a title cannot differ between them.
+const INDEX_FILE = join(ROOT, 'src/app/lib/blog-index.generated.ts');
+const index = posts.map(({ slug, title, description, publishedAt, updatedAt, category }) => ({ slug, title, description, publishedAt, updatedAt, category }));
+writeFileSync(
+  INDEX_FILE,
+  banner +
+    "import type { BlogIndexEntry } from './types';\n\n" +
+    `export const BLOG_INDEX: BlogIndexEntry[] = ${JSON.stringify(index, null, 2)};\n\n` +
+    'export function getBlogIndexEntry(slug: string): BlogIndexEntry | undefined {\n' +
+    '  return BLOG_INDEX.find((p) => p.slug === slug);\n' +
+    '}\n',
+  'utf8',
+);
+console.log(`✓ blog index: ${index.length} posts → ${INDEX_FILE.replace(ROOT, '')}`);

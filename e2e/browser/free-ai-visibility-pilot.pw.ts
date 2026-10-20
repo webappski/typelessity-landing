@@ -1,9 +1,12 @@
-import { test, expect } from './fixtures';
+import { test, expect, REDUCED_MOTION } from './fixtures';
 import { join } from 'node:path';
 import { BADGE, COPY } from '../free-pilot-copy';
 
 const HREF = 'https://webappski.com/en/free-aeo-pilot?utm_source=typelessity.com&utm_campaign=free-pilot&utm_medium=banner';
-const HERO = '.home-hero__grid';
+// L4: the hero grid of the redesign (.hero__grid). Every test here opens `/`, where the demo plays: reduced motion keeps the hero still,
+// so a measure never lands in the middle of a tip or the ring of the demo (F7).
+const HERO = '.hero__grid';
+test.use(REDUCED_MOTION);
 
 // The local app renders normally; only unrelated external services are blocked.
 test.beforeEach(async ({ page }) => {

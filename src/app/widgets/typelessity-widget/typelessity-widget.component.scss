@@ -1,5 +1,6 @@
-// The frame of the mock (.demo__frame): the widget is a white card in both themes. The min-height is the slot's own, so the
-// widget arriving after the first paint moves nothing.
+// The slot of the hero demo. The frame (the white card with the ring) and its height belong to the page: `.demo__frame` in
+// home.component.scss. The widget is a white card in both themes, so the status text is drawn in fixed colours on white —
+// 7.0:1 and 5.4:1 — and not in the theme's text tokens, which turn light on the dark theme.
 :host {
   display: block;
   width: 100%;
@@ -8,15 +9,31 @@
 
 .tw-slot {
   position: relative;
-  min-height: 720px;
-  overflow: hidden;
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: var(--widget-ring);
+  min-height: inherit;
+  height: 100%;
 }
 
-typelessity-widget { display: block; }
+.tw-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #4A4A4A;
+  font-size: 14px;
+  line-height: 1.5;
 
-@media (max-width: 720px) {
-  .tw-slot { min-height: 640px; }
+  a {
+    color: #A84A09;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 }

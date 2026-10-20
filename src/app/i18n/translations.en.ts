@@ -30,8 +30,8 @@ export const EN: TranslationMap = {
   'footer.parentBrand': 'A product of Webappski. Sister product: TypelessForm.',
 
   // ── SEO meta (title is suffixed with " — Typelessity" by SeoService; descriptions ≤155 chars) ──
-  'seo.home.title': 'Bookings through conversation, not forms',
-  'seo.home.description': 'AI booking widget that replaces forms with chat. 25+ languages, voice input. Consent before any AI processing; service and database in the EU.',
+  'seo.home.title': 'AI booking assistant for your website',
+  'seo.home.description': 'Typelessity is an AI booking assistant (a booking widget) for your site: customers say what they want by voice or text; you get a booking request.',
   'seo.howItWorks.title': 'How Typelessity works: from chat to booking request',
   'seo.howItWorks.description': 'Chat, select, review, send: the AI booking assistant turns one sentence into a booking request; if your booking system has an API, it asks it what is free.',
   'seo.install.title': 'Add an AI booking widget to your website',

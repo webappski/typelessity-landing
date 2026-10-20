@@ -15,228 +15,343 @@
   </aside>
 </div>
 
-<!-- ── Hero ── -->
-<section class="home-hero">
+<!-- ── Hero: the words, and the real widget with the scripted demo ── -->
+<section class="hero">
   <div class="vc-mesh" aria-hidden="true"></div>
-  <div class="vc-grain" aria-hidden="true"></div>
-  <div class="vc-wrap home-hero__grid">
-    <div>
-      <div class="vc-eyebrow">
-        <span class="vc-dot"></span>
-        {{ c.hero.eyebrow }}
+  <div class="vc-wrap">
+    <div class="hero__grid">
+      <div class="hero__text">
+        <span class="chip"><span class="chip__dot"><i></i></span>{{ c.hero.chip }}</span>
+        <h1 class="h1">{{ c.hero.h1Lead }} <span class="gtext">{{ c.hero.h1Grad }}</span></h1>
+        <p class="lead">{{ c.hero.capsule }}</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary btn--lg" [href]="signupUrl('hero', 'free-pilot')">{{ c.hero.cta.primary }} <app-icon name="arrow" [size]="18" /></a>
+          <button class="btn btn--ghost btn--lg" data-take-over type="button" [disabled]="slot() === 'failed'" (click)="takeOver()">
+            <app-icon name="mic" [size]="18" />{{ c.hero.cta.secondary }}
+          </button>
+        </div>
+        <p class="trust">{{ c.hero.trust[0] }}<br>{{ c.hero.trust[1] }}</p>
       </div>
-      <h1 class="home-hero__h1">
-        {{ c.hero.headlineLead }}
-        <span class="vc-h1-grad">{{ c.hero.headlineGrad }}</span>
-        <em class="vc-h1-em">{{ c.hero.headlineEm }}</em>
-      </h1>
-      <p class="home-hero__sub">{{ c.hero.sub }}</p>
-      <div class="home-hero__cta">
-        <a class="vc-btn vc-btn-accent vc-btn-lg" [href]="signupUrl('hero', 'free-pilot')">
-          {{ c.hero.cta.primary }}
-          <app-icon name="arrow-right-small" [size]="14" />
-        </a>
-        <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.hero.cta.secondary }}</a>
+
+      <div class="tip-slot tip-slot--left" id="hero-tips" data-tip-slot>
+        <div class="tip" data-tip role="status" aria-live="polite">
+          <span class="tip__n" data-tip-n>1</span>
+          <div class="tip__t"><b data-tip-title></b><span data-tip-body></span></div>
+          <span class="tip__steps" data-tip-steps></span>
+          <button class="tip__x" data-tip-close type="button" aria-label="Hide tips" (click)="setTips(true)">×</button>
+        </div>
       </div>
-      <p class="home-hero__trust">{{ c.hero.trustline }}</p>
+      <svg class="tip-link" data-tip-link aria-hidden="true"><path d="M0 0" /><circle r="5" cx="0" cy="0" /></svg>
+
+      <div class="demo" data-ty-demo data-scenarios="salon,garage,table,freight" data-chain="#chain" data-tip-host="#hero-tips"
+        [style.--slot-h]="slotHeight" [style.--slot-h-sm]="slotHeightMobile">
+        <div class="demo__top">
+          <div class="demo__tabs">
+            <span class="demo__label">{{ cap.tabsLabel }}</span>
+            <div class="tabs" role="tablist" aria-label="Demo business">
+              @for (tab of tabs; track tab.id) {
+                <button class="tab" role="tab" type="button" [class.is-on]="scenario() === tab.id" [attr.aria-selected]="scenario() === tab.id"
+                  [attr.data-scenario-tab]="tab.id" [disabled]="slot() === 'failed'" (click)="pick(tab.id)">{{ tab.label }}</button>
+              }
+            </div>
+            <div class="demo__langrow">
+              <span class="demo__label demo__label--lang">{{ cap.langLabel }}</span>
+              <div class="langs" role="group" aria-label="Language of the chat">
+                @for (l of langs; track l.code) {
+                  <button class="lang" type="button" [class.is-on]="lang() === l.code" [attr.lang]="l.code" [attr.aria-pressed]="lang() === l.code"
+                    [attr.data-lang]="l.code" [disabled]="slot() === 'failed'" (click)="setLang(l.code)">{{ l.name }}</button>
+                }
+                <button class="lang lang--more" type="button" [class.is-on]="moreOpen()" [attr.aria-expanded]="moreOpen()" aria-controls="langs-more"
+                  data-langs-more [attr.title]="moreTitle" [attr.aria-label]="moreTitle" (click)="toggleMore()">…<small>+{{ moreCount }}</small></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="demo__langnote">{{ langnote }}</p>
+        <p class="demo__more" id="langs-more" [attr.hidden]="moreOpen() ? null : ''"><b>{{ moreHead }}</b> {{ moreNames }}. {{ moreTail }}</p>
+        <div class="demo__frame">
+          <app-typelessity-widget [state]="slot()" />
+          <div class="ring" data-ring aria-hidden="true"><span class="ring__n" data-ring-n>1</span></div>
+          <div class="after" data-after aria-hidden="true">
+            <div class="after__h"><b>{{ cap.afterHead }}</b></div>
+            <div class="after__stack">
+              <div class="chain-card" data-after-card="0">
+                <div class="chain-card__h"><span>{{ c.chain.caps.answered }}</span><span class="chain-card__tag">OK · 200</span></div>
+                <div class="chain-card__sub" data-after-endpoint>{{ ex.endpoint }}</div>
+                <div data-after-rows></div>
+              </div>
+              <div class="after__arrow" aria-hidden="true"><app-icon name="arrow" [size]="18" /></div>
+              <div class="chain-card" data-after-card="1">
+                <div class="chain-card__h"><span>The booking request</span><button class="chain-card__tog" type="button" data-after-toggle>{{ cap.jsonShow }}</button></div>
+                <div class="kv" data-after-list></div>
+                <pre data-after-json hidden></pre>
+                <div class="chain-card__note" data-after-note hidden>{{ cap.jsonNote }}</div>
+              </div>
+              <div class="after__arrow" aria-hidden="true"><app-icon name="arrow" [size]="18" /></div>
+              <div class="chain-card" data-after-card="2">
+                <div class="chain-card__h"><span>{{ c.chain.caps.delivered }}</span><span class="chain-card__dot" aria-hidden="true"></span></div>
+                <div data-after-sent></div>
+              </div>
+            </div>
+            <button class="after__back" type="button" data-after-back>{{ cap.afterBack }}</button>
+          </div>
+        </div>
+        <div class="demo__actions">
+          <span class="demo__note" [attr.hidden]="slot() === 'ready' ? null : ''"><i></i><span data-demo-note>{{ cap.note }}</span></span>
+          <button class="demo__tips" data-tips-toggle type="button" [attr.aria-pressed]="tipsOff()" [disabled]="slot() === 'failed'"
+            (click)="setTips(!tipsOff())">{{ tipsOff() ? cap.tipsShow : cap.tipsHide }}</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Hero right: the real widget (L3 slot; hero layout, suggestions and scenarios are L4) -->
-    <div class="home-hero__right">
-      <app-typelessity-widget />
+    <!-- ── Behind the chat: say → extracted → your system ── -->
+    <div class="chain is-idle" id="chain" data-ty-chain>
+      <div class="chain__intro">
+        <span class="eyebrow"><i></i>{{ c.chain.kicker }}</span>
+        <h2 class="h2">{{ c.chain.h2Lead }} <span class="gtext">{{ c.chain.h2Grad }}</span></h2>
+        <p class="lead">{{ c.chain.lead }}</p>
+      </div>
+      <div class="chain__grid">
+        <div class="chain__col">
+          <div class="chain__cap">{{ c.chain.caps.understood }}</div>
+          <div class="chain-card chain-card--json" data-chain-json>
+            <div class="chain-card__h"><span>{{ c.chain.cards.understood }}</span><span class="chain-card__dot" aria-hidden="true"></span></div>
+            <pre data-chain-json-body [innerHTML]="exJsonBody"></pre>
+          </div>
+        </div>
+        <div class="chain__arrow" aria-hidden="true"><app-icon name="arrow" [size]="26" /></div>
+        <div class="chain__col">
+          <div class="chain__cap">{{ c.chain.caps.answered }}</div>
+          <div class="chain-card chain-card--api" data-chain-api>
+            <div class="chain-card__h"><span data-chain-endpoint>{{ ex.endpoint }}</span><span class="chain-card__tag">200</span></div>
+            <div data-chain-rows [innerHTML]="exRows"></div>
+          </div>
+        </div>
+        <div class="chain__arrow" aria-hidden="true"><app-icon name="arrow" [size]="26" /></div>
+        <div class="chain__col">
+          <div class="chain__cap">{{ c.chain.caps.delivered }}</div>
+          <div class="chain-card chain-card--sent" data-chain-sent>
+            <div class="chain-card__h"><span>{{ c.chain.cards.sentHead }}</span><span class="chain-card__tag">201</span></div>
+            <div>
+              <div class="chain-row"><span class="chain-row__dot"></span><span>{{ c.chain.cards.sentEmail }}</span></div>
+              <div class="chain-row"><span class="chain-row__dot"></span><span data-chain-sent-meta>{{ ex.sentMeta }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="chain__plain">
+        <dt>{{ c.chain.plain[0][0] }}</dt><dd data-chain-say>“{{ ex.say }}”</dd>
+        <dt>{{ c.chain.plain[1][0] }}</dt><dd>{{ c.chain.plain[1][1] }}</dd>
+        <dt>{{ c.chain.plain[2][0] }}</dt><dd><span data-chain-source>{{ ex.brand }}</span> {{ c.chain.returnsTail }}</dd>
+        <dt>{{ c.chain.plain[3][0] }}</dt><dd>{{ c.chain.plain[3][1] }}</dd>
+      </dl>
     </div>
   </div>
 </section>
 
-<!-- ── TL;DR ── -->
-<section class="home-answer vc-wrap">
-  <div class="home-answer__grid">
-    <div>
-      <div class="vc-kicker"><span class="vc-kicker-bar"></span>What is it</div>
-      <h2>{{ c.tldr.title }}</h2>
-      <p class="home-answer__lede">{{ c.tldr.answer }}</p>
+<!-- ── What it is ── -->
+<section class="sec">
+  <div class="vc-wrap">
+    <div class="sec__head">
+      <span class="eyebrow"><i></i>{{ c.whatItIs.kicker }}</span>
+      <h2 class="h2">{{ c.whatItIs.h2Lead }} <span class="gtext">{{ c.whatItIs.h2Grad }}</span></h2>
+      <p class="lead">{{ c.whatItIs.sub }}</p>
     </div>
-    <dl class="home-facts">
-      @for (b of c.tldr.bullets; track b[0]) {
-        <div class="home-facts__row">
-          <dt>{{ b[0] }}</dt>
-          <dd>{{ b[1] }}</dd>
-        </div>
+    <div class="grid grid--4 stats">
+      @for (s of c.whatItIs.stats; track s.l) {
+        <div class="stat"><b>{{ s.n }}</b><span>{{ s.l }}</span></div>
+      }
+      <div class="stat"><b>{{ embedLines }} lines</b><span>{{ c.whatItIs.codeLabel }}</span></div>
+    </div>
+    <dl class="facts">
+      @for (f of c.whatItIs.facts; track f[0]) {
+        <div><dt>{{ f[0] }}</dt><dd>{{ f[1] }}</dd></div>
       }
     </dl>
   </div>
 </section>
 
-<!-- ── Stats ── -->
-<section class="home-stats vc-wrap">
-  <div class="home-stats__row">
-    @for (s of c.stats; track s.l) {
-      <div class="home-stat">
-        <div class="home-stat__n">{{ s.n }}</div>
-        <div class="home-stat__l">{{ s.l }}</div>
+<!-- ── How a booking goes ── -->
+<section class="sec" id="how">
+  <div class="vc-wrap">
+    <div class="sec__head">
+      <span class="eyebrow"><i></i>{{ c.steps.kicker }}</span>
+      <h2 class="h2">{{ c.steps.h2Lead }} <span class="gtext">{{ c.steps.h2Grad }}</span></h2>
+      <p class="lead">{{ c.steps.sub }}</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step__n">1</span>
+        <h3 class="h3">{{ c.steps.one.title }}</h3>
+        <div class="step__box">
+          <div class="bubble bubble--me">{{ c.steps.one.say }}</div>
+          <span class="small muted step__note">{{ c.steps.one.note }}</span>
+        </div>
       </div>
-    }
-  </div>
-</section>
-
-<!-- ── How it works ── -->
-<section class="home-how vc-wrap">
-  <header class="vc-section-h">
-    <div class="vc-kicker"><span class="vc-kicker-bar"></span>How it works</div>
-    <h2>{{ c.howItWorks.title }}</h2>
-    <p class="vc-section-sub">{{ c.howItWorks.sub }}</p>
-  </header>
-
-  <div class="home-phases">
-    @for (p of c.howItWorks.phases; track p.n) {
-      <article class="phase phase--compact">
-        <header class="phase__head">
-          <div class="phase__num">{{ p.n }}</div>
-          <div>
-            <h3 class="phase__name">{{ p.name }}</h3>
-            <p class="phase__one">{{ p.oneLine }}</p>
+      <div class="step">
+        <span class="step__n">2</span>
+        <h3 class="h3">{{ c.steps.two.title }}</h3>
+        <div class="step__box">
+          <div class="bubble bubble--ai">{{ c.steps.two.reply }}</div>
+          <div class="opts">
+            @for (o of c.steps.two.options; track o; let first = $first) {
+              <span class="opt" [class.opt--on]="first">{{ o }}</span>
+            }
           </div>
-        </header>
-      </article>
-    }
-  </div>
-
-  <p class="home-how__more">
-    <a routerLink="/how-it-works">See a full session walkthrough with prompt example →</a>
-  </p>
-</section>
-
-<!-- ── Architecture ── -->
-<section class="home-arch vc-wrap">
-  <header class="vc-section-h">
-    <div class="vc-kicker"><span class="vc-kicker-bar"></span>Architecture</div>
-    <h2>{{ c.architecture.title }}</h2>
-    <p class="vc-section-sub">{{ c.architecture.sub }}</p>
-  </header>
-  <div class="home-arch__grid">
-    @for (p of c.architecture.pillars; track p.h; let i = $index) {
-      <article class="pillar">
-        <div class="pillar__num">{{ i + 1 | padNumber }}</div>
-        <h3 class="pillar__h">{{ p.h }}</h3>
-        <p class="pillar__b">{{ p.b }}</p>
-      </article>
-    }
+          <span class="small muted step__note">{{ c.steps.two.note }}</span>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step__n">3</span>
+        <h3 class="h3">{{ c.steps.three.title }}</h3>
+        <div class="step__box">
+          <div class="req">
+            <b class="t">{{ c.steps.three.head }}</b>
+            @for (r of c.steps.three.rows; track r[0]) {
+              <div class="row"><span>{{ r[0] }}</span><span>{{ r[1] }}</span><span class="tick"><app-icon name="check" [size]="16" /></span></div>
+            }
+          </div>
+          <span class="small muted">{{ c.steps.three.note }}</span>
+        </div>
+      </div>
+    </div>
+    <p class="more"><a class="link" routerLink="/how-it-works">{{ c.steps.more }}</a></p>
   </div>
 </section>
 
 <!-- ── Industries ── -->
-<section class="home-industries vc-wrap">
-  <header class="vc-section-h">
-    <div class="vc-kicker"><span class="vc-kicker-bar"></span>Industries</div>
-    <h2>Configured for {{ industriesCount }} {{ c.industriesIntro.titleSuffix }}</h2>
-    <p class="vc-section-sub">{{ c.industriesIntro.sub }}</p>
-  </header>
-  <ul class="home-industries__grid">
-    @for (n of industryNames; track n) {
-      <li class="home-industries__cell">
-        <span>{{ n }}</span>
-      </li>
-    }
-    <li class="home-industries__cell home-industries__cell--more">
-      <a routerLink="/industries">All {{ industriesCount }} industries →</a>
-    </li>
-  </ul>
-</section>
-
-<!-- ── Comparison ── -->
-<section class="home-compare vc-wrap">
-  <header class="vc-section-h">
-    <div class="vc-kicker vc-accent-magenta"><span class="vc-kicker-bar"></span>Compared</div>
-    <h2>{{ c.comparison.title }}</h2>
-    <p class="vc-section-sub">{{ c.comparison.sub }}</p>
-  </header>
-  <div class="home-compare__wrap">
-    <table class="home-compare__table">
-      <thead>
-        <tr>
-          @for (col of c.comparison.columns; track col; let i = $index) {
-            <th [class.home-compare__us]="i === 1">{{ col }}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of c.comparison.rows; track row[0]) {
-          <tr>
-            @for (cell of row; track $index; let i = $index) {
-              <td [class.home-compare__us]="i === 1" [class.home-compare__key]="i === 0">{{ cell }}</td>
-            }
-          </tr>
-        }
-      </tbody>
-    </table>
+<section class="sec sec--alt" id="industries">
+  <div class="vc-wrap">
+    <div class="sec__head">
+      <span class="eyebrow"><i></i>{{ c.industries.kicker }}</span>
+      <h2 class="h2">{{ c.industries.h2Lead }} <span class="gtext">{{ c.industries.h2Grad }}</span></h2>
+      <p class="lead">{{ c.industries.sub }}</p>
+    </div>
+    <div class="grid grid--3">
+      @for (i of industries; track i.slug) {
+        <a class="card card--link" [routerLink]="['/industries', i.slug]">
+          <span class="card__ic"><app-icon [name]="i.icon" [size]="20" /></span>
+          <h3>{{ i.name }}</h3>
+          <p>{{ i.blurb }}</p>
+          <span class="card__more">{{ c.industries.more }}</span>
+        </a>
+      }
+    </div>
   </div>
-  <p class="home-compare__sources">{{ c.comparison.sources }}</p>
-  <aside class="home-compare__verdict">
-    <span class="home-compare__verdict-tag">Verdict</span>
-    <p>{{ c.comparison.verdict }}</p>
-  </aside>
 </section>
 
-<!-- ── Pricing ── -->
-<section class="home-pricing vc-wrap">
-  <header class="vc-section-h">
-    <div class="vc-kicker"><span class="vc-kicker-bar"></span>Pricing</div>
-    <h2>{{ c.pricing.title }}</h2>
-    <p class="vc-section-sub">{{ c.pricing.sub }}</p>
-  </header>
-  <div class="home-tiers">
-    @for (tier of c.pricing.tiers; track tier.name) {
-      <article class="tier tier--compact" [class.tier--coming-soon]="tier.comingSoon">
-        @if (tier.comingSoon) { <span class="tier__badge tier__badge--soon">Coming soon</span> }
-        <div class="tier__name">{{ tier.name }}</div>
-        <div class="tier__price">{{ tier.price }}</div>
-        <div class="tier__sub">{{ tier.sub }}</div>
-        @if (!tier.comingSoon) {
-          <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" [href]="signupUrl('pricing', tier.slug)">{{ tier.cta }}</a>
-        } @else {
-          <span class="vc-btn vc-btn-muted vc-btn-block vc-btn-lg tier__cta-disabled">Coming soon</span>
-        }
-      </article>
-    }
+<!-- ── Your data ── -->
+<section class="sec">
+  <div class="vc-wrap split">
+    <div class="sec__head sec__head--side">
+      <span class="eyebrow"><i></i>{{ c.data.kicker }}</span>
+      <h2 class="h2">{{ c.data.h2Lead }} <span class="gtext">{{ c.data.h2Grad }}</span></h2>
+      <p class="lead lead--sm">{{ c.data.sub }}</p>
+      <a class="btn btn--ghost" routerLink="/gdpr">{{ c.data.link }}</a>
+    </div>
+    <div class="grid grid--stack">
+      @for (card of c.data.cards; track card.h) {
+        <div class="card"><h3>{{ card.h }}</h3><p>{{ card.p }}</p></div>
+      }
+    </div>
   </div>
-
-  <p class="home-pricing__more">
-    <a routerLink="/pricing">See full plan details and how setup works →</a>
-  </p>
 </section>
 
-<!-- ── FAQ (top-of-funnel only; full set on /faq) ── -->
-<section class="home-faq vc-wrap">
-  <header class="vc-section-h">
-    <div class="vc-kicker"><span class="vc-kicker-bar"></span>FAQ</div>
-    <h2>Top questions</h2>
-    <p class="vc-section-sub">All {{ faqCount }} answers grouped by topic on the <a routerLink="/faq">FAQ page</a>.</p>
-  </header>
-  <div class="home-faq__list">
-    @for (qa of faqPreview; track qa.q; let i = $index) {
-      <details>
-        <summary>
-          <span class="home-faq__i">{{ i + 1 | padNumber }}</span>
-          <span class="home-faq__q">{{ qa.q }}</span>
-          <app-icon name="chevron-down" className="home-faq__toggle" />
-        </summary>
-        <p class="home-faq__a">{{ qa.a }}</p>
-      </details>
-    }
+<!-- ── Free pilot ── -->
+<section class="sec sec--alt">
+  <div class="vc-wrap">
+    <div class="plaque">
+      <div>
+        <span class="muted">{{ c.plaque.label }}</span>
+        <div class="bignum">{{ pilotRequests }}</div>
+        <div class="lead lead--md">{{ c.plaque.unit }}</div>
+      </div>
+      <div class="plaque__actions">
+        <a class="btn btn--primary btn--lg" [href]="signupUrl('plaque', 'free-pilot')">{{ c.plaque.primary }}</a>
+        <a class="link" routerLink="/pricing">{{ c.plaque.more }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Blog ── -->
+<section class="sec sec--alt">
+  <div class="vc-wrap">
+    <div class="sec__head">
+      <span class="eyebrow"><i></i>{{ c.blog.kicker }}</span>
+      <h2 class="h2">{{ c.blog.h2Lead }} <span class="gtext">{{ c.blog.h2Grad }}</span></h2>
+    </div>
+    <div class="grid grid--3">
+      @for (p of posts; track p.slug) {
+        <a class="card card--link post" [routerLink]="['/blog', p.slug]">
+          <span class="post__tag">{{ p.category }}</span>
+          <h3>{{ p.title }}</h3>
+          <span class="card__more">{{ c.blog.read }}</span>
+        </a>
+      }
+    </div>
+    <p class="more"><a class="link" routerLink="/blog">{{ c.blog.more }}</a></p>
+  </div>
+</section>
+
+<!-- ── FAQ: six questions of /faq ── -->
+<section class="sec">
+  <div class="vc-wrap split">
+    <div class="sec__head sec__head--side">
+      <span class="eyebrow"><i></i>{{ c.faq.kicker }}</span>
+      <h2 class="h2">{{ c.faq.h2Lead }} <span class="gtext">{{ c.faq.h2Grad }}</span></h2>
+      <a class="link" routerLink="/faq">{{ c.faq.more }}</a>
+    </div>
+    <div class="faq">
+      @for (qa of faqItems; track qa.q; let first = $first) {
+        <details [attr.open]="first ? '' : null">
+          <summary>{{ qa.q }}</summary>
+          <p>{{ qa.a }}</p>
+        </details>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ── Languages ── -->
+<section class="sec" id="languages">
+  <div class="vc-wrap">
+    <div class="sec__head">
+      <span class="eyebrow"><i></i>{{ c.languages.kicker }}</span>
+      <h2 class="h2">{{ c.languages.h2Lead }} <span class="gtext">{{ c.languages.h2Grad }}</span></h2>
+      <p class="lead">{{ c.languages.sub }}</p>
+    </div>
+    <ul class="langlist" aria-label="Chat window languages">
+      @for (l of languages; track l.code) {
+        <li [attr.lang]="l.native === l.english ? l.code : null">{{ l.english }}@if (l.native !== l.english) {<span [attr.lang]="l.code">{{ l.native }}</span>}</li>
+      }
+    </ul>
+    <dl class="facts">
+      @for (f of c.languages.facts; track f[0]) {
+        <div><dt>{{ f[0] }}</dt><dd>{{ f[1] }}</dd></div>
+      }
+    </dl>
+    <p class="more"><a class="link" [routerLink]="['/blog', languagesArticle.slug]">{{ languagesArticle.title }} →</a></p>
   </div>
 </section>
 
 <!-- ── CTA ── -->
-<section class="home-cta">
-  <div class="home-cta__bg" aria-hidden="true"></div>
-  <div class="vc-wrap home-cta__inner">
-    <div class="home-cta__eyebrow">{{ c.cta.eyebrow }}</div>
-    <h2 class="home-cta__h">{{ c.cta.title }}</h2>
-    <p class="home-cta__sub">{{ c.cta.sub }}</p>
-    <div class="home-cta__actions">
-      <a class="vc-btn vc-btn-accent vc-btn-lg" [href]="signupUrl('home-cta', 'free-pilot')">{{ c.cta.primary }}</a>
-      <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
+<section class="sec">
+  <div class="vc-wrap">
+    <div class="cta-band">
+      <div class="cta-band__copy">
+        <span class="eyebrow eyebrow--on-dark"><i></i>{{ c.cta.eyebrow }}</span>
+        <h2 class="h2">{{ c.cta.title }}</h2>
+        <p>{{ c.cta.sub }}</p>
+        <div class="cta-band__actions">
+          <a class="btn btn--primary btn--lg" [href]="signupUrl('home-cta', 'free-pilot')">{{ c.cta.primary }}</a>
+          <a class="btn btn--ghost btn--lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
+        </div>
+      </div>
+      <div class="cta-band__code">
+        <pre class="code" [attr.aria-label]="c.cta.codeLabel">{{ embedSnippet }}</pre>
+        <a class="link link--on-dark" routerLink="/install">{{ c.cta.install }}</a>
+      </div>
     </div>
-    <pre class="home-cta__snippet">{{ embedSnippet }}</pre>
   </div>
 </section>

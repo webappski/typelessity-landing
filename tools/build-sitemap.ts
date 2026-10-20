@@ -28,7 +28,7 @@ interface Url {
 // A page rewritten by a later task sets its own date in that task. e2e/sitemap-contract.spec.ts fails
 // when a date is earlier than the result of these two commands.
 const STATIC_PATHS: Url[] = [
-  // The home grid and the FAQ answer name the seven industries that remain; /industries lists them (L1б, 2026-10-19).
+  // L4 (2026-10-20): the home page is rebuilt (title, description, H1, the demo, seven industry cards, six questions of /faq); L1б (2026-10-19): the seven industries.
   { path: '/', lastmod: '2026-10-20' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
   { path: '/install', lastmod: '2026-10-19' },

@@ -35,10 +35,12 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
       /replies in the customer['’]?s language/i,
       /detects? the language/i,
       /any of \d+\+? languages/i,
+      // L4 (D1): «works in Polish» is a promise about the language of the REPLIES, which the assistant gives in the language set for the business.
+      /works (well )?in (Polish|German|Russian|Spanish)/i,
       /<title>[^<]*in 25 languages/i,
       /<h1[^>]*>[^<]*in 25 languages/i,
     ],
-    mutants: ['Languages: 25+ (English)', 'Chinese, Korean and Arabic', 'It replies in the customer’s language', 'It detects the language', 'Say it in any of 25 languages', '<title>Booking widget in 25 languages</title>'],
+    mutants: ['Languages: 25+ (English)', 'Chinese, Korean and Arabic', 'It replies in the customer’s language', 'It detects the language', 'Say it in any of 25 languages', '<title>Booking widget in 25 languages</title>', 'It works in Polish', 'The chat works well in German'],
     legal: 'The chat window comes in 25 languages; the assistant replies in the language you set.',
   },
   {
@@ -129,8 +131,10 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
   },
   {
     id: 'K14', name: 'mock-up working notes',
-    patterns: [/Mock note/i, /Portal screenshot goes here/i, /Thin template/i, /the server answers 404/i],
-    mutants: ['Mock note: replace', 'Portal screenshot goes here', 'Thin template', 'the server answers 404'],
+    // L4 (F14): the working note of the mock-up's demo said «… in this prototype»; the demo strings are held by home-demo-contract (C1(d)) on the
+    // exported strings of demo-script.ts and demo-labels.ts, so the code's own `Element.prototype` never reaches this class.
+    patterns: [/Mock note/i, /Portal screenshot goes here/i, /Thin template/i, /the server answers 404/i, /\bprototype\b/i],
+    mutants: ['Mock note: replace', 'Portal screenshot goes here', 'Thin template', 'the server answers 404', 'the replies are scripted in this prototype'],
     legal: 'Typelessity is an AI booking widget.',
   },
 ];

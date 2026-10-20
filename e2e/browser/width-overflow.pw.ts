@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './fixtures';
+import { test, expect, type Page, REDUCED_MOTION } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { BLOG_POSTS } from '../../src/app/lib/blog-manifest.generated';
@@ -83,21 +83,24 @@ const COLLECT = String.raw`(opts) => {
   return { offenders, candidates, scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth };
 }`;
 
-// L3 (B6, F3): the hero holds the widget slot (the animated demo with its .ld card is gone). The slot — the box the
-// <typelessity-widget> sits in — and the widget element itself must stay inside the hero column. The general rule above
-// cannot see this: a slot is a box without text of its own, and the widget draws inside a shadow root that
-// `body.querySelectorAll` does not enter. The hero layout is L4's; the column edge is the one the old demo test used.
+// L3 (B6, F3), moved to the hero of L4: the hero holds the widget slot. The slot — the box the <typelessity-widget> sits in
+// (`[data-widget-host]`, inside the frame `.demo__frame`) — and the widget element itself must stay inside the hero column. The general
+// rule above cannot see this: a slot is a box without text of its own, and the widget draws inside a shadow root that
+// `body.querySelectorAll` does not enter. The column edge is the right edge of `.hero__grid` (the wrap's padding is outside it).
 const SLOT = String.raw`() => {
   const r1 = (n) => Math.round(n * 10) / 10;
-  const host = document.querySelector('typelessity-widget');
-  const grid = document.querySelector('.home-hero__grid');
-  if (!host || !grid) return { host: !!host, grid: !!grid, offenders: [] };
+  const host = document.querySelector('[data-widget-host]');
+  const widget = document.querySelector('typelessity-widget');
+  const grid = document.querySelector('.hero__grid');
+  if (!host || !grid) return { host: !!host, grid: !!grid, widget: !!widget, offenders: [] };
   const limit = Math.min(grid.getBoundingClientRect().right - parseFloat(getComputedStyle(grid).paddingRight), window.innerWidth);
   const offenders = [];
   const inside = (name, el) => { const b = el.getBoundingClientRect(); if (b.right > limit + 0.5 || b.left < -0.5) offenders.push(name + ' ' + r1(b.left) + '..' + r1(b.right) + ' outside the column edge ' + r1(limit)); };
-  inside('typelessity-widget', host);
-  if (host.parentElement) inside('the slot of the widget', host.parentElement);
-  return { host: true, grid: true, offenders };
+  inside('the slot of the widget', host);
+  const frame = host.closest('.demo__frame');
+  if (frame) inside('the frame of the slot', frame);
+  if (widget) inside('typelessity-widget', widget);
+  return { host: true, grid: true, widget: !!widget, offenders };
 }`;
 
 const settle = async (page: Page) => {
@@ -137,6 +140,9 @@ test('/blog/cascade-corrections @320: inline code is not hyphenated inside a hyp
 if (!sitemapError && paths.length > 0) {
   for (const width of WIDTHS) {
     for (const path of paths) {
+      // L4 (F7): `/` runs the scripted demo (tips, a ring, a changing widget); it is measured still, with reduced motion.
+      test.describe(path === '/' ? 'home, demo still' : 'page', () => {
+      if (path === '/') test.use(REDUCED_MOTION);
       test(`${path} @${width}: nothing is wider than the window`, async ({ page }) => {
         await page.setViewportSize({ width, height: HEIGHT });
         await page.goto(path);
@@ -155,17 +161,23 @@ if (!sitemapError && paths.length > 0) {
         expect(result.offenders, `${path} @${width}: scrollWidth ${result.scrollWidth} / clientWidth ${result.clientWidth}`).toEqual([]);
         expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
       });
+      });
     }
 
-    test(`/ @${width}: the widget slot stays inside the hero column`, async ({ page }) => {
-      await page.setViewportSize({ width, height: HEIGHT });
-      await page.goto('/');
-      await settle(page);
-      await expect(page.locator('typelessity-widget'), 'the hero holds the widget element').toBeAttached();
-      await page.evaluate(async () => { await document.fonts.ready; });
-      const result = await page.evaluate(`(${SLOT})()`) as { host: boolean; grid: boolean; offenders: string[] };
-      expect(result.grid, 'the hero grid the column edge is read from').toBe(true);
-      expect(result.offenders, `/ @${width}: the widget slot against the hero column`).toEqual([]);
+    test.describe('home, demo still', () => {
+      test.use(REDUCED_MOTION);
+      test(`/ @${width}: the widget slot stays inside the hero column`, async ({ page }) => {
+        await page.setViewportSize({ width, height: HEIGHT });
+        await page.goto('/');
+        await settle(page);
+        await expect(page.locator('[data-widget-host]'), 'the hero holds the slot of the widget').toBeAttached();
+        await expect(page.locator('typelessity-widget'), 'the demo has put the widget into the slot').toBeAttached({ timeout: 15_000 });
+        await page.evaluate(async () => { await document.fonts.ready; });
+        const result = await page.evaluate(`(${SLOT})()`) as { host: boolean; grid: boolean; widget: boolean; offenders: string[] };
+        expect(result.grid, 'the hero grid the column edge is read from').toBe(true);
+        expect(result.widget, 'the widget element is measured too').toBe(true);
+        expect(result.offenders, `/ @${width}: the widget slot against the hero column`).toEqual([]);
+      });
     });
   }
 }

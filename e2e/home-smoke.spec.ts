@@ -64,11 +64,14 @@ test('home <head> carries SoftwareApplication schema with featureList (TY-LANDIN
   });
 });
 
-test('comparison section renders Cal.ai and Cal.com columns (TY-COMPARE-CALAI)', async () => {
+// L4: the comparison section (TY-COMPARE-CALAI: Cal.ai and Cal.com columns, the «differ from Cal.ai» FAQ) left the home page with the
+// table of vendors; the vendor facts have one owner, the article best-ai-booking-widgets-2026. The smoke now holds the other side:
+// the home page is the booking-assistant page of the redesign, and it names no vendor.
+test('home page renders the hero of the redesign and no vendor comparison (L4)', async () => {
   await withServer(async (base) => {
     const body = await (await fetch(`${base}/`)).text();
-    assert.ok(body.includes('Cal.ai'), 'comparison must render Cal.ai');
-    assert.ok(body.includes('Cal.com'), 'comparison must render Cal.com');
-    assert.ok(/differ from Cal\.ai/i.test(body), 'a Cal.ai differentiation FAQ must render');
+    assert.ok(body.includes('Customers just say it.'), 'the H1 of the hero must render');
+    assert.ok(body.includes('data-ty-demo'), 'the demo stage must render');
+    assert.ok(!/Cal\.ai|Cal\.com|Calendly|SimplyBook|Botpress|NoForm/.test(body), 'the home page must not print a vendor comparison');
   });
 });

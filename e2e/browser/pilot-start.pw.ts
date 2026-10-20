@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './fixtures';
+import { test, expect, type Page, REDUCED_MOTION } from './fixtures';
 
 // A43 (founder 2026-09-25): every tier starts with the free pilot, which is set up in the Webappski
 // portal. Each «start» button leads to the portal login with start=typelessity and the utm_* that tell
@@ -27,7 +27,8 @@ async function tierCards(page: Page) {
   return page.locator('.home-tiers .tier');
 }
 
-for (const path of ['/', '/pricing']) {
+// L4: the tier grid left the home page (D7/D9); the four tiers are on /pricing only. The home page keeps the pilot plaque and the CTAs below.
+for (const path of ['/pricing']) {
   test(`${path}: each tier starts with the free pilot in the portal`, async ({ page }) => {
     await page.goto(path);
     const cards = await tierCards(page);
@@ -57,11 +58,20 @@ for (const path of ['/', '/pricing']) {
   }
 }
 
-test('hero, closing call and header lead to the portal', async ({ page }) => {
-  await page.goto('/');
-  expectPortalLink(await page.locator('.home-hero__cta a').first().getAttribute('href'), 'hero', 'free-pilot');
-  expectPortalLink(await page.locator('.home-cta__actions a').first().getAttribute('href'), 'home-cta', 'free-pilot');
-  expectPortalLink(await page.locator('header a.vc-btn-primary').first().getAttribute('href'), 'nav', 'free-pilot');
+test.describe('home', () => {
+  // the demo plays on `/`; reduced motion keeps it still while links are read
+  test.use(REDUCED_MOTION);
+
+  test('hero, pilot plaque, closing call and header lead to the portal', async ({ page }) => {
+    await page.goto('/');
+    expectPortalLink(await page.locator('.hero__cta a.btn--primary').first().getAttribute('href'), 'hero', 'free-pilot');
+    expectPortalLink(await page.locator('.plaque a.btn--primary').first().getAttribute('href'), 'plaque', 'free-pilot');
+    expectPortalLink(await page.locator('.cta-band__actions a.btn--primary').first().getAttribute('href'), 'home-cta', 'free-pilot');
+    expectPortalLink(await page.locator('header a.vc-btn-primary').first().getAttribute('href'), 'nav', 'free-pilot');
+  });
+});
+
+test('how-it-works leads to the portal', async ({ page }) => {
   await page.goto('/how-it-works');
   expectPortalLink(await page.locator('main').getByRole('link', { name: 'Get it free' }).getAttribute('href'), 'how-it-works', 'free-pilot');
 });

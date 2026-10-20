@@ -414,11 +414,12 @@ test('J11 the questions stay on the page as plain text when their markup goes', 
     assert.ok(all.length >= 30, `${all.length} questions`);
     assert.deepEqual(all.map((x) => squash(x.q)).filter((q) => !text.includes(q)), []);
   });
-  await t.test('/ shows every question of the category the home page previews (Product)', () => {
+  await t.test('/ shows the six questions it previews (L4, D8), as plain text, and each is a question of /faq', () => {
     const text = pageText('index.html');
-    const preview = HOME.faq.filter((x) => x.category === 'Product');
-    assert.ok(preview.length >= 9, `${preview.length} preview questions`);
-    assert.deepEqual(preview.map((x) => squash(x.q)).filter((q) => !text.includes(q)), []);
+    const onFaq = new Set(FAQ_GROUPS.flatMap((g) => g.items).map((x) => squash(x.q)));
+    assert.equal(HOME.faq.questions.length, 6, 'the preview is six questions');
+    assert.deepEqual(HOME.faq.questions.map((q) => squash(q)).filter((q) => !onFaq.has(q)), []);
+    assert.deepEqual(HOME.faq.questions.map((q) => squash(q)).filter((q) => !text.includes(q)), []);
   });
   await t.test('/pricing shows every PRICING_FAQ question', () => {
     const text = pageText('pricing/index.html');
