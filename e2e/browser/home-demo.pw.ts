@@ -5,7 +5,6 @@ import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { WIDGET_SCRIPT_URL } from '../../src/app/core/integrations/embed-snippet';
-import { ALL_INDUSTRIES } from '../../src/app/lib/industries';
 
 // L4 B1–B8 — the hero demo of `/`, in a real Chromium, against the real SSR build and the REAL widget.js (the snapshot of the product's
 // published build, e2e/browser/widget-snapshot.ts), under the CSP and the Permissions-Policy of vercel.json (fixtures.ts: underPolicy).
@@ -948,11 +947,30 @@ for (const scheme of ['light', 'dark'] as const) {
         await shoot(page, `after-home-hero-${width}-${scheme}`, page.locator('.hero__grid'));
       });
 
-      test(`[after-home-page-${width}-${scheme}] the page: the seven links of Industries and the code of the call to action are not wider than themselves, the page is ${scheme}`, async ({ page }) => {
+      // L11 (founder 20.10): one block instead of the six industry cards — «any business that takes bookings», the examples as plain chips.
+      test(`[after-home-business-${width}-${scheme}] the block «Any business»: the heading, seven chips of plain text, no link among them, all inside the window, the page is ${scheme}`, async ({ page }) => {
         await openHome(page, { width });
         await settle(page);
-        for (const industry of ALL_INDUSTRIES) await expect(page.locator(`#industries a[href="/industries/${industry.slug}"]`), industry.slug).toBeVisible();
-        expect(await page.locator('#industries a[href^="/industries/"]').count()).toBe(7);
+        const block = page.locator('#any-business');
+        await expect(block).toBeVisible();
+        await expect(block.locator('h2')).toHaveText('One engine, set up for your business');
+        await expect(block.locator('.lead')).toHaveText('Typelessity adapts to any business that takes bookings. You choose the details the chat collects, and the same engine does the rest.');
+        const chips = block.locator('ul.bizlist li');
+        await expect(chips).toHaveText(['Hair and beauty salons', 'Auto repair shops', 'Gyms and yoga studios', 'Driving schools', 'Tutors', 'Restaurants', 'and any other business that takes bookings']);
+        await expect(block.locator('ul.bizlist a'), 'a chip is a link').toHaveCount(0);
+        const outside = await chips.evaluateAll((els) => els.filter((el) => { const b = el.getBoundingClientRect(); return b.right > window.innerWidth + 0.5 || b.left < -0.5; }).map((el) => el.textContent));
+        expect(outside, 'chips wider than the window').toEqual([]);
+        await expect(block.locator('a'), 'the block leads only to /install').toHaveAttribute('href', '/install');
+        await expectScheme(page, scheme);
+        await expectInsideWindow(page, 'any business');
+        await shoot(page, `after-home-business-${width}-${scheme}`, block);
+      });
+
+      test(`[after-home-page-${width}-${scheme}] the page: the code of the call to action is not wider than itself, the page has no industry link, the page is ${scheme}`, async ({ page }) => {
+        await openHome(page, { width });
+        await settle(page);
+        expect(await page.locator('a[href^="/industries"]').count(), 'a link to an industry address on the home page').toBe(0);
+        await expect(page.locator('#industries'), 'the old section is gone').toHaveCount(0);
         const pre = await page.locator('pre.code').evaluate((el) => {
           const b = el.getBoundingClientRect(); const cs = getComputedStyle(el);
           return { scroll: el.scrollWidth, client: el.clientWidth, wrap: cs.whiteSpace, overflowX: cs.overflowX, right: b.right, left: b.left, win: window.innerWidth };

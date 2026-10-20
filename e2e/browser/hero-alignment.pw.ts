@@ -7,7 +7,6 @@ import { test, expect } from './fixtures';
 const HEROES = [
   { path: '/pricing', section: '.pricing-hero' },
   { path: '/faq', section: '.faq-hero' },
-  { path: '/industries', section: '.industries-hero' },
   { path: '/how-it-works', section: '.how-hero' },
   { path: '/install', section: '.install-hero' },
 ];

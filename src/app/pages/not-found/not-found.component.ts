@@ -18,7 +18,6 @@ import { SeoService } from '../../core/seo/seo.service';
         <p class="nf__sub">The link you followed may be broken, or the page may have been moved.</p>
         <div class="nf__actions">
           <a class="vc-btn vc-btn-primary vc-btn-lg" routerLink="/">Go home</a>
-          <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/industries">Browse industries</a>
           <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/blog">Blog</a>
         </div>
       </div>

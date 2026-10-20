@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import handler, { FALLBACK_FROM, FALLBACK_TO, LIMITS, PLANS } from '../../../../api/contact';
-import { RETIRED_SLUGS, SEVEN_SLUGS } from '../../../../e2e/industries-seven';
-import { EMAIL_PATTERN, waitlistRequestBody } from './waitlist-request';
+import { PRE_L11_SELECT_VALUES, RETIRED_SLUGS } from '../../../../e2e/retired-industries';
+import { BUSINESS_TYPES, EMAIL_PATTERN, waitlistRequestBody } from './waitlist-request';
 
 // A36 (c8, 2026-09-24): with CONTACT_TO unset the form mailed hello@typelessity.com, a domain
 // with no MX record — every request was lost. The real handler runs here; only the network is stubbed.
@@ -14,7 +14,7 @@ const WAITLIST = waitlistRequestBody({
   email: 'owner@clinic.example',
   website: 'https://clinic.example',
   plan: 'starter',
-  industry: SEVEN_SLUGS[0],
+  industry: BUSINESS_TYPES[0].value,
   message: 'Two locations, about 300 bookings a month.',
   consent: true,
 });
@@ -180,13 +180,22 @@ test('plan and industry must be values the form offers', async () => {
   }
   for (const industry of ['Hospitality', 'hospitality', 'Health', 'x'.repeat(65)]) {
     const { status, sent } = await submit({}, { ...WAITLIST, industry });
-    assert.equal(status, 400, `industry ${JSON.stringify(industry)} is not a page of the site`);
+    assert.equal(status, 400, `industry ${JSON.stringify(industry)} is not on the form`);
     assert.equal(sent.length, 0);
   }
-  for (const industry of ['', 'other', ...SEVEN_SLUGS]) {
+  // The options the form offers today (the select is built from BUSINESS_TYPES, the endpoint reads INDUSTRY_VALUES: one list)
+  for (const industry of ['', 'other', ...BUSINESS_TYPES.map((t) => t.value)]) {
     assert.equal((await submit({}, { ...WAITLIST, industry })).status, 200, `industry ${JSON.stringify(industry)} is on the form`);
   }
-  // L1б: the 30 retired pages left the select; a tab opened before the release may still send one, and it is refused
+  // L11 (R67 п.3): a tab opened before the release holds the select of that day. Its values are written out in e2e/retired-industries.ts
+  // (frozen: they come from the old component, not from today's list), and the real handler must still take each one — a value the endpoint
+  // refused would turn into a 400 on a form that worked a minute ago.
+  for (const industry of PRE_L11_SELECT_VALUES) {
+    const { status, sent } = await submit({}, { ...WAITLIST, industry });
+    assert.equal(status, 200, `industry ${industry} was on the form before the release and must still be accepted`);
+    assert.equal(sent.length, 1, `industry ${industry}: the mail was not sent`);
+  }
+  // L1б: the 30 retired pages never were in the select; a body that carries one is refused
   for (const industry of RETIRED_SLUGS) {
     const { status, sent } = await submit({}, { ...WAITLIST, industry });
     assert.equal(status, 400, `industry ${industry} is a retired page and must be refused`);

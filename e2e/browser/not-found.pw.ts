@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { expectedSitemapCount, RETIRED_SLUGS } from '../industries-seven';
+import { expectedSitemapCount, GONE_SLUGS } from '../retired-industries';
 
 // The Angular layer of the 404: the SSR server answers an unknown address with status 404 and the
 // «This page doesn't exist» screen. Vercel does not run here: that the platform serves dist/404.html
@@ -70,7 +70,7 @@ test('/404 on the SSR server is not a server error and is the 404 screen, not an
 });
 
 // Known defect, not repaired in L1 (card §1): after hydration the client router knows blog/:slug,
-// industries/:slug and legal/:doc, so a bot gets 404 but a visitor sees an article, an industry or the
+// legal/:doc, so a bot gets 404 but a visitor sees an article or the
 // Security page. test.fail() keeps it visible and turns red when someone fixes it (then drop .fail).
 test.fail('after hydration an unknown blog or legal address shows the 404 screen', async ({ page }) => {
   for (const p of ['/blog/no-such-post', '/legal/foo']) {
@@ -79,14 +79,57 @@ test.fail('after hydration an unknown blog or legal address shows the 404 screen
   }
 });
 
-// L1б (FL-04, industries part): a retired or unknown industry address showed «Industry not found» after hydration while
-// the platform answers 410 or 404. The detail page now renders the same 404 screen. The status of the response is not
-// asserted: the SSR mirror answers 200 for /industries/<x> (the platform serves a static file or the 410 rule).
-test('after hydration an unknown or retired industry address shows the 404 screen, not «Industry not found»', async ({ page }) => {
-  for (const p of ['/industries/no-such-slug', '/industries/home-cleaning', `/industries/${RETIRED_SLUGS[0]}`, '/industries/beauty-aesthetic-clinics']) {
+// L11 (2026-10-20, founder: «we do not need industries»): the hub and the 37 industry pages are gone from the Angular layer too — no route, no
+// prerender. The platform answers 410 (the rule is held by src/app/discovery/retired-industries.spec.ts; curl on the preview is the row that
+// proves the platform). What THIS server proves: the mirror answers such an address 404 with the 404 screen (it used to answer 200 with an
+// «Industry not found» page after hydration), and a visitor who arrives by a link inside the page sees the same screen.
+test('an industry address is answered 404 with the 404 screen by the mirror, never a page, and shows the 404 screen after hydration', async ({ page, request }) => {
+  const addresses = ['/industries', '/industries/', '/industries/no-such-slug', ...GONE_SLUGS.slice(0, 3).map((s) => `/industries/${s}`), `/industries/${GONE_SLUGS.at(-1)}`, '/industries/beauty-aesthetic-clinics'];
+  for (const p of addresses) {
+    const res = await request.get(p, { maxRedirects: 0 });
+    expect(res.status(), p).toBe(404);
+    expect(await res.text(), p).toMatch(H1);
     await page.goto(p);
     await expect(page.locator('app-not-found'), p).toHaveCount(1);
     await expect(page.locator('h1'), p).toHaveText("This page doesn't exist");
     await expect(page.getByText('Industry not found'), p).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /Browse industries/i }), p).toHaveCount(0);
   }
 });
+
+// ── the 404 screen: four frames of L11 (390 and 1440, light and dark) ───────────────────────────────────────────────────────────────────────
+// «Browse industries» left the screen: it offers «Go home» and «Blog» and no way into /industries. Taken when L11_FRAMES names a folder; the
+// statement of each frame is the test around it (toHaveScreenshot is not used: fonts rasterise differently on macOS and Linux).
+const FRAMES = process.env['L11_FRAMES'];
+for (const scheme of ['light', 'dark'] as const) {
+  for (const width of [390, 1440]) {
+    test.describe(`404 screen ${width}px ${scheme}`, () => {
+      test.use({ colorScheme: scheme });
+      test(`[after-404-${width}-${scheme}] the heading, two buttons (Go home, Blog), no link to /industries, inside the window, the page is ${scheme}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+        await page.goto('/zz-404-check', { waitUntil: 'networkidle' });
+        await expect(page.locator('app-not-found')).toHaveCount(1);
+        await expect(page.locator('h1')).toHaveText("This page doesn't exist");
+        const actions = page.locator('.nf__actions a');
+        await expect(actions).toHaveText(['Go home', 'Blog']);
+        await expect(actions.nth(0)).toHaveAttribute('href', '/');
+        await expect(actions.nth(1)).toHaveAttribute('href', '/blog');
+        await expect(page.locator('app-not-found a[href^="/industries"]')).toHaveCount(0);
+        const r = await page.evaluate(() => {
+          const rgb = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g)!.map(Number);
+          const lum = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
+          const bad = [...document.querySelectorAll('.nf__inner, .nf__actions a, h1')].filter((el) => { const b = el.getBoundingClientRect(); return b.right > window.innerWidth + 0.5 || b.left < -0.5; }).length;
+          return { lum, bad, scroll: document.documentElement.scrollWidth, w: window.innerWidth, dark: matchMedia('(prefers-color-scheme: dark)').matches };
+        });
+        expect(r.dark, 'the browser is in the scheme asked for').toBe(scheme === 'dark');
+        if (scheme === 'dark') expect(r.lum, 'the page background is dark').toBeLessThan(0.2); else expect(r.lum, 'the page background is light').toBeGreaterThan(0.8);
+        expect(r.bad, 'an element of the 404 screen is wider than the window').toBe(0);
+        expect(r.scroll, 'the page scrolls sideways').toBeLessThanOrEqual(r.w);
+        if (FRAMES) {
+          mkdirSync(FRAMES, { recursive: true });
+          await page.screenshot({ path: join(FRAMES, `after-404-${width}-${scheme}.png`), fullPage: true });
+        }
+      });
+    });
+  }
+}

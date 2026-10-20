@@ -322,7 +322,6 @@
 .card--link { transition: transform 0.2s ease, box-shadow 0.2s ease; color: inherit;
   &:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(247, 115, 0, 0.45); }
 }
-.card__ic { width: 42px; height: 42px; border-radius: 12px; background: var(--ink-soft); color: var(--ink); display: grid; place-items: center; }
 .card__more { margin-top: auto; padding-top: 6px; font-weight: 600; color: var(--ink); font-size: 14.5px; }
 .stats { margin-bottom: 28px; }
 .stat { display: flex; flex-direction: column; gap: 4px; padding: 6px 0;
@@ -377,8 +376,8 @@
   p { padding: 0 0 22px; color: var(--fg2); font-size: 15.5px; }
 }
 
-// ── languages ──
-.langlist { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0 0 28px; padding: 0;
+// ── languages ── (L11: the business examples under «Any business» wear the same chips)
+.langlist, .bizlist { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0 0 28px; padding: 0;
   li { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--chip-bd); background: var(--chip); font-size: 14px; color: var(--fg); }
   li span { color: var(--fg3); margin-left: 6px; font-size: 13px; }
 }

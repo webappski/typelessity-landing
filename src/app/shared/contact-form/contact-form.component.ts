@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { getIndustriesByCategory } from '../../lib/industries';
-import { EMAIL_PATTERN, WaitlistPayload, waitlistRequestBody } from './waitlist-request';
+import { BUSINESS_TYPES, EMAIL_PATTERN, WaitlistPayload, waitlistRequestBody } from './waitlist-request';
 
 
 // 'offline' — no response reached us (status 0): retrying on a working connection can help.
@@ -54,12 +53,8 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
           <label for="cf-industry">Industry / Use Case (optional)</label>
           <select id="cf-industry" name="industry" [(ngModel)]="model.industry">
             <option value="">Select your industry</option>
-            @for (group of industryGroups; track group.category) {
-              <optgroup [label]="group.category">
-                @for (industry of group.industries; track industry.slug) {
-                  <option [value]="industry.slug">{{ industry.name }}</option>
-                }
-              </optgroup>
+            @for (type of businessTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
             }
             <option value="other">Other</option>
           </select>
@@ -141,8 +136,8 @@ export class ContactFormComponent {
 
   protected readonly status = signal<Status>('idle');
 
-  // The industries the site has a page for, grouped as /industries groups them — the list cannot drift from the pages.
-  protected readonly industryGroups = Object.entries(getIndustriesByCategory()).map(([category, industries]) => ({ category, industries }));
+  // The options of the industry select; the endpoint reads the same list (waitlist-request.ts).
+  protected readonly businessTypes = BUSINESS_TYPES;
 
   protected async submit(): Promise<void> {
     if (this.status() === 'sending') return;

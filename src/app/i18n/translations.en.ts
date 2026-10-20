@@ -1,5 +1,5 @@
 // EN — chrome strings used by header/footer.
-// Page content (home, how-it-works, pricing, faq, about, for-ai-agents, industries, blog, legal)
+// Page content (home, how-it-works, pricing, faq, about, for-ai-agents, blog, legal)
 // is currently hardcoded in components for English. Translation to ru/de/pl is a content task —
 // see TODO(translate) markers in the corresponding *.content.ts and *.component.ts files.
 
@@ -38,8 +38,6 @@ export const EN: TranslationMap = {
   'seo.install.description': 'Set up Typelessity in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system.',
   'seo.pricing.title': 'Pricing: free pilot, then €39–€399 a month — Typelessity',
   'seo.pricing.description': 'Free Pilot €0 (50 booking requests a month), Starter €39, Pro €149, Enterprise €399 a month. Every plan starts with the free pilot.',
-  'seo.industries.title': 'Industries — AI booking for service verticals',
-  'seo.industries.description': 'AI booking assistant pages for hair salons, restaurants, yoga studios, gyms, driving schools, auto repair and tutoring.',
   'seo.faq.title': 'Typelessity FAQ: AI booking widget, pricing, GDPR, setup',
   'seo.faq.description': 'Answers about Typelessity: what it does, AI behaviour, setup, data protection, pricing, security and switching from another booking tool.',
   'seo.gdpr.title': 'Typelessity and GDPR: consent, where data is processed',

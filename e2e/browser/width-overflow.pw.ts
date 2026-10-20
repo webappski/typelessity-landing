@@ -2,7 +2,7 @@ import { test, expect, type Page, REDUCED_MOTION } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { BLOG_POSTS } from '../../src/app/lib/blog-manifest.generated';
-import { expectedSitemapCount, SEVEN } from '../industries-seven';
+import { expectedSitemapCount } from '../retired-industries';
 
 // Nothing on any page may be wider than the window. `scrollWidth <= clientWidth` is blind to the class
 // that bit us twice: `body` and the hero carry `overflow-x: hidden`, so a heading cut off on the right
@@ -110,12 +110,11 @@ const settle = async (page: Page) => {
 
 test('sitemap.xml is built and complete', () => {
   expect(sitemapError, 'the page list is read from the built sitemap').toBeNull();
-  expect(paths.length, 'urls in sitemap.xml: nine static paths + the seven kept industries + one per article file').toBe(expectedSitemapCount());
+  expect(paths.length, 'urls in sitemap.xml: ten static paths + one per article file').toBe(expectedSitemapCount());
   for (const required of ['/', '/blog', '/pricing']) expect(paths).toContain(required);
   const missingPosts = BLOG_POSTS.map((post) => `/blog/${post.slug}`).filter((path) => !paths.includes(path));
   expect(missingPosts, 'blog posts that the sitemap does not list').toEqual([]);
-  const missingIndustries = SEVEN.map((i) => `/industries/${i.slug}`).filter((path) => !paths.includes(path));
-  expect(missingIndustries, 'industry pages that the sitemap does not list').toEqual([]);
+  expect(paths.filter((path) => path.startsWith('/industries')), 'an /industries address in the sitemap').toEqual([]);
 });
 
 // The article body hyphenates (`hyphens: auto` on its paragraphs), and inline code wraps on a phone since

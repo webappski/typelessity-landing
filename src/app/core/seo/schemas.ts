@@ -81,7 +81,7 @@ export function softwareApplicationLd(opts: { offers?: boolean; period?: boolean
     '@id': `${SITE_URL}/#software`,
     name: SITE_NAME,
     description:
-      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. The chat window comes in 25 languages; the assistant replies in the language you set for the business. Voice input via OpenAI gpt-4o-mini-transcribe, enrichment APIs; the booking goes to your endpoint (REST) or by email.',
+      'AI conversational booking widget that replaces multi-step booking forms with a single natural-language chat. The chat window comes in 25 languages; the assistant replies in the language you set for the business. It adapts to any business that takes bookings. Voice input via OpenAI gpt-4o-mini-transcribe, enrichment APIs; the booking goes to your endpoint (REST) or by email.',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     featureList: [

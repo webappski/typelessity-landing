@@ -109,7 +109,7 @@ test('L9(в) the articles lead to the pages that own the subject', () => {
   const href = (slug: string, to: string) => body(slug).includes(`href="${to}"`);
   const bad: string[] = [];
   for (const slug of ['latency-budgets', 'whisper-vs-webspeech', 'single-gpt-call', '25-languages-one-prompt', 'cascade-corrections']) if (!href(slug, '/how-it-works')) bad.push(`${slug}: no link to /how-it-works`);
-  if (!href(SALON, '/industries/beauty-hair-salons')) bad.push(`${SALON}: no link to the salon page`);
+  if (!href(SALON, '/install')) bad.push(`${SALON}: no link to /install`);
   if (!href(SALON, `/blog/${WIDGETS}`)) bad.push(`${SALON}: no link to the comparison`);
   if (!href(TRANSFER, `/blog/${WIDGETS}`)) bad.push(`${TRANSFER}: no link to the comparison`);
   if (!href('single-gpt-call', `/blog/${WIDGETS}`)) bad.push('single-gpt-call: the pointer to other tools does not lead to the comparison');

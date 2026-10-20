@@ -1,6 +1,6 @@
 import { test, expect, type Page } from './fixtures';
-import { SEVEN } from '../industries-seven';
-import { EMAIL_PATTERN } from '../../src/app/shared/contact-form/waitlist-request';
+import { PRE_L11_SELECT_VALUES } from '../retired-industries';
+import { BUSINESS_TYPES, EMAIL_PATTERN, INDUSTRY_VALUES } from '../../src/app/shared/contact-form/waitlist-request';
 import { CONTRAST_ENGINE } from './contrast-engine';
 
 // A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
@@ -8,8 +8,8 @@ import { CONTRAST_ENGINE } from './contrast-engine';
 // now points to an email with the request already in it; only a request that got no answer at all
 // talks about the connection. /api/contact is stubbed; the page is the real SSR build.
 
-// The industry the tests pick is one the site has a page for — the select is built from those pages.
-const INDUSTRY = SEVEN[0];
+// The industry the tests pick is one the select offers (L11: the list lives in waitlist-request.ts; the site has no industry pages).
+const INDUSTRY = { slug: BUSINESS_TYPES[0].value };
 
 async function fillAndSubmit(page: Page) {
   await page.goto('/pricing');
@@ -180,19 +180,33 @@ test('a request that gets no answer asks to check the connection', async ({ page
   await expect(error.getByRole('link')).toHaveCount(0);
 });
 
-// CRO r2 (2026-10-04, R2-N1): the form still offered Hospitality / Transfers / Freight, a list from the waitlist era, while
-// the site has seven industry pages and no Transfers or Freight among them. The select is built from the pages.
-test('the industry select offers every industry page of the site, grouped as /industries groups them, plus «Other» — nothing else', async ({ page }) => {
+// CRO r2 (2026-10-04, R2-N1): the form still offered Hospitality / Transfers / Freight, a list from the waitlist era. L11 (2026-10-20): the site
+// has no industry pages; the select is a flat list of business types kept in waitlist-request.ts, and the endpoint accepts exactly that list.
+test('the industry select offers the business types of waitlist-request.ts plus «Other» and the empty choice — the values the endpoint accepts, flat, nothing from the waitlist era', async ({ page }) => {
   await page.goto('/pricing');
   const options = await page.locator('#cf-industry option').evaluateAll((nodes) =>
     nodes.map((n) => ({ value: (n as HTMLOptionElement).value, label: (n.textContent ?? '').trim() })),
   );
+  expect(options.map((o) => o.value).sort(), 'the select and the endpoint disagree about the values').toEqual([...INDUSTRY_VALUES].sort());
   const real = options.filter((o) => o.value && o.value !== 'other');
-  expect(real.map((o) => o.value).sort()).toEqual(SEVEN.map((i) => i.slug).sort());
-  for (const o of real) expect(o.label).toBe(SEVEN.find((i) => i.slug === o.value)!.name);
+  expect(real, 'the order and the words of the business types').toEqual(BUSINESS_TYPES.map((t) => ({ value: t.value, label: t.label })));
   expect(options.filter((o) => o.value === 'other')).toHaveLength(1);
   expect(options.map((o) => o.label).join(' | ')).not.toMatch(/Transfers|Freight|Hospitality & Restaurants/);
-  const groups = await page.locator('#cf-industry optgroup').evaluateAll((nodes) => nodes.map((n) => (n as HTMLOptGroupElement).label));
-  expect(groups.length).toBeGreaterThan(1);
-  expect(new Set(groups).size).toBe(groups.length);
+  await expect(page.locator('#cf-industry optgroup'), 'the select is a flat list').toHaveCount(0);
+});
+
+// L11 (R67 п.3): a tab opened before the release holds the select of that day; each value of it is still on the select, can be chosen, and goes to
+// the endpoint as the value (the endpoint takes it: contact-endpoint.spec.ts runs the real handler on the same frozen list).
+test('every value the select had before L11 is still a choice, and the body posted carries it', async ({ page }) => {
+  const posted: string[] = [];
+  await page.route('**/api/contact', (route) => { posted.push(String(JSON.parse(route.request().postData() ?? '{}').industry)); return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }); });
+  for (const value of PRE_L11_SELECT_VALUES) {
+    await page.goto('/pricing');
+    await page.fill('#cf-email', 'owner@clinic.example');
+    await page.selectOption('#cf-industry', value);
+    await page.check('input[name=consent]');
+    await page.click('.cf button[type=submit]');
+    await expect(page.locator('.cf__success')).toBeVisible();
+  }
+  expect(posted).toEqual(PRE_L11_SELECT_VALUES);
 });

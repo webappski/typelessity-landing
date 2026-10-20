@@ -219,24 +219,21 @@
   </div>
 </section>
 
-<!-- ── Industries ── -->
-<section class="sec sec--alt" id="industries">
+<!-- ── Any business ── -->
+<section class="sec sec--alt" id="any-business">
   <div class="vc-wrap">
     <div class="sec__head">
-      <span class="eyebrow"><i></i>{{ c.industries.kicker }}</span>
-      <h2 class="h2">{{ c.industries.h2Lead }} <span class="gtext">{{ c.industries.h2Grad }}</span></h2>
-      <p class="lead">{{ c.industries.sub }}</p>
+      <span class="eyebrow"><i></i>{{ c.business.kicker }}</span>
+      <h2 class="h2">{{ c.business.h2Lead }} <span class="gtext">{{ c.business.h2Grad }}</span></h2>
+      <p class="lead">{{ c.business.sub }}</p>
     </div>
-    <div class="grid grid--3">
-      @for (i of industries; track i.slug) {
-        <a class="card card--link" [routerLink]="['/industries', i.slug]">
-          <span class="card__ic"><app-icon [name]="i.icon" [size]="20" /></span>
-          <h3>{{ i.name }}</h3>
-          <p>{{ i.blurb }}</p>
-          <span class="card__more">{{ c.industries.more }}</span>
-        </a>
+    <ul class="bizlist" aria-label="Examples of businesses">
+      @for (b of c.business.examples; track b) {
+        <li>{{ b }}</li>
       }
-    </div>
+      <li>{{ c.business.rest }}</li>
+    </ul>
+    <p class="more"><a class="link" routerLink="/install">{{ c.business.more }}</a></p>
   </div>
 </section>
 

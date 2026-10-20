@@ -5,7 +5,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { EN } from '../src/app/i18n/translations.en';
 import { BADGE } from './free-pilot-copy';
-import { EXPECTED_PAGES, RETIRED_TERMS, SEVEN, SEVEN_SLUGS } from './industries-seven';
+import { EXPECTED_PAGES, RETIRED_TERMS } from './retired-industries';
 import { CLAIM_CLASSES, countClaims, LANDING_LANGUAGES, type ClaimCounts } from './claims-dictionary';
 
 // A45e (c8 2026-10-03): the second CRO and promises/legal verdicts on the landing release found four classes
@@ -345,32 +345,25 @@ test('no page, post, llms file or sitemap entry invites health data', () => {
     }
   }
   const sitemap = everything.get('sitemap.xml') ?? '';
-  assert.ok(sitemap.includes('/industries/beauty-hair-salons'), 'the sitemap must still list the other beauty pages');
   assert.doesNotMatch(sitemap, /beauty-aesthetic-clinics/, 'the sitemap still lists the clinics page');
   assert.deepEqual(offenders, [], 'a page invites health data');
 });
 
-test('the clinics page is not built and /industries lists the seven kept pages', () => {
-  assert.equal(pages.has('industries/beauty-aesthetic-clinics/index.html'), false, 'dist still holds the clinics page');
-  const industries = visibleText(pages.get('industries/index.html')!);
-  assert.doesNotMatch(industries, /Aesthetic|cosmetic/i);
-  const count = Number(industries.match(/AI booking that fits (\d+) verticals/)?.[1]);
-  const listed = [...pages.keys()].filter((p) => /^industries\/[^/]+\/index\.html$/.test(p)).length;
-  assert.equal(count, listed, 'the heading counts a different number of verticals than the build holds');
-  // the expectation is the written list of the seven kept pages, not the data the build was made from (L1б)
-  assert.equal(listed, SEVEN.length);
-  assert.equal(count, SEVEN.length);
+test('no industry page is built: not the clinics page, not the hub, not the seven kept ones', () => {
+  assert.deepEqual([...pages.keys()].filter((p) => p.startsWith('industries/')), [], 'dist still holds a page under industries/');
 });
 
-// L4 (2026-10-20): the home page no longer counts its verticals in a heading and no longer draws chips plus an «All N industries» tile;
-// it has one card per industry, each linking to that industry's own page, and nothing links to the hub from here.
-test('the home page links exactly the verticals that have a page, each card to its own page, and not to the hub', () => {
+// L11 (2026-10-20, founder: «industries can be anything, so the site says it adapts to any business»): the home page has ONE block where
+// the six cards of industries were. It names examples in plain text and links to no industry; its own words are held by home-page.spec.
+test('the home page has the «any business» block with plain-text examples, and no industry card, link or heading', () => {
   const html = pages.get('index.html')!;
-  const built = [...pages.keys()].map((p) => p.match(/^industries\/([^/]+)\/index\.html$/)?.[1]).filter((x): x is string => !!x).sort();
-  const linked = [...new Set([...html.matchAll(/href="\/industries\/([^"]+)"/g)].map((m) => m[1]!))].sort();
-  assert.deepEqual(linked, built, 'the home page lists a vertical that has no page, or leaves one out');
-  assert.equal(built.length, SEVEN.length, 'the site builds a different number of industry pages than the seven it keeps');
-  assert.doesNotMatch(html, /href="\/industries"/, 'the home page links to the hub');
+  const section = html.match(/<section[^>]*id="any-business"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+  assert.ok(section, 'no section#any-business on the home page');
+  const examples = section.match(/<ul[^>]*class="bizlist"[\s\S]*?<\/ul>/)?.[0] ?? '';
+  assert.ok(examples, 'the block has no list of examples');
+  assert.doesNotMatch(examples, /<a[\s>]/, 'an example links somewhere: the examples are plain text');
+  assert.match(visibleText(section), /any business that takes bookings/i);
+  assert.doesNotMatch(html, /id="industries"|Built for\s+your industry|See the setup|href="\/industries/);
   assert.doesNotMatch(visibleText(html), /Configured for|All \d+ industries/);
 });
 
@@ -380,9 +373,9 @@ test('the home page links exactly the verticals that have a page, each card to i
 // best-ai-booking-widgets-2026 («legal practices, real estate»), off its list: the ten articles and the /blog list are guarded too.
 const ARTICLE_PAGES = readdirSync(new URL('../src/assets/content/blog/', import.meta.url))
   .filter((f) => f.endsWith('.mdx')).map((f) => `blog/${f.replace(/\.mdx$/, '')}/index.html`).sort();
-const RETIRED_GUARDED = ['index.html', 'industries/index.html', 'faq/index.html', 'for-ai-agents/index.html', 'blog/index.html', ...ARTICLE_PAGES];
+const RETIRED_GUARDED = ['index.html', 'faq/index.html', 'for-ai-agents/index.html', 'blog/index.html', ...ARTICLE_PAGES];
 
-test('the home, hub, FAQ, for-ai-agents, /blog and the ten articles name none of the retired industries or categories', () => {
+test('the home, FAQ, for-ai-agents, /blog and the ten articles name none of the retired industries or categories', () => {
   const offenders: string[] = [];
   for (const path of RETIRED_GUARDED) {
     const html = pages.get(path);
@@ -394,13 +387,6 @@ test('the home, hub, FAQ, for-ai-agents, /blog and the ten articles name none of
   }
   assert.deepEqual(offenders, [], 'a retired industry or category is still named');
   assert.equal(ARTICLE_PAGES.length, 10, 'the blog holds a different number of articles than the ten L9 guards');
-});
-
-test('every kept industry is named on the hub by its name, and in the right category', () => {
-  const html = pages.get('industries/index.html')!;
-  const text = visibleText(html);
-  for (const i of SEVEN) assert.ok(text.includes(i.name), `${i.slug}: «${i.name}» is not on the hub`);
-  assert.deepEqual(SEVEN_SLUGS.filter((slug) => !html.includes(`href="/industries/${slug}"`)), [], 'the hub does not link a kept page');
 });
 
 test('/gdpr says medicine only in the form «not allowed»', () => {
@@ -483,19 +469,6 @@ test('posts: Typelessity is not named the leader on conversion or on time to dep
         const at = text.search(re);
         if (at >= 0) offenders.push(`${path}: ${re} — …${text.slice(Math.max(0, at - 60), at + 90).replace(/\s+/g, ' ')}…`);
       }
-    }
-  }
-  assert.deepEqual(offenders, []);
-});
-
-// F8: the engine collects the fields and delivers a booking or a request; whether a specialist, a coach, a court, a
-// test drive or a viewing is booked is the business's act. Industry pages say «collects», like their neighbours.
-test('industry pages: the widget collects a request or the details — it does not book a specialist, a coach, a test drive or a viewing', () => {
-  const offenders: string[] = [];
-  for (const [path, body] of pages) {
-    if (!/^industries\/(?:[^/]+\/)?index\.html$/.test(path)) continue;
-    for (const s of sentences(visibleText(body))) {
-      if (/\bwidget books\b|\bbooks (?:with|the right|a coach|a test drive|a viewing|a consultation|the session|the vet)\b/i.test(s)) offenders.push(`${path}: ${s.slice(0, 160)}`);
     }
   }
   assert.deepEqual(offenders, []);
@@ -609,9 +582,9 @@ test('footer.tagline names the language count of the code, without «+»', () =>
 });
 
 // ── L10 (2026-10-20) ─────────────────────────────────────────────────────────────────────────────────────────
-// (а) The ratchet and the dictionary read the whole page. The seven industry pages put their words into the title, the H1 and the description,
+// (а) The ratchet and the dictionary read the whole page. A page puts its words into the title, the H1 and the description (L11: the seven industry pages are gone, the home page remains),
 // where a search result and an AI answer read them first; those three get a named check, with the slug in the report, so that a word coming
-// back to a page head is not found only as «the count grew». The outcome words are the ones industry-pages.spec.ts bans in the body: a head
+// back to a page head is not found only as «the count grew». The outcome words are the ones the industry pages' spec banned in the body (L8): a head
 // that says «booked» or «scheduled» tells the visitor an outcome the widget does not give (it sends a request).
 const HEAD_OUTCOME_WORDS = /\bbook(s|ed)?\b|\bscheduled\b|—\s*done\b|configured for/gi;
 
@@ -622,11 +595,11 @@ function headOf(html: string): string {
   return [title, h1, description].join(' ¶ ');
 }
 
-test('L10(а) the title, the H1 and the description of each of the seven industry pages carry no word of the dictionary and no outcome word', () => {
+test('L10(а) the title, the H1 and the description of the home page carry no word of the dictionary and no outcome word', () => {
   const offenders: string[] = [];
-  for (const { slug } of SEVEN) {
-    const html = pages.get(`industries/${slug}/index.html`);
-    assert.ok(html, `industries/${slug}/index.html is not in the build`);
+  for (const slug of ['home']) {
+    const html = pages.get('index.html');
+    assert.ok(html, 'index.html is not in the build');
     const head = headOf(html);
     assert.ok(head.split(' ¶ ').every((part) => part.trim().length > 0), `${slug}: the title, the H1 or the description is empty — ${head}`);
     const found = countClaims(head);
@@ -634,7 +607,7 @@ test('L10(а) the title, the H1 and the description of each of the seven industr
     const outcomes = head.match(HEAD_OUTCOME_WORDS) ?? [];
     if (outcomes.length) offenders.push(`${slug}: outcome word ${JSON.stringify(outcomes)} — ${head.slice(0, 120)}`);
   }
-  assert.deepEqual(offenders, [], 'an industry page head says what the widget does not do');
+  assert.deepEqual(offenders, [], 'a page head says what the widget does not do');
 });
 
 // (б) The working notes of the mock-up and its own frame name. K14 holds them in the text of the pages; this reads EVERY file of the build,

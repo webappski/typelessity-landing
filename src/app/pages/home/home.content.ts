@@ -81,17 +81,6 @@ export const PILOT_REQUESTS = /\d+/.exec(PRICING.tiers[0].bullets[0])![0];
 const STARTER_PRICE = PRICING.tiers[1].price;
 const LANGUAGE_COUNT = LANDING_LANGUAGES.length;
 
-/** The card of an industry: the trade's own words about what the chat picks up, matched by slug (the order is the data's: FL-41). */
-export const INDUSTRY_CARDS: Readonly<Record<string, { icon: 'scissors' | 'utensils' | 'wrench' | 'yoga' | 'dumbbell' | 'car' | 'book'; blurb: string }>> = {
-  'beauty-hair-salons': { icon: 'scissors', blurb: 'Service, hair length, stylist, date and time window — from one message.' },
-  'hospitality-restaurants': { icon: 'utensils', blurb: 'Party size, date, time and seating.' },
-  'automotive-repair': { icon: 'wrench', blurb: 'Vehicle make, model and year, the symptom and the urgency.' },
-  'fitness-yoga-studios': { icon: 'yoga', blurb: 'Class type, level and instructor picked from cards.' },
-  'fitness-gyms': { icon: 'dumbbell', blurb: 'A tour, a trial class or a membership question — told apart.' },
-  'automotive-driving-schools': { icon: 'car', blurb: 'Licence type, experience and the student’s language.' },
-  'education-tutoring': { icon: 'book', blurb: 'Subject, grade level, goal and remote or in person.' },
-};
-
 export const HOME = {
   hero: {
     chip: 'AI booking assistant for your website',
@@ -165,12 +154,16 @@ export const HOME = {
     more: 'See the four phases and how the AI works →',
   },
 
-  industries: {
-    kicker: 'Industries',
-    h2Lead: 'Built for',
-    h2Grad: 'your industry',
-    sub: 'Same engine, different setup. Each industry has its own page with the fields it collects and an example conversation.',
-    more: 'See the setup →',
+  // L11 (founder 20.10): the site names no industry page and links to none; it says the setup adapts to any business that takes bookings.
+  // The examples are plain text, not links.
+  business: {
+    kicker: 'Any business',
+    h2Lead: 'One engine,',
+    h2Grad: 'set up for your business',
+    sub: 'Typelessity adapts to any business that takes bookings. You choose the details the chat collects, and the same engine does the rest.',
+    examples: ['Hair and beauty salons', 'Auto repair shops', 'Gyms and yoga studios', 'Driving schools', 'Tutors', 'Restaurants'] as const,
+    rest: 'and any other business that takes bookings',
+    more: 'See how to add it to your site →',
   },
 
   data: {

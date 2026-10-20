@@ -1,5 +1,5 @@
 // Build-time: generate sitemap.xml after `ng build`.
-// Reads industries (verbatim from production) + blog manifest, emits to dist/<project>/browser/.
+// Reads the blog manifest, emits to dist/<project>/browser/.
 //
 // Every <lastmod> is a literal in this file or an article's own date. The generator reads no clock, no
 // git and no file time: a lastmod that moves with the build tells a crawler nothing (Google, «Build and
@@ -11,7 +11,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { ALL_INDUSTRIES } from '../src/app/lib/industries';
 import { BLOG_POSTS } from '../src/app/lib/blog-manifest.generated';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -28,14 +27,15 @@ interface Url {
 // A page rewritten by a later task sets its own date in that task. e2e/sitemap-contract.spec.ts fails
 // when a date is earlier than the result of these two commands.
 const STATIC_PATHS: Url[] = [
-  // L4 (2026-10-20): the home page is rebuilt (title, description, H1, the demo, seven industry cards, six questions of /faq); L1б (2026-10-19): the seven industries.
+  // L11 (2026-10-20): the home page has one block for «any business that takes bookings»; L4 (2026-10-20): it was rebuilt (title, description, H1, the demo, six questions of /faq).
   { path: '/', lastmod: '2026-10-20' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
   { path: '/install', lastmod: '2026-10-19' },
-  { path: '/pricing', lastmod: '2026-10-19' },
+  // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
+  { path: '/pricing', lastmod: '2026-10-20' },
   { path: '/gdpr', lastmod: '2026-10-19' },
-  { path: '/industries', lastmod: '2026-10-20' },
-  { path: '/for-ai-agents', lastmod: '2026-10-19' },
+  // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
+  { path: '/for-ai-agents', lastmod: '2026-10-20' },
   { path: '/faq', lastmod: '2026-10-19' },
   { path: '/about', lastmod: '2026-10-19' },
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
@@ -46,19 +46,12 @@ const STATIC_PATHS: Url[] = [
   { path: '/legal/security', lastmod: '2026-10-19' },
 ];
 
-// One date for all industry pages: the latest of git log -1 --format=%cs -- src/app/lib/industries/ (29 pages taken down, the seven that remain
-// were not rewritten, but the set a crawler sees changed: 2026-10-19), -- src/app/pages/industries/ and the schemas.ts functions the
-// detail component calls (its Service markup: the FAQ markup went and the provider became a pointer, L2, 2026-10-19).
-// L8 (2026-10-20) rewrote the seven pages (title, H1, capsule, FAQ, neighbours) and one sentence of the hub; the home grid reads the same data.
-const INDUSTRIES_LASTMOD = '2026-10-20';
-
 /** A post's date is its own: the last update, else the day it was published. */
 export function lastmodForPost(post: { publishedAt: string; updatedAt?: string }): string {
   return post.updatedAt ?? post.publishedAt;
 }
 
 const dynamicPaths = (): Url[] => [
-  ...ALL_INDUSTRIES.map((i): Url => ({ path: `/industries/${i.slug}`, lastmod: INDUSTRIES_LASTMOD })),
   ...BLOG_POSTS.map((p): Url => ({ path: `/blog/${p.slug}`, lastmod: lastmodForPost(p) })),
 ];
 
@@ -89,7 +82,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const browserDir = join(ROOT, 'dist', projectName, 'browser');
 
   const xml = buildSitemap();
-  const urlCount = STATIC_PATHS.length + ALL_INDUSTRIES.length + BLOG_POSTS.length;
+  const urlCount = STATIC_PATHS.length + BLOG_POSTS.length;
   writeFileSync(join(browserDir, 'sitemap.xml'), xml, 'utf8');
 
   console.log(`✓ sitemap: ${urlCount} URLs → ${browserDir.replace(ROOT, '')}/sitemap.xml`);

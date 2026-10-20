@@ -5,7 +5,7 @@
   "outputDirectory": "dist/typelessity-landing/browser",
   "routes": [
     {
-      "src": "^/industries/(?:automotive-detailing|automotive-test-drives|beauty-nail-salons|beauty-spas|beauty-tattoo-studios|education-language-schools|education-music-schools|education-test-prep|fitness-martial-arts|fitness-personal-training|fitness-sports-coaching|home-cleaning|home-handyman|home-hvac|home-landscaping|home-moving|hospitality-event-venues|hospitality-hotels|hospitality-tours|pet-grooming|pet-training|pet-veterinary|professional-accounting|professional-coaching|professional-financial-advisors|professional-legal|realestate-commercial|realestate-property-management|realestate-residential|beauty-aesthetic-clinics)/?$",
+      "src": "^/industries(?:/(?:automotive-detailing|automotive-test-drives|beauty-nail-salons|beauty-spas|beauty-tattoo-studios|education-language-schools|education-music-schools|education-test-prep|fitness-martial-arts|fitness-personal-training|fitness-sports-coaching|home-cleaning|home-handyman|home-hvac|home-landscaping|home-moving|hospitality-event-venues|hospitality-hotels|hospitality-tours|pet-grooming|pet-training|pet-veterinary|professional-accounting|professional-coaching|professional-financial-advisors|professional-legal|realestate-commercial|realestate-property-management|realestate-residential|beauty-aesthetic-clinics|beauty-hair-salons|hospitality-restaurants|fitness-yoga-studios|fitness-gyms|automotive-driving-schools|automotive-repair|education-tutoring))?/?$",
       "status": 410,
       "dest": "/404.html",
       "headers": [

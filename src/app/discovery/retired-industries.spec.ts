@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { ALL_INDUSTRIES } from '../lib/industries';
-import { RETIRED_SLUGS, SEVEN, SEVEN_SLUGS } from '../../../e2e/industries-seven';
+import { existsSync, readFileSync } from 'node:fs';
+import { GONE_SLUGS, RETIRED_SLUGS, SEVEN_SLUGS } from '../../../e2e/retired-industries';
 
-// L1б (2026-10-19): 29 thin industry pages and the clinics address answer 410, the seven kept pages and the hub stay.
-// The clinics page was taken down earlier (it invited health data, Art. 9) and was redirected to the hub; that
-// redirect is gone now — a redirect to a hub that lists none of its subjects is the soft 404 Google warns of.
+// L1б (2026-10-19): 29 thin industry pages and the clinics address answer 410. L11 (2026-10-20, founder: «we do not need industries»):
+// the hub and the seven kept pages answer 410 too, and the site has no industry page at all. Nothing redirects to a page: the clinics
+// address was a redirect to the hub once, and a redirect to a hub that lists none of its subjects is the soft 404 Google warns of.
+// The rule is a written list, not a wildcard: an address that never existed (/industries/no-such-slug) stays a 404 — 410 says «was here».
 //
 // A unit-tier guard on purpose: only `npm test` runs in the pre-commit and pre-push hooks, and the local SSR server
 // does not apply vercel.json. What this file proves is the content of the rule (which addresses it takes and which it
@@ -26,20 +26,21 @@ const gone = (vercel.routes ?? []).filter((r) => r.status === 410);
 const rule = gone[0];
 const taken = (path: string): boolean => new RegExp(rule.src).test(path);
 
-test('the retired list is what the card says it is: 30 addresses, none of them a kept page', () => {
+test('the lists are what the card says: 30 retired and 7 taken down at L11, none twice, 37 addresses in all', () => {
   assert.equal(RETIRED_SLUGS.length, 30);
-  assert.equal(new Set(RETIRED_SLUGS).size, 30, 'a slug twice in RETIRED');
   assert.equal(SEVEN_SLUGS.length, 7);
   assert.deepEqual(RETIRED_SLUGS.filter((s) => SEVEN_SLUGS.includes(s)), []);
-  assert.equal(new Set([...RETIRED_SLUGS, ...SEVEN_SLUGS]).size, 37, 'RETIRED + SEVEN is the 36 pages of d0cbafe plus the clinics address');
+  assert.equal(new Set(GONE_SLUGS).size, 37, 'RETIRED + SEVEN is the 36 pages of d0cbafe plus the clinics address');
 });
 
-test('the data holds exactly the seven kept industries (slug, name and category), and no retired one', () => {
-  assert.deepEqual(
-    ALL_INDUSTRIES.map((i) => ({ slug: i.slug, name: i.name, category: i.category })).sort((a, b) => a.slug.localeCompare(b.slug)),
-    [...SEVEN].sort((a, b) => a.slug.localeCompare(b.slug)),
-  );
-  assert.deepEqual(ALL_INDUSTRIES.filter((i) => RETIRED_SLUGS.includes(i.slug)).map((i) => i.slug), []);
+test('the site has no industry module any more: no data, no component, no route, no prerender', () => {
+  for (const path of ['src/app/lib/industries', 'src/app/pages/industries']) assert.equal(existsSync(new URL(path, ROOT)), false, `${path} is back`);
+  const routes = readFileSync(new URL('src/app/app.routes.ts', ROOT), 'utf8');
+  const server = readFileSync(new URL('src/app/app.routes.server.ts', ROOT), 'utf8');
+  assert.doesNotMatch(routes, /industr/i, 'app.routes.ts has an industries route');
+  assert.doesNotMatch(server, /industr/i, 'app.routes.server.ts prerenders an industries page');
+  const sitemap = readFileSync(new URL('tools/build-sitemap.ts', ROOT), 'utf8');
+  assert.doesNotMatch(sitemap, /industr/i, 'the sitemap generator names industries');
 });
 
 test('vercel.json holds exactly one 410 route: anchored, no handle, no catch-all', () => {
@@ -50,16 +51,16 @@ test('vercel.json holds exactly one 410 route: anchored, no handle, no catch-all
   assert.doesNotMatch(rule.src, /\.\*|\(\.\+\)|\[\^\/\]\*/, 'the src must not hold a wildcard');
 });
 
-test('the 410 rule takes each of the 30 retired addresses, with and without a trailing slash', () => {
-  const missed = RETIRED_SLUGS.flatMap((s) => [`/industries/${s}`, `/industries/${s}/`]).filter((p) => !taken(p));
+test('the 410 rule takes the hub and each of the 37 addresses that had a page, with and without a trailing slash', () => {
+  const missed = GONE_SLUGS.flatMap((s) => [`/industries/${s}`, `/industries/${s}/`]).filter((p) => !taken(p));
   assert.deepEqual(missed, []);
+  assert.deepEqual(['/industries', '/industries/'].filter((p) => !taken(p)), [], 'the hub is not taken');
 });
 
-test('the 410 rule leaves the hub, the seven kept pages and look-alikes alone', () => {
+test('the 410 rule leaves look-alikes, unknown slugs and the rest of the site alone', () => {
   const must = [
-    '/industries', '/industries/', ...SEVEN_SLUGS.flatMap((s) => [`/industries/${s}`, `/industries/${s}/`]),
     '/industries/no-such-slug', '/industries/home-cleaning-x', '/industries/home-cleaningx', '/industries/x-home-cleaning',
-    '/industries/home-cleaning/x', '/Industries/home-cleaning', '/', '/pricing', '/blog',
+    '/industries/home-cleaning/x', '/industries/fitness-gyms/x', '/Industries/home-cleaning', '/industries-x', '/industrie', '/', '/pricing', '/blog', '/install',
   ];
   assert.deepEqual(must.filter((p) => taken(p)), []);
 });
@@ -77,7 +78,7 @@ test('the 410 route answers with the 404 page and carries the same security head
 
 test('no redirect or rewrite takes a retired address or the hub: the clinics redirect is gone, nothing sends them to a page', () => {
   const sources = [...(vercel.redirects ?? []), ...(vercel.rewrites ?? [])].map((r) => r.source);
-  const probes = ['/industries', '/industries/', ...RETIRED_SLUGS.flatMap((s) => [`/industries/${s}`, `/industries/${s}/`])];
+  const probes = ['/industries', '/industries/', ...GONE_SLUGS.flatMap((s) => [`/industries/${s}`, `/industries/${s}/`])];
   // a Vercel source is path-to-regexp: «:slug» is one segment, «(.*)» and «*» take the rest
   const pattern = (s: string) => new RegExp(`^${s.replace(/:[A-Za-z_]+\*/g, '.*').replace(/:[A-Za-z_]+/g, '[^/]+').replace(/\*/g, '.*')}$`);
   const hit = sources.filter((s) => probes.some((p) => {
@@ -85,11 +86,4 @@ test('no redirect or rewrite takes a retired address or the hub: the clinics red
   }));
   assert.deepEqual(hit, []);
   assert.ok(!sources.some((s) => /beauty-aesthetic-clinics/.test(s)), 'the clinics redirect is back');
-});
-
-test('the generator does not name a retired slug, and the hub is still prerendered', () => {
-  const routes = readFileSync(new URL('src/app/app.routes.server.ts', ROOT), 'utf8');
-  assert.match(routes, /STATIC_PAGES = \[[\s\S]*?'industries'[\s\S]*?\]/, '/industries is no longer a prerendered page');
-  const sitemap = readFileSync(new URL('tools/build-sitemap.ts', ROOT), 'utf8');
-  for (const s of RETIRED_SLUGS) assert.ok(!sitemap.includes(s), `the sitemap generator names ${s}`);
 });

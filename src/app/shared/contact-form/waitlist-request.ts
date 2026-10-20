@@ -11,6 +11,24 @@
  */
 export const EMAIL_PATTERN = '[^\\s@]+@[^\\s@]+\\.[^\\s@]+';
 
+/**
+ * What the form's «Industry / Use Case» select offers: the value the endpoint receives and the words the visitor reads. The site has no
+ * industry pages (L11, 2026-10-20), so the list lives here and nowhere else; the values are the ones the select has always sent, so a tab
+ * opened before that release still sends a value the endpoint takes. The endpoint imports INDUSTRY_VALUES — one list, two readers.
+ */
+export const BUSINESS_TYPES = [
+  { value: 'beauty-hair-salons', label: 'Hair and beauty salon' },
+  { value: 'hospitality-restaurants', label: 'Restaurant' },
+  { value: 'fitness-yoga-studios', label: 'Yoga or pilates studio' },
+  { value: 'fitness-gyms', label: 'Gym or fitness centre' },
+  { value: 'automotive-driving-schools', label: 'Driving school' },
+  { value: 'automotive-repair', label: 'Auto repair shop' },
+  { value: 'education-tutoring', label: 'Tutoring' },
+] as const;
+
+/** The values of the industry field the endpoint accepts: none, «other», and one per business type of the select. */
+export const INDUSTRY_VALUES: ReadonlySet<string> = new Set(['', 'other', ...BUSINESS_TYPES.map((t) => t.value)]);
+
 export interface WaitlistPayload {
   email: string;
   website?: string;

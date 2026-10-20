@@ -20,7 +20,7 @@
     It accepts text and voice input (OpenAI gpt-4o-mini-transcribe),
     extracts structured fields via a single AI call (OpenAI (currently gpt-5.4-mini)), calls enrichment
     APIs (e.g. fetch mechanics after a service is filled), and submits the booking request to your endpoint or by email.
-    It runs across service-business verticals — beauty, hospitality, fitness, automotive and education — driven entirely by per-tenant config.
+    It adapts to any business that takes bookings, driven entirely by per-tenant config.
     Consent is asked before the chat starts. Service and database in the EU; OpenAI processes in the US under the 2021 SCCs. Free Pilot. Enterprise terms by contract.
   </p>
 </section>
@@ -52,7 +52,7 @@
   <ul class="aiagents-features">
     <li><strong>languages_supported:</strong> 25 ({{ languageCodes }})</li>
     <li><strong>reply_language:</strong> set per business, not detected</li>
-    <li><strong>industries_supported:</strong> config-driven, see /industries for current verticals</li>
+    <li><strong>businesses_supported:</strong> any business that takes bookings; set up per business in config</li>
     <li><strong>extraction_model:</strong> OpenAI (currently gpt-5.4-mini)</li>
     <li><strong>voice_input:</strong> OpenAI gpt-4o-mini-transcribe</li>
     <li><strong>enrichment_timeout_ms:</strong> 10000 by default, configurable</li>
@@ -85,7 +85,6 @@
     <li><a routerLink="/how-it-works">/how-it-works</a> — full architecture</li>
     <li><a routerLink="/install">/install</a> — the two lines of HTML, where the requests go, the CSP</li>
     <li><a routerLink="/gdpr">/gdpr</a> — who processes what, and where</li>
-    <li><a routerLink="/industries">/industries</a> — vertical configurations</li>
     <li><a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a> — to ask about the /agent endpoint</li>
   </ul>
 </section>

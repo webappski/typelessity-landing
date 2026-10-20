@@ -8,7 +8,7 @@ category: "Engineering"
 tags: ["bugs", "algorithms", "ux", "extraction"]
 ---
 
-> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the link to how the engine works is a link, and the list of verticals no longer names a transfer service, because there is no public transfer demo.
+> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the link to how the engine works is a link, and the list of verticals no longer names a transfer service, because there is no public transfer demo. The text says "any business that takes bookings" where it said "verticals".
 
 > **Updated 2026-09-27 — what changed:** the example is an auto repair booking, not a clinic appointment: health data is not permitted under the Typelessity DPA. The post now describes what the engine does: the dependency list is called `dependsOn`, the user is asked before fields are cleared, and enrichments are fetched again when the user gives a new value — there is no ordered re-run. Gone: a reset message the widget never showed, the claim that abandonment after a cascade drops sharply (we did not measure it), a short code sample presented as the engine's code (it was not), and a cap on enrichments per config (the engine has none).
 
@@ -47,9 +47,9 @@ Field relationships are part of the config. Each field can list the fields it de
 
 A field filled from an enrichment also depends on that enrichment's inputs: if the mechanic list is fetched with the chosen service, `mechanic` depends on `service` even without the explicit line.
 
-When a filled field changes, the engine builds the reverse map — for each field, the fields that depend on it — and walks it depth-first from the changed field. Every field it reaches that already holds a value goes on the list to clear. The dependency graph is in config, not in code, so a new vertical does not need changes to the orchestration layer.
+When a filled field changes, the engine builds the reverse map — for each field, the fields that depend on it — and walks it depth-first from the changed field. Every field it reaches that already holds a value goes on the list to clear. The dependency graph is in config, not in code, so a new kind of business does not need changes to the orchestration layer.
 
-**Bottom line:** cascade behaviour is config-driven. The same engine handles an auto repair shop and other verticals because the dependency shape lives in config alongside the field schema.
+**Bottom line:** cascade behaviour is config-driven. The same engine handles an auto repair shop and any other business that takes bookings because the dependency shape lives in config alongside the field schema.
 
 ## Why not just clear every later field?
 
@@ -89,7 +89,7 @@ The mental model: **fields are not independent variables. Treat them like a spre
 An edit that clears every downstream field that depended on the edited one. Typelessity uses a config-declared dependency graph, walks it depth-first when a filled field changes, and drops the enrichment results that read a cleared field.
 
 **How does Typelessity model field dependencies?**
-Each field can declare a `dependsOn` list in config, and a field filled from an enrichment depends on that enrichment's inputs. The orchestration layer reads this graph at runtime — no per-industry code, no hardcoded relationships.
+Each field can declare a `dependsOn` list in config, and a field filled from an enrichment depends on that enrichment's inputs. The orchestration layer reads this graph at runtime — no per-business code, no hardcoded relationships.
 
 **Why not just clear all later fields when one changes?**
 Indiscriminate clearing makes the user re-enter unrelated data and wastes enrichment calls. Targeted invalidation only touches fields that actually depended on the edited one.

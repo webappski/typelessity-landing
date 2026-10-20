@@ -8,7 +8,7 @@
 
 **Hero.** Bookings through conversation, not forms. Typelessity is an AI booking widget that replaces forms with natural chat. Customers describe their needs in a chat window that comes in 25 languages — the AI extracts dates, times, preferences and personal details automatically; it replies in the language you set for the business. Voice input. Enrichment from your own APIs. Consent is asked before the chat starts; service and database in the EU, OpenAI in the US under the 2021 SCCs; processing under the Typelessity DPA.
 
-**TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available mechanics after a service is chosen), and submits the booking request by email or REST POST. The chat window comes in 25 languages; it supports voice input and is configurable for service-business booking flows.
+**TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available mechanics after a service is chosen), and submits the booking request by email or REST POST. The chat window comes in 25 languages; it supports voice input and adapts to any business that takes bookings.
 
 **Stats.** Chat-window languages 25. Free pilot €0, up to 50 submissions a month. Four phases (Chat → Select → Review → Confirm). Two lines of HTML to integrate.
 
@@ -62,9 +62,9 @@ We do not publish a conversion-lift number. The only honest answer for a specifi
 
 ---
 
-## Industries — seven pages
+## Businesses — any business that takes bookings
 
-Configurable per service-business vertical. Each vertical has its own configuration. Pages: https://typelessity.com/industries/beauty-hair-salons, https://typelessity.com/industries/hospitality-restaurants, https://typelessity.com/industries/fitness-yoga-studios, https://typelessity.com/industries/automotive-driving-schools, https://typelessity.com/industries/automotive-repair, https://typelessity.com/industries/fitness-gyms, https://typelessity.com/industries/education-tutoring.
+Typelessity adapts to any business that takes bookings. Each business has its own configuration: the details the chat collects and the calls it makes. For example: hair salons, restaurants, yoga studios, driving schools, auto repair, gyms and tutoring.
 
 Medical booking is not a supported use case: the Typelessity DPA does not permit health data (GDPR Article 9), in the US or the EU, and Typelessity is not HIPAA-attested.
 
@@ -80,7 +80,7 @@ The Session and Booking shapes are published, not versioned yet. A dedicated `/a
 
 **Feature list (machine-readable).**
 - languages_supported: 25 (chat window; the assistant replies in the language set for the business)
-- industries_pages: 7 (listed under Industries)
+- businesses_supported: any business that takes bookings (set up per business in config)
 - extraction_model: OpenAI (currently gpt-5.4-mini)
 - voice_input: OpenAI gpt-4o-mini-transcribe
 - enrichment_timeout_ms: 10000 by default, configurable
@@ -106,7 +106,7 @@ Selection (full FAQ on /faq):
 - **Per-turn latency?** Not measured on the current model, so not quoted. One AI call per turn; enrichment turns make a second call.
 - **Self-host?** No. Hosted service only — there is no on-premise or self-hosted build.
 - **Replace my booking system?** No. Replaces the form, not the backend. Submits by email or REST POST.
-- **Best industries?** Service businesses with appointments. Pages exist for hair salons, restaurants, yoga studios, driving schools, auto repair, gyms and tutoring; each vertical has its own configuration.
+- **Which businesses is it for?** Any business that takes bookings; each business has its own configuration. Examples: hair salons, restaurants, yoga studios, driving schools, auto repair, gyms and tutoring.
 - **Works for AI agents?** Not through a dedicated endpoint yet. Session and Booking schemas are published; the `/agent/turn` endpoint is designed, not built, with no release date.
 
 ---

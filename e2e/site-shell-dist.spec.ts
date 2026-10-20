@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { BLOG_POSTS } from '../src/app/lib/blog-manifest.generated';
+import { expectedSitemapCount } from './retired-industries';
 
 // L3 (S4): what a crawler and a no-JavaScript visitor receive of the new shell — the bytes of every .html of the build. The
 // behaviour a person sees (themes, menu, fonts) is site-shell-theme.pw.ts; this reads the HTML itself.
@@ -171,6 +172,6 @@ test('(g) the Guides link of the footer says the title of the article, on every 
     checked++;
     if (link !== post!.title) problems.push(`${path}: the footer link says «${link}», the article is «${post!.title}»`);
   }
-  assert.ok(checked >= 28, `${checked} pages with a footer were read — fewer than the pages of the site`);
+  assert.ok(checked >= expectedSitemapCount(), `${checked} pages with a footer were read — fewer than the ${expectedSitemapCount()} pages of the sitemap`);
   assert.deepEqual(problems, []);
 });

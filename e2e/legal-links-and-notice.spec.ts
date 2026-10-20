@@ -2,7 +2,8 @@ import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { EXPECTED_PAGES, SEVEN_SLUGS } from './industries-seven';
+import { EXPECTED_PAGES, PRE_L11_SELECT_VALUES } from './retired-industries';
+import { INDUSTRY_VALUES } from '../src/app/shared/contact-form/waitlist-request';
 
 // A45e (c8 2026-10-03; legal verdict B1, Art. 13 and Art. 28 document identity):
 //  - every «Terms» link on the landing led to the TypelessForm Terms of Service, and every «Privacy» link to a
@@ -194,16 +195,18 @@ test('nothing a visitor reads on /pricing calls the question form a waitlist', (
   assert.doesNotMatch(visible, /waitlist/i);
 });
 
-// CRO r2 (2026-10-04, R2-N1): the form's industry select was a waitlist-era list (Hospitality / Transfers / Freight) while the
-// site has one page per industry and no Transfers or Freight. It is built from the pages; the browser spec checks the live DOM,
-// this reads the bytes a crawler receives.
-test('the industry select of the question form lists every industry page and «Other», and nothing from the waitlist era', () => {
+// CRO r2 (2026-10-04, R2-N1): the form's industry select was a waitlist-era list (Hospitality / Transfers / Freight). L11 (2026-10-20): the site
+// has no industry pages, so the select is a short list of business types kept in waitlist-request.ts. The browser spec checks the live DOM,
+// this reads the bytes a crawler receives — against the set the ENDPOINT accepts (api/contact.ts reads INDUSTRY_VALUES), and against the
+// values a tab opened before the release sends.
+test('the industry select of the question form offers exactly the values the endpoint accepts, keeps the old ones, and nothing from the waitlist era', () => {
   const html = files.get('pricing/index.html')!;
   const select = html.match(/<select[^>]*id="cf-industry"[\s\S]*?<\/select>/)?.[0];
   assert.ok(select, '/pricing has no industry select');
   const options = [...select.matchAll(/<option[^>]*\svalue="([^"]*)"[^>]*>([^<]*)<\/option>/g)].map((m) => ({ value: m[1], label: m[2].replace(/&amp;/g, '&').trim() }));
-  const real = options.filter((o) => o.value && o.value !== 'other');
-  assert.deepEqual(real.map((o) => o.value).sort(), [...SEVEN_SLUGS].sort());
+  assert.deepEqual(options.map((o) => o.value).sort(), [...INDUSTRY_VALUES].sort(), 'the select and the endpoint disagree about the values');
+  for (const v of PRE_L11_SELECT_VALUES) assert.ok(options.some((o) => o.value === v), `${v} was on the select before the release and is gone`);
   assert.equal(options.filter((o) => o.value === 'other').length, 1, 'exactly one «Other»');
+  assert.equal(select.includes('<optgroup'), false, 'the select is a flat list');
   assert.doesNotMatch(options.map((o) => o.label).join(' | '), /Transfers|Freight|Hospitality & Restaurants/);
 });

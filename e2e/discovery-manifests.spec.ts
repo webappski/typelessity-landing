@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { LANDING_LANGUAGES, NOT_SUPPORTED_LANGUAGES } from './claims-dictionary';
 
 // R42/R36 smoke for the discovery manifests (llms.txt / llms-full.txt). These are the first
@@ -136,13 +136,8 @@ test('manifests still link the one legal page this domain serves', async () => {
   });
 });
 
-// L0 (18.10): what the manifests say about languages and industries is checked against the code and the build,
-// not against a list of old phrases. The 25 chat-window languages are LANDING_LANGUAGES (SUPPORTED_LOCALES of the
-// product, types.ts:219-245 @ 027a177); the seven industry pages are the ones the redesign keeps (QUEUE L1б, L8).
-const INDUSTRY_SLUGS = [
-  'beauty-hair-salons', 'hospitality-restaurants', 'fitness-yoga-studios', 'automotive-driving-schools',
-  'automotive-repair', 'fitness-gyms', 'education-tutoring',
-] as const;
+// L0 (18.10): what the manifests say about languages is checked against the code and the build, not against a list of old phrases.
+// The 25 chat-window languages are LANDING_LANGUAGES (SUPPORTED_LOCALES of the product, types.ts:219-245 @ 027a177).
 
 test('llms.txt names exactly the 25 chat-window languages of the code, with no "+" and no unsupported language', async () => {
   await withServer(async (base) => {
@@ -161,17 +156,15 @@ test('llms.txt names exactly the 25 chat-window languages of the code, with no "
   });
 });
 
-test('manifests link the seven industry pages, never the bare /industries hub, and every page is in the build', async () => {
+// L11 (2026-10-20, founder): the site has no industry pages. The manifests print no /industries address of any kind, and say the one thing the
+// site now says: Typelessity adapts to any business that takes bookings.
+test('manifests print no /industries address and say it adapts to any business that takes bookings', async () => {
   await withServer(async (base) => {
     for (const [name, body] of await fetchManifests(base)) {
-      assert.ok(!/\/industries(?![/\w-])/.test(body), `${name} still prints the bare /industries address`);
-      const printed = [...new Set([...body.matchAll(/typelessity\.com\/industries\/([a-z0-9-]+)/g)].map((m) => m[1]))].sort();
-      assert.deepEqual(printed, [...INDUSTRY_SLUGS].sort(), `${name} prints a different set of industry pages than the seven`);
+      assert.ok(!/\/industries/i.test(body), `${name} still prints an /industries address`);
+      assert.ok(/any business that takes bookings/.test(body), `${name} does not say it adapts to any business that takes bookings`);
     }
   });
-  for (const slug of INDUSTRY_SLUGS) {
-    assert.ok(existsSync(new URL(`industries/${slug}/index.html`, DIST)), `dist has no page for ${slug}`);
-  }
 });
 
 // L9 (card D9, class «к»): the words of each blog link in llms.txt, and the start of each post line in llms-full.txt, are the
@@ -199,8 +192,7 @@ test('L9(к) the blog titles printed in llms.txt and llms-full.txt are the title
 });
 
 // L10 (D5, FL-34): the manifests name every page the sitemap lists — a file that lists pages and leaves two out is inconsistent, even
-// though llms.txt is no lever for a search engine (FL-13: the playbook calls it hygiene). The exceptions are written out: the bare hub
-// (a page that is not described, FL-23/FL-52) and the articles outside the selection each file makes — llms.txt links the one comparison,
+// though llms.txt is no lever for a search engine (FL-13: the playbook calls it hygiene). The exception is written out: the articles outside the selection each file makes — llms.txt links the one comparison,
 // llms-full.txt lists six selected posts by title without an address (L9 test «к» holds those names).
 const COMPARISON = '/blog/best-ai-booking-widgets-2026';
 
@@ -212,13 +204,13 @@ function sitemapPaths(): string[] {
 const names = (body: string, path: string) =>
   new RegExp(`https://typelessity\\.com${path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w/-])`).test(body);
 
-test('L10 every address of the sitemap is named by address in llms.txt and in llms-full.txt (the hub, and the articles outside each selection, excepted)', async () => {
+test('L10 every address of the sitemap is named by address in llms.txt and in llms-full.txt (the articles outside each selection excepted)', async () => {
   const paths = sitemapPaths();
-  assert.ok(paths.length >= 28, `the sitemap lists ${paths.length} addresses`);
+  assert.ok(paths.length >= 20, `the sitemap lists ${paths.length} addresses`);
   await withServer(async (base) => {
     const [[, short], [, full]] = await fetchManifests(base);
-    const missingShort = paths.filter((p) => p !== '/industries' && !(p.startsWith('/blog/') && p !== COMPARISON)).filter((p) => !names(short, p));
-    const missingFull = paths.filter((p) => p !== '/industries' && !p.startsWith('/blog/')).filter((p) => !names(full, p));
+    const missingShort = paths.filter((p) => !(p.startsWith('/blog/') && p !== COMPARISON)).filter((p) => !names(short, p));
+    const missingFull = paths.filter((p) => !p.startsWith('/blog/')).filter((p) => !names(full, p));
     assert.deepEqual(missingShort, [], 'llms.txt does not name these pages of the sitemap');
     assert.deepEqual(missingFull, [], 'llms-full.txt does not name these pages of the sitemap');
   });

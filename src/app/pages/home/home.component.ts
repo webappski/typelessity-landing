@@ -11,10 +11,9 @@ import { EMBED_SNIPPET } from '../../core/integrations/embed-snippet';
 import { LANDING_LANGUAGES } from '../../core/languages/landing-languages';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { TypelessityWidgetComponent } from '../../widgets/typelessity-widget/typelessity-widget.component';
-import { ALL_INDUSTRIES } from '../../lib/industries';
 import { getBlogIndexEntry } from '../../lib/blog-index.generated';
 import { FAQ_GROUPS } from '../faq/faq.content';
-import { HOME, INDUSTRY_CARDS, PILOT_REQUESTS, pilotSignupUrl } from './home.content';
+import { HOME, PILOT_REQUESTS, pilotSignupUrl } from './home.content';
 import {
   DEMO_CAPTIONS, DEMO_LANGS, DEMO_TABS, LANGNOTE, LANGS_MORE_COUNT, LANGS_MORE_HEAD, LANGS_MORE_NAMES, LANGS_MORE_TAIL, LANGS_MORE_TITLE,
   SLOT_HEIGHT_MOBILE_PX, SLOT_HEIGHT_PX, staticChain, type SlotState,
@@ -77,7 +76,6 @@ export class HomeComponent implements OnInit {
     .join('');
 
   // ── the page ──
-  protected readonly industries = ALL_INDUSTRIES.map((i) => ({ slug: i.slug, name: i.name, ...INDUSTRY_CARDS[i.slug]! }));
   protected readonly languages = LANDING_LANGUAGES;
   protected readonly posts = HOME.blog.slugs.map((slug) => {
     const post = getBlogIndexEntry(slug);

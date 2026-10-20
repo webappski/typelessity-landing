@@ -7,8 +7,7 @@
 // The body is checked before anything is read from it: a JSON object, every field a string, lengths bounded,
 // `plan` and `industry` one of the values the form's selects offer. Any miss is a 400 and nothing is sent.
 
-import { ALL_INDUSTRIES } from '../src/app/lib/industries';
-import { EMAIL_PATTERN } from '../src/app/shared/contact-form/waitlist-request';
+import { EMAIL_PATTERN, INDUSTRY_VALUES } from '../src/app/shared/contact-form/waitlist-request';
 
 interface ContactPayload {
   email?: string;
@@ -71,8 +70,6 @@ function isEmail(v: string): boolean {
 export const LIMITS = { email: 254, website: 2048, message: 5000, plan: 64, industry: 64, product: 64, source: 64 } as const;
 // The <option> values of the plan select in contact-form.component.ts; '' is «just a question».
 export const PLANS: ReadonlySet<string> = new Set(['', 'starter', 'pro', 'enterprise']);
-// The industry select is built from ALL_INDUSTRIES, plus «Other» and the empty choice.
-const INDUSTRIES: ReadonlySet<string> = new Set(['', 'other', ...ALL_INDUSTRIES.map((i) => i.slug)]);
 
 // `type` is checked on its own below; every other text field has a limit.
 const TEXT_FIELDS = ['type', ...(Object.keys(LIMITS) as (keyof typeof LIMITS)[])];
@@ -89,7 +86,7 @@ function readPayload(raw: unknown): ContactPayload | string {
     if (((body[k] as string | undefined) ?? '').length > LIMITS[k]) return `${k} is too long`;
   }
   if (!PLANS.has((body['plan'] as string | undefined) ?? '')) return 'Unknown plan';
-  if (!INDUSTRIES.has((body['industry'] as string | undefined) ?? '')) return 'Unknown industry';
+  if (!INDUSTRY_VALUES.has((body['industry'] as string | undefined) ?? '')) return 'Unknown industry';
   return body as ContactPayload;
 }
 

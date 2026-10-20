@@ -1,5 +1,4 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
-import { getAllIndustrySlugs } from './lib/industries';
 import { BLOG_SLUGS } from './lib/blog-manifest.generated';
 
 const STATIC_PAGES = [
@@ -8,7 +7,6 @@ const STATIC_PAGES = [
   'install',
   'pricing',
   'gdpr',
-  'industries',
   'for-ai-agents',
   'faq',
   'about',
@@ -20,13 +18,6 @@ export const serverRoutes: ServerRoute[] = [
     path: page,
     renderMode: RenderMode.Prerender,
   })),
-  {
-    path: 'industries/:slug',
-    renderMode: RenderMode.Prerender,
-    async getPrerenderParams() {
-      return getAllIndustrySlugs().map((slug) => ({ slug }));
-    },
-  },
   {
     path: 'blog/:slug',
     renderMode: RenderMode.Prerender,

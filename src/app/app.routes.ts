@@ -28,16 +28,6 @@ export const routes: Routes = [
       import('./pages/gdpr/gdpr-page.component').then((m) => m.GdprPageComponent),
   },
   {
-    path: 'industries',
-    loadComponent: () =>
-      import('./pages/industries/industries-page.component').then((m) => m.IndustriesPageComponent),
-  },
-  {
-    path: 'industries/:slug',
-    loadComponent: () =>
-      import('./pages/industries/industry-detail-page.component').then((m) => m.IndustryDetailPageComponent),
-  },
-  {
     path: 'for-ai-agents',
     loadComponent: () =>
       import('./pages/for-ai-agents/for-ai-agents.component').then((m) => m.ForAiAgentsComponent),

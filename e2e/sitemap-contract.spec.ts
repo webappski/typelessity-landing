@@ -4,7 +4,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
-import { expectedSitemapCount, RETIRED_SLUGS, SEVEN_SLUGS } from './industries-seven';
+import { expectedSitemapCount, GONE_SLUGS } from './retired-industries';
 
 // What a crawler receives as sitemap.xml. Google, «Build and submit a sitemap» (read 2026-10-19):
 // <lastmod> is the date of the last significant update and is used only if consistently and verifiably
@@ -28,7 +28,7 @@ const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, b]) => ({
 const pathOf = (loc: string) => loc.slice(SITE.length) || '/';
 
 test('sitemap: every URL has exactly one lastmod, a real calendar date, not later than tomorrow (UTC)', () => {
-  // the nine static paths + the seven kept industries + one per .mdx post, counted from files and written lists — not from the data the generator reads
+  // the ten static paths + one per .mdx post, counted from files and written lists — not from the data the generator reads
   assert.equal(entries.length, expectedSitemapCount(), `${entries.length} URLs`);
   // The date of a commit is local (Warsaw); between 00:00 and 02:00 there it is already «tomorrow» in UTC.
   const limit = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
@@ -42,11 +42,10 @@ test('sitemap: every URL has exactly one lastmod, a real calendar date, not late
   assert.deepEqual(bad, []);
 });
 
-test('sitemap: the industry pages are the seven kept ones and none of the 30 taken down', () => {
-  const industry = entries.map((e) => pathOf(e.loc)).filter((p) => p.startsWith('/industries/')).map((p) => p.slice('/industries/'.length)).sort();
-  assert.deepEqual(industry, [...SEVEN_SLUGS].sort());
-  assert.ok(entries.some((e) => pathOf(e.loc) === '/industries'), 'the hub is not listed');
-  assert.deepEqual(entries.filter((e) => RETIRED_SLUGS.some((s) => e.loc.endsWith(`/${s}`))).map((e) => e.loc), []);
+test('sitemap: neither the hub nor any of the 37 addresses that had an industry page is listed', () => {
+  assert.deepEqual(entries.map((e) => pathOf(e.loc)).filter((p) => /^\/industries(\/|$)/.test(p)), [], 'an /industries address is listed');
+  assert.deepEqual(entries.filter((e) => GONE_SLUGS.some((s) => e.loc.endsWith(`/${s}`))).map((e) => e.loc), []);
+  assert.doesNotMatch(xml, /industries/i);
 });
 
 test('sitemap: no changefreq, no priority, one namespace, no duplicate or foreign URL', () => {
@@ -91,7 +90,7 @@ test('sitemap: every prerendered page has its own <title>, and no title is print
     assert.ok(title, `${p}: no <title> in the prerendered file`);
     byTitle.set(title!, [...(byTitle.get(title!) ?? []), p]);
   }
-  assert.ok(byTitle.size >= 28, `the titles of ${byTitle.size} pages were read — fewer than the 28 addresses of the sitemap`);
+  assert.equal(byTitle.size, expectedSitemapCount(), `the titles of ${byTitle.size} pages were read — the sitemap lists ${expectedSitemapCount()} addresses`);
   assert.deepEqual([...byTitle].filter(([, ps]) => ps.length > 1).map(([t, ps]) => `${t} ← ${ps.join(', ')}`), [], 'two pages print the same <title>');
 });
 
@@ -165,20 +164,19 @@ const schemaNameDate = (name: string): string => git('log', '-1', '--format=%cs'
 test('sitemap: a page is not dated before its last edit (the formula of D7: page folder, its seo.* keys and, by name, the schemas.ts functions it calls)', (t) => {
   const shallow = git('rev-parse', '--is-shallow-repository') !== 'false';
   if (shallow) return t.skip('shallow clone or no git: the formula needs history');
-  // the fourth member lists files a page's text also comes from: the industry data feeds the home grid and the hub; the home page
+  // the fourth member lists files a page's text also comes from: the home page
   // also draws its blog cards, its six questions and its languages from files of other pages (L4). The FAQ answers used to live with
   // the home content; since L4 the home page only reads them from the FAQ's own file (L1б: the home date was a literal that had fallen a day behind)
   const pages: Array<[string, string, string?, string[]?]> = [
-    ['/', 'home', 'home', ['src/app/lib/industries/', 'src/app/pages/faq/faq.content.ts', 'src/app/pages/how-it-works/how-it-works.content.ts', 'src/app/core/languages/landing-languages.ts']],
+    ['/', 'home', 'home', ['src/app/pages/faq/faq.content.ts', 'src/app/pages/how-it-works/how-it-works.content.ts', 'src/app/core/languages/landing-languages.ts']],
     ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'], ['/gdpr', 'gdpr', 'gdpr'],
-    ['/industries', 'industries', 'industries', ['src/app/lib/industries/']],
     ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq'],
     ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],
     ['/legal/security', 'legal'],
   ];
   const bad: string[] = [];
   // the pages whose JSON-LD is built in schemas.ts by what their component calls (Р3); /faq and /how-it-works are not in the list (L9 added /blog: blogLd)
-  const SCHEMA_PAGES = new Set(['/', '/pricing', '/gdpr', '/for-ai-agents', '/about', '/industries', '/blog', '/legal/security']);
+  const SCHEMA_PAGES = new Set(['/', '/pricing', '/gdpr', '/for-ai-agents', '/about', '/blog', '/legal/security']);
   const nameDates = (dir: string, where: string): string[] => {
     const names = schemaNamesOf(dir);
     const dated = names.map((n) => [n, schemaNameDate(n)] as const);
@@ -198,11 +196,6 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
     const need = dates.filter(Boolean).sort().at(-1) ?? '';
     const got = entries.find((e) => pathOf(e.loc) === path)?.lastmods[0] ?? '';
     if (got < need) bad.push(`${path}: lastmod ${got || '(none)'} < last edit ${need}`);
-  }
-  // a detail page is also its component (src/app/pages/industries/) and the schemas.ts functions that component calls (Р3)
-  const lib = [git('log', '-1', '--format=%cs', '--', 'src/app/lib/industries/'), git('log', '-1', '--format=%cs', '--', 'src/app/pages/industries/'), ...nameDates('industries', 'industry pages')].filter(Boolean).sort().at(-1) ?? '';
-  for (const e of entries.filter((x) => pathOf(x.loc).startsWith('/industries/'))) {
-    if ((e.lastmods[0] ?? '') < lib) bad.push(`${pathOf(e.loc)}: lastmod ${e.lastmods[0]} < industries data, component or schemas.ts edit ${lib}`);
   }
   assert.deepEqual(bad, []);
 });

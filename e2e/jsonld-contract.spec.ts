@@ -4,7 +4,6 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import matter from 'gray-matter';
 import { countClaims } from './claims-dictionary';
-import { SEVEN } from './industries-seven';
 import { HOME } from '../src/app/pages/home/home.content';
 import { PRICING_FAQ } from '../src/app/pages/pricing/pricing.content';
 import { FAQ_GROUPS } from '../src/app/pages/faq/faq.content';
@@ -88,12 +87,11 @@ const HTML = new Map(walkHtml(DIST).map((f) => [relative(DIST, f).split('\\').jo
 const LD = new Map([...HTML].map(([rel, html]) => [rel, ldNodes(html)] as const));
 const ARTICLES = readdirSync(BLOG_DIR).filter((f) => f.endsWith('.mdx')).map((f) => f.replace(/\.mdx$/, '')).sort();
 const articlePage = (slug: string) => `blog/${slug}/index.html`;
-const industryPage = (slug: string) => `industries/${slug}/index.html`;
 const frontmatter = (slug: string) => matter(readFileSync(join(BLOG_DIR, `${slug}.mdx`), 'utf8'));
 
 const sortedUnique = (xs: string[]) => [...new Set(xs)].sort();
 
-test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', async (t) => {
+test('J0 the doors map: which JSON-LD each of the 22 pages carries, both ways', async (t) => {
   await t.test('every block of every page parses (a broken block is red, not skipped)', () => {
     const bad = [...LD].flatMap(([rel, ld]) => ld.errors.map((e) => `${rel}: ${e}`));
     assert.deepEqual(bad, []);
@@ -106,7 +104,6 @@ test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', 
       'pricing/index.html': ['SoftwareApplication'],
       'about/index.html': ['AboutPage'],
       'gdpr/index.html': ['BreadcrumbList'],
-      'industries/index.html': ['BreadcrumbList'],
       'legal/security/index.html': ['BreadcrumbList'],
       'faq/index.html': [],
       'blog/index.html': ['Blog', 'BreadcrumbList'],
@@ -116,7 +113,6 @@ test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', 
       'index.csr.html': [],
     };
     for (const slug of ARTICLES) expected[articlePage(slug)] = ['Article', 'BreadcrumbList'];
-    for (const i of SEVEN) expected[industryPage(i.slug)] = ['BreadcrumbList', 'Service'];
     const bad: string[] = [];
     for (const [rel, ld] of LD) {
       const got = sortedUnique(ld.top.flatMap(typesOf));
@@ -126,7 +122,7 @@ test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', 
     }
     for (const rel of Object.keys(expected)) if (!LD.has(rel)) bad.push(`${rel}: in the map, not in dist`);
     assert.deepEqual(bad, []);
-    assert.equal(LD.size, 30, `${LD.size} .html files in dist`);
+    assert.equal(LD.size, 22, `${LD.size} .html files in dist`);
   });
 });
 
@@ -453,7 +449,6 @@ test('J13 designing-for-ai-agents lists only schema types that the pages it name
     if (/^Home/.test(label)) return ['index.html'];
     if (/^Pricing/.test(label)) return ['pricing/index.html'];
     if (/^For AI agents/.test(label)) return ['for-ai-agents/index.html'];
-    if (/^Industry/.test(label)) return SEVEN.map((i) => industryPage(i.slug));
     if (/^Blog/.test(label)) return ['blog/index.html'];
     if (/^Articles/.test(label)) return ARTICLES.map(articlePage);
     if (/^About/.test(label)) return ['about/index.html'];

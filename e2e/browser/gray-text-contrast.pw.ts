@@ -68,14 +68,14 @@ for (const scheme of ['light', 'dark'] as const) {
         expect(bad).toEqual([]);
       });
 
-      // L4: the four phase cards left `/` (they live on /how-it-works); the cards that stay under the pointer are the seven industries
-      // and the three articles. Each is hovered in turn and the whole page is measured again.
-      test('hovering an industry card or an article card on / keeps its text at 4.5:1', async ({ page }) => {
+      // L4: the four phase cards left `/` (they live on /how-it-works); the cards that stay under the pointer are the three articles
+      // (L11: the industry cards are gone). Each is hovered in turn and the whole page is measured again.
+      test('hovering an article card on / keeps its text at 4.5:1', async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });
         await page.goto('/', { waitUntil: 'networkidle' });
         const cards = page.locator('main a.card--link');
         const count = await cards.count();
-        expect(count, 'seven industries and three articles').toBe(10);
+        expect(count, 'three articles').toBe(3);
         for (let i = 0; i < count; i++) {
           await cards.nth(i).hover();
           await page.waitForTimeout(350);

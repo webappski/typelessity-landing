@@ -109,7 +109,7 @@ const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'about/index.html': [/mailto:info@webappski\.com/, /Typelessity and TypelessForm are separate codebases/],
   'llms.txt': [/Support is by email on every tier/, /health data is not permitted under the Typelessity DPA/, /on model calls and on booking submission/],
   'llms-full.txt': [/Up to 2,000 submissions\/month, up to 10 websites, support by email/,
-    /Each vertical has its own configuration/],
+    /Each business has its own configuration/],
 };
 
 async function read(path: string): Promise<string> {

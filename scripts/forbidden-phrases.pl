@@ -20,7 +20,7 @@ my @OK = (
   'not HIPAA-attested',                                                       # llms.txt, llms-full.txt
   'no HIPAA attestation',                                                     # /faq
   'certified for US healthcare \(HIPAA\)',                                    # /faq (the visitor's question, answered with a no)
-  'Is (?:Typelessity|it) an AI receptionist\?',                               # /faq and /industries/beauty-hair-salons (the visitor's question; FL-31/39: confirm at the judges' round)
+  'Is (?:Typelessity|it) an AI receptionist\?',                               # /faq (the visitor's question; FL-31/39: confirm at the judges' round)
   'does not answer calls, WhatsApp or SMS',                                   # /faq
   'connects to any booking system with an API',                               # llms.txt
   'checks your booking system for what is free, if it has an API',            # / (the home page)

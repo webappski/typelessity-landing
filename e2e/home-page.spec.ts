@@ -7,7 +7,6 @@ import { gzipSync } from 'node:zlib';
 import { EN } from '../src/app/i18n/translations.en';
 import { EMBED_SNIPPET } from '../src/app/core/integrations/embed-snippet';
 import { LANDING_LANGUAGES } from '../src/app/core/languages/landing-languages';
-import { ALL_INDUSTRIES } from '../src/app/lib/industries';
 import { BLOG_INDEX } from '../src/app/lib/blog-index.generated';
 import { FAQ_GROUPS } from '../src/app/pages/faq/faq.content';
 import { HOME, PILOT_REQUESTS } from '../src/app/pages/home/home.content';
@@ -15,7 +14,7 @@ import { DEMO_LANGS, DEMO_TABS, LANGNOTE, SLOT_TEXT } from '../src/app/pages/hom
 
 // L4 C2 — the prerendered `/` the build produced: what a crawler, a visitor without JavaScript and every browser before hydration receive.
 // Real bytes of dist/typelessity-landing/browser, no mocks (run `npm run build` first). The words come from the sources that print them
-// (translations.en.ts, home.content.ts, faq.content.ts, the blog index, the industries, the demo labels), not from this file, except where a
+// (translations.en.ts, home.content.ts, faq.content.ts, the blog index, the demo labels), not from this file, except where a
 // decision of the card names the text itself (D8: the six questions; D1: the two sentences of demo__langnote).
 //   (a) title, description, H1, capsule  (b) the slot, no widget, no demo script   (c) the chunk of the demo   (d) the 25 languages
 //   (e) one caption   (f) what is gone and what is linked   (g) FAQ preview = /faq   (h) blog   (i) CTA code   (j) pilot plaque and offers
@@ -141,9 +140,7 @@ test('C2(e) the caption under the languages is ONE paragraph that holds both the
   assert.equal(textOf(classed ?? ''), LANGNOTE, 'the paragraph carries the class demo__langnote');
 });
 
-const SEVEN_SLUGS = (): string[] => ALL_INDUSTRIES.map((i) => i.slug);
 const LINKS = (): string[] => [
-  ...SEVEN_SLUGS().map((s) => `/industries/${s}`),
   '/install', '/pricing', '/gdpr', '/faq', '/blog', '/how-it-works', '/blog/best-ai-booking-widgets-2026', '/blog/25-languages-one-prompt',
 ];
 
@@ -161,11 +158,28 @@ test('C2(f) what the redesign took away is gone from the prerender; what it adds
   assert.deepEqual(Object.entries(counts).filter(([, n]) => n > 0), [], 'the prerender still carries what L4 removed');
   const missing = LINKS().filter((p) => !home.includes(`href="${p}"`));
   assert.deepEqual(missing, [], 'a link the page must carry is missing');
-  assert.equal(LINKS().length, 15);
-  // the seven cards are the data's seven, once each, in the data's order
-  const cardOrder = [...home.matchAll(/href="\/industries\/([^"]+)"/g)].map((m) => m[1]!);
-  assert.deepEqual(cardOrder, SEVEN_SLUGS(), 'industry cards: one per industry, in the order of the data (FL-41)');
-  for (const slug of SEVEN_SLUGS()) assert.ok(existsSync(join(DIST, 'industries', slug, 'index.html')), `${slug}: the card leads to a page that is not built`);
+  assert.equal(LINKS().length, 8);
+  // L11: no link into /industries of any kind, and no industries directory behind one
+  assert.deepEqual(home.match(/href="\/industries[^"]*"/g) ?? [], [], 'the home page links to an industry address');
+  assert.equal(existsSync(join(DIST, 'industries')), false, 'dist holds an industries directory');
+});
+
+// L11 (2026-10-20, founder): one block where the six industry cards were — one engine, set up for any business that takes bookings. The examples are
+// plain text (no link), in the order of home.content.ts, followed by «and any other business that takes bookings».
+test('C2(f2) the «any business» block says the one thing, names the examples as plain text and links only to /install', () => {
+  const section = /<section\b[^>]*id="any-business"[^>]*>([\s\S]*?)<\/section>/.exec(home)?.[1];
+  assert.ok(section, 'no section#any-business');
+  const b = HOME.business;
+  assert.equal(textOf(/<span\b[^>]*class="eyebrow[^"]*"[^>]*>([\s\S]*?)<\/span>/.exec(section)?.[1] ?? ''), b.kicker);
+  assert.equal(textOf(/<h2\b[^>]*>([\s\S]*?)<\/h2>/.exec(section)?.[1] ?? ''), `${b.h2Lead} ${b.h2Grad}`);
+  assert.equal(textOf(/<p\b[^>]*class="lead"[^>]*>([\s\S]*?)<\/p>/.exec(section)?.[1] ?? ''), b.sub);
+  assert.match(b.sub, /adapts to any business that takes bookings/);
+  const list = /<ul\b[^>]*class="bizlist"[^>]*>([\s\S]*?)<\/ul>/.exec(section)?.[1] ?? '';
+  const items = [...list.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((m) => textOf(m[1]!));
+  assert.deepEqual(items, [...b.examples, b.rest], 'the examples and the closing line, in order');
+  assert.ok(!/<a[\s>]/.test(list), 'an example is a link');
+  assert.deepEqual([...section.matchAll(/<a\b[^>]*href="([^"]*)"/g)].map((m) => m[1]), ['/install'], 'the block leads nowhere but to /install');
+  assert.equal(items.length, 7);
 });
 
 test('C2(g) the FAQ preview is the six questions of D8, found on /faq by their text, with the answers of /faq', () => {
@@ -238,11 +252,11 @@ test('C2(j) the pilot plaque and the offers: 50 and the Starter price come from 
 test('C2(k) the sections come in the order of D7', () => {
   const kickers = [...home.matchAll(/<span\b[^>]*class="eyebrow[^"]*"[^>]*>([\s\S]*?)<\/span>/g)].map((m) => textOf(m[1]!));
   assert.deepEqual(kickers, [
-    HOME.chain.kicker, HOME.whatItIs.kicker, HOME.steps.kicker, HOME.industries.kicker, HOME.data.kicker, HOME.blog.kicker, HOME.faq.kicker, HOME.languages.kicker, HOME.cta.eyebrow,
+    HOME.chain.kicker, HOME.whatItIs.kicker, HOME.steps.kicker, HOME.business.kicker, HOME.data.kicker, HOME.blog.kicker, HOME.faq.kicker, HOME.languages.kicker, HOME.cta.eyebrow,
   ]);
   const at = (needle: string): number => { const i = home.indexOf(needle); assert.ok(i >= 0, `${needle} is not on /`); return i; };
-  const order = ['free-pilot-offer', 'class="hero"', 'data-ty-chain', 'id="how"', 'id="industries"', 'class="plaque"', 'id="languages"', 'class="cta-band"'].map(at);
-  assert.deepEqual([...order].sort((a, b) => a - b), order, 'banner, hero, chain, how, industries, plaque, languages, call to action');
+  const order = ['free-pilot-offer', 'class="hero"', 'data-ty-chain', 'id="how"', 'id="any-business"', 'class="plaque"', 'id="languages"', 'class="cta-band"'].map(at);
+  assert.deepEqual([...order].sort((a, b) => a - b), order, 'banner, hero, chain, how, any business, plaque, languages, call to action');
 });
 
 test('C2(l) «Your data» says only what /gdpr says: every sentence of the three cards is printed on /gdpr', () => {

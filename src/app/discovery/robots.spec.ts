@@ -73,7 +73,7 @@ const BOTS = [
   'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Amazonbot', 'CCBot', 'Bytespider',
   'Applebot-Extended', 'YouBot', 'Meta-ExternalAgent', 'Diffbot', 'Googlebot', 'bingbot', 'FooBot',
 ];
-const PAGES = ['/', '/pricing', '/blog/x', '/industries/x', '/legal/security', '/llms.txt', '/sitemap.xml', '/426a67efe405494f9da92670749a0f86.txt'];
+const PAGES = ['/', '/pricing', '/blog/x', '/faq', '/legal/security', '/llms.txt', '/sitemap.xml', '/426a67efe405494f9da92670749a0f86.txt'];
 
 test('robots.txt is exactly one group, «*», with the two private paths closed', () => {
   assert.equal(groups.length, 1, `${groups.length} groups: a named group takes its bot out from under the «*» Disallow`);

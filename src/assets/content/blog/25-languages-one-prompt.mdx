@@ -8,13 +8,13 @@ category: "Engineering"
 tags: ["i18n", "prompts", "architecture", "gpt-5.4-mini"]
 ---
 
-> **Updated 2026-10-20 — what changed:** the language count no longer carries a plus sign: the chat window has 25 languages, the assistant replies in the language the business sets, and we have not measured extraction quality per language. The string count is "about 150" (it was "about 146"), and the paths in the text are links.
+> **Updated 2026-10-20 — what changed:** the language count no longer carries a plus sign: the chat window has 25 languages, the assistant replies in the language the business sets, and we have not measured extraction quality per language. The string count is "about 150" (it was "about 146"), and the paths in the text are links. The config is described as one per business, not one per industry.
 
 > **Updated 2026-09-27 — what changed:** the config example is an auto repair shop, not a clinic — health data is not permitted under the Typelessity DPA — and the claims about the size of a clinic config and the time it takes to add a new vertical are gone: we did not measure either. A config is stored on our side, not a JSON file per client. On 2026-09-25: extraction runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The reply language is the one set in the configuration — it is not detected from the user, and the model returns no language tag. The widget strings are about 146 per locale in a TypeScript module, not 80 in JSON files, and the engine has no phone- or date-parsing library. Latency per language is not measured, so its figures are gone.
 
-<strong>The Typelessity chat window comes in 25 languages with one English-language prompt template, one per-industry config, and about 150 translated widget strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. The model — OpenAI, currently gpt-5.4-mini — handles normalization and extraction in a single round-trip. The assistant replies in the language set for the business; the customer can write in another language, and we have not measured extraction quality per language. Adding a new language is a translation of widget strings. See <a href="/how-it-works">how it works</a> for the four phases.</strong>
+<strong>The Typelessity chat window comes in 25 languages with one English-language prompt template, one per-business config, and about 150 translated widget strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. The model — OpenAI, currently gpt-5.4-mini — handles normalization and extraction in a single round-trip. The assistant replies in the language set for the business; the customer can write in another language, and we have not measured extraction quality per language. Adding a new language is a translation of widget strings. See <a href="/how-it-works">how it works</a> for the four phases.</strong>
 
-When engineers hear that the Typelessity chat window comes in 25 languages, the next question is always the same: *"How big is your i18n team?"* Zero. There is no i18n team. There is one prompt template and per-industry configs. Languages are an emergent property of the model (OpenAI, currently gpt-5.4-mini), not a feature built per market.
+When engineers hear that the Typelessity chat window comes in 25 languages, the next question is always the same: *"How big is your i18n team?"* Zero. There is no i18n team. There is one prompt template and per-business configs. Languages are an emergent property of the model (OpenAI, currently gpt-5.4-mini), not a feature built per market.
 
 ## What is the trap of per-language code?
 
@@ -70,7 +70,7 @@ If the use case is open-ended advisory dialogue with deep cultural nuance — th
 ## FAQ
 
 **How does Typelessity serve 25 languages without a per-language codepath?**
-One English-language prompt template plus per-industry config. The model handles translation, normalization, and extraction in one round-trip and returns structured JSON.
+One English-language prompt template plus per-business config. The model handles translation, normalization, and extraction in one round-trip and returns structured JSON.
 
 **What is actually translated by hand?**
 About 150 short widget strings per locale — widget text, consent notice, review and error messages — in one TypeScript module per locale.
