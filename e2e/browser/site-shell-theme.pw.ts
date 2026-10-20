@@ -3,6 +3,9 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import matter from 'gray-matter';
 import { pilotSignupUrl } from '../../src/app/pages/home/home.content';
+import { EN } from '../../src/app/i18n/translations.en';
+import { BLOG_POSTS } from '../../src/app/lib/blog-manifest.generated';
+import { mkdirSync } from 'node:fs';
 import { SITEMAP_PATHS } from './sitemap-paths';
 
 // L3 «Каркас сайта и скорость» (2026-10-19): the shell every page shares — header, footer, the two themes, the fonts — read
@@ -284,6 +287,25 @@ for (const scheme of ['light', 'dark'] as const) {
           // textContent, not innerText: the mock sets these headings in capitals (text-transform), innerText would return PRODUCT.
           const headings = await page.locator('footer.vc-footer h4').allTextContents();
           expect(headings.map((h) => h.trim())).toEqual(['Product', 'Guides', 'Company']);
+        });
+
+        // L10 (D1, D2; frames after-footer-{390,1440}-{light,dark}): the one statement of each frame — the tagline is the line of the code (it says that the
+        // chat WINDOW comes in 25 languages, not a conversation in 25 languages), the link under Guides carries the title of the article it leads to
+        // (read from the manifest, so the footer does not keep an old name), and the footer stands on the surface of the theme. L10_FRAMES names the folder of the frame.
+        test(`[after-footer-${width}-${scheme}] B1.8 the tagline is the line of the code, the Guides link carries the title of the article, the footer is ${scheme}`, async ({ page }) => {
+          const footer = page.locator('footer.vc-footer');
+          await footer.scrollIntoViewIfNeeded();
+          await expect(footer.locator('.vc-footer-brand > p').first()).toHaveText(EN['footer.tagline']);
+          expect(EN['footer.tagline']).toContain('The chat window comes in 25 languages');
+          const post = BLOG_POSTS.find((b) => b.slug === 'best-ai-booking-widgets-2026');
+          expect(post, 'the article of the Guides link is in the manifest').toBeTruthy();
+          await expect(footer.locator('a[href="/blog/best-ai-booking-widgets-2026"]')).toHaveText(post!.title);
+          await expectSurface(page, scheme, 'footer.vc-footer', 'the footer surface');
+          const dir = process.env['L10_FRAMES'];
+          if (dir) {
+            mkdirSync(dir, { recursive: true });
+            await footer.screenshot({ path: join(dir, `after-footer-${width}-${scheme}.png`) });
+          }
         });
 
         test('B1.8 the footer has no link to /industries', async ({ page }) => {

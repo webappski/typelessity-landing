@@ -103,7 +103,9 @@ const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /DPA is accepted in the Webappski portal before any visitor data is processed/],
   'for-ai-agents/index.html': [/mailto:info@webappski\.com/, /is designed to take an intent like this/, /bookingResult/,
     /booking \| request/],
-  'how-it-works/index.html': [/Submit endpoint returns 502, 503 or 504/, /brake_pads/],
+  // L10 (FL-32, D9): two answers left /faq with the L6 rewrite and lived on nowhere else in the checked set; the facts stay where the page says them.
+  'how-it-works/index.html': [/Submit endpoint returns 502, 503 or 504/, /brake_pads/, /The model call is retried once/, /there is no separate form mode/],
+  'blog/cascade-corrections/index.html': [/will also clear/],
   'about/index.html': [/mailto:info@webappski\.com/, /Typelessity and TypelessForm are separate codebases/],
   'llms.txt': [/Support is by email on every tier/, /health data is not permitted under the Typelessity DPA/, /on model calls and on booking submission/],
   'llms-full.txt': [/Up to 2,000 submissions\/month, up to 10 websites, support by email/,

@@ -36,6 +36,8 @@
 - [Home](https://typelessity.com/) — Product overview
 - [How it works](https://typelessity.com/how-it-works) — 4-phase flow + architecture deep dive
 - [Pricing](https://typelessity.com/pricing) — Free Pilot €0 / Starter €39 / Pro €149 / Enterprise €399
+- [Install](https://typelessity.com/install) — Set up Typelessity in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system.
+- [GDPR](https://typelessity.com/gdpr) — Consent before the chat starts; service and database in the EU; OpenAI and Resend in the US with safeguards. Five checks for any AI booking widget.
 - [Hair salons](https://typelessity.com/industries/beauty-hair-salons) — Typelessity for hair salons
 - [Restaurants](https://typelessity.com/industries/hospitality-restaurants) — Typelessity for restaurants
 - [Yoga studios](https://typelessity.com/industries/fitness-yoga-studios) — Typelessity for yoga studios

@@ -197,3 +197,47 @@ test('L9(к) the blog titles printed in llms.txt and llms-full.txt are the title
     assert.equal(lines.length, 6, 'llms-full.txt lists a different number of selected posts than six');
   });
 });
+
+// L10 (D5, FL-34): the manifests name every page the sitemap lists — a file that lists pages and leaves two out is inconsistent, even
+// though llms.txt is no lever for a search engine (FL-13: the playbook calls it hygiene). The exceptions are written out: the bare hub
+// (a page that is not described, FL-23/FL-52) and the articles outside the selection each file makes — llms.txt links the one comparison,
+// llms-full.txt lists six selected posts by title without an address (L9 test «к» holds those names).
+const COMPARISON = '/blog/best-ai-booking-widgets-2026';
+
+function sitemapPaths(): string[] {
+  const xml = readFileSync(new URL('sitemap.xml', DIST), 'utf8');
+  return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
+}
+
+const names = (body: string, path: string) =>
+  new RegExp(`https://typelessity\\.com${path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w/-])`).test(body);
+
+test('L10 every address of the sitemap is named by address in llms.txt and in llms-full.txt (the hub, and the articles outside each selection, excepted)', async () => {
+  const paths = sitemapPaths();
+  assert.ok(paths.length >= 28, `the sitemap lists ${paths.length} addresses`);
+  await withServer(async (base) => {
+    const [[, short], [, full]] = await fetchManifests(base);
+    const missingShort = paths.filter((p) => p !== '/industries' && !(p.startsWith('/blog/') && p !== COMPARISON)).filter((p) => !names(short, p));
+    const missingFull = paths.filter((p) => p !== '/industries' && !p.startsWith('/blog/')).filter((p) => !names(full, p));
+    assert.deepEqual(missingShort, [], 'llms.txt does not name these pages of the sitemap');
+    assert.deepEqual(missingFull, [], 'llms-full.txt does not name these pages of the sitemap');
+  });
+});
+
+test('L10 the line of /install and of /gdpr in llms.txt and its section in llms-full.txt carry the description of the page, word for word', async () => {
+  const decode = (t: string) => t.replace(/&#38;|&amp;/g, '&').replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  await withServer(async (base) => {
+    const [[, short], [, full]] = await fetchManifests(base);
+    for (const path of ['/install', '/gdpr']) {
+      const html = readFileSync(new URL(`${path.slice(1)}/index.html`, DIST), 'utf8');
+      const description = decode(html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '');
+      assert.ok(description.length > 40, `${path}: no description in the built page`);
+      const line = short.split('\n').find((l) => l.startsWith('- [') && names(l, path)) ?? '';
+      assert.ok(line.includes(description), `llms.txt: the line of ${path} does not carry the description «${description}»: ${line}`);
+      const heading = full.split('\n').findIndex((l) => l.startsWith('## ') && names(l, path));
+      assert.ok(heading > -1, `llms-full.txt: no «## … — https://typelessity.com${path}» section`);
+      const section = full.split('\n').slice(heading + 1).join('\n').split('\n---')[0];
+      assert.ok(section.includes(description), `llms-full.txt: the section of ${path} does not carry the description «${description}»`);
+    }
+  });
+});

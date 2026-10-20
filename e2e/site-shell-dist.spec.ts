@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { BLOG_POSTS } from '../src/app/lib/blog-manifest.generated';
 
 // L3 (S4): what a crawler and a no-JavaScript visitor receive of the new shell — the bytes of every .html of the build. The
 // behaviour a person sees (themes, menu, fonts) is site-shell-theme.pw.ts; this reads the HTML itself.
@@ -153,5 +154,23 @@ test('(f) the header of every page holds both theme icons in the server HTML —
     const header = html.match(/<header\b[\s\S]*?<\/header>/)?.[0] ?? '';
     for (const icon of ['vc-theme-moon', 'vc-theme-sun']) if (!new RegExp(`class="${icon}"`).test(header)) problems.push(`${path}: no ${icon} in the header`);
   }
+  assert.deepEqual(problems, []);
+});
+
+// L10 (D2, FL-43): the link under «Guides» in the footer carries the title of the article it leads to. The words are a literal in the footer
+// template (an import of the manifest would put the bodies of the articles into the bundle of every page), so the seam is this test: it reads
+// the title from the article's manifest entry and the words of the link from the built HTML of every page with a footer, the 404 shell included.
+test('(g) the Guides link of the footer says the title of the article, on every page that has a footer', async () => {
+  const post = BLOG_POSTS.find((b) => b.slug === 'best-ai-booking-widgets-2026');
+  assert.ok(post, 'the comparison is not in the manifest');
+  const problems: string[] = [];
+  let checked = 0;
+  for (const [path, html] of withShell(await load())) {
+    const footer = html.match(/<footer[^>]*class="vc-footer"[\s\S]*?<\/footer>/)?.[0] ?? ''; // an article page has its own <footer> before the site's
+    const link = footer.match(/<a\b[^>]*\shref="\/blog\/best-ai-booking-widgets-2026"[^>]*>([^<]*)<\/a>/)?.[1]?.replace(/&#38;|&amp;/g, '&').trim();
+    checked++;
+    if (link !== post!.title) problems.push(`${path}: the footer link says «${link}», the article is «${post!.title}»`);
+  }
+  assert.ok(checked >= 28, `${checked} pages with a footer were read — fewer than the pages of the site`);
   assert.deepEqual(problems, []);
 });

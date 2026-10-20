@@ -137,33 +137,97 @@ test('/blog/cascade-corrections @320: inline code is not hyphenated inside a hyp
   expect(codes.filter((c) => c.hyphens !== 'none'), 'inline code that may be hyphenated').toEqual([]);
 });
 
+// L10 (D7): every address of the sitemap AND the 404 shell (the same header and footer, a page nobody measured), in both themes, and the open
+// menu. The 404 address is the one `sitemap-paths.ts` adds to its list (`SITEMAP_PATHS_WITH_404`); this file reads the sitemap itself so that a
+// missing build is a named failure, not an import error.
+const NOT_FOUND_PATH = '/404-not-a-page';
+
+/** One measurement of a page at one width, in the theme of the test; the body of the rule in `COLLECT`. */
+async function expectNothingWider(page: Page, path: string, width: number, label: string): Promise<void> {
+  await page.setViewportSize({ width, height: HEIGHT });
+  await page.goto(path);
+  if (path === NOT_FOUND_PATH) {
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
+    await expect(page.locator('app-not-found'), 'the 404 address shows the 404 screen (a measurement of another page proves nothing)').toHaveCount(1);
+  } else {
+    await settle(page);
+  }
+  if (path.startsWith('/blog/')) await expect(page.locator('.blog-post__body p')).not.toHaveCount(0);
+  // The reader opens the answers, so their text is measured too; two frames let the layout settle.
+  await page.evaluate(() => {
+    document.querySelectorAll('details').forEach((d) => { d.open = true; });
+    return new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+  });
+  await page.evaluate(async () => { await document.fonts.ready; });
+  const result = await page.evaluate(`(${COLLECT})(${JSON.stringify({ exceptions: EXCEPTIONS })})`) as {
+    offenders: string[]; candidates: number; scrollWidth: number; clientWidth: number;
+  };
+  expect(result.candidates, `elements measured on the page (a page that measures nothing proves nothing)`).toBeGreaterThan(10);
+  expect(result.offenders, `${label}: scrollWidth ${result.scrollWidth} / clientWidth ${result.clientWidth}`).toEqual([]);
+  expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
+}
+
 if (!sitemapError && paths.length > 0) {
+  const measured = [...paths, NOT_FOUND_PATH];
   for (const width of WIDTHS) {
-    for (const path of paths) {
+    for (const path of measured) {
       // L4 (F7): `/` runs the scripted demo (tips, a ring, a changing widget); it is measured still, with reduced motion.
       test.describe(path === '/' ? 'home, demo still' : 'page', () => {
-      if (path === '/') test.use(REDUCED_MOTION);
-      test(`${path} @${width}: nothing is wider than the window`, async ({ page }) => {
-        await page.setViewportSize({ width, height: HEIGHT });
-        await page.goto(path);
-        await settle(page);
-        if (path.startsWith('/blog/')) await expect(page.locator('.blog-post__body p')).not.toHaveCount(0);
-        // The reader opens the answers, so their text is measured too; two frames let the layout settle.
-        await page.evaluate(() => {
-          document.querySelectorAll('details').forEach((d) => { d.open = true; });
-          return new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+        if (path === '/') test.use(REDUCED_MOTION);
+        test(`${path} @${width}: nothing is wider than the window`, async ({ page }) => {
+          await expectNothingWider(page, path, width, `${path} @${width}`);
         });
-        await page.evaluate(async () => { await document.fonts.ready; });
-        const result = await page.evaluate(`(${COLLECT})(${JSON.stringify({ exceptions: EXCEPTIONS })})`) as {
-          offenders: string[]; candidates: number; scrollWidth: number; clientWidth: number;
-        };
-        expect(result.candidates, 'elements measured on the page (a page that measures nothing proves nothing)').toBeGreaterThan(10);
-        expect(result.offenders, `${path} @${width}: scrollWidth ${result.scrollWidth} / clientWidth ${result.clientWidth}`).toEqual([]);
-        expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
-      });
       });
     }
+  }
 
+  // L10: the dark theme at 390 — a different surface, other colours on the same boxes; every address and the 404 shell.
+  test.describe('dark theme', () => {
+    for (const path of measured) {
+      test.describe(path === '/' ? 'home, demo still' : 'page', () => {
+        test.use(path === '/' ? { colorScheme: 'dark', ...REDUCED_MOTION } : { colorScheme: 'dark' });
+        test(`${path} @390 dark: nothing is wider than the window`, async ({ page }) => {
+          await expectNothingWider(page, path, 390, `${path} @390 dark`);
+        });
+      });
+    }
+  });
+
+  // L10: the open menu is its own layer on top of the page (a fixed surface); it is measured open, at both widths where the burger shows,
+  // in both themes, on the address where the menu is first met.
+  for (const scheme of ['light', 'dark'] as const) {
+    for (const width of WIDTHS) {
+      test.describe(`open menu, ${scheme}`, () => {
+        test.use({ colorScheme: scheme, ...REDUCED_MOTION });
+        test(`/ @${width} ${scheme}: the open menu, and the page under it, are not wider than the window`, async ({ page }) => {
+          await page.setViewportSize({ width, height: HEIGHT });
+          await page.goto('/');
+          await settle(page);
+          const burger = page.getByRole('button', { name: /menu/i });
+          await expect(burger).toBeVisible();
+          await burger.click();
+          await expect(burger).toHaveAttribute('aria-expanded', 'true');
+          await expect(page.locator('.vc-mobile-menu')).toBeVisible();
+          await page.evaluate(async () => { await document.fonts.ready; });
+          const result = await page.evaluate(`(${COLLECT})(${JSON.stringify({ exceptions: EXCEPTIONS })})`) as {
+            offenders: string[]; candidates: number; scrollWidth: number; clientWidth: number;
+          };
+          const menu = await page.locator('.vc-mobile-menu').boundingBox();
+          expect(menu, 'the open menu has a box').not.toBeNull();
+          expect(menu!.x + menu!.width, `the open menu is inside the window (${width})`).toBeLessThanOrEqual(width + 0.5);
+          // The menu is a fixed box with `overflow-y: auto`, which makes its overflow-x `auto` too: the rule above skips what sits inside a scroller
+          // (it scrolls by itself), so a line too wide for the menu would only make the MENU scroll sideways. That is the defect, measured here
+          // (found in the mutation run, M10: a 700 px line in the open menu survived the rule above).
+          const menuScroll = await page.locator('.vc-mobile-menu').evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
+          expect(menuScroll.scrollWidth, `the open menu scrolls sideways (scrollWidth ${menuScroll.scrollWidth}, clientWidth ${menuScroll.clientWidth})`).toBeLessThanOrEqual(menuScroll.clientWidth);
+          expect(result.offenders, `/ @${width} ${scheme} with the menu open`).toEqual([]);
+          expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
+        });
+      });
+    }
+  }
+
+  for (const width of WIDTHS) {
     test.describe('home, demo still', () => {
       test.use(REDUCED_MOTION);
       test(`/ @${width}: the widget slot stays inside the hero column`, async ({ page }) => {

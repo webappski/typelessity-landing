@@ -17,7 +17,7 @@ export const EN: TranslationMap = {
   'nav.getStarted': 'Get it free',
 
   // ── Footer ──
-  'footer.tagline': 'AI conversational booking widget. Replace forms with natural chat in 25 languages.',
+  'footer.tagline': 'AI conversational booking widget: a chat instead of the booking form. The chat window comes in 25 languages.',
   'footer.product': 'Product',
   'footer.guides': 'Guides',
   'footer.allArticles': 'All articles',

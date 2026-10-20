@@ -39,8 +39,11 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
       /works (well )?in (Polish|German|Russian|Spanish)/i,
       /<title>[^<]*in 25 languages/i,
       /<h1[^>]*>[^<]*in 25 languages/i,
+      // L10 (D1): «natural chat in 25 languages» (the footer line, on every page) promises a conversation in 25 languages; the code has the
+      // chat WINDOW in 25 languages and replies in the language set for the business. «The chat window comes in 25 languages» stays legal.
+      /\bchat in \d+ languages/i,
     ],
-    mutants: ['Languages: 25+ (English)', 'Chinese, Korean and Arabic', 'It replies in the customer’s language', 'It detects the language', 'Say it in any of 25 languages', '<title>Booking widget in 25 languages</title>', 'It works in Polish', 'The chat works well in German'],
+    mutants: ['Languages: 25+ (English)', 'Chinese, Korean and Arabic', 'It replies in the customer’s language', 'It detects the language', 'Say it in any of 25 languages', '<title>Booking widget in 25 languages</title>', 'It works in Polish', 'The chat works well in German', 'Replace forms with natural chat in 25 languages.'],
     legal: 'The chat window comes in 25 languages; the assistant replies in the language you set.',
   },
   {
@@ -133,8 +136,10 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
     id: 'K14', name: 'mock-up working notes',
     // L4 (F14): the working note of the mock-up's demo said «… in this prototype»; the demo strings are held by home-demo-contract (C1(d)) on the
     // exported strings of demo-script.ts and demo-labels.ts, so the code's own `Element.prototype` never reaches this class.
-    patterns: [/Mock note/i, /Portal screenshot goes here/i, /Thin template/i, /the server answers 404/i, /\bprototype\b/i],
-    mutants: ['Mock note: replace', 'Portal screenshot goes here', 'Thin template', 'the server answers 404', 'the replies are scripted in this prototype'],
+    patterns: [/Mock note/i, /Portal screenshot goes here/i, /Thin template/i, /the server answers 404/i, /\bprototype\b/i,
+      // L10 (D8): the mock-up's own name for its frames; the dist scan (every file, `.js` too) holds it at 0.
+      /widget-states/i],
+    mutants: ['Mock note: replace', 'Portal screenshot goes here', 'Thin template', 'the server answers 404', 'the replies are scripted in this prototype', 'see widget-states'],
     legal: 'Typelessity is an AI booking widget.',
   },
 ];

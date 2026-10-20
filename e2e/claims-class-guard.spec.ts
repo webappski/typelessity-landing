@@ -607,3 +607,56 @@ test('footer.tagline names the language count of the code, without «+»', () =>
   assert.ok(tagline.includes(`${LANDING_LANGUAGES.length} languages`), `no «${LANDING_LANGUAGES.length} languages» in «${tagline}»`);
   assert.ok(!tagline.includes('+'), `a «+» in «${tagline}»`);
 });
+
+// ── L10 (2026-10-20) ─────────────────────────────────────────────────────────────────────────────────────────
+// (а) The ratchet and the dictionary read the whole page. The seven industry pages put their words into the title, the H1 and the description,
+// where a search result and an AI answer read them first; those three get a named check, with the slug in the report, so that a word coming
+// back to a page head is not found only as «the count grew». The outcome words are the ones industry-pages.spec.ts bans in the body: a head
+// that says «booked» or «scheduled» tells the visitor an outcome the widget does not give (it sends a request).
+const HEAD_OUTCOME_WORDS = /\bbook(s|ed)?\b|\bscheduled\b|—\s*done\b|configured for/gi;
+
+function headOf(html: string): string {
+  const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
+  const h1 = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, ' ') ?? '';
+  const description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '';
+  return [title, h1, description].join(' ¶ ');
+}
+
+test('L10(а) the title, the H1 and the description of each of the seven industry pages carry no word of the dictionary and no outcome word', () => {
+  const offenders: string[] = [];
+  for (const { slug } of SEVEN) {
+    const html = pages.get(`industries/${slug}/index.html`);
+    assert.ok(html, `industries/${slug}/index.html is not in the build`);
+    const head = headOf(html);
+    assert.ok(head.split(' ¶ ').every((part) => part.trim().length > 0), `${slug}: the title, the H1 or the description is empty — ${head}`);
+    const found = countClaims(head);
+    if (Object.keys(found).length) offenders.push(`${slug}: ${describeCounts(found)} — ${head.slice(0, 120)}`);
+    const outcomes = head.match(HEAD_OUTCOME_WORDS) ?? [];
+    if (outcomes.length) offenders.push(`${slug}: outcome word ${JSON.stringify(outcomes)} — ${head.slice(0, 120)}`);
+  }
+  assert.deepEqual(offenders, [], 'an industry page head says what the widget does not do');
+});
+
+// (б) The working notes of the mock-up and its own frame name. K14 holds them in the text of the pages; this reads EVERY file of the build,
+// the JS bundles included (a string of the demo or a template travels in a chunk, not in a page). `prototype` is not in this list: in JS it
+// is `Element.prototype`.
+const MOCK_LABELS: readonly RegExp[] = [/Mock note/i, /Portal screenshot goes here/i, /Thin template/i, /the server answers 404/i, /widget-states/i];
+
+test('L10(б) no file of the build — html, txt, xml, json, js — carries a working note or a frame name of the mock-up', () => {
+  const offenders: string[] = [];
+  for (const [path, body] of everything) for (const re of MOCK_LABELS) if (re.test(body)) offenders.push(`${path} ${re}`);
+  assert.ok(everything.size > EXPECTED_PAGES, 'the scan read the build (a scan of nothing proves nothing)');
+  assert.ok([...everything.keys()].some((p) => p.endsWith('.js')), 'the scan reads the JS bundles too');
+  assert.deepEqual(offenders, [], 'a mock-up label reached the build');
+});
+
+// The footer line of the code is the line of every page: the tagline of the translation file is printed as it is, and the dictionary class
+// «chat in N languages» is in K1 (the self-check above holds it with a mutant).
+test('L10 the footer tagline is on every prerendered page and on the 404 shell as the code has it, and says «The chat window comes in N languages»', () => {
+  const tagline = EN['footer.tagline'];
+  assert.match(tagline, new RegExp(`The chat window comes in ${LANDING_LANGUAGES.length} languages`), 'the tagline does not say that the chat WINDOW comes in 25 languages');
+  const html404 = [...everything].filter(([p]) => p.endsWith('404.html')).map(([, b]) => b);
+  assert.ok(html404.length >= 1, 'the 404 shell is not in the build');
+  const missing = [...pages].filter(([p]) => p.endsWith('index.html') || p.endsWith('404.html')).filter(([, b]) => !b.includes(tagline.replace(/&/g, '&amp;'))).map(([p]) => p);
+  assert.deepEqual(missing, [], 'pages whose footer does not print the tagline of the code');
+});

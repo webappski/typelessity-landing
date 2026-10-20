@@ -40,6 +40,12 @@ Embed: two lines of HTML — a `<script type="module">` tag loading https://type
 
 ---
 
+## Install — https://typelessity.com/install
+
+Set up Typelessity in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system.
+
+---
+
 ## Pricing — https://typelessity.com/pricing
 
 The Free Pilot is open, and every tier starts with it: sign in at https://webappski.com/en/portal/login?start=typelessity and set Typelessity up in the portal — step by step, or with your own AI writing the configuration.
@@ -127,6 +133,12 @@ Articles on booking by chat: how the engine works, how the pilot is priced, how 
 - Cascade corrections in conversational booking — how dependency-graph walks clear stale downstream data on field changes.
 - Whisper vs Web Speech API for booking voice — how Typelessity transcribes voice today (OpenAI gpt-4o-mini-transcribe).
 - What typelessity.com publishes for AI agents — JSON-LD, llms.txt and the /for-ai-agents page, and what no AI engine has promised us.
+
+---
+
+## GDPR — https://typelessity.com/gdpr
+
+Consent before the chat starts; service and database in the EU; OpenAI and Resend in the US with safeguards. Five checks for any AI booking widget.
 
 ---
 

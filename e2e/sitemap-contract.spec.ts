@@ -81,6 +81,20 @@ test('sitemap: the set of addresses is the set of prerendered pages, each page c
   }
 });
 
+// L10 (point 6 of the brief): a crawler without JavaScript reads the <title> of the file it gets. A page prerendered with the title of another page
+// (the shell's, or the home page's) is a page that says nothing of its own; every address has its own, and no two are the same.
+test('sitemap: every prerendered page has its own <title>, and no title is printed by two pages', () => {
+  const byTitle = new Map<string, string[]>();
+  for (const p of prerenderedPaths()) {
+    const html = read(p === '/' ? 'index.html' : `${p.slice(1)}/index.html`);
+    const title = html.match(/<title>([^<]*)<\/title>/)?.[1]?.trim();
+    assert.ok(title, `${p}: no <title> in the prerendered file`);
+    byTitle.set(title!, [...(byTitle.get(title!) ?? []), p]);
+  }
+  assert.ok(byTitle.size >= 28, `the titles of ${byTitle.size} pages were read — fewer than the 28 addresses of the sitemap`);
+  assert.deepEqual([...byTitle].filter(([, ps]) => ps.length > 1).map(([t, ps]) => `${t} ← ${ps.join(', ')}`), [], 'two pages print the same <title>');
+});
+
 test('sitemap: no address is the source of a redirect in vercel.json', () => {
   const vj = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8')) as { redirects: { source: string }[] };
   for (const e of entries) for (const r of vj.redirects) {
