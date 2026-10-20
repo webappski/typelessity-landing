@@ -100,19 +100,19 @@ test('J0 the doors map: which JSON-LD each of the 22 pages carries, both ways', 
   await t.test('the set of top-level @type per page is exactly the written map', () => {
     const expected: Record<string, string[]> = {
       'index.html': ['Organization', 'SoftwareApplication', 'WebSite'],
-      'for-ai-agents/index.html': ['BreadcrumbList', 'Organization', 'SoftwareApplication'],
+      'for-ai-agents/index.html': ['Organization', 'SoftwareApplication'],
       'pricing/index.html': ['SoftwareApplication'],
       'about/index.html': ['AboutPage'],
-      'gdpr/index.html': ['BreadcrumbList'],
-      'legal/security/index.html': ['BreadcrumbList'],
+      'gdpr/index.html': [],
+      'legal/security/index.html': [],
       'faq/index.html': [],
-      'blog/index.html': ['Blog', 'BreadcrumbList'],
+      'blog/index.html': ['Blog'],
       'how-it-works/index.html': [],
       'install/index.html': [],
       '404.html': [],
       'index.csr.html': [],
     };
-    for (const slug of ARTICLES) expected[articlePage(slug)] = ['Article', 'BreadcrumbList'];
+    for (const slug of ARTICLES) expected[articlePage(slug)] = ['Article'];
     const bad: string[] = [];
     for (const [rel, ld] of LD) {
       const got = sortedUnique(ld.top.flatMap(typesOf));
@@ -164,13 +164,15 @@ test('J3 one product: a single #software on three pages, no Product, no #product
     assert.deepEqual(bad, []);
   });
 
-  await t.test('the three #software nodes are equal once offers is set aside (Р2: no offers on /for-ai-agents)', () => {
-    const strip = (n: Obj) => { const { offers: _offers, ...rest } = n; return rest; };
+  // L12 (C7, regression of FL-29): the one @id is described once, offers included — the four tiers, the month on the paid ones. A page that
+  // prints another set (the price without its period on /, no offers on /for-ai-agents) tells a crawler two things about one product.
+  await t.test('the three #software nodes are equal, offers included (the four tiers, unitCode MON on the paid ones)', () => {
     const nodes = THREE.map((rel) => {
       const n = LD.get(rel)!.top.find((x) => x['@id'] === SOFTWARE_ID);
       assert.ok(n, `${rel}: no top-level #software node`);
-      return strip(n!);
+      return n!;
     });
+    assert.ok(Array.isArray(nodes[0]['offers']) && (nodes[0]['offers'] as Obj[]).length === TIERS.length, '/ prints no offers list of four');
     assert.deepEqual(nodes[1], nodes[0], '/for-ai-agents differs from /');
     assert.deepEqual(nodes[2], nodes[0], '/pricing differs from /');
   });
@@ -239,10 +241,10 @@ const tierTable = (): Array<[string, number]> => {
   return names.map((n, i) => [n, prices[i]]);
 };
 
-test('J5 offers: the visible table, the markup on / and /pricing, nothing where the price is not shown', async (t) => {
-  await t.test('(а) offers of #software on / and /pricing = the visible tier table = the product literal; EUR, InStock, url /pricing', () => {
+test('J5 offers: the visible table, the markup on /, /pricing and /for-ai-agents, nothing where the price is not shown', async (t) => {
+  await t.test('(а) offers of #software on the three pages = the visible tier table = the product literal; EUR, InStock, url /pricing', () => {
     assert.deepEqual(tierTable(), TIERS.map(([n, p]) => [n, p]), 'the visible table on /pricing is not the product price list');
-    for (const rel of ['index.html', 'pricing/index.html']) {
+    for (const rel of THREE) {
       const node = LD.get(rel)!.top.find((n) => n['@id'] === SOFTWARE_ID);
       assert.ok(node, `${rel}: no top-level #software node`);
       const offers = node!['offers'];
@@ -257,7 +259,7 @@ test('J5 offers: the visible table, the markup on / and /pricing, nothing where 
     }
   });
 
-  await t.test('(в) offers sit on exactly / and /pricing, and every price of every offer is visible text on its page', () => {
+  await t.test('(в) offers sit on exactly the three pages that print #software, and every price of every offer is visible text on its page', () => {
     const bad: string[] = [];
     const withOffers: string[] = [];
     for (const [rel, ld] of LD) {
@@ -271,11 +273,13 @@ test('J5 offers: the visible table, the markup on / and /pricing, nothing where 
         if (!new RegExp(`€${p}(?![\\d.,])`).test(text)) bad.push(`${rel}: price €${p} (${String(o['name'])}) is not shown on the page`);
       }
     }
-    if (JSON.stringify(withOffers.sort()) !== JSON.stringify(['index.html', 'pricing/index.html'])) bad.push(`pages with offers: [${withOffers}], want [index.html,pricing/index.html]`);
+    if (JSON.stringify(withOffers.sort()) !== JSON.stringify([...THREE].sort())) bad.push(`pages with offers: [${withOffers}], want [${[...THREE].sort()}]`);
     assert.deepEqual(bad, []);
   });
 
-  await t.test('(г) the period is visible ⇔ it is in the markup: a tier with «/ month» on the page has priceSpecification unitCode MON (UN/CEFACT Rec 20: month), and only such a tier; no billingDuration anywhere', () => {
+  // L12: the period is read from what a visitor sees, in either of two forms: a tier card of /pricing («€39» and «/ month» in its price line) or the
+  // sentence «<tier> €<price> a month» in the text of the page (the FAQ answer of /, the price line of /for-ai-agents). Both directions are held.
+  await t.test('(г) the period is visible ⇔ it is in the markup: a tier with «a month» on the page has priceSpecification unitCode MON (UN/CEFACT Rec 20: month), and only such a tier; no billingDuration anywhere', () => {
     const bad: string[] = [];
     for (const [rel, ld] of LD) for (const n of ld.all) if ('billingDuration' in n) bad.push(`${rel}: billingDuration`);
     for (const [rel, ld] of LD) {
@@ -284,20 +288,21 @@ test('J5 offers: the visible table, the markup on / and /pricing, nothing where 
       if (!offers.length) continue;
       const cards = [...HTML.get(rel)!.matchAll(/<article\b[^>]*class="[^"]*\btier\b[^"]*"[\s\S]*?<\/article>/g)].map((m) => m[0]);
       const shown = new Set(cards.filter((c) => /class="tier__period"[^>]*>\s*\/\s*month/.test(c)).map((c) => c.match(/class="tier__name"[^>]*>\s*([^<]*?)\s*</)?.[1] ?? '?'));
+      const text = pageText(rel);
+      for (const [name, price] of TIERS) if (new RegExp(`(?<![\\w])${name} €${price} a month`).test(text)) shown.add(name);
       const marked = new Set(offers.filter((o) => isObj(o['priceSpecification']) && o['priceSpecification']['unitCode'] === 'MON').map((o) => String(o['name'])));
       for (const o of offers) {
         const spec = o['priceSpecification'];
         if (spec === undefined) continue;
         assert.ok(isObj(spec) && spec['@type'] === 'UnitPriceSpecification' && String(spec['price']) === String(o['price']) && spec['priceCurrency'] === 'EUR', `${rel}: ${String(o['name'])} priceSpecification is not a UnitPriceSpecification of its own price in EUR`);
       }
-      for (const n of shown) if (!marked.has(n)) bad.push(`${rel}: «/ month» is shown for ${n}, the markup has no unitCode MON`);
-      for (const n of marked) if (!shown.has(n)) bad.push(`${rel}: unitCode MON for ${n}, the page does not show «/ month»`);
+      for (const n of shown) if (!marked.has(n)) bad.push(`${rel}: «a month» is shown for ${n}, the markup has no unitCode MON`);
+      for (const n of marked) if (!shown.has(n)) bad.push(`${rel}: unitCode MON for ${n}, the page does not show «a month»`);
     }
     assert.deepEqual(bad, []);
-    // on /pricing the three paid tiers (and only they) carry it; on / the period is not shown yet, so nothing is marked (L4 turns it on)
+    // on each of the three pages the three paid tiers (and only they) carry it
     const priced = (rel: string) => ((LD.get(rel)!.top.find((n) => n['@id'] === SOFTWARE_ID)!['offers'] as Obj[]).filter((o) => isObj(o['priceSpecification'])).map((o) => String(o['name'])));
-    assert.deepEqual(priced('pricing/index.html'), ['Starter', 'Pro', 'Enterprise']);
-    assert.deepEqual(priced('index.html'), []);
+    for (const rel of THREE) assert.deepEqual(priced(rel), ['Starter', 'Pro', 'Enterprise'], rel);
   });
 });
 
@@ -473,8 +478,8 @@ test('J13 designing-for-ai-agents lists only schema types that the pages it name
   assert.deepEqual(bad, []);
 });
 
-// ── J14 (L9): the blog list page carries Blog and its breadcrumb, built from the same strings as its <title> and meta ──
-test('J14 /blog carries a Blog node and a Home → Blog breadcrumb', async (t) => {
+// ── J14 (L9, L12): the blog list page carries Blog, built from the same strings as its <title> and meta; no breadcrumb is shown there, so none is marked ──
+test('J14 /blog carries a Blog node and no BreadcrumbList', async (t) => {
   const html = HTML.get('blog/index.html')!;
   const ld = LD.get('blog/index.html')!;
   const blog = ld.top.find((n) => hasType(n, 'Blog'));
@@ -493,10 +498,41 @@ test('J14 /blog carries a Blog node and a Home → Blog breadcrumb', async (t) =
     assert.equal(blog!['description'], meta);
     assert.ok(meta.length <= 155, `${meta.length} characters`);
   });
-  await t.test('the breadcrumb is Home → Blog', () => {
-    const crumb = ld.top.find((n) => hasType(n, 'BreadcrumbList'));
-    assert.ok(crumb, 'no BreadcrumbList');
-    const items = (crumb!['itemListElement'] as Obj[]).map((i) => `${String(i['position'])}:${String(i['name'])}:${String(i['item'])}`);
-    assert.deepEqual(items, [`1:Home:${SITE}`, `2:Blog:${SITE}/blog`]);
+  await t.test('no BreadcrumbList: the page shows no chain of breadcrumbs (L12, C5)', () => {
+    assert.equal(ld.all.filter((n) => hasType(n, 'BreadcrumbList')).length, 0);
+  });
+});
+
+// ── J15 (L12, C5): a BreadcrumbList is on a page exactly when the page shows the chain of breadcrumbs ──
+// Google, «Breadcrumb structured data» / sd-policies: «Don't mark up content that is not visible to readers of the page». «Visible chain» = the
+// <nav aria-label="Breadcrumb"> that the pattern of wave 2 (C6, articles) will print; until a page has it, the page has no markup. When both are
+// there, the names of the links are the names of the markup, in order.
+const CRUMB_NAV = /<nav\b[^>]*aria-label="Breadcrumb"[^>]*>([\s\S]*?)<\/nav>/i;
+test('J15 BreadcrumbList ⇔ a visible breadcrumb chain, on every page of dist', async (t) => {
+  await t.test('for every .html file: the markup is there exactly when <nav aria-label="Breadcrumb"> is', () => {
+    const bad: string[] = [];
+    for (const [rel, ld] of LD) {
+      const marked = ld.all.some((n) => hasType(n, 'BreadcrumbList'));
+      const shown = CRUMB_NAV.test(HTML.get(rel)!);
+      if (marked !== shown) bad.push(`${rel}: BreadcrumbList ${marked ? 'is' : 'is not'} in the markup, the chain ${shown ? 'is' : 'is not'} on the page`);
+    }
+    assert.deepEqual(bad, []);
+  });
+  await t.test('the card pages: /gdpr, /for-ai-agents, /blog, /legal/security and the 10 articles carry no BreadcrumbList', () => {
+    const rels = ['gdpr/index.html', 'for-ai-agents/index.html', 'blog/index.html', 'legal/security/index.html', ...ARTICLES.map(articlePage)];
+    assert.equal(rels.length, 14);
+    assert.deepEqual(rels.filter((rel) => /BreadcrumbList/.test(HTML.get(rel)!)), []);
+  });
+  await t.test('where a chain is shown, its link names are the names of the markup, in order', () => {
+    const bad: string[] = [];
+    for (const [rel, ld] of LD) {
+      const nav = HTML.get(rel)!.match(CRUMB_NAV)?.[1];
+      const crumb = ld.all.find((n) => hasType(n, 'BreadcrumbList'));
+      if (nav === undefined || !crumb) continue; // the first test reports a one-sided page
+      const names = (crumb['itemListElement'] as Obj[]).map((i) => String(i['name']));
+      const visibleNames = [...nav.matchAll(/<(?:a|span)\b[^>]*>([^<]*)</g)].map((m) => decode(m[1]).trim()).filter(Boolean);
+      if (JSON.stringify(visibleNames) !== JSON.stringify(names)) bad.push(`${rel}: shown [${visibleNames}], marked [${names}]`);
+    }
+    assert.deepEqual(bad, []);
   });
 });

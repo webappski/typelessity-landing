@@ -18,6 +18,15 @@
 
 .pricing-tiers { padding-block: 30px 60px; }
 
+// The date of the last edit of the prices (C15): small, quiet, under the four cards, left-aligned with them.
+.pricing-updated {
+  max-width: 1200px;
+  margin: 20px auto 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
 .home-tiers {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

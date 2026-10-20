@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
-import { blogLd, breadcrumbLd } from '../../core/seo/schemas';
+import { blogLd } from '../../core/seo/schemas';
 import { BLOG_POSTS } from '../../lib/blog-manifest.generated';
 import type { BlogPost } from '../../lib/types';
 
@@ -152,15 +152,10 @@ export class BlogListComponent implements OnInit, OnDestroy {
       name: this.t.t('seo.blog.title'),
       description: this.t.t('seo.blog.description'),
     }));
-    this.jsonLd.set('breadcrumb', breadcrumbLd([
-      { name: 'Home', path: '/' },
-      { name: 'Blog', path: '/blog' },
-    ]));
   }
 
   ngOnDestroy(): void {
     this.jsonLd.remove('blog');
-    this.jsonLd.remove('breadcrumb');
   }
 
   protected readingTime(body: string): number {

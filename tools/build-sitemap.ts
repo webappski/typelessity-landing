@@ -1,7 +1,7 @@
 // Build-time: generate sitemap.xml after `ng build`.
 // Reads the blog manifest, emits to dist/<project>/browser/.
 //
-// Every <lastmod> is a literal in this file or an article's own date. The generator reads no clock, no
+// Every <lastmod> is a literal in this file, the date of the prices page (PRICING_LAST_UPDATED, which that page also prints) or an article's own date. The generator reads no clock, no
 // git and no file time: a lastmod that moves with the build tells a crawler nothing (Google, «Build and
 // submit a sitemap»: use it for the date of the last significant update, and only if accurate), and the
 // clone Vercel builds from has no full history. <changefreq> and <priority> are ignored by Google and
@@ -12,6 +12,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { BLOG_POSTS } from '../src/app/lib/blog-manifest.generated';
+import { PRICING_LAST_UPDATED } from '../src/app/pages/pricing/pricing.content';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SITE = 'https://typelessity.com';
@@ -28,22 +29,28 @@ interface Url {
 // when a date is earlier than the result of these two commands.
 const STATIC_PATHS: Url[] = [
   // L11 (2026-10-20): the home page has one block for «any business that takes bookings»; L4 (2026-10-20): it was rebuilt (title, description, H1, the demo, six questions of /faq).
-  { path: '/', lastmod: '2026-10-20' },
+  // L12 (2026-10-21): the promo card is wrapped in data-nosnippet, the product node prints the four prices with their month.
+  { path: '/', lastmod: '2026-10-21' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
   { path: '/install', lastmod: '2026-10-19' },
   // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
-  { path: '/pricing', lastmod: '2026-10-20' },
-  { path: '/gdpr', lastmod: '2026-10-19' },
+  // L12 (2026-10-21): the page prints «Prices last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
+  { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
+  // L12 (2026-10-21): the page no longer carries BreadcrumbList (no breadcrumb is shown).
+  { path: '/gdpr', lastmod: '2026-10-21' },
   // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
-  { path: '/for-ai-agents', lastmod: '2026-10-20' },
+  // L12 (2026-10-21): no BreadcrumbList; the product node has its four offers; a price line in the list of resources.
+  { path: '/for-ai-agents', lastmod: '2026-10-21' },
   { path: '/faq', lastmod: '2026-10-19' },
   { path: '/about', lastmod: '2026-10-19' },
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
-  { path: '/blog', lastmod: '2026-10-20' },
+  // L12 (2026-10-21): the list no longer carries BreadcrumbList.
+  { path: '/blog', lastmod: '2026-10-21' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here
   // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.
-  { path: '/legal/security', lastmod: '2026-10-19' },
+  // L12 (2026-10-21): the page no longer carries BreadcrumbList (no breadcrumb is shown).
+  { path: '/legal/security', lastmod: '2026-10-21' },
 ];
 
 /** A post's date is its own: the last update, else the day it was published. */

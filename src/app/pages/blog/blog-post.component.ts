@@ -18,7 +18,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { articleLd, breadcrumbLd } from '../../core/seo/schemas';
+import { articleLd } from '../../core/seo/schemas';
 import { getBlogPostBySlug } from '../../lib/blog-manifest.generated';
 
 @Component({
@@ -94,7 +94,6 @@ export class BlogPostComponent implements AfterViewInit {
       const p = this.post();
       if (!p) {
         this.jsonLd.remove('article');
-        this.jsonLd.remove('breadcrumb');
         return;
       }
       this.seo.apply({
@@ -108,11 +107,6 @@ export class BlogPostComponent implements AfterViewInit {
         author: p.author,
       });
       this.jsonLd.set('article', articleLd(p));
-      this.jsonLd.set('breadcrumb', breadcrumbLd([
-        { name: 'Home', path: '/' },
-        { name: 'Blog', path: '/blog' },
-        { name: p.title, path: `/blog/${p.slug}` },
-      ]));
     });
   }
 

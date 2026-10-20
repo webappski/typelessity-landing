@@ -3,6 +3,13 @@
 // product's developer-tiers.ts and e2e/pricing-faq-facts.spec.ts reads that file. Nothing here repeats them as a literal,
 // except the capsule and the answers below, which that spec reads too.
 
+/**
+ * The date of the last edit of the prices page, `YYYY-MM-DD`. One source for two readers: the visible line under the tiers («Prices last
+ * updated …», pricing-page.component.ts) and the `<lastmod>` of /pricing in tools/build-sitemap.ts. e2e/sitemap-contract.spec.ts holds that the
+ * two are the same day in the built bytes, and that a page is not dated before its last edit; edit anything in this folder, move this date.
+ */
+export const PRICING_LAST_UPDATED = '2026-10-21';
+
 export const PRICING_PAGE = {
   kicker: 'Pricing',
   h1: 'Typelessity pricing: free pilot, then from €39',

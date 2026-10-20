@@ -2,8 +2,6 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { JsonLdService } from '../../core/seo/json-ld.service';
-import { breadcrumbLd } from '../../core/seo/schemas';
 import { pilotSignupUrl } from '../home/home.content';
 import { GDPR } from './gdpr.content';
 
@@ -93,7 +91,6 @@ import { GDPR } from './gdpr.content';
 export class GdprPageComponent implements OnInit {
   protected readonly t = inject(TranslationService);
   private readonly seo = inject(SeoService);
-  private readonly jsonLd = inject(JsonLdService);
   protected readonly c = GDPR;
   protected readonly signupUrl = pilotSignupUrl;
 
@@ -107,9 +104,5 @@ export class GdprPageComponent implements OnInit {
       path: '/gdpr',
       titleHasBrand: true,
     });
-    this.jsonLd.set('breadcrumb', breadcrumbLd([
-      { name: 'Home', path: '/' },
-      { name: 'Data & privacy', path: '/gdpr' },
-    ]));
   }
 }

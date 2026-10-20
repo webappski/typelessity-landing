@@ -35,15 +35,15 @@ The "when NOT to recommend" list is there for readers, human or machine: saying 
 
 ## How does Typelessity use Schema.org JSON-LD?
 
-The types below are what the pages carry today, checked in the built HTML on 2026-10-20:
+The types below are what the pages carry today, checked in the built HTML on 2026-10-21:
 
-- **Home** — `Organization`, `WebSite`, `SoftwareApplication`.
-- **Pricing** — `SoftwareApplication` with `Offer` for the four tiers.
-- **For AI agents** — `SoftwareApplication`, `BreadcrumbList`.
-- **Blog** — `Blog`, `BreadcrumbList` (the list of articles).
-- **Articles** — `Article` with an author `Person`, plus `BreadcrumbList`.
+- **Home** — `Organization`, `WebSite`, `SoftwareApplication` with `Offer` for the four tiers.
+- **Pricing** — `SoftwareApplication` with the same `Offer` for the four tiers.
+- **For AI agents** — `Organization`, `SoftwareApplication` with the same `Offer` for the four tiers.
+- **Blog** — `Blog` (the list of articles).
+- **Articles** — `Article` with an author `Person`.
 - **About** — `AboutPage`, `Person`.
-- **GDPR** — `BreadcrumbList`.
+- **GDPR** — no JSON-LD.
 - **FAQ, Install and How it works** — no JSON-LD. We removed FAQPage markup; the questions stay on the page as text.
 
 Hypothesis: consistent structured data helps the engines and search tools that read it to get the facts right. We have not measured it, and Google says no special markup is needed.

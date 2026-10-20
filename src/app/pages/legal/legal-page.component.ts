@@ -4,9 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { MarkdownComponent } from 'ngx-markdown';
 import { TranslationService } from '../../i18n/translation.service';
-import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
-import { breadcrumbLd } from '../../core/seo/schemas';
 
 
 // privacy/terms/dpa/sub-processors are 308-redirected to webappski.com at SSR layer (see app.routes.server.ts).
@@ -82,7 +80,6 @@ export class LegalPageComponent {
   protected readonly t = inject(TranslationService);
   private readonly route = inject(ActivatedRoute);
   private readonly seo = inject(SeoService);
-  private readonly jsonLd = inject(JsonLdService);
 
   protected readonly docs = LEGAL_DOCS;
   protected readonly doc = toSignal(
@@ -103,10 +100,6 @@ export class LegalPageComponent {
         description: c.body.split('\n\n')[0].replace(/[*#]/g, '').slice(0, 200),
         path: `/legal/${d}`,
       });
-      this.jsonLd.set('breadcrumb', breadcrumbLd([
-        { name: 'Home', path: '/' },
-        { name: c.title, path: `/legal/${d}` },
-      ]));
     });
   }
 

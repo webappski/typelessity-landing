@@ -68,13 +68,13 @@ export function websiteLd(): Json {
 }
 
 /**
- * The one product node (`#software`). `offers` are the tiers the page shows (HOME.pricing.tiers), so it is passed
- * only where those prices are visible text: `/` and `/pricing`; `/for-ai-agents` states none (`{ offers: false }`).
- * `period` adds `priceSpecification` with `unitCode: 'MON'` to the tiers that print «/ month» (L2 decision R2, L6): only where
- * that text is visible, so /pricing passes it and / does not yet (L4). `MON` = month, UN/CEFACT Recommendation 20.
+ * The one product node (`#software`). Every page that prints it (`/`, `/pricing`, `/for-ai-agents`) prints the same
+ * `offers`: the four tiers of HOME.pricing.tiers, and `priceSpecification` with `unitCode: 'MON'` on the tiers that have a
+ * period (the paid ones). `MON` = month, UN/CEFACT Recommendation 20. The three pages show the prices as visible text
+ * («Starter €39 a month» in the FAQ answer of `/`, the tier cards of `/pricing`, the price line of `/for-ai-agents`);
+ * e2e/jsonld-contract.spec.ts J3 compares the three nodes with `offers` included, J5 holds the visible side (L12, C7).
  */
-export function softwareApplicationLd(opts: { offers?: boolean; period?: boolean } = {}): Json {
-  const withOffers = opts.offers !== false;
+export function softwareApplicationLd(): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -94,28 +94,24 @@ export function softwareApplicationLd(opts: { offers?: boolean; period?: boolean
       'Booking sent to your endpoint (REST) or by email',
     ],
     publisher: orgRef(),
-    ...(withOffers
-      ? {
-          offers: HOME.pricing.tiers.map((tier) => ({
-            '@type': 'Offer',
-            name: tier.name,
-            price: tier.price.replace('€', ''),
-            priceCurrency: 'EUR',
-            url: canonicalUrl('/pricing'),
-            availability: 'https://schema.org/InStock',
-            ...(opts.period && 'period' in tier
-              ? {
-                  priceSpecification: {
-                    '@type': 'UnitPriceSpecification',
-                    price: tier.price.replace('€', ''),
-                    priceCurrency: 'EUR',
-                    unitCode: 'MON',
-                  },
-                }
-              : {}),
-          })),
-        }
-      : {}),
+    offers: HOME.pricing.tiers.map((tier) => ({
+      '@type': 'Offer',
+      name: tier.name,
+      price: tier.price.replace('€', ''),
+      priceCurrency: 'EUR',
+      url: canonicalUrl('/pricing'),
+      availability: 'https://schema.org/InStock',
+      ...('period' in tier
+        ? {
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: tier.price.replace('€', ''),
+              priceCurrency: 'EUR',
+              unitCode: 'MON',
+            },
+          }
+        : {}),
+    })),
   };
 }
 

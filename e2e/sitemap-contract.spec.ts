@@ -5,6 +5,7 @@ import { join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
 import { expectedSitemapCount, GONE_SLUGS } from './retired-industries';
+import { PRICING_LAST_UPDATED } from '../src/app/pages/pricing/pricing.content';
 
 // What a crawler receives as sitemap.xml. Google, «Build and submit a sitemap» (read 2026-10-19):
 // <lastmod> is the date of the last significant update and is used only if consistently and verifiably
@@ -111,6 +112,18 @@ test('sitemap: posts carry updatedAt ?? publishedAt read from the article files,
     if (!e) continue; // a retired post is not listed
     assert.equal(e.lastmods[0], String(fm.updatedAt ?? fm.publishedAt), f);
   }
+});
+
+// L12 (C15): the date printed under the tiers of /pricing and the <lastmod> of /pricing are one date. Read from the built bytes of both files,
+// and from the one constant they both come from (pricing.content.ts, which tools/build-sitemap.ts imports).
+test('sitemap: «Prices last updated <date>» on /pricing is the lastmod of /pricing, printed once, as text', () => {
+  const html = read('pricing/index.html').replace(/<script[\s\S]*?<\/script>/gi, ' ');
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const printed = [...text.matchAll(/Prices last updated (\d{4}-\d{2}-\d{2})/g)].map((m) => m[1]);
+  assert.equal(printed.length, 1, `«Prices last updated» is printed ${printed.length} times`);
+  const lastmod = entries.find((e) => pathOf(e.loc) === '/pricing')?.lastmods[0];
+  assert.equal(printed[0], lastmod, 'the date on the page is not the lastmod of /pricing');
+  assert.equal(printed[0], PRICING_LAST_UPDATED, 'the date on the page is not the constant of pricing.content.ts');
 });
 
 function git(...args: string[]): string {

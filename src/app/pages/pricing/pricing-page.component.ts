@@ -7,7 +7,7 @@ import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { RouterLink } from '@angular/router';
 import { ContactFormComponent } from '../../shared/contact-form/contact-form.component';
 import { HOME, pilotSignupUrl } from '../home/home.content';
-import { PRICING_FAQ, PRICING_PAGE } from './pricing.content';
+import { PRICING_FAQ, PRICING_LAST_UPDATED, PRICING_PAGE } from './pricing.content';
 
 @Component({
   selector: 'app-pricing-page',
@@ -40,6 +40,7 @@ import { PRICING_FAQ, PRICING_PAGE } from './pricing.content';
           </article>
         }
       </div>
+      <p class="pricing-updated">Prices last updated {{ lastUpdated }}</p>
     </section>
 
     <section class="vc-wrap pricing-counts">
@@ -95,6 +96,7 @@ export class PricingPageComponent implements OnInit {
   protected readonly c = HOME;
   protected readonly pricingFaq = PRICING_FAQ;
   protected readonly p = PRICING_PAGE;
+  protected readonly lastUpdated = PRICING_LAST_UPDATED;
   /** «/ month» is drawn for the paid tiers only; the markup carries it for the same tiers (unitCode MON) */
   protected readonly hasPeriod = (tier: object): tier is { period: string } => 'period' in tier;
   // Tiers run Free Pilot → Enterprise, the same as on the home page: every tier starts with the free
@@ -108,6 +110,6 @@ export class PricingPageComponent implements OnInit {
       description: this.t.t('seo.pricing.description'),
       path: '/pricing',
     });
-    this.jsonLd.set('software', softwareApplicationLd({ period: true }));
+    this.jsonLd.set('software', softwareApplicationLd());
   }
 }

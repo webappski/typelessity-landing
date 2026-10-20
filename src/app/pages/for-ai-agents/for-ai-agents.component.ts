@@ -3,7 +3,8 @@ import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
-import { breadcrumbLd, organizationLd, softwareApplicationLd } from '../../core/seo/schemas';
+import { organizationLd, softwareApplicationLd } from '../../core/seo/schemas';
+import { HOME, PILOT_REQUESTS } from '../home/home.content';
 
 @Component({
   selector: 'app-for-ai-agents',
@@ -26,12 +27,17 @@ export class ForAiAgentsComponent implements OnInit {
       titleHasBrand: true,
     });
     this.jsonLd.set('organization', organizationLd());
-    this.jsonLd.set('software', softwareApplicationLd({ offers: false }));
-    this.jsonLd.set('breadcrumb', breadcrumbLd([
-      { name: 'Home', path: '/' },
-      { name: 'For developers & AI agents', path: '/for-ai-agents' },
-    ]));
+    this.jsonLd.set('software', softwareApplicationLd());
   }
+
+  /**
+   * The four prices as visible text (C7): the `offers` of `#software` are printed on this page too, and a price in the markup is a price
+   * on the page. Built from the tiers, in the words of the FAQ answer of `/` («Free Pilot €0 (50 booking requests a month), Starter €39 a month»):
+   * the free tier prints its limit (a comma right after «€0» would read as a decimal comma), the paid ones the month.
+   */
+  protected readonly priceLine = HOME.pricing.tiers
+    .map((tier) => `${tier.name} ${tier.price}${'period' in tier ? ' a month' : ` (${PILOT_REQUESTS} booking requests a month)`}`)
+    .join(', ');
 
   // The codes of SUPPORTED_LOCALES in packages/shared/src/i18n/types.ts of the product; e2e/gdpr-facts.spec.ts compares the sets.
   protected readonly languageCodes = 'en, ru, de, fr, es, it, pt, nl, pl, uk, cs, sk, hu, ro, bg, hr, sr, sl, el, tr, sv, da, fi, no, ja';
