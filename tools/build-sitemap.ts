@@ -38,7 +38,8 @@ const STATIC_PATHS: Url[] = [
   { path: '/for-ai-agents', lastmod: '2026-10-19' },
   { path: '/faq', lastmod: '2026-10-19' },
   { path: '/about', lastmod: '2026-10-19' },
-  { path: '/blog', lastmod: '2026-10-19' },
+  // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
+  { path: '/blog', lastmod: '2026-10-20' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here
   // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.
