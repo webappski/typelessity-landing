@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
+import { JsonLdService } from '../../core/seo/json-ld.service';
+import { blogLd, breadcrumbLd } from '../../core/seo/schemas';
 import { BLOG_POSTS } from '../../lib/blog-manifest.generated';
 import type { BlogPost } from '../../lib/types';
 
@@ -27,11 +29,9 @@ interface PostGroup {
           <span>The Typelessity Journal</span>
         </div>
         <h1 class="blog-hero__title">
-          Field notes on <em>conversational</em> AI&nbsp;booking.
+          AI booking guides <em>and comparisons</em>
         </h1>
-        <p class="blog-hero__sub">
-          Architecture decisions, latency math, compliance contours, and category essays from building the AI conversational booking widget.
-        </p>
+        <p class="blog-hero__sub">{{ t.t('seo.blog.description') }}</p>
         <div class="blog-hero__stats">
           <div><strong>{{ posts.length }}</strong><span>writeups</span></div>
           <div><strong>{{ totalWords() | number }}</strong><span>words</span></div>
@@ -101,9 +101,10 @@ interface PostGroup {
     </section>
   `,
 })
-export class BlogListComponent implements OnInit {
+export class BlogListComponent implements OnInit, OnDestroy {
   protected readonly t = inject(TranslationService);
   private readonly seo = inject(SeoService);
+  private readonly jsonLd = inject(JsonLdService);
   protected readonly posts = BLOG_POSTS;
 
   /** Featured = newest Comparison post, fallback to newest overall */
@@ -147,6 +148,19 @@ export class BlogListComponent implements OnInit {
       description: this.t.t('seo.blog.description'),
       path: '/blog',
     });
+    this.jsonLd.set('blog', blogLd({
+      name: this.t.t('seo.blog.title'),
+      description: this.t.t('seo.blog.description'),
+    }));
+    this.jsonLd.set('breadcrumb', breadcrumbLd([
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog' },
+    ]));
+  }
+
+  ngOnDestroy(): void {
+    this.jsonLd.remove('blog');
+    this.jsonLd.remove('breadcrumb');
   }
 
   protected readingTime(body: string): number {

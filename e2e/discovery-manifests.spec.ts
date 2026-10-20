@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { LANDING_LANGUAGES, NOT_SUPPORTED_LANGUAGES } from './claims-dictionary';
 
 // R42/R36 smoke for the discovery manifests (llms.txt / llms-full.txt). These are the first
@@ -172,4 +172,28 @@ test('manifests link the seven industry pages, never the bare /industries hub, a
   for (const slug of INDUSTRY_SLUGS) {
     assert.ok(existsSync(new URL(`industries/${slug}/index.html`, DIST)), `dist has no page for ${slug}`);
   }
+});
+
+// L9 (card D9, class «к»): the words of each blog link in llms.txt, and the start of each post line in llms-full.txt, are the
+// title in the article's front matter. An article renamed in the .mdx and left in the manifests is a stale name for a crawler.
+test('L9(к) the blog titles printed in llms.txt and llms-full.txt are the titles of the articles', async () => {
+  const titles = new Map<string, string>();
+  const blogDir = new URL('src/assets/content/blog/', ROOT);
+  for (const f of readdirSync(blogDir).filter((n) => n.endsWith('.mdx'))) {
+    const t = readFileSync(new URL(f, blogDir), 'utf8').match(/^title: "([^"]*)"/m)?.[1];
+    assert.ok(t, `${f} has no title`);
+    titles.set(f.replace(/\.mdx$/, ''), t!);
+  }
+  await withServer(async (base) => {
+    const [[, short], [, full]] = await fetchManifests(base);
+    const links = [...short.matchAll(/\[([^\]]+)\]\(https:\/\/typelessity\.com\/blog\/([a-z0-9-]+)\)/g)];
+    assert.ok(links.length >= 1, 'llms.txt links no article');
+    for (const [, words, slug] of links) assert.equal(words, titles.get(slug), `llms.txt: the link to /blog/${slug} says «${words}»`);
+    const at = full.indexOf('## Blog — https://typelessity.com/blog');
+    assert.ok(at > -1, 'llms-full.txt has no Blog section');
+    const rest = full.slice(at);
+    const lines = rest.slice(0, rest.indexOf('\n---') > -1 ? rest.indexOf('\n---') : rest.length).split('\n').filter((l) => l.startsWith('- '));
+    for (const l of lines) assert.ok([...titles.values()].some((t) => l.startsWith(`- ${t} — `)), `llms-full.txt line does not start with an article title: ${l.slice(0, 80)}`);
+    assert.equal(lines.length, 6, 'llms-full.txt lists a different number of selected posts than six');
+  });
 });

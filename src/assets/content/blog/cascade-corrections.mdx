@@ -1,16 +1,18 @@
 ---
-title: "Cascade-aware corrections: how to handle field dependencies in conversational booking"
-description: "When a user changes one field mid-booking, every field that depended on it must be cleared. Here is how Typelessity models field dependencies, walks them when a value changes, and asks the user before it clears anything."
+title: "Cascade corrections in conversational booking"
+description: "When a customer changes one detail mid-booking, the details that depended on it must be cleared. How Typelessity tracks this and asks first."
 publishedAt: "2026-05-21"
-updatedAt: "2026-09-27"
+updatedAt: "2026-10-20"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["bugs", "algorithms", "ux", "extraction"]
 ---
 
+> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the link to how the engine works is a link, and the list of verticals no longer names a transfer service, because there is no public transfer demo.
+
 > **Updated 2026-09-27 — what changed:** the example is an auto repair booking, not a clinic appointment: health data is not permitted under the Typelessity DPA. The post now describes what the engine does: the dependency list is called `dependsOn`, the user is asked before fields are cleared, and enrichments are fetched again when the user gives a new value — there is no ordered re-run. Gone: a reset message the widget never showed, the claim that abandonment after a cascade drops sharply (we did not measure it), a short code sample presented as the engine's code (it was not), and a cap on enrichments per config (the engine has none).
 
-<strong>Cascade-aware correction is a booking-form pattern in which editing one field clears every downstream field that depended on it. Typelessity declares dependencies in config (`dependsOn`), walks them depth-first when a filled field changes, asks the user before clearing anything, and drops the enrichment results that read a cleared field. Read /how-it-works for the full extraction pipeline.</strong>
+<strong>Cascade-aware correction is a booking-form pattern in which editing one field clears every downstream field that depended on it. Typelessity declares dependencies in config (`dependsOn`), walks them depth-first when a filled field changes, asks the user before clearing anything, and drops the enrichment results that read a cleared field. Read <a href="/how-it-works">how it works</a> for the full extraction pipeline.</strong>
 
 ## The bug this prevents
 
@@ -47,7 +49,7 @@ A field filled from an enrichment also depends on that enrichment's inputs: if t
 
 When a filled field changes, the engine builds the reverse map — for each field, the fields that depend on it — and walks it depth-first from the changed field. Every field it reaches that already holds a value goes on the list to clear. The dependency graph is in config, not in code, so a new vertical does not need changes to the orchestration layer.
 
-**Bottom line:** cascade behaviour is config-driven. The same engine handles an auto repair shop, a transfer service and every other vertical because the dependency shape lives in config alongside the field schema.
+**Bottom line:** cascade behaviour is config-driven. The same engine handles an auto repair shop and other verticals because the dependency shape lives in config alongside the field schema.
 
 ## Why not just clear every later field?
 

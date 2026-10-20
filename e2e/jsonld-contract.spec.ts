@@ -109,7 +109,7 @@ test('J0 the doors map: which JSON-LD each of the 30 pages carries, both ways', 
       'industries/index.html': ['BreadcrumbList'],
       'legal/security/index.html': ['BreadcrumbList'],
       'faq/index.html': [],
-      'blog/index.html': [],
+      'blog/index.html': ['Blog', 'BreadcrumbList'],
       'how-it-works/index.html': [],
       'install/index.html': [],
       '404.html': [],
@@ -306,11 +306,8 @@ test('J5 offers: the visible table, the markup on / and /pricing, nothing where 
 });
 
 test('J6 the word dictionary reads every JSON-LD block of dist, not the source', async (t) => {
-  // The two that stay until L9 rewrites their title and description: an exact class and number, not a loophole.
-  const EXCEPTIONS: Record<string, Record<string, number>> = {
-    'blog/25-languages-one-prompt/index.html': { K1: 1 },
-    'blog/pricing-ai-products/index.html': { K12: 1 },
-  };
+  // L9 rewrote the title and description of the two articles that were allowed one word each: no exception is left.
+  const EXCEPTIONS: Record<string, Record<string, number>> = {};
   const blocks = (pred: (type: string) => boolean) => {
     const out: string[] = [];
     for (const [rel, ld] of LD) {
@@ -444,22 +441,29 @@ test('J12 the «Updated» note in the body is the same date as updatedAt in the 
   assert.deepEqual(bad, []);
 });
 
-// ── J13: the taxonomy article describes the markup; L9 rewrites it. Red, shown in the report, does not block. ──
-test('J13 designing-for-ai-agents lists only schema types that the pages it names carry', { todo: 'L9' }, () => {
+// ── J13: the taxonomy article describes the markup; L9 rewrote it. The section must be found, or an empty run would pass. ──
+test('J13 designing-for-ai-agents lists only schema types that the pages it names carry', () => {
   const src = readFileSync(join(BLOG_DIR, 'designing-for-ai-agents.mdx'), 'utf8');
-  const section = src.slice(src.indexOf('## How does Typelessity use Schema.org JSON-LD'));
+  const at = src.indexOf('## How does Typelessity use Schema.org JSON-LD');
+  assert.ok(at > -1, 'the H2 «How does Typelessity use Schema.org JSON-LD» is not in the article');
+  const section = src.slice(at);
   const body = section.slice(0, section.indexOf('\n## ', 4) > -1 ? section.indexOf('\n## ', 4) : section.length);
   const pagesFor = (label: string): string[] => {
     if (/^Home/.test(label)) return ['index.html'];
-    if (/^FAQ/.test(label)) return ['faq/index.html'];
+    if (/^Pricing/.test(label)) return ['pricing/index.html'];
+    if (/^For AI agents/.test(label)) return ['for-ai-agents/index.html'];
     if (/^Industry/.test(label)) return SEVEN.map((i) => industryPage(i.slug));
-    if (/^Blog/.test(label)) return ARTICLES.map(articlePage);
+    if (/^Blog/.test(label)) return ['blog/index.html'];
+    if (/^Articles/.test(label)) return ARTICLES.map(articlePage);
     if (/^About/.test(label)) return ['about/index.html'];
-    if (/^Industries/.test(label)) return ['industries/index.html', 'blog/index.html', 'legal/security/index.html'];
+    if (/^GDPR/.test(label)) return ['gdpr/index.html'];
+    if (/^FAQ/.test(label)) return ['faq/index.html', 'install/index.html', 'how-it-works/index.html'];
     return [];
   };
+  const bullets = body.split('\n').filter((l) => l.startsWith('- **'));
+  assert.ok(bullets.length >= 5, `${bullets.length} bullets found in the section`);
   const bad: string[] = [];
-  for (const line of body.split('\n').filter((l) => l.startsWith('- **'))) {
+  for (const line of bullets) {
     const label = line.match(/^- \*\*([^*]+)\*\*/)![1];
     const pages = pagesFor(label);
     assert.ok(pages.length, `unmapped bullet «${label}»`);
@@ -467,6 +471,36 @@ test('J13 designing-for-ai-agents lists only schema types that the pages it name
     for (const type of claimed) for (const rel of pages) {
       if (!LD.get(rel)!.all.some((n) => hasType(n, type))) bad.push(`${label}: «${type}» is not on ${rel}`);
     }
+    // a bullet that names no type says «no JSON-LD»: the pages it names must carry none
+    if (!claimed.length) for (const rel of pages) if (LD.get(rel)!.all.length) bad.push(`${label}: says no JSON-LD, but ${rel} carries some`);
   }
   assert.deepEqual(bad, []);
+});
+
+// ── J14 (L9): the blog list page carries Blog and its breadcrumb, built from the same strings as its <title> and meta ──
+test('J14 /blog carries a Blog node and a Home → Blog breadcrumb', async (t) => {
+  const html = HTML.get('blog/index.html')!;
+  const ld = LD.get('blog/index.html')!;
+  const blog = ld.top.find((n) => hasType(n, 'Blog'));
+  await t.test('a Blog node with @id, url, name, description, inLanguage and a publisher that points at the Organization', () => {
+    assert.ok(blog, 'no Blog node');
+    assert.equal(blog!['@id'], `${SITE}/blog#blog`);
+    assert.equal(blog!['url'], `${SITE}/blog`);
+    assert.equal(blog!['inLanguage'], 'en');
+    assert.equal(isObj(blog!['publisher']) ? (blog!['publisher'] as Obj)['@id'] : undefined, ORG_ID);
+  });
+  await t.test('name is the title and description is the meta description of the page', () => {
+    const title = html.match(/<title>([^<]*)<\/title>/)![1];
+    const meta = html.match(/<meta name="description" content="([^"]*)"/)![1];
+    assert.equal(blog!['name'], 'Blog: AI booking guides and comparisons');
+    assert.ok(title.startsWith(String(blog!['name'])), `title «${title}» does not start with the Blog name`);
+    assert.equal(blog!['description'], meta);
+    assert.ok(meta.length <= 155, `${meta.length} characters`);
+  });
+  await t.test('the breadcrumb is Home → Blog', () => {
+    const crumb = ld.top.find((n) => hasType(n, 'BreadcrumbList'));
+    assert.ok(crumb, 'no BreadcrumbList');
+    const items = (crumb!['itemListElement'] as Obj[]).map((i) => `${String(i['position'])}:${String(i['name'])}:${String(i['item'])}`);
+    assert.deepEqual(items, [`1:Home:${SITE}`, `2:Blog:${SITE}/blog`]);
+  });
 });

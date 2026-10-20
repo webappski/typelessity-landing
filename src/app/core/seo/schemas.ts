@@ -165,6 +165,19 @@ export function articleLd(post: {
   };
 }
 
+export function blogLd(page: { name: string; description: string }): Json {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    '@id': `${canonicalUrl('/blog')}#blog`,
+    url: canonicalUrl('/blog'),
+    name: page.name,
+    description: page.description,
+    inLanguage: 'en',
+    publisher: orgRef(),
+  };
+}
+
 export function aboutPageLd(): Json {
   return {
     '@context': 'https://schema.org',

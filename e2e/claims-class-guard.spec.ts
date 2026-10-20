@@ -1,7 +1,7 @@
 import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { HOME } from '../src/app/pages/home/home.content';
 import { EN } from '../src/app/i18n/translations.en';
@@ -375,12 +375,13 @@ test('the home page names exactly the verticals that have a page', () => {
 
 // L1б: the 29 industries and 4 categories taken down must not be named on the pages that list or summarise the
 // verticals. Case does not matter; the class is the names of the retired industries and categories plus the phrases
-// that named them ('legal' alone is a fair word: «legal basis», «legal blockers»). The post
-// best-ai-booking-widgets-2026 still lists «legal practices, real estate» — it belongs to L9 (todo, not blocking).
-const RETIRED_GUARDED = ['index.html', 'industries/index.html', 'faq/index.html', 'for-ai-agents/index.html'];
-const RETIRED_TODO: Record<string, string> = { 'blog/best-ai-booking-widgets-2026/index.html': 'L9' };
+// that named them ('legal' alone is a fair word: «legal basis», «legal blockers»). L9 took the last one, the post
+// best-ai-booking-widgets-2026 («legal practices, real estate»), off its list: the ten articles and the /blog list are guarded too.
+const ARTICLE_PAGES = readdirSync(new URL('../src/assets/content/blog/', import.meta.url))
+  .filter((f) => f.endsWith('.mdx')).map((f) => `blog/${f.replace(/\.mdx$/, '')}/index.html`).sort();
+const RETIRED_GUARDED = ['index.html', 'industries/index.html', 'faq/index.html', 'for-ai-agents/index.html', 'blog/index.html', ...ARTICLE_PAGES];
 
-test('the home, hub, FAQ and for-ai-agents pages name none of the retired industries or categories', () => {
+test('the home, hub, FAQ, for-ai-agents, /blog and the ten articles name none of the retired industries or categories', () => {
   const offenders: string[] = [];
   for (const path of RETIRED_GUARDED) {
     const html = pages.get(path);
@@ -391,7 +392,7 @@ test('the home, hub, FAQ and for-ai-agents pages name none of the retired indust
     for (const term of RETIRED_TERMS) if (text.includes(term) || meta.includes(term)) offenders.push(`${path}: «${term}»`);
   }
   assert.deepEqual(offenders, [], 'a retired industry or category is still named');
-  for (const [path, owner] of Object.entries(RETIRED_TODO)) assert.ok(pages.has(path), `${path} (todo ${owner}) is gone — drop it from RETIRED_TODO`);
+  assert.equal(ARTICLE_PAGES.length, 10, 'the blog holds a different number of articles than the ten L9 guards');
 });
 
 test('every kept industry is named on the hub by its name, and in the right category', () => {

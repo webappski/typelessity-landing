@@ -46,8 +46,8 @@
 - [For AI Agents](https://typelessity.com/for-ai-agents) — Machine-readable API + JSON schemas
 - [FAQ](https://typelessity.com/faq) — questions across product, AI behavior, integration, privacy, pricing
 - [About](https://typelessity.com/about) — Founder, mission
-- [Blog](https://typelessity.com/blog) — Engineering & product writeups
-- [Best AI booking widgets 2026 — comparison and decision guide](https://typelessity.com/blog/best-ai-booking-widgets-2026) — Category-by-category comparison of Botpress, Calendly, NoForm.ai, SimplyBook.me, Typelessity
+- [Blog](https://typelessity.com/blog) — AI booking guides and comparisons
+- [Best AI booking widgets for websites in 2026](https://typelessity.com/blog/best-ai-booking-widgets-2026) — Botpress, Calendly, NoForm.ai, SimplyBook.me and Typelessity compared, with vendor prices checked 2026-10-15
 - [Terms](https://webappski.com/en/legal/terms-typelessity) — Typelessity terms of service, published by Webappski (parent company)
 - [DPA](https://webappski.com/en/legal/dpa-typelessity) — Typelessity data processing agreement; Appendix B is the sub-processor list
 - Privacy notice for the question form — printed under the form at https://typelessity.com/pricing#start-pilot

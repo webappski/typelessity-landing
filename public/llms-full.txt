@@ -119,14 +119,14 @@ Values: GPT decides, code orchestrates. Architecture is permanent, GTM is change
 
 ## Blog — https://typelessity.com/blog
 
-Engineering and product writeups. Selected posts:
+Articles on booking by chat: how the engine works, how the pilot is priced, how booking tools differ. Selected posts:
 
-- Best AI booking widgets 2026 — category-by-category comparison of Botpress, Calendly, NoForm.ai, SimplyBook.me, Typelessity.
-- 25 languages, one prompt — how the unified prompt handles every supported language without per-language code.
-- Single GPT call — why one model call per turn beats one call per field.
-- Cascade corrections — how dependency-graph walks clear stale downstream data on field changes.
-- Whisper vs Web Speech API — how Typelessity transcribes voice today (OpenAI gpt-4o-mini-transcribe).
-- Designing for AI agents — why a dedicated /for-ai-agents page complements llms.txt.
+- Best AI booking widgets for websites in 2026 — Botpress, Calendly, NoForm.ai, SimplyBook.me and Typelessity compared, with vendor prices checked 2026-10-15.
+- 25 interface languages, one booking prompt — the chat window comes in 25 languages; one prompt template, no per-language code.
+- Replacing a booking form with one GPT call — why one model call per turn beats one call per field.
+- Cascade corrections in conversational booking — how dependency-graph walks clear stale downstream data on field changes.
+- Whisper vs Web Speech API for booking voice — how Typelessity transcribes voice today (OpenAI gpt-4o-mini-transcribe).
+- What typelessity.com publishes for AI agents — JSON-LD, llms.txt and the /for-ai-agents page, and what no AI engine has promised us.
 
 ---
 

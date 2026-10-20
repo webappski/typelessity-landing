@@ -48,6 +48,6 @@ export const EN: TranslationMap = {
   'seo.about.description': 'Who builds Typelessity, how the booking assistant works and why a chat replaces the booking form.',
   'seo.forAiAgents.title': 'Typelessity for developers and AI agents: JSON shapes',
   'seo.forAiAgents.description': 'The JSON shapes of a Typelessity session and a submitted booking request, for developers and AI agents. The agent endpoint is not built yet.',
-  'seo.blog.title': 'Blog — Conversational booking, AI agents, integration patterns',
-  'seo.blog.description': 'Articles on replacing forms with chat, GPT-driven extraction, multi-language UX, enrichment patterns, and the agent web.',
+  'seo.blog.title': 'Blog: AI booking guides and comparisons',
+  'seo.blog.description': 'Articles on booking by chat: how the engine works, how the pilot is priced, and how booking tools differ.',
 };

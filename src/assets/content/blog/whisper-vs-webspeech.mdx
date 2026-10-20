@@ -1,16 +1,18 @@
 ---
-title: "Whisper vs Web Speech API: how Typelessity transcribes voice for booking"
-description: "The Web Speech API is built into Chromium browsers. Typelessity transcribes booking voice input on its own server instead — first with OpenAI Whisper, today with OpenAI gpt-4o-mini-transcribe. Here is what that path does, what it does not do, and what we have not measured."
+title: "Whisper vs Web Speech API for booking voice"
+description: "Typelessity transcribes booking voice on its server, first with Whisper, now with gpt-4o-mini-transcribe, not in the browser. What it does and does not do."
 publishedAt: "2026-05-21"
-updatedAt: "2026-09-25"
+updatedAt: "2026-10-20"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["voice", "whisper", "speech-recognition", "gpt-4o-mini-transcribe"]
 ---
 
+> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the paths in the text are links (with a link to how the product works), and one sentence is reworded: the transcription model works out the spoken language itself, the widget does not detect it.
+
 > **Updated 2026-09-25 — what changed:** Typelessity no longer transcribes with Whisper. Voice goes to OpenAI gpt-4o-mini-transcribe, and the conversation runs on OpenAI (currently gpt-5.4-mini). This post used to describe streamed audio, a fallback to the Web Speech API, a confidence prompt and per-clinic vocabulary in the transcription prompt; the widget has none of these, and the latency figures were not our measurements. The sections below now say what the code does.
 
-<strong>Typelessity transcribes booking voice input on its own server, not with the browser's Web Speech API. It started on OpenAI Whisper and today calls OpenAI gpt-4o-mini-transcribe. The widget records the user, sends the recording once when they stop, and feeds the transcript into the same extraction step as typed text. We have not measured transcription latency or accuracy on the current model, so this post quotes neither.</strong>
+<strong><a href="/how-it-works">Typelessity</a> transcribes booking voice input on its own server, not with the browser's Web Speech API. It started on OpenAI Whisper and today calls OpenAI gpt-4o-mini-transcribe. The widget records the user, sends the recording once when they stop, and feeds the transcript into the same extraction step as typed text. We have not measured transcription latency or accuracy on the current model, so this post quotes neither.</strong>
 
 The Web Speech API ships in Chromium browsers and costs the site nothing at the point of use. Typelessity does not use it for voice booking: voice goes to Typelessity's API, which calls an OpenAI speech-to-text model and pays for each request.
 
@@ -26,8 +28,8 @@ The Web Speech API ships in Chromium browsers and costs the site nothing at the 
 
 1. **Recording.** The widget records with the browser's `MediaRecorder`. The audio stays in the browser while the user speaks.
 2. **One upload.** When the user stops — or after two minutes — the widget sends the whole recording once to Typelessity's API. Nothing is sent while the user is still speaking.
-3. **Transcription.** The API calls OpenAI `gpt-4o-mini-transcribe` with one fixed prompt: *"Form data. Preserve email indicators as spoken words. Keep natural speech patterns."* The prompt is the same for every business and carries no names or domain terms. The widget sends no language hint, so the model detects the language itself.
-4. **Extraction.** The transcript enters the same extraction step as typed text — see /blog/single-gpt-call.
+3. **Transcription.** The API calls OpenAI `gpt-4o-mini-transcribe` with one fixed prompt: *"Form data. Preserve email indicators as spoken words. Keep natural speech patterns."* The prompt is the same for every business and carries no names or domain terms. The widget sends no language hint, so the transcription model works out the spoken language itself.
+4. **Extraction.** The transcript enters the same extraction step as typed text — see [Replacing a booking form with one GPT call](/blog/single-gpt-call).
 
 The audio is not saved; it exists only while it is being transcribed. While transcription runs, the widget shows the same typing indicator it shows for any turn. There is no fallback to the Web Speech API, and our transcription call returns no confidence score, so the widget cannot flag an uncertain word. The review screen, where the user sees every field before confirming, is where a misheard name gets caught.
 
@@ -35,7 +37,7 @@ The audio is not saved; it exists only while it is being transcribed. While tran
 
 ## What does this path cost in time?
 
-We have not measured transcription latency on the current model, so we do not quote a number. Voice adds one step before the conversation turn: the upload and the transcription call. The latency target the rest of the booking flow is designed for is in /blog/latency-budgets — a target, not a measurement.
+We have not measured transcription latency on the current model, so we do not quote a number. Voice adds one step before the conversation turn: the upload and the transcription call. The latency target the rest of the booking flow is designed for is in [A one-second latency target for AI booking](/blog/latency-budgets) — a target, not a measurement.
 
 ## Direct comparison summary
 
@@ -79,6 +81,6 @@ The API now has per-result confidence and a `phrases` list in the spec. We have 
 
 ---
 
-For the extraction pipeline that consumes the transcript, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the multilingual prompt, see [25 languages, one prompt](/blog/25-languages-one-prompt). For the latency target around voice input, see [Latency budgets](/blog/latency-budgets).
+For the extraction pipeline that consumes the transcript, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For the multilingual prompt, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For the latency target around voice input, see [A one-second latency target for AI booking](/blog/latency-budgets).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

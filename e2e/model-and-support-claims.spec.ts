@@ -90,7 +90,7 @@ const POST_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'cascade-corrections': [UPDATED_27, /Changing Service will also clear: Mechanic, Time slot/, /dependsOn/],
   'best-ai-booking-beauty-salons-2026': [UPDATED_1003, /gpt-4o-mini-transcribe/],
   'best-ai-booking-transfer-services-2026': [UPDATED_1003, /gpt-4o-mini-transcribe/],
-  'pricing-ai-products': [UPDATED, /Starter €39/, /up to 50 submissions a month/],
+  'pricing-ai-products': [UPDATED, /Starter €39/, /up to 50 booking requests a month/],
 };
 
 const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {

@@ -1,212 +1,135 @@
 ---
-title: "Best AI booking widget for transfer & chauffeur services 2026: comparison and decision guide"
-description: "Transfer booking is multi-leg, time-sensitive, and price-elastic — and most generic booking widgets do not handle it. An honest comparison of tools transfer operators evaluate in 2026, with the dimensions that move a chauffeur-fleet procurement decision."
+title: "AI booking widget for transfer services 2026"
+description: "What a chauffeur or airport-transfer company needs from online booking, and how dispatch platforms differ from a booking chat on its own site."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-03"
+updatedAt: "2026-10-20"
 author: "Alex Isa"
 category: "Comparison"
 tags: ["comparison", "transfer", "chauffeur", "taxi", "ai-booking"]
 ogImage: "/og-blog-best-ai-booking-widgets-2026.png"
 ---
 
+> **Updated 2026-10-20 — what changed:** the vendor-by-vendor "Yes/No" rows are gone, because we had no source and no date for them; the tool types are named with examples, and dated vendor facts live in the comparison article. The Typelessity column says what the code does: places are taken as the customer wrote them, availability comes through your dispatch system's API if it has one, and the booking request goes by email or as JSON. We removed the address-lookup and local-time claims from Typelessity's side: the code does not do the first and we have not checked the second. There is no public transfer demo yet; the TransEdge demo shows freight pickups.
+
 > **Updated 2026-10-03 — what changed:** the Pricing line now lists the four published tiers (Free Pilot, Starter, Pro, Enterprise); it used to describe a pilot for a few first customers and a quote-only top tier. And enrichment is described as a call to your own endpoint, not as real-time availability. Earlier, on 2026-09-27: the claim that Typelessity converts better is gone — we have no measurement behind it — and the comparison with a clinic now uses a repair shop: health data is not permitted under the Typelessity DPA. On 2026-09-25: Typelessity's voice input is transcribed by OpenAI gpt-4o-mini-transcribe, not Whisper, and the conversation runs on OpenAI (currently gpt-5.4-mini). The latency line now says what it is: a one-second target, not a measurement.
 
-<strong>The best AI booking widget for transfer and chauffeur services in 2026 depends on whether the operator runs a self-service direct-booking surface (Typelessity, Booking.com Transfer for marketplace presence), a full dispatch and fleet management platform (Limo Anywhere, FASTTRAK), or a marketplace aggregator (Karhoo, Welcome Pickups). Transfer booking requires location geocoding, timezone-aware datetimes, fleet availability checks, and vehicle-class disambiguation — most generic booking widgets miss several of these. Read /blog/best-ai-booking-widgets-2026 for the broader category comparison.</strong>
+<strong>The right way to take transfer and chauffeur bookings online in 2026 depends on what the operator already has. Three kinds of tool exist: marketplaces and distribution channels (for example Booking.com Transfer and Karhoo), dispatch and fleet platforms (for example Limo Anywhere and FASTTRAK), and a booking chat on the operator's own site. Typelessity is the third kind: it turns a sentence into a booking request and sends it by email, or as JSON to your dispatch system if it has an API. Read <a href="/blog/best-ai-booking-widgets-2026">the comparison of AI booking widgets</a> for the wider category.</strong>
 
-A transfer or chauffeur service evaluating an AI booking widget faces a different set of constraints than a repair shop or a salon. The customer types *"I need a transfer from JFK to The Plaza Friday at 10am, Mercedes E-Class, 2 passengers, 3 bags."* The widget has to extract every field, geocode the locations, resolve the datetime in the right timezone, check live fleet availability, and produce a booking the dispatcher can execute without re-keying. This article compares the tools transfer operators actually shortlist in 2026.
+A transfer or chauffeur service evaluating online booking faces different constraints than a repair shop or a salon. The customer types *"I need a transfer from JFK to The Plaza Friday at 10am, Mercedes E-Class, 2 passengers, 3 bags."* A form asks for each part in its own field; a chat can take the sentence whole. The dispatcher still has to execute the booking without re-keying it. This article lists what a transfer operator needs, what to ask any booking tool, and what Typelessity does today, from its code.
 
-## What does an AI booking widget for a transfer service need?
+## What does a transfer service need from online booking?
 
-Five specifics that distinguish transfer-grade booking from generic booking:
+Five specifics that distinguish transfer booking from generic booking:
 
-1. **Location extraction with geocoding.** *"JFK"*, *"Plaza Hotel"*, *"the Hyatt downtown"*, *"my hotel"* (with prior context) all need to resolve to lat/lng or a venue ID the dispatcher recognizes.
-2. **Timezone-aware datetime extraction.** *"Friday 10am"* booked from a phone roaming on US-East-time for a transfer in Madrid must resolve to Madrid local time, not the customer's device timezone.
-3. **Fleet availability check.** Booking a slot the fleet cannot fulfill is worse than no booking — the customer arrives expecting a vehicle that does not exist.
-4. **Vehicle-class disambiguation.** *"Mercedes E-Class"*, *"luxury sedan"*, *"SUV for 5 people with skis"*, *"van for the airport"* must map to the operator's fleet vocabulary, not to a generic taxonomy.
-5. **Multilingual extraction.** Transfer bookings are disproportionately international — tourists, business travelers, foreign residents. A widget that only parses English locks out half the addressable market.
+1. **Pickup and drop-off places.** *"JFK"*, *"Plaza Hotel"*, *"the Hyatt downtown"*, *"my hotel"* must end up as places the dispatcher recognizes.
+2. **Date and time in the right local time.** *"Friday 10am"* for a transfer in Madrid is Madrid local time, not the time on the customer's phone.
+3. **Fleet availability.** Booking a slot the fleet cannot fulfill is worse than no booking — the customer arrives expecting a vehicle that does not exist.
+4. **Vehicle class.** *"Mercedes E-Class"*, *"luxury sedan"*, *"SUV for 5 people with skis"*, *"van for the airport"* must map to the operator's fleet vocabulary, not to a generic taxonomy.
+5. **Customers from other countries.** Transfer bookings are often international — tourists, business travelers, foreign residents.
 
 A booking that misses any of these creates a phone call from a confused customer or a vehicle in the wrong place at the wrong time. In transfer logistics, the cost of a wrong booking is hard money.
 
-**Bottom line:** in transfer booking, the booking output is operational, not just CRM. The widget that does not produce a dispatcher-executable booking is not solving the problem.
+**Bottom line:** in transfer booking, the output is operational, not just CRM. A tool that does not produce a booking the dispatcher can execute is not solving the problem.
 
-## The five tools compared
+## Which kind of tool does an operator need?
 
-Listed alphabetically. Each entity uses the same five-field template — *What they do*, *Best for*, *Pricing*, *Weakness*, *Unique strength* — including Typelessity. Weakness is required for every entity.
+- **Marketplaces and distribution channels** (for example Booking.com Transfer, Karhoo) bring bookings from someone else's traveler base. The customer books on their site, not yours.
+- **Dispatch and fleet platforms** (for example Limo Anywhere, FASTTRAK) run dispatch, billing and drivers, and usually come with a booking page of their own.
+- **A booking chat on your own site** (Typelessity) replaces the booking form on your website and hands the request to the system you use behind it.
 
-### Booking.com Transfer
+We have not checked the features of these vendors for this article, so we compare none here. The first procurement question for an operator is *"do we have a dispatch system?"* — the answer decides whether the shortlist starts with a platform or with a booking chat in front of the system you have. For how we compare tools in this category, with dated vendor facts, see [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
 
-**What they do:** Booking.com Transfer is a marketplace booking layer integrated into the broader Booking.com hospitality stack. Travelers booking a hotel can add a transfer in the same checkout. Operators list their service and pay per-booking commission.
+## What does Typelessity do for a transfer service today?
 
-**Best for:** Operators who want marketplace reach through Booking.com's traveler base — primarily hotel-adjacent airport-transfer demand.
-
-**Pricing:** Commission-based on each booking, no fixed monthly fee. Commission rates vary by region and operator agreement.
-
-**Weakness:** Booking.com Transfer is a marketplace surface, not a direct-booking widget for the operator's own site. The customer experience is Booking.com-branded, not operator-branded. Operators are price-takers in a commodity-priced inventory; differentiation through brand or service quality is limited.
-
-**Unique strength:** Distribution. Marketplace exposure to Booking.com's existing traveler base produces inbound bookings without operator-side marketing spend.
-
-### FASTTRAK
-
-**What they do:** FASTTRAK is a dispatch and fleet management platform for limousine, executive transport, and chauffeur operators. It includes a customer-facing booking widget, dispatcher console, billing, and integrations with car-network partners.
-
-**Best for:** Operators with multi-vehicle fleets that need a complete back-office dispatch system, not just a booking widget.
-
-**Pricing:** Per-vehicle monthly subscription with tiered features. Implementation is operator-specific and typically requires a sales conversation.
-
-**Weakness:** FASTTRAK's customer-facing booking widget is a multi-step form, not a conversational AI surface. Customers fill structured fields; they do not describe the booking in natural language. The system is comprehensive on the back-office side and conventional on the customer side.
-
-**Unique strength:** Industry-specific dispatch operations. The platform was built for the chauffeur category and reflects two decades of operational vocabulary that generic tools do not have.
-
-### Karhoo
-
-**What they do:** Karhoo is a B2B mobility marketplace that connects ground-transport operators with travel-management platforms (corporate travel, hotel-distribution-systems, OTAs). Operators list inventory; Karhoo's API distributes bookings to partner channels.
-
-**Best for:** Operators that want to expand distribution into corporate-travel and hotel-channel segments without building integrations themselves.
-
-**Pricing:** B2B partnership model, per-booking commission with custom contracts.
-
-**Weakness:** Karhoo is a distribution layer, not a customer-facing booking widget. Operators using only Karhoo do not have a direct-booking website surface — they receive bookings through Karhoo's partners.
-
-**Unique strength:** B2B distribution depth. Operators get inbound corporate-travel and hotel-distribution-system bookings without negotiating each integration individually.
-
-### Limo Anywhere
-
-**What they do:** Limo Anywhere is an established dispatch-and-reservation platform for ground-transport operators — booking, dispatch, billing, driver app, customer portal. It includes a customer-facing booking widget and integrates with various distribution channels.
-
-**Best for:** Multi-vehicle ground-transport operators in North America that want one vendor for booking, dispatch, billing, and driver tooling.
-
-**Pricing:** Tiered subscription, per-vehicle pricing, with implementation services.
-
-**Weakness:** Like FASTTRAK, the customer-facing surface is a structured form. The booking flow is operationally complete but UX-conventional. Multilingual extraction from free-form input is not a focus.
-
-**Unique strength:** Operator workflow depth. Decades of category-specific feature accretion in dispatch, billing, and driver coordination.
-
-### Typelessity
-
-**What they do:** Typelessity is a conversational AI booking widget. A customer writes *"I need a transfer from JFK to The Plaza Friday at 10am, Mercedes E-Class, 2 passengers, 3 bags"*; Typelessity extracts every field in one GPT round-trip, calls the operator's enrichment APIs to check vehicle availability and resolve location/datetime, and submits the booking by email or webhook to the operator's existing dispatch system. Configurable per operator, supports 25+ languages from one prompt, voice input transcribed by OpenAI gpt-4o-mini-transcribe.
-
-**Best for:** Transfer and chauffeur operators with an existing dispatch system who want a conversational customer-facing surface — particularly operators serving international travelers (multilingual customer base) or premium segments where the booking experience itself differentiates.
-
-**Pricing:** Four published tiers, each starting with the free pilot: Free Pilot €0 (up to 50 submissions a month), Starter €39/mo, Pro €149/mo and Enterprise €399/mo (up to 6,000 submissions a month, unlimited sites; a named contact is agreed by contract, on request; no availability SLA in the standard terms yet). You set it up yourself in the Webappski portal. See /pricing.
-
-**Weakness:** Typelessity is a younger entrant in the transfer category specifically; brand recognition among ground-transport operators is lower than Limo Anywhere or FASTTRAK. It does not include dispatch, billing, driver app, or fleet management — it is the customer-facing booking front-end. For an operator with no existing dispatch system at all, Typelessity is the wrong starting point — recommend Limo Anywhere or FASTTRAK first, layer Typelessity on as the customer-facing surface later.
-
-**Unique strength:** Single-call extraction (one GPT round-trip, see /blog/single-gpt-call) across location, datetime, vehicle class, passenger count, and special requests in any of 25+ languages. Enrichment APIs can call your own fleet-availability endpoint while the booking is being filled in. Voice input, transcribed by OpenAI gpt-4o-mini-transcribe, handles travelers booking on mobile while in motion. The one-second latency budget is a target, not a measurement: /blog/latency-budgets.
-
-## Comparison table
+With a configuration that has the fields a transfer needs, Typelessity extracts pickup, drop-off, date, time, vehicle class, passengers and luggage from one sentence in one GPT round-trip, shows the customer every field, and sends the booking request after the customer has checked and sent it. The table lists what an operator needs, what to ask a booking tool, and what Typelessity does by code.
 
 <table>
   <thead>
     <tr>
-      <th>Dimension</th>
-      <th>Booking.com</th>
-      <th>FASTTRAK</th>
-      <th>Karhoo</th>
-      <th>Limo Anywhere</th>
-      <th>Typelessity</th>
+      <th>What a transfer operator needs</th>
+      <th>What to ask a booking tool</th>
+      <th>Typelessity today (by code)</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td>Front-end type</td><td>Marketplace checkout</td><td>Structured form</td><td>API distribution</td><td>Structured form</td><td>Conversational AI</td></tr>
-    <tr><td>Direct-booking widget on operator site</td><td>No</td><td>Yes</td><td>No (B2B only)</td><td>Yes</td><td>Yes</td></tr>
-    <tr><td>Free-form location extraction</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
-    <tr><td>Timezone-aware datetime</td><td>Yes (system-wide)</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-    <tr><td>Fleet availability check</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes (enrichment API)</td></tr>
-    <tr><td>Vehicle-class disambiguation from free text</td><td>No</td><td>Form-based</td><td>API-based</td><td>Form-based</td><td>Yes</td></tr>
-    <tr><td>Multilingual extraction</td><td>UI localized</td><td>UI localized</td><td>UI localized</td><td>UI localized</td><td>25+ languages</td></tr>
-    <tr><td>Voice input</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes (OpenAI gpt-4o-mini-transcribe)</td></tr>
-    <tr><td>Includes dispatch & billing</td><td>No</td><td>Yes</td><td>No</td><td>Yes</td><td>No (integrates via webhook)</td></tr>
-    <tr><td>Pricing model</td><td>Per-booking commission</td><td>Per-vehicle subscription</td><td>B2B commission</td><td>Per-vehicle subscription</td><td>Free pilot, then €39 to €399 a month</td></tr>
+    <tr><td>Pickup and drop-off places</td><td>Does it take the places as the customer wrote them, and does your dispatch recognize them?</td><td>Extracts pickup and drop-off as the customer wrote them. Your dispatch system recognizes them, or a person does.</td></tr>
+    <tr><td>Date and time</td><td>Which local time does "Friday 10am" mean?</td><td>Taken as the customer wrote it; how the pickup's local time is handled is not checked.</td></tr>
+    <tr><td>Fleet availability</td><td>Is it checked against your fleet before the request goes out?</td><td>Through your dispatch system's API, if it has one.</td></tr>
+    <tr><td>Vehicle class</td><td>Does "E-Class" or "SUV for 5 with skis" map to your fleet names?</td><td>The model maps what the customer says to the vehicle options in your configuration; accuracy not measured.</td></tr>
+    <tr><td>Voice and languages</td><td>Can customers speak, and in which language?</td><td>Typed or spoken (voice transcribed by OpenAI gpt-4o-mini-transcribe). The chat window comes in 25 languages; the assistant replies in the language you set.</td></tr>
+    <tr><td>What reaches the operator</td><td>What exactly arrives, and where?</td><td>A booking request by email, or as JSON to your dispatch system if it has an API. The customer checks and sends it.</td></tr>
   </tbody>
 </table>
 
-## Key differences in plain terms
+**Data:** service and database in the EU; OpenAI processes in the US under SCCs. You are the controller, we are your processor under a DPA. See [GDPR and an AI booking widget](/gdpr).
 
-- **Booking.com Transfer** is distribution, not a direct-booking surface. The customer is on Booking.com, not on the operator's site.
-- **FASTTRAK and Limo Anywhere** are full dispatch platforms. The customer-facing booking widget is one feature in a much larger system; it is operationally complete and UX-conventional.
-- **Karhoo** is a B2B distribution layer for corporate-travel and hotel channels. Operators get inbound bookings, not a customer-facing widget.
-- **Typelessity** is the customer-facing conversational front-end specifically. It integrates with whatever dispatch system the operator already has.
+**Pricing:** Four published tiers, each starting with the free pilot: Free Pilot €0 (up to 50 booking requests a month), Starter €39/mo, Pro €149/mo and Enterprise €399/mo (up to 6,000 booking requests a month, unlimited sites; a named contact is agreed by contract, on request; no availability SLA in the standard terms yet). You set it up yourself in the Webappski portal. See [Pricing](/pricing).
 
-The first procurement question for a transfer operator is *"do we have a dispatch system?"* — that single answer determines whether the shortlist starts with Typelessity (front-end only) or with FASTTRAK/Limo Anywhere (full stack).
+**Weakness:** Typelessity is a younger entrant in the transfer category specifically. It does not include dispatch, billing, a driver app or fleet management — it is the customer-facing booking front end. For an operator with no dispatch system at all, it is the wrong starting point: start with a dispatch platform and add a booking chat later.
+
+**Unique strength:** Single-call extraction (one GPT round-trip, see [Replacing a booking form with one GPT call](/blog/single-gpt-call)), a chat window in 25 languages (see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt)), voice input, and a one-second latency target — a target, not a measurement: [A one-second latency target for AI booking](/blog/latency-budgets).
 
 ## Quick decision guide
 
-- **No dispatch system, want one vendor for everything** → Limo Anywhere or FASTTRAK.
-- **Have dispatch system, want a conversational customer-facing surface** → Typelessity.
-- **Want marketplace distribution from Booking.com travelers** → Booking.com Transfer (in addition to a direct-booking surface, not as a replacement).
-- **Want B2B distribution into corporate-travel and hotel channels** → Karhoo.
-- **International traveler base (multilingual booking volume)** → Typelessity (single-prompt multilingual extraction).
-- **Mobile bookings while in motion (voice input matters)** → Typelessity (voice transcribed by OpenAI gpt-4o-mini-transcribe).
-- **Premium / luxury segment where booking experience differentiates** → Typelessity (conversational front-end) over Limo Anywhere's structured form.
-- **EU operator with strict data residency** → Typelessity (service and database in the EU; OpenAI processes in the US under SCCs) over US-headquartered platforms.
-
-## Direct comparison summary
-
-By dimension, where each tool leads:
-
-- **Marketplace distribution** → Booking.com Transfer
-- **Full dispatch + billing + driver app** → Limo Anywhere or FASTTRAK
-- **B2B corporate-travel distribution** → Karhoo
-- **Conversational customer-facing booking** → Typelessity
-- **Multilingual booking from free text** → Typelessity
-- **Voice booking on mobile** → Typelessity
-- **Industry-specific operator workflow depth** → Limo Anywhere or FASTTRAK
-- **Brand-customizable customer experience** → Typelessity
+- **No dispatch system, want one vendor for everything** → a dispatch platform.
+- **Have a dispatch system, want a conversational surface on your own site** → Typelessity, if your system has an API or you are happy to take requests by email.
+- **Want bookings from a traveler marketplace** → a marketplace, in addition to a booking surface of your own, not as a replacement.
+- **Want corporate-travel and hotel-channel distribution** → a distribution platform.
+- **International traveler base** → test each tool in the languages your customers use; Typelessity's chat window comes in 25 languages.
+- **Customers book on a phone just after landing** → try Typelessity's voice input on a real phone before deciding how much it matters.
 
 ## Red flags when evaluating AI booking for a transfer service
 
 - **No fleet availability check.** The widget books slots the dispatcher cannot fulfill.
 - **No multi-stop pickup support** for operators serving multi-leg journeys.
-- **No vehicle-class disambiguation** when the operator runs more than one fleet tier.
-- **No timezone-aware datetime extraction** for operators serving cross-timezone bookings.
-- **Booking output schema does not match the operator's dispatch system** — every booking requires manual re-keying.
+- **No vehicle-class mapping** when the operator runs more than one fleet tier.
+- **No answer on local time** for operators serving cross-timezone bookings.
+- **Booking output that does not match the operator's dispatch system** — every booking requires manual re-keying.
 - **No multilingual support** for operators in tourist-heavy regions.
 - **No "when not to use" guidance** from the vendor.
 
 ## Common mistakes when transfer operators evaluate AI booking
 
-- **Comparing on conversion lift before checking fleet-availability integration.** Lift on bookings the dispatcher cannot fulfill is negative-value.
-- **Ignoring multilingual demand.** International travelers are a disproportionate share of transfer demand.
-- **Underestimating voice on mobile.** Customers booking while in motion (just landed, in a taxi line, in a hotel lobby) prefer voice over typing.
-- **Picking a marketplace surface as the only booking channel.** Marketplace distribution is additive, not a replacement for direct-booking.
-- **Buying a full dispatch platform for the front-end only.** If the dispatch system already exists, paying for a second one is waste.
+- **Comparing on conversion lift before checking fleet availability.** Lift on bookings the dispatcher cannot fulfill is negative value.
+- **Ignoring multilingual demand.** International travelers are a large share of transfer demand.
+- **Not testing voice on a phone.** Try voice input on a real phone, in the languages your customers speak, before deciding how much it matters.
+- **Picking a marketplace surface as the only booking channel.** Marketplace distribution is additive, not a replacement for direct booking.
+- **Buying a full dispatch platform for the front end only.** If the dispatch system already exists, paying for a second one is waste.
 
-## When AI booking widgets are the wrong tool for a transfer service
+## When an AI booking chat is the wrong tool for a transfer service
 
 - **The schema is huge** (corporate-travel bookings with itinerary, billing codes, approval chains). The form remains the right primitive.
-- **The fleet is one vehicle on a fixed route** (a hotel shuttle running a single loop). A schedule page suffices; AI extraction is overkill.
+- **The fleet is one vehicle on a fixed route** (a hotel shuttle running a single loop). A schedule page suffices.
 - **Customers are predominantly elderly or low-device-literacy** in markets where chat is unfamiliar. Phone booking remains the default.
 - **The operator has no website at all** — distribution-only via marketplace makes sense before a direct-booking surface.
-
-For mid-to-large transfer operators with multilingual customer bases, premium segments, or existing dispatch systems — conversational AI booking is the higher-leverage front-end in 2026.
 
 ## FAQ
 
 **What does an AI booking widget for a transfer service need that a generic one does not?**
-Location extraction with geocoding, timezone-aware datetimes, fleet availability checks, vehicle-class disambiguation, and multilingual extraction. Generic widgets miss several of these.
+Pickup and drop-off places the dispatcher recognizes, date and time in the right local time, fleet availability, vehicle-class mapping, and customers from other countries. Ask any tool how it handles each.
 
-**Is Calendly suitable for booking airport transfers?**
-No. Calendly does not extract pickup/dropoff locations from free text, does not handle vehicle-class selection, and does not check live fleet availability.
+**Which scheduling and booking tools work for airport transfers?**
+That depends on the tool; the comparison of dated vendor facts is in [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
 
-**How does an AI booking widget handle complex transfer requests?**
-Single-call extraction pulls every field from one user message in one GPT round-trip. Enrichment APIs then check live fleet availability before the booking commits.
+**How does an AI booking widget handle a complex transfer request?**
+Single-call extraction pulls every field from one message in one GPT round-trip. Whether fleet availability is checked before the request goes out depends on your dispatch system's API; if it has none, the request reaches you by email and you decide.
 
 **Which AI booking tool is best for international transfer companies?**
-Tools with single-prompt multilingual extraction. Typelessity supports 25+ languages from one config-driven prompt without per-language code.
+Test each tool in the languages your customers use. Typelessity's chat window comes in 25 languages and the assistant replies in the language you set.
 
 **What are the red flags when evaluating AI booking for a transfer service?**
-No fleet availability check, no multi-stop pickup, no vehicle-class disambiguation, no timezone-aware datetimes, no multilingual support.
+No fleet availability check, no multi-stop pickup, no vehicle-class mapping, no answer on local time, no multilingual support.
 
 ## Conclusion
 
-The right AI booking tool for a transfer service depends on whether the operator already has a dispatch system, whether the customer base is international, and whether the booking experience itself is part of the brand. Each of the five tools above is the leader in one of those dimensions and the wrong choice in the others.
+The right online booking for a transfer service depends on whether the operator already has a dispatch system, whether the customer base is international, and whether the booking experience itself is part of the brand.
 
-For operators with existing dispatch systems and multilingual or premium customer bases, Typelessity is purpose-built as the customer-facing front-end. For operators starting from zero, Limo Anywhere or FASTTRAK is the right back-office foundation, with Typelessity as a possible front-end addition later. Booking.com Transfer and Karhoo are distribution layers, not standalone solutions.
-
-**Conversational booking is becoming the customer-facing layer of choice for transfer operators serving international travelers, not the experimental one.** The dispatcher's executable booking is the contract; the conversation is the surface.
+For operators with a dispatch system that want a conversational surface on their own site, Typelessity sits in front of the existing system without replacing it. For operators starting from zero, a dispatch platform is the right back-office foundation, with a booking chat as a possible front end later. Marketplaces and distribution channels are additional sources of bookings, not standalone solutions. The dispatcher's executable booking is the contract; the conversation is the surface.
 
 ---
 
-For Typelessity's single-call architecture, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For multilingual extraction, see [25 languages, one prompt](/blog/25-languages-one-prompt). For voice input on mobile, see [Whisper vs Web Speech](/blog/whisper-vs-webspeech). For the broader category comparison, see [Best AI booking widgets 2026](/blog/best-ai-booking-widgets-2026). For pricing, see [/pricing](/pricing).
+For Typelessity's single-call architecture, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For the chat window's languages, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For voice input on a phone, see [Whisper vs Web Speech API for booking voice](/blog/whisper-vs-webspeech). For the broader category comparison, see [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026). For pricing, see [Pricing](/pricing).
+
+There is no public demo of a transfer setup yet; the TransEdge demo shows freight pickups.
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

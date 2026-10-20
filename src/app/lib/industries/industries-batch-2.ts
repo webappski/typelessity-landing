@@ -1,7 +1,7 @@
 // Industries content batch 2 — 4 verticals (ten were taken down in L1б). L8 (2026-10-20): see batch 1.
 import type { IndustryContent } from '../types';
 
-const WIDGETS_ARTICLE = { slug: 'best-ai-booking-widgets-2026', title: 'Best AI booking widgets 2026: comparison and decision guide' };
+const WIDGETS_ARTICLE = { slug: 'best-ai-booking-widgets-2026', title: 'Best AI booking widgets for websites in 2026' };
 
 export const industriesBatch2: IndustryContent[] = [
   // ============================================================

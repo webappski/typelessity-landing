@@ -25,7 +25,7 @@ export const industries: IndustryContent[] = [
       'The stylist needs more than a date. Hair length and what was done to the hair before change the length of a visit, so a request without them is a guess.',
       'Clients write when the salon is closed. A request typed in the evening should be waiting for you with the details filled in, not a missed call.',
     ],
-    article: { slug: 'best-ai-booking-beauty-salons-2026', title: 'Best AI booking widget for beauty salons and spas 2026: comparison and decision guide' },
+    article: { slug: 'best-ai-booking-beauty-salons-2026', title: 'AI booking widgets for beauty salons, compared' },
     exampleConversations: [
       {
         lang: 'es',

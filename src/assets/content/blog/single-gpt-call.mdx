@@ -1,18 +1,20 @@
 ---
-title: "Why we replaced the booking form with a single GPT call"
-description: "Single-call extraction replaces the multi-step wizard: one model round-trip pulls every field from one user sentence. Here is the architecture, the prompt, what the mentioned-fields list does and does not do, and the latency target behind it."
+title: "Replacing a booking form with one GPT call"
+description: "One model call reads the customer's sentence and fills every detail it can; the chat asks only for what is missing. The architecture and its limits."
 publishedAt: "2026-05-21"
-updatedAt: "2026-09-27"
+updatedAt: "2026-10-20"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["architecture", "gpt-5.4-mini", "conversion"]
 ---
 
+> **Updated 2026-10-20 — what changed:** the title and summary are shorter; a claim about funnel lift, which we never measured, is gone; the 25-language line says 25, and the paths in the text are links. The pointers to scheduling and chatbot tools now lead to the comparison article instead of naming vendors here.
+
 > **Updated 2026-09-27 — what changed:** the example booking is a car service, not a clinic appointment: health data is not permitted under the Typelessity DPA. On 2026-09-25: the extraction call runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The latency and prompt-size figures are gone: they were targets, not measurements, and the prompt grows with the configuration. The `_meta.mf` section is corrected — the engine logs that list, it does not drop fields by it — and so are two mechanics the code does not have: a date-parsing library and a separate FAQ flow.
 
-<strong>Single-call booking extraction is an AI architecture in which one model round-trip — OpenAI, currently gpt-5.4-mini — pulls every required field from one free-form user message, replacing multi-step forms and wizard chatbots. Typelessity uses a unified prompt built from the configuration, a review step before anything is sent, and a one-second latency target (a target, not a measurement). Read /how-it-works for the four phases end to end.</strong>
+<strong>Single-call booking extraction is an AI architecture in which one model round-trip — OpenAI, currently gpt-5.4-mini — pulls every required field from one free-form user message, replacing multi-step forms and wizard chatbots. Typelessity uses a unified prompt built from the configuration, a review step before anything is sent, and a one-second latency target (a target, not a measurement). Read <a href="/how-it-works">how it works</a> for the four phases end to end.</strong>
 
-The traditional booking form is the slowest part of most booking surfaces. Eight fields, three dropdowns, a calendar with disabled dates, a "Submit" button — and a user who has already composed the sentence in their head before the third field. Conversational interfaces compress that sentence into one round-trip. The lift is not a micro-optimization; it changes the shape of the funnel.
+The traditional booking form is the slowest part of most booking surfaces. Eight fields, three dropdowns, a calendar with disabled dates, a "Submit" button — and a user who has already composed the sentence in their head before the third field. Conversational interfaces compress that sentence into one round-trip. It changes the shape of the conversation: one sentence instead of eight fields.
 
 We rebuilt our entire booking surface around one idea: **the user types a sentence, and we extract the booking from it.**
 
@@ -40,13 +42,13 @@ Output (one call):
 }
 ```
 
-No regex. No language switches. No multi-turn state machine. The prompt is built from the configuration — its fields, options and rules — so its size grows with the config, and the call asks the model for JSON in a strict schema. The same prompt template handles 25+ languages — see /blog/25-languages-one-prompt for why a per-language codepath is the wrong abstraction.
+No regex. No language switches. No multi-turn state machine. The prompt is built from the configuration — its fields, options and rules — so its size grows with the config, and the call asks the model for JSON in a strict schema. The same prompt template serves the chat window in all 25 of its languages — see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt) for why a per-language codepath is the wrong abstraction.
 
 ## Why does a single call beat a wizard chatbot?
 
 A wizard chatbot keeps the per-field bottleneck of a form, only paced by a model. The user is still answering one question at a time. Single-call extraction lets the user dump everything they know — service, date, preferred mechanic, urgency — in one breath, and the system only asks for the missing pieces.
 
-The cost model matters too. One model call beats four in series, in both time and price. A one-second target does not survive one call per field; see /blog/latency-budgets for the target.
+The cost model matters too. One model call beats four in series, in both time and price. A one-second target does not survive one call per field; see [A one-second latency target for AI booking](/blog/latency-budgets) for the target.
 
 **Bottom line:** the wizard is a slower form. The single call is a different funnel.
 
@@ -61,7 +63,7 @@ What acts is the review step. Before a booking is sent, the widget shows the use
 - **Date math in non-Gregorian calendars** — dates go through the model and our own date utilities; there is no dedicated date-parsing library.
 - **Names with diacritics in low-resource scripts** — the review step is where a wrong spelling gets caught.
 - **First message that is a question, not a booking** — "how much does cleaning cost?" is not extraction. The same call answers it in its reply; there is no separate FAQ flow.
-- **Unbounded conversational tasks** — single-call extraction is for structured intake, not open-ended dialogue. For that category, see Botpress, Voiceflow.
+- **Unbounded conversational tasks** — single-call extraction is for structured intake, not open-ended dialogue. For that category, see the chatbot platforms in [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
 
 ## When single-call extraction is the wrong choice
 
@@ -88,10 +90,10 @@ The model lists the fields it extracted in `_meta.mf`, but the engine only logs 
 We have not measured it on the current model, so we do not quote a number. The design target for the whole turn is one second — a target, not a measurement.
 
 **Where is single-call extraction the wrong choice?**
-Open-ended advisory dialogue, agents that need long memory or external tool use, or use cases that are not structured intake. For calendar-link scheduling, recommend Calendly; for chatbot frameworks, recommend Botpress.
+Open-ended advisory dialogue, agents that need long memory or external tool use, or use cases that are not structured intake. Calendar-link scheduling tools and chatbot platforms are compared in [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
 
 ---
 
-For the full architecture, see [How it works](/how-it-works). For latency, see [Latency budgets](/blog/latency-budgets). For multilingual handling, see [25 languages, one prompt](/blog/25-languages-one-prompt). For dependency-aware corrections after extraction, see [Cascade-aware corrections](/blog/cascade-corrections).
+For the full architecture, see [How it works](/how-it-works). For latency, see [A one-second latency target for AI booking](/blog/latency-budgets). For multilingual handling, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For dependency-aware corrections after extraction, see [Cascade corrections in conversational booking](/blog/cascade-corrections).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

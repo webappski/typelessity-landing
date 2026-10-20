@@ -1,24 +1,26 @@
 ---
-title: "Pricing AI products in 2026: why Typelessity makes the pilot free"
-description: "Typelessity makes the pilot free with no time limit — every feature, up to 50 submissions a month — and publishes every paid tier: Starter €39, Pro €149 and Enterprise €399 a month. Here is the reasoning behind that choice — and where it is the wrong choice."
+title: "Pricing an AI product: why our pilot is free"
+description: "Free pilot with no time limit (50 booking requests a month), then Starter €39, Pro €149 and Enterprise €399 a month: our reasoning and its limits."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-03"
+updatedAt: "2026-10-20"
 author: "Alex Isa"
 category: "Business"
 tags: ["pricing", "go-to-market", "saas", "b2b-ai"]
 ---
 
-> **Updated 2026-10-03 — what changed:** the generic SaaS ladder no longer quotes dollar prices or a quote-only top tier. Earlier, on 2026-09-25: Typelessity now publishes paid Starter (€39/mo) and Pro (€149/mo) tiers next to Enterprise (€399/mo), and the free pilot is the entry tier: every feature, up to 50 submissions a month, no time limit, set up by the business in the portal. The article used to describe a single free tier with payment negotiated later, and to claim conversion gains we have no data for; both are corrected below.
+> **Updated 2026-10-20 — what changed:** the title and summary are shorter; "submissions" is now "booking requests", the number the pricing page uses; the claim that all tiers share all features is gone, because the tiers differ in limits (booking requests a month, requests a minute, sites) and we have not checked any other difference; the ranking of pricing models is marked as our view; a claim about thousands of bookings per customer is replaced by what we know, that every request costs model fees.
 
-<strong>Typelessity prices the pilot free with no time limit: every feature, up to 50 submissions a month. It is not a feature-gated freemium tier and not an expiring free trial. The paid tiers are published — Starter €39, Pro €149 and Enterprise €399 a month — and a business moves up when its volume passes the cap. The reasoning: standard SaaS pricing assumes zero marginal cost, screenshot-proven value, and credit-card procurement. None of those hold cleanly for B2B AI in 2026, so value is proven on the customer's own site before any price decision. Read /pricing for tier shape.</strong>
+> **Updated 2026-10-03 — what changed:** the generic SaaS ladder no longer quotes dollar prices or a quote-only top tier. Earlier, on 2026-09-25: Typelessity now publishes paid Starter (€39/mo) and Pro (€149/mo) tiers next to Enterprise (€399/mo), and the free pilot is the entry tier: up to 50 submissions a month (now called booking requests), no time limit, set up by the business in the portal. The article used to describe a single free tier with payment negotiated later, and to claim conversion gains we have no data for; both are corrected below.
 
-The conventional SaaS pricing playbook says: a free tier, a starter plan, a growth plan, then a plan on request. Typelessity keeps the ladder but changes the first rung: the pilot is free with every feature, no time limit and no credit card, and every paid tier is published. This article explains the reasoning. We have no conversion data from it yet, so it quotes none.
+<strong>Typelessity prices the pilot free with no time limit: the whole booking engine, up to 50 booking requests a month. It is not a feature-gated freemium tier and not an expiring free trial. The paid tiers are published — Starter €39, Pro €149 and Enterprise €399 a month — and a business moves up when its volume passes the cap. The reasoning: standard SaaS pricing assumes zero marginal cost, screenshot-proven value, and credit-card procurement. None of those hold cleanly for B2B AI in 2026, so value is proven on the customer's own site before any price decision. Read <a href="/pricing">the pricing page</a> for tier shape.</strong>
+
+The conventional SaaS pricing playbook says: a free tier, a starter plan, a growth plan, then a plan on request. Typelessity keeps the ladder but changes the first rung: the pilot is free with the whole booking engine, no time limit and no credit card, and every paid tier is published. This article explains the reasoning. We have no conversion data from it yet, so it quotes none.
 
 ## What does "free pilot" actually mean at Typelessity?
 
-A Typelessity pilot is the entire product on a real customer-facing surface, set up by the business in the Webappski portal, with support by email. Not a sandbox. Not a demo. Real users booking real appointments — up to 50 a month — processed by Typelessity's infrastructure, at Typelessity's cost.
+A Typelessity pilot is the entire product on a real customer-facing surface, set up by the business in the Webappski portal, with support by email. Not a sandbox. Not a demo. Real customers sending real booking requests — up to 50 a month — processed by Typelessity's infrastructure, at Typelessity's cost.
 
-The pilot has **no time limit**. A business moves to a paid tier when its monthly submissions pass 50 — after value has had time to show on its own data. The risk sits on the vendor side. That is the feature, not a side-effect.
+The pilot has **no time limit**. A business moves to a paid tier when its monthly booking requests pass 50 — after value has had time to show on its own data. The risk sits on the vendor side. That is the feature, not a side-effect.
 
 **Bottom line:** the pilot is the entire product, not a watered-down preview. A pilot that hides features is a free trial pretending to be a partnership.
 
@@ -32,7 +34,7 @@ The historical SaaS pricing model assumes:
 
 None of this is true for AI products in B2B:
 
-1. **Marginal cost is real.** Model inference fees per request; thousands of bookings per month per customer.
+1. **Marginal cost is real.** Model inference fees per request: every booking request costs model fees.
 2. **Value depends on how the model performs on the customer's specific data.** Staff names, service terminology, address formats, language mix — none of which can be screenshot-tested.
 3. **B2B AI procurement involves legal review, data residency questions, IT security questionnaires, and DPA negotiation.** Credit-card PLG is dead in this segment.
 
@@ -40,7 +42,7 @@ So the customer has to be allowed to prove value before procurement. A free pilo
 
 ## How does the unit economics math actually work?
 
-Per-pilot marginal cost is dominated by model inference fees plus infrastructure. A pilot is capped at 50 submissions a month, so that cost is small compared to the cost of a single sales call, let alone a full procurement cycle.
+Per-pilot marginal cost is dominated by model inference fees plus infrastructure. A pilot is capped at 50 booking requests a month, so that cost is small compared to the cost of a single sales call, let alone a full procurement cycle.
 
 The real constraint is **human attention per pilot**, not compute. A pilot the business sets up itself scales — many can run in parallel. A pilot that needs hours of our engineering each does not — the team would be bankrupt before the first conversion.
 
@@ -48,7 +50,7 @@ The model fits Typelessity because:
 
 - The widget is a single embed.
 - The config is JSON, generated by the portal's setup wizard.
-- The backend integration is a webhook or REST POST to the customer's existing booking system, or an email to the business.
+- The backend integration is a REST POST (JSON) to the customer's existing booking system, if it has an API, or an email to the business.
 
 If the integration cost per customer were higher, the pilot model would not work.
 
@@ -56,14 +58,14 @@ If the integration cost per customer were higher, the pilot model would not work
 
 ## What is the Enterprise tier?
 
-Enterprise is published like every other tier: €399 a month for up to 6,000 submissions, with unlimited sites. What a list price cannot fix is agreed per contract, on request:
+Enterprise is published like every other tier: €399 a month for up to 6,000 booking requests, with unlimited sites. What a list price cannot fix is agreed per contract, on request:
 
-- **Volume** above 6,000 submissions a month.
+- **Volume** above 6,000 booking requests a month.
 - **A named contact person.**
 
 An uptime commitment is not on that list. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it.
 
-There is no on-premise or sovereign deployment: Typelessity is hosted only, with the service in Frankfurt and the database in Ireland (see /gdpr). For tier shape, see /pricing.
+There is no on-premise or sovereign deployment: Typelessity is hosted only, with the service in Frankfurt and the database in Ireland (see [GDPR and an AI booking widget](/gdpr)). For tier shape, see [Pricing](/pricing).
 
 ## Why "no time limit" specifically?
 
@@ -78,15 +80,15 @@ A pilot with no time limit reads as a partnership. Two reasons:
 
 ## What this is and is not
 
-It is **not feature-gated.** Classic freemium keeps features behind the paid tier. Every Typelessity tier, the pilot included, has every feature; the tiers differ in submission volume and the number of websites. The pilot is not a lesser version.
+It is **not feature-gated.** Classic freemium keeps features behind the paid tier. Every Typelessity tier, the pilot included, runs the same booking engine; the tiers differ in booking requests a month, requests a minute and the number of websites. The pilot is not a lesser version.
 
 It is **not a free trial.** A trial expires. The Typelessity pilot does not.
 
-It **is a volume ladder.** The business pays once its volume passes the pilot's 50 submissions a month. Until then the risk sits on the vendor. That is the structural feature.
+It **is a volume ladder.** The business pays once its volume passes the pilot's 50 booking requests a month. Until then the risk sits on the vendor. That is the structural feature.
 
 ## Direct comparison summary
 
-Pricing models for B2B AI products, ranked by procurement compatibility:
+How we rank pricing models for B2B AI products by procurement compatibility (our view, not a study):
 
 - **Free pilot, no time limit, published tiers** → highest procurement compatibility
 - **Annual Enterprise contract with proof-of-concept clause** → strong; legal-friendly
@@ -112,19 +114,19 @@ For lower-touch products, publish a free tier and meter usage. For mid-market B2
 B2B AI procurement needs value proven on the customer's own data before a price decision. The pilot comes first; the published paid tiers come after it.
 
 **What does a "free pilot" actually include?**
-Every feature, on a real customer-facing site, up to 50 submissions a month, set up by the business in the portal with support by email. No time limit.
+The whole booking engine, on a real customer-facing site, up to 50 booking requests a month, set up by the business in the portal with support by email. No time limit.
 
 **How does Typelessity make the unit economics work on free pilots?**
-A pilot is capped at 50 submissions a month, so its cost is bounded. The real constraint is human attention per pilot, not compute; self-serve setup is the prerequisite.
+A pilot is capped at 50 booking requests a month, so its cost is bounded. The real constraint is human attention per pilot, not compute; self-serve setup is the prerequisite.
 
 **What does Enterprise include, and what is agreed per contract?**
-€399 a month for up to 6,000 submissions and unlimited sites. Volume above that and a named contact are agreed per contract, on request. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it.
+€399 a month for up to 6,000 booking requests and unlimited sites. Volume above that and a named contact are agreed per contract, on request. No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it.
 
 **When is the free-pilot model the wrong choice?**
 High marginal cost per user, huge customer base, or natively usage-priced products. Publish a metered free tier instead.
 
 ---
 
-For the architectural reason single-call extraction makes pilots cheap, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For what to check on data protection, see [GDPR and an AI booking widget](/gdpr). For tier shape, see [Pricing](/pricing).
+For the architectural reason single-call extraction makes pilots cheap, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For what to check on data protection, see [GDPR and an AI booking widget](/gdpr). For tier shape, see [Pricing](/pricing).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*

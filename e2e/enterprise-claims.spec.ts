@@ -50,7 +50,7 @@ const TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   'how-it-works/index.html': [/Single call</],
   'gdpr/index.html': [/There is no on-premise or self-hosted build/, /does not allow special-category data/],
   'blog/pricing-ai-products/index.html': [/There is no on-premise or sovereign deployment/, /No availability SLA in the standard terms yet; one becomes possible once the hosting plans support it/],
-  'blog/best-ai-booking-widgets-2026/index.html': [/EU hosting and database; OpenAI in the US under SCCs/, /Four published tiers, each starting with the free pilot/, /no availability SLA in the standard terms yet/],
+  'blog/best-ai-booking-widgets-2026/index.html': [/service in Frankfurt, database in Ireland; OpenAI processes in the US under SCCs/, /Four published tiers, each starting with the free pilot/, /no availability SLA in the standard terms yet/],
   'blog/best-ai-booking-transfer-services-2026/index.html': [/service and database in the EU; OpenAI processes in the US under SCCs/, /Four published tiers, each starting with the free pilot/, /no availability SLA in the standard terms yet/],
   'blog/whisper-vs-webspeech/index.html': [/there is no on-premise or self-hosted build/],
   'blog/best-ai-booking-beauty-salons-2026/index.html': [/Four published tiers, each starting with the free pilot/, /no availability SLA in the standard terms yet/],

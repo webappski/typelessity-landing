@@ -162,8 +162,8 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
     ['/legal/security', 'legal'],
   ];
   const bad: string[] = [];
-  // the pages whose JSON-LD is built in schemas.ts by what their component calls (Р3); /blog, /faq and /how-it-works are not in the list
-  const SCHEMA_PAGES = new Set(['/', '/pricing', '/gdpr', '/for-ai-agents', '/about', '/industries', '/legal/security']);
+  // the pages whose JSON-LD is built in schemas.ts by what their component calls (Р3); /faq and /how-it-works are not in the list (L9 added /blog: blogLd)
+  const SCHEMA_PAGES = new Set(['/', '/pricing', '/gdpr', '/for-ai-agents', '/about', '/industries', '/blog', '/legal/security']);
   const nameDates = (dir: string, where: string): string[] => {
     const names = schemaNamesOf(dir);
     const dated = names.map((n) => [n, schemaNameDate(n)] as const);

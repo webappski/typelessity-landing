@@ -201,3 +201,19 @@ test('D9 the hub no longer says «configured for»', () => {
   assert.ok(hub.includes('Each one has its own setup, without forms.'), 'the new sentence is missing');
   assert.ok(!/configured for/i.test(hub));
 });
+
+// L9 (card D9, class «к»): the words of the «Read next» link on each page are the <h1> of the article it points to, taken from the
+// built article page — a title changed in the article and left in lib/industries (three literals) goes red here.
+test('L9(к) the «Read next» link text on each industry page is the h1 of the article it opens', () => {
+  const bad: string[] = [];
+  for (const p of SEVEN_PAGES) {
+    const html = page(p.slug);
+    const anchor = html.match(new RegExp(`<a[^>]*href="/blog/${p.article.slug}"[^>]*>([\\s\\S]*?)</a>`));
+    const article = h1s(read(`blog/${p.article.slug}/index.html`))[0];
+    if (!article) { bad.push(`${p.slug}: the article page has no h1`); continue; }
+    if (!anchor) { bad.push(`${p.slug}: no link to /blog/${p.article.slug}`); continue; }
+    const words = text(anchor[1]);
+    if (words !== article) bad.push(`${p.slug}: link says «${words}», the article h1 is «${article}»`);
+  }
+  assert.deepEqual(bad, []);
+});
