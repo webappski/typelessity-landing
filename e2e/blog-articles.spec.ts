@@ -162,7 +162,7 @@ test('L9(е) the transfer article ends with the line about the demo, just above 
 });
 
 test('L9(ж) no promise of citation, no percentage and no engine behaviour that we have not measured', () => {
-  const BANNED: readonly RegExp[] = [/\d+ ?%/, /Princeton/i, /preferentially/i, /citation probability/i, /ends up in a model/i, /highest-leverage/i, /is becoming/i, /most-cited/i, /prefer voice/i, /GDPR[- ]compliant/i];
+  const BANNED: readonly RegExp[] = [/\d+ ?%/, /Princeton/i, /preferentially/i, /citation probability/i, /ends up in a model/i, /highest-leverage/i, /is becoming/i, /most-cited/i, /prefer voice/i, /conversion lift/i, /conversion ceiling/i, /GDPR[- ]compliant/i];
   const bad: string[] = [];
   for (const slug of SLUGS) for (const re of BANNED) {
     const t = text(body(slug));
