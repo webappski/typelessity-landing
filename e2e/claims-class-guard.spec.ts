@@ -188,7 +188,7 @@ test('no speed word describes the product anywhere — pages, posts, llms files'
 
 // The portfolio advertisement offers Webappski's work, not a measured setup time for Typelessity.
 // Exclude only the complete, unchanged canonical card on the root page; malformed or expanded ads fail closed.
-const PILOT_TEXT = `${BADGE} By application 30 days of work on your AI visibility Apply for the free pilot No contract. No card. No price.`;
+const PILOT_TEXT = `${BADGE} By application 30 days of work on your AI visibility Apply for the AEO pilot No contract. No card. No price.`;
 const PILOT_HREF = 'https://webappski.com/en/free-aeo-pilot?utm_source=typelessity.com&utm_campaign=free-pilot&utm_medium=banner';
 const OPEN_TAG = /<[a-z][\w:-]*\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi;
 

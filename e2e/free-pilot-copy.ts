@@ -10,6 +10,6 @@ export const COPY = [
   BADGE,
   'By application',
   '30 days of work on your AI visibility',
-  'Apply for the free pilot',
+  'Apply for the AEO pilot',
   'No contract. No card. No price.',
 ];

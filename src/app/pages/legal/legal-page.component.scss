@@ -16,48 +16,48 @@
     line-height: 1.7;
     color: var(--text-primary);
 
-    h2 {
-      font-size: 22px;
-      letter-spacing: -0.025em;
-      margin: 32px 0 12px;
-    }
-
-    h3 {
-      font-size: 18px;
-      letter-spacing: -0.022em;
-      margin: 24px 0 10px;
-    }
-
-    p { margin: 0 0 14px; }
-    ul, ol { margin: 0 0 14px 22px; }
-    li { margin-bottom: 6px; }
-
-    a {
-      color: var(--text-primary);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 16px 0;
-      font-size: 14px;
-
-      th, td {
-        padding: 10px 14px;
-        text-align: left;
-        border-bottom: 1px solid var(--border);
+    // The body is drawn by <markdown>, a component of its own: its elements carry no attribute of this component, so the rules below, written
+    // without ::ng-deep, never reached them (L13: on /privacy the headings stood against the paragraph above; /legal/security had the same).
+    // Links are not in the list on purpose: they keep the colour of the site.
+    ::ng-deep {
+      h2 {
+        font-size: 22px;
+        letter-spacing: -0.025em;
+        margin: 32px 0 12px;
       }
 
-      th { color: var(--text-secondary); font-weight: 600; background: var(--bg-secondary); }
-    }
+      h3 {
+        font-size: 18px;
+        letter-spacing: -0.022em;
+        margin: 24px 0 10px;
+      }
 
-    code {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      background: var(--bg-secondary);
-      padding: 1px 6px;
-      border-radius: 4px;
+      p { margin: 0 0 14px; }
+      ul, ol { margin: 0 0 14px 22px; }
+      li { margin-bottom: 6px; }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 14px;
+
+        th, td {
+          padding: 10px 14px;
+          text-align: left;
+          border-bottom: 1px solid var(--border);
+        }
+
+        th { color: var(--text-secondary); font-weight: 600; background: var(--bg-secondary); }
+      }
+
+      code {
+        font-family: var(--font-mono);
+        font-size: 14px;
+        background: var(--bg-secondary);
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
     }
   }
 

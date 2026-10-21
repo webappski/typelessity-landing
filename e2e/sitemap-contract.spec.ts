@@ -189,7 +189,7 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
     ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'], ['/gdpr', 'gdpr', 'gdpr'],
     ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq'],
     ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],
-    ['/legal/security', 'legal'],
+    ['/privacy', 'privacy'], ['/legal/security', 'legal'],
   ];
   const bad: string[] = [];
   // the pages whose JSON-LD is built in schemas.ts by what their component calls (Р3); /faq and /how-it-works are not in the list (L9 added /blog: blogLd)

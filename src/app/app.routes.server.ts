@@ -7,6 +7,7 @@ const STATIC_PAGES = [
   'install',
   'pricing',
   'gdpr',
+  'privacy',
   'for-ai-agents',
   'faq',
   'about',

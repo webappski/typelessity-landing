@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { STATIC_PATH_COUNT } from './retired-industries';
 
 // L11 (2026-10-20, founder): the site has no industry pages and no link to one. «Industries can be anything, so the site says it adapts to
 // any business and links to no industry.» The hub /industries and the seven pages answer 410 (src/app/discovery/retired-industries.spec.ts
@@ -69,11 +70,11 @@ test('the build holds no industries directory and no page under it', () => {
   assert.equal(existsSync(join(BROWSER, 'industries')), false, 'dist still holds industries/');
 });
 
-test('sitemap.xml lists the ten static pages and the articles, and not one /industries address', () => {
+test('sitemap.xml lists the eleven static pages and the articles, and not one /industries address', () => {
   const xml = readFileSync(join(BROWSER, 'sitemap.xml'), 'utf8');
   assert.equal((xml.match(/industries/gi) ?? []).length, 0, 'sitemap.xml mentions industries');
   const articles = readdirSync(join(ROOT, 'src', 'assets', 'content', 'blog')).filter((f) => f.endsWith('.mdx')).length;
-  assert.equal((xml.match(/<loc>/g) ?? []).length, 10 + articles, `ten static paths + ${articles} article files`);
+  assert.equal((xml.match(/<loc>/g) ?? []).length, STATIC_PATH_COUNT + articles, `${STATIC_PATH_COUNT} static paths + ${articles} article files`);
 });
 
 test('self-check: every spelling of a link to an industry address is found, and the fair uses of the word are not', () => {

@@ -65,6 +65,9 @@
     }
   }
 
+  // The line under a field that says what not to write in it (L13, legal L-11): the colour of the labels, one size smaller.
+  &__hint { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--text-secondary); text-wrap: wrap; }
+
   // The send button is off until the consent box is ticked (and while a request is on its way): show it.
   .vc-btn:disabled {
     opacity: 0.45;

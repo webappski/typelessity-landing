@@ -97,6 +97,7 @@ const DATA_SURFACES: readonly { name: string; text: string }[] = [
   { name: 'faq page', text: FAQ_GROUPS.flatMap((g) => g.items).map((qa) => qa.a).join('\n') },
   { name: 'pricing FAQ', text: PRICING_FAQ.map((qa) => qa.a).join('\n') },
   { name: '/legal/security', text: readFileSync('src/app/pages/legal/legal-page.component.ts', 'utf8') },
+  { name: '/privacy', text: readFileSync('src/app/pages/privacy/privacy.content.ts', 'utf8') },
   { name: 'llms-full.txt', text: readFileSync('public/llms-full.txt', 'utf8') },
 ];
 

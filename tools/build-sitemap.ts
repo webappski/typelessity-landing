@@ -39,6 +39,8 @@ const STATIC_PATHS: Url[] = [
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
   // L12 (2026-10-21): the page no longer carries BreadcrumbList (no breadcrumb is shown).
   { path: '/gdpr', lastmod: '2026-10-21' },
+  // L13 (2026-10-21): new — the notice for a visitor of this website (legal L-2, G-3); a draft for the lawyer.
+  { path: '/privacy', lastmod: '2026-10-21' },
   // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
   // L12 (2026-10-21): no BreadcrumbList; the product node has its four offers; a price line in the list of resources.
   { path: '/for-ai-agents', lastmod: '2026-10-21' },

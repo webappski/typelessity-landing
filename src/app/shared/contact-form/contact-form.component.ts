@@ -61,7 +61,9 @@ const MAX_MESSAGE_IN_MAILTO = 1000;
         </div>
         <div class="cf__row">
           <label for="cf-message">Message (optional)</label>
-          <textarea id="cf-message" name="message" rows="3" maxlength="5000" placeholder="Tell us about your booking flow or requirements" [(ngModel)]="model.message"></textarea>
+          <textarea id="cf-message" name="message" rows="3" maxlength="5000" placeholder="Tell us about your booking flow or requirements" aria-describedby="cf-message-hint" [(ngModel)]="model.message"></textarea>
+          <!-- L13 (legal L-11, gate G-6): the one sentence of the legal reviewer; the legal basis of the notice is not touched here (the lawyer decides it). -->
+          <p class="cf__hint" id="cf-message-hint">Please do not include health or other sensitive information.</p>
         </div>
         <div class="cf__notice" id="cf-notice" role="note" aria-labelledby="cf-notice-h">
           <h3 id="cf-notice-h">Privacy notice for this form</h3>

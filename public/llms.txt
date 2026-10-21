@@ -46,6 +46,7 @@
 - [Terms](https://webappski.com/en/legal/terms-typelessity) — Typelessity terms of service, published by Webappski (parent company)
 - [DPA](https://webappski.com/en/legal/dpa-typelessity) — Typelessity data processing agreement; Appendix B is the sub-processor list
 - Privacy notice for the question form — printed under the form at https://typelessity.com/pricing#start-pilot
+- [Privacy notice](https://typelessity.com/privacy) — what this website collects about a visitor
 - [Security](https://typelessity.com/legal/security) — served from this domain
 
 ## Comparison snapshot

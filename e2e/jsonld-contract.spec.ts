@@ -91,7 +91,7 @@ const frontmatter = (slug: string) => matter(readFileSync(join(BLOG_DIR, `${slug
 
 const sortedUnique = (xs: string[]) => [...new Set(xs)].sort();
 
-test('J0 the doors map: which JSON-LD each of the 22 pages carries, both ways', async (t) => {
+test('J0 the doors map: which JSON-LD each of the 23 pages carries, both ways', async (t) => {
   await t.test('every block of every page parses (a broken block is red, not skipped)', () => {
     const bad = [...LD].flatMap(([rel, ld]) => ld.errors.map((e) => `${rel}: ${e}`));
     assert.deepEqual(bad, []);
@@ -105,6 +105,7 @@ test('J0 the doors map: which JSON-LD each of the 22 pages carries, both ways', 
       'about/index.html': ['AboutPage'],
       'gdpr/index.html': [],
       'legal/security/index.html': [],
+      'privacy/index.html': [],
       'faq/index.html': [],
       'blog/index.html': ['Blog'],
       'how-it-works/index.html': [],
@@ -122,7 +123,7 @@ test('J0 the doors map: which JSON-LD each of the 22 pages carries, both ways', 
     }
     for (const rel of Object.keys(expected)) if (!LD.has(rel)) bad.push(`${rel}: in the map, not in dist`);
     assert.deepEqual(bad, []);
-    assert.equal(LD.size, 22, `${LD.size} .html files in dist`);
+    assert.equal(LD.size, 23, `${LD.size} .html files in dist`);
   });
 });
 

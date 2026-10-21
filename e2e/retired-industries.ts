@@ -116,15 +116,15 @@ export const RETIRED_TERMS: string[] = [
   ...RETIRED_PHRASES,
 ].map((s) => s.toLowerCase());
 
-/** The ten static paths of the sitemap (home, how-it-works, install, pricing, gdpr, for-ai-agents, faq, about, blog, security). */
-export const STATIC_PATH_COUNT = 10;
+/** The eleven static paths of the sitemap (home, how-it-works, install, pricing, gdpr, privacy, for-ai-agents, faq, about, blog, security). */
+export const STATIC_PATH_COUNT = 11;
 
 /** Posts the site publishes: one `.mdx` file each in src/assets/content/blog (counted on disk, not from the generated manifest). */
 export function postCount(): number {
   return readdirSync(join(process.cwd(), 'src', 'assets', 'content', 'blog')).filter((f) => f.endsWith('.mdx')).length;
 }
 
-/** Addresses in sitemap.xml: the ten static paths and the posts. */
+/** Addresses in sitemap.xml: the eleven static paths and the posts. */
 export function expectedSitemapCount(): number {
   return STATIC_PATH_COUNT + postCount();
 }

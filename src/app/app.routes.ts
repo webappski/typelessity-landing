@@ -28,6 +28,11 @@ export const routes: Routes = [
       import('./pages/gdpr/gdpr-page.component').then((m) => m.GdprPageComponent),
   },
   {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./pages/privacy/privacy-page.component').then((m) => m.PrivacyPageComponent),
+  },
+  {
     path: 'for-ai-agents',
     loadComponent: () =>
       import('./pages/for-ai-agents/for-ai-agents.component').then((m) => m.ForAiAgentsComponent),

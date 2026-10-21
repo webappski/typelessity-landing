@@ -25,6 +25,7 @@ export const EN: TranslationMap = {
   'footer.forAiAgents': 'For AI Agents',
   'footer.contact': 'Contact',
   'footer.privacy': 'Data processing (DPA)',
+  'footer.sitePrivacy': 'Privacy notice',
   'footer.terms': 'Terms',
   'footer.security': 'Security',
   'footer.parentBrand': 'A product of Webappski. Sister product: TypelessForm.',
