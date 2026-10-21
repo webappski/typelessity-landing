@@ -2,6 +2,7 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect, type Page } from './fixtures';
 import { BADGE, COPY } from '../free-pilot-copy';
+import { PRIVACY_LAST_UPDATED } from '../../src/app/pages/privacy/privacy.content';
 
 // L13 (21.10): the two visible changes that are not the tip card of the phone (that one is held by home-demo.pw.ts, «L14 tips on a phone»), and the one statement
 // each frame (R64) holds.
@@ -9,7 +10,7 @@ import { BADGE, COPY } from '../free-pilot-copy';
 //                  work on AI visibility, and the tariff «Free pilot: 50 booking requests a month»). The badge and the tariff are not touched.
 //   G-6 / L-11     under the Message field of the question form: «Please do not include health or other sensitive information.»
 //   G-3 / L-2     /privacy, the notice for a visitor of the site (a draft for the lawyer), and the footer link «Privacy notice» that leads to it
-// Frames when L13_FRAMES names a folder: after-home-pilot-{390,1440}-{light,dark}, after-pricing-hint-{390,1440}-{light,dark}, after-privacy-{390,1440}-{light,dark},
+// Frames when L13_FRAMES names a folder: after-home-pilot-{390,1440}-{light,dark}, after-pricing-hint-{390,1440}-{light,dark}, after-privacy-{390,1440}-{light,dark}, after-legal-security-{390,1440}-{light,dark} (its markdown headings changed with it),
 // after-footer-privacy-{390,1440}-{light,dark}.
 
 const FRAMES = process.env['L13_FRAMES'];
@@ -52,23 +53,28 @@ for (const scheme of ['light', 'dark'] as const) {
         await shot(page, `after-home-pilot-${width}-${scheme}`);
       });
 
-      test(`[after-privacy-${width}-${scheme}] /privacy: one h1, the controller and the host named, canonical to itself, no horizontal scroll`, async ({ page }) => {
-        await page.setViewportSize({ width, height });
-        await page.goto('/privacy');
-        await expect(page.getByRole('heading', { level: 1 })).toHaveText('Privacy on typelessity.com');
-        await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://typelessity.com/privacy');
-        const body = page.locator('.legal__body');
-        await expect(body).toContainText('typelessity.com is run by Lizaveta Isayeuskaya');
-        await expect(body).toContainText('Vercel Inc. (United States)');
-        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-        expect(overflow, 'no horizontal scroll').toBeLessThanOrEqual(0);
-        // the body is drawn by <markdown>: its headings carry the spacing of the page's styles (they stood against the paragraph above them before L13)
-        const gaps = await body.locator('h2').evaluateAll((hs) => hs.map((h) => ({ above: parseFloat(getComputedStyle(h).marginTop), below: parseFloat(getComputedStyle(h).marginBottom), size: parseFloat(getComputedStyle(h).fontSize) })));
-        expect(gaps.length, 'the six sections').toBe(6);
-        for (const g of gaps) { expect(g.above).toBeGreaterThanOrEqual(24); expect(g.below).toBeGreaterThanOrEqual(8); expect(g.size).toBeGreaterThanOrEqual(20); }
-        await expectSurface(page, scheme);
-        await shot(page, `after-privacy-${width}-${scheme}`);
-      });
+      for (const [path, name, h1, sections] of [['/privacy', 'after-privacy', 'Privacy on typelessity.com', 6], ['/legal/security', 'after-legal-security', 'Security', 6]] as const) {
+        test(`[${name}-${width}-${scheme}] ${path}: one h1, the headings of the markdown body have their spacing (they stood against the paragraph above before L13), no horizontal scroll${path === '/privacy' ? ', the controller and the host named, canonical to itself, the date printed' : ''}`, async ({ page }) => {
+          await page.setViewportSize({ width, height });
+          await page.goto(path);
+          await expect(page.getByRole('heading', { level: 1 })).toHaveText(h1);
+          await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', `https://typelessity.com${path}`);
+          const body = page.locator('.legal__body');
+          if (path === '/privacy') {
+            await expect(body).toContainText('typelessity.com is run by Lizaveta Isayeuskaya');
+            await expect(body).toContainText('Vercel Inc. (United States)');
+            await expect(page.locator('.legal__updated')).toHaveText(`Page last updated ${PRIVACY_LAST_UPDATED}`);
+          }
+          const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+          expect(overflow, 'no horizontal scroll').toBeLessThanOrEqual(0);
+          // the body is drawn by <markdown>: its headings carry the spacing of the page's styles
+          const gaps = await body.locator('h2').evaluateAll((hs) => hs.map((h) => ({ above: parseFloat(getComputedStyle(h).marginTop), below: parseFloat(getComputedStyle(h).marginBottom), size: parseFloat(getComputedStyle(h).fontSize) })));
+          expect(gaps.length, `the sections of ${path}`).toBeGreaterThanOrEqual(sections - 1);
+          for (const g of gaps) { expect(g.above).toBeGreaterThanOrEqual(24); expect(g.below).toBeGreaterThanOrEqual(8); expect(g.size).toBeGreaterThanOrEqual(20); }
+          await expectSurface(page, scheme);
+          await shot(page, `${name}-${width}-${scheme}`);
+        });
+      }
 
       test(`[after-footer-privacy-${width}-${scheme}] the footer has «Privacy notice» next to «Data processing (DPA)» and it leads to /privacy`, async ({ page }) => {
         await page.setViewportSize({ width, height });

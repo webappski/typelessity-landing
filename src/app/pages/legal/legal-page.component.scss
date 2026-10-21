@@ -11,6 +11,9 @@
     margin: 18px 0 28px;
   }
 
+  // «Page last updated <date>» under the heading of /privacy (the date of the page and of its sitemap entry)
+  &__updated { margin: -12px 0 24px; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+
   &__body {
     font-size: 16px;
     line-height: 1.7;

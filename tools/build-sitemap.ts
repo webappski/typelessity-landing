@@ -1,7 +1,7 @@
 // Build-time: generate sitemap.xml after `ng build`.
 // Reads the blog manifest, emits to dist/<project>/browser/.
 //
-// Every <lastmod> is a literal in this file, the date of the prices page (PRICING_LAST_UPDATED, which that page also prints) or an article's own date. The generator reads no clock, no
+// Every <lastmod> is a literal in this file, the date of the prices page or of the privacy notice (PRICING_LAST_UPDATED, PRIVACY_LAST_UPDATED, which those pages also print) or an article's own date. The generator reads no clock, no
 // git and no file time: a lastmod that moves with the build tells a crawler nothing (Google, «Build and
 // submit a sitemap»: use it for the date of the last significant update, and only if accurate), and the
 // clone Vercel builds from has no full history. <changefreq> and <priority> are ignored by Google and
@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { BLOG_POSTS } from '../src/app/lib/blog-manifest.generated';
 import { PRICING_LAST_UPDATED } from '../src/app/pages/pricing/pricing.content';
+import { PRIVACY_LAST_UPDATED } from '../src/app/pages/privacy/privacy.content';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SITE = 'https://typelessity.com';
@@ -39,8 +40,8 @@ const STATIC_PATHS: Url[] = [
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
   // L12 (2026-10-21): the page no longer carries BreadcrumbList (no breadcrumb is shown).
   { path: '/gdpr', lastmod: '2026-10-21' },
-  // L13 (2026-10-21): new — the notice for a visitor of this website (legal L-2, G-3); a draft for the lawyer.
-  { path: '/privacy', lastmod: '2026-10-21' },
+  // L13 (2026-10-21): new — the notice for a visitor of this website (legal L-2, G-3); a draft for the lawyer. The page prints «Page last updated <date>» with the same constant.
+  { path: '/privacy', lastmod: PRIVACY_LAST_UPDATED },
   // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
   // L12 (2026-10-21): no BreadcrumbList; the product node has its four offers; a price line in the list of resources.
   { path: '/for-ai-agents', lastmod: '2026-10-21' },

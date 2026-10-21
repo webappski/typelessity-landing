@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
 import { expectedSitemapCount, GONE_SLUGS } from './retired-industries';
 import { PRICING_LAST_UPDATED } from '../src/app/pages/pricing/pricing.content';
+import { PRIVACY_LAST_UPDATED } from '../src/app/pages/privacy/privacy.content';
 
 // What a crawler receives as sitemap.xml. Google, «Build and submit a sitemap» (read 2026-10-19):
 // <lastmod> is the date of the last significant update and is used only if consistently and verifiably
@@ -127,6 +128,17 @@ test('sitemap: «Page last updated <date>» on /pricing is the lastmod of /prici
   const lastmod = entries.find((e) => pathOf(e.loc) === '/pricing')?.lastmods[0];
   assert.equal(printed[0], lastmod, 'the date on the page is not the lastmod of /pricing');
   assert.equal(printed[0], PRICING_LAST_UPDATED, 'the date on the page is not the constant of pricing.content.ts');
+});
+
+// L13 (G-3): the same rule for /privacy — the date under its heading, the lastmod of its sitemap entry and the constant they both come from are one date.
+test('sitemap: «Page last updated <date>» on /privacy is the lastmod of /privacy, printed once, as text', () => {
+  const html = read('privacy/index.html').replace(/<script[\s\S]*?<\/script>/gi, ' ');
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const printed = [...text.matchAll(/Page last updated (\d{4}-\d{2}-\d{2})/g)].map((m) => m[1]);
+  assert.equal(printed.length, 1, `«Page last updated» is printed ${printed.length} times on /privacy`);
+  const lastmod = entries.find((e) => pathOf(e.loc) === '/privacy')?.lastmods[0];
+  assert.equal(printed[0], lastmod, 'the date on /privacy is not its lastmod');
+  assert.equal(printed[0], PRIVACY_LAST_UPDATED, 'the date on the page is not the constant of privacy.content.ts');
 });
 
 function git(...args: string[]): string {

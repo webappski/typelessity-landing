@@ -14,6 +14,9 @@
 export const CONTROLLER_SENTENCE =
   'Lizaveta Isayeuskaya, sole proprietorship (jednoosobowa działalność gospodarcza), the owner of webappski.com, ul. Leona Staniszewskiego 19a, 81-603 Gdynia, Poland, VAT ID (EU): PL5862379862';
 
+/** The date of the page: printed under the heading and the `lastmod` of /privacy in the sitemap (tools/build-sitemap.ts imports it) — one constant, as PRICING_LAST_UPDATED. */
+export const PRIVACY_LAST_UPDATED = '2026-10-21';
+
 export const PRIVACY = {
   title: 'Privacy on typelessity.com',
   seoTitle: 'Privacy notice for typelessity.com',
