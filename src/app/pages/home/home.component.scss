@@ -243,12 +243,26 @@
 .tip__x { flex: none; width: 28px; height: 28px; margin: -4px -4px 0 0; border: 0; border-radius: 8px; background: transparent; color: var(--fg3); font-size: 20px; line-height: 1; cursor: pointer;
   &:hover { background: var(--chip); color: var(--fg); }
 }
-.ring { position: absolute; left: 0; top: 0; width: 0; height: 0; border: 2px solid var(--accent); border-radius: 16px; box-shadow: 0 0 0 5px var(--ring-glow); opacity: 0; pointer-events: none; z-index: 3; transition: opacity 0.3s ease; animation: ringPulse 2.2s ease-in-out infinite;
+// L15 (2026-10-21): the pulse runs only while the ring is shown (.is-on) and is composited: two fixed glows on pseudo-layers cross-fade
+// by opacity (the two ends of the old box-shadow animation: 4px at 0.14 and 9px at 0.06), instead of animating box-shadow on .ring
+// itself — Lighthouse flagged that one as a non-composited animation on every run, and it ran from the first frame on a ring with
+// opacity 0 and no size. Reduced motion (reset.scss stops every animation) keeps the old static glow: 5px of --ring-glow.
+.ring { position: absolute; left: 0; top: 0; width: 0; height: 0; border: 2px solid var(--accent); border-radius: 16px; opacity: 0; pointer-events: none; z-index: 3; transition: opacity 0.3s ease;
+  &::before, &::after { content: ''; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none; z-index: -1; } // under the number badge, as the old box-shadow of .ring was
+  &::before { box-shadow: 0 0 0 4px rgba(247, 115, 0, 0.14); }
+  &::after { box-shadow: 0 0 0 9px rgba(247, 115, 0, 0.06); opacity: 0; }
+  &.is-on::before { animation: ringGlowNear 2.2s ease-in-out infinite; }
+  &.is-on::after { animation: ringGlowFar 2.2s ease-in-out infinite; }
   &.is-reset { transition: none !important; }
   &.is-on { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    &::before { box-shadow: 0 0 0 5px var(--ring-glow); }
+    &::after { display: none; }
+  }
 }
 .ring__n { position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; line-height: 24px; font-size: 12px; box-shadow: 0 3px 8px rgba(247, 115, 0, 0.4); }
-@keyframes ringPulse { 0%, 100% { box-shadow: 0 0 0 4px rgba(247, 115, 0, 0.14); } 50% { box-shadow: 0 0 0 9px rgba(247, 115, 0, 0.06); } }
+@keyframes ringGlowNear { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes ringGlowFar { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
 
 // ── after Send: the three blocks of «Behind the chat» replace the widget, one under the other ──
 .after { position: absolute; inset: 0; z-index: 4; background: var(--bg); border-radius: 24px; padding: 16px 18px 10px; display: flex; flex-direction: column; gap: 8px; opacity: 0; visibility: hidden; transition: opacity 0.7s ease, visibility 0s linear 0.7s; overflow-y: auto;

@@ -141,3 +141,48 @@ for (const scheme of ['light', 'dark'] as const) {
     }
   });
 }
+
+// ── 3. The ring of the tips pulses only while it is shown, and only by opacity (a composited animation) ──
+// Before L15 `ringPulse` animated box-shadow on .ring from the first frame, also while the ring had opacity 0 and no size: the page
+// repainted on every frame (trace 21.10: 237 Paint events in the 2 s after load against 5 without it, L15/trace-note.md) and
+// Lighthouse flagged a non-composited animation on every run. The look stays: the two glows are the two ends of the old pulse.
+const RING_ANIMATIONS = String.raw`() => document.getAnimations().filter((a) => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('[data-ring]')).map((a) => ({
+  name: a.animationName || '', pseudo: a.effect.pseudoElement || '', state: a.playState,
+  props: [...new Set(a.effect.getKeyframes().flatMap((k) => Object.keys(k)).filter((p) => !['offset', 'computedOffset', 'easing', 'composite'].includes(p)))] }))`;
+const BOX_SHADOW_ANIMATIONS = String.raw`() => document.getAnimations().filter((a) => a.effect && a.effect.getKeyframes().some((k) => 'boxShadow' in k)).map((a) => (a.animationName || '?') + ' on ' + (a.effect.target && a.effect.target.className))`;
+
+test('L15-R1 /: the hidden ring runs no animation, and no animation on the page animates box-shadow', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'load' });
+  await expect(page.locator('[data-ring]')).toHaveCount(1);
+  expect(await page.locator('[data-ring]').evaluate((el) => el.classList.contains('is-on')), 'the ring is hidden at load').toBe(false);
+  expect(await page.evaluate(`(${RING_ANIMATIONS})()`), 'animations of the hidden ring').toEqual([]);
+  expect(await page.evaluate(`(${BOX_SHADOW_ANIMATIONS})()`), 'box-shadow animations (not composited)').toEqual([]);
+});
+
+test('L15-R2 /: the shown ring pulses by opacity alone, its two glows are the two ends of the old pulse (4 px at 0.14, 9 px at 0.06)', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/', { waitUntil: 'load' });
+  await expect(page.locator('[data-ring].is-on'), 'a tip turns the ring on').toHaveCount(1, { timeout: 45_000 });
+  const animations = await page.evaluate(`(${RING_ANIMATIONS})()`) as Array<{ name: string; pseudo: string; state: string; props: string[] }>;
+  expect(animations.map((a) => a.pseudo).sort(), 'one animation on each glow layer').toEqual(['::after', '::before']);
+  for (const a of animations) {
+    expect(a.props, `${a.name} ${a.pseudo} animates only opacity`).toEqual(['opacity']);
+    expect(a.state).toBe('running');
+  }
+  expect(await page.evaluate(`(${BOX_SHADOW_ANIMATIONS})()`)).toEqual([]);
+  const glows = await page.locator('[data-ring]').evaluate((el) => [getComputedStyle(el, '::before').boxShadow, getComputedStyle(el, '::after').boxShadow, getComputedStyle(el).boxShadow]);
+  expect(glows[0]).toBe('rgba(247, 115, 0, 0.14) 0px 0px 0px 4px');
+  expect(glows[1]).toBe('rgba(247, 115, 0, 0.06) 0px 0px 0px 9px');
+  expect(glows[2], 'the ring itself draws no glow of its own any more').toBe('none');
+});
+
+test.describe('L15-R3 reduced motion', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
+  test('L15-R3 /: with reduced motion the shown ring keeps the old still glow (5 px of --ring-glow) and no far layer', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'load' });
+    // with reduced motion the tips do not play on their own; the class the controller sets is set here, to read the CSS of that state
+    const [near, far] = await page.locator('[data-ring]').evaluate((el) => { el.classList.add('is-on'); return [getComputedStyle(el, '::before').boxShadow, getComputedStyle(el, '::after').display]; });
+    expect(near).toBe('rgba(247, 115, 0, 0.16) 0px 0px 0px 5px');
+    expect(far).toBe('none');
+  });
+});
