@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { BLOG_POSTS } from '../../src/app/lib/blog-manifest.generated';
 import { expectedSitemapCount } from '../retired-industries';
+import { readManifest } from './widget-snapshot';
 
 // Nothing on any page may be wider than the window. `scrollWidth <= clientWidth` is blind to the class
 // that bit us twice: `body` and the hero carry `overflow-x: hidden`, so a heading cut off on the right
@@ -242,5 +243,39 @@ if (!sitemapError && paths.length > 0) {
         expect(result.offenders, `/ @${width}: the widget slot against the hero column`).toEqual([]);
       });
     });
+  }
+
+  // FL-19 / FL-96 (L13, test-design L13-14), a KNOWN deviation of the product's widget, held as it is (the way 3817568 held FL-04), not hidden and not red: the card the
+  // widget draws (`.widget-container`) stands 8–14 px to the RIGHT of its slot on a phone (its `left: auto` on `.inline`, the product's F-138), so the right margin is
+  // narrower than the left one. It stays inside the window and the page does not scroll sideways. This test is green today; it turns red when the card goes outside the
+  // window (worse), and ALSO when F-138 is fixed and the card sits in its slot (better) — then replace it with the plain «the card is inside the slot» (B6+).
+  // The widget under test is the snapshot of the product's build; its sha256 is printed so that a change of the widget is seen in the log of the run.
+  for (const scheme of ['light', 'dark'] as const) {
+    for (const width of [320, 360, 390, 430]) {
+      test.describe(`home, demo still, ${scheme}`, () => {
+        test.use({ colorScheme: scheme, ...REDUCED_MOTION });
+        test(`/ @${width} ${scheme}: the card of the widget is 8–14 px right of its slot (known, FL-96), inside the window, the page does not scroll sideways`, async ({ page }) => {
+          const sha = readManifest().sha256;
+          test.info().annotations.push({ type: 'widget.js sha256', description: sha });
+          console.log(`FL-19 guard: widget.js sha256 ${sha}`);
+          await page.setViewportSize({ width, height: HEIGHT });
+          await page.goto('/');
+          await settle(page);
+          await expect(page.locator('typelessity-widget'), 'the demo has put the widget into the slot').toBeAttached({ timeout: 15_000 });
+          await page.evaluate(async () => { await document.fonts.ready; });
+          await expect.poll(() => page.evaluate(() => !!document.querySelector('typelessity-widget')?.shadowRoot?.querySelector('.widget-container')), { message: 'the widget drew its card', timeout: 20_000 }).toBe(true);
+          const m = await page.evaluate(() => {
+            const slot = document.querySelector('[data-widget-host]')!.getBoundingClientRect();
+            const card = document.querySelector('typelessity-widget')!.shadowRoot!.querySelector('.widget-container')!.getBoundingClientRect();
+            return { slotLeft: slot.left, slotRight: slot.right, cardLeft: card.left, cardRight: card.right, iw: window.innerWidth, sw: document.documentElement.scrollWidth };
+          });
+          const shift = m.cardRight - m.slotRight;
+          expect(shift, `FL-19 (known): the card's right edge ${m.cardRight} against the slot's ${m.slotRight} — 8–14 px right of it. Less: F-138 is fixed, replace this test with B6+. More: it got worse. ${JSON.stringify(m)}`).toBeGreaterThanOrEqual(8);
+          expect(shift).toBeLessThanOrEqual(14);
+          expect(m.cardRight, 'the card stays inside the window').toBeLessThanOrEqual(m.iw);
+          expect(m.sw, 'the page does not scroll sideways').toBe(m.iw);
+        });
+      });
+    }
   }
 }

@@ -162,6 +162,24 @@ async function stageSettled(page: Page, inView: boolean): Promise<void> {
 }
 
 /**
+ * L13 (test-design L13-11): a card that stopped under the sticky header is «stable» and still not clickable — `red-fl56-head.log` shows the pointer caught by
+ * <a href="/faq"> of <app-header>. The point a click would go to (the centre of the box) must be free of the header; if it is not, the page is scrolled by the height
+ * of the header and the box is waited for again (the clock is installed, so the page's own requestAnimationFrame is faked: the same read-twice poll as above).
+ * Its own function so that a spec can ask for the result (a click that Playwright rescues by scrolling on its own would not tell a missing guard from a present one).
+ */
+async function clearOfHeader(locator: Locator): Promise<void> {
+  for (let pass = 0; pass < 3; pass++) {
+    const box = (await locator.boundingBox())!;
+    const underHeader = await locator.page().evaluate(({ x, y }) => !!document.elementFromPoint(x, y)?.closest('app-header'), { x: box.x + box.width / 2, y: box.y + box.height / 2 });
+    if (!underHeader) break;
+    const header = await locator.page().evaluate(() => document.querySelector('app-header')!.getBoundingClientRect().height);
+    await locator.page().evaluate((h) => window.scrollBy({ top: -(h + 8), behavior: 'instant' }), header);
+    let before = '';
+    await expect.poll(async () => { const now = JSON.stringify(await locator.boundingBox()); const same = now !== 'null' && now === before; before = now; return same; }, { message: 'the card keeps moving after the page was scrolled off the header', intervals: [100, 150, 250], timeout: 15_000 }).toBe(true);
+  }
+}
+
+/**
  * A card of the show is clicked when it has stood still: the widget slides cards in and scrolls its own list, and a click aimed at a card that is still
  * on its way is refused with «element is not stable» or «outside of the viewport» (FL-56: once on a full run, 3 of 3 alone). Polled by the real clock of
  * the test, not by the page's (that one is frozen): the box must be the same on consecutive reads, then the click has a bounded time of its own.
@@ -175,6 +193,7 @@ async function clickWhenSettled(locator: Locator): Promise<void> {
     last = now;
     return same;
   }, { message: 'the card keeps moving', intervals: [100, 100, 150, 250], timeout: 30_000 }).toBe(true);
+  await clearOfHeader(locator);
   await locator.click({ timeout: 30_000 });
 }
 
@@ -473,6 +492,42 @@ test.describe('L14 the step line of the widget never goes back', () => {
 
 // L14, item 6 (FL-68): on a phone the tip stood in the room above the tabs and was out of the window when the widget filled it. Now the card stands in the
 // window with the block it lights. 390×844, the widget scrolled so that its top is 90–120 px from the top of the window, tips 1 and 2, two themes.
+
+/** The animations that end (the frame grows with a transition, the card fades) are waited for, not a time. */
+async function settleAnimations(page: Page): Promise<void> {
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
+}
+
+/**
+ * L13 (FL-71, test-design L13-13): the part of an element of the widget (`sel`, searched in its shadow root) that the card of the tip lies over, as a point of the window.
+ * Measured from the two boxes — `elementFromPoint` would look through the card (it lets taps pass: `pointer-events: none`) and say «not covered» exactly when the fix works.
+ * `reachable`: the point is inside the window, under the sticky header's lower edge, and is not the × of the card.
+ */
+async function underCard(page: Page, sel: string) {
+  return page.evaluate((s) => {
+    const el = (document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.querySelector(s)!.getBoundingClientRect();
+    const tip = document.querySelector('[data-tip].is-on')!.getBoundingClientRect();
+    const top = Math.max(el.top, tip.top), bottom = Math.min(el.bottom, tip.bottom), left = Math.max(el.left, tip.left), right = Math.min(el.right, tip.right);
+    const covered = bottom > top && right > left;
+    const x = (left + right) / 2, y = (top + bottom) / 2;
+    const header = document.querySelector('app-header')?.getBoundingClientRect().bottom ?? 0;
+    const onClose = !!document.elementFromPoint(x, y)?.closest('[data-tip-close]');
+    return { covered, reachable: covered && x > 0 && x < window.innerWidth && y > header && y < window.innerHeight && !onClose, x, y, rowY: (el.top + el.bottom) / 2, tipY: (tip.top + tip.bottom) / 2 };
+  }, sel);
+}
+
+/** Scrolls the page until `sel` of the widget lies under the card (at most 4 passes: measure, move by the distance between the two centres, let the layout settle). */
+async function bringUnderCard(page: Page, sel: string) {
+  let spot = await underCard(page, sel);
+  for (let pass = 0; pass < 4 && !spot.reachable; pass++) {
+    await page.evaluate((d) => window.scrollBy({ top: -d, behavior: 'instant' }), spot.tipY - spot.rowY);
+    await stageSettled(page, true);
+    await settleAnimations(page);
+    spot = await underCard(page, sel);
+  }
+  return spot;
+}
+
 const L14_FRAMES = process.env['L14_FRAMES'];
 for (const scheme of ['light', 'dark'] as const) {
   test.describe(`L14 tips on a phone, 390px, ${scheme}`, () => {
@@ -514,7 +569,8 @@ for (const scheme of ['light', 'dark'] as const) {
         expect(overlap, `tip ${n}: the card covers the block it lights by ${Math.round(overlap)} px`).toBeLessThanOrEqual(0);
         // L13 (FL-71): the card stands over the foot of the widget, where the input row is. A tap on that row must reach the widget (the card used to take
         // it: `.tip.is-on { pointer-events: auto }`), and the card's own × must still be a button. The overlap is real at this scroll position, so the
-        // tap point is the middle of the part of the input row the card covers; if the card covered none of it, the check below would say so.
+        // tap point is the middle of the part of the input row the card covers. For tip 1 the overlap is part of what is asserted: if the card is moved off the
+        // row (FL-97, the designer's call), the check below must say so instead of vanishing — it used to be skipped silently (test-design L13-9).
         const hit = await page.evaluate(() => {
           const host = document.querySelector('typelessity-widget') as HTMLElement;
           const row = host.shadowRoot!.querySelector('.pill-input')!.getBoundingClientRect();
@@ -528,16 +584,21 @@ for (const scheme of ['light', 'dark'] as const) {
           return { covered, rowIsWidget: underRow ? !!underRow.closest('typelessity-widget') : null, rowTarget: underRow ? underRow.tagName + '.' + underRow.className : null, closeIsButton: !!onClose?.closest('[data-tip-close]') };
         });
         expect(hit.closeIsButton, `tip ${n}: the × of the card is a button that can be tapped`).toBe(true);
+        if (n === 1) expect(hit.covered, `tip 1: the card lies over the input row at this scroll position (390×844, widget 90–120 px from the top) — the card was moved: revisit this check together with FL-97, do not delete it`).toBe(true);
+        // tip 2 stands where its own block is lit and may leave the row free; where it does cover the row the tap must go through
         if (hit.covered) expect(hit.rowIsWidget, `tip ${n}: a tap on the part of the input row under the card reaches the widget, not the card (it hit ${hit.rowTarget})`).toBe(true);
         if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip${n}-390-${scheme}.png`) }); }
       }
     });
 
     // L13 (FL-71): the case the finding is about — the visitor has taken the demo over and wants to type, and the card of a tip stands over the foot of the widget.
-    // While the show plays the controller does not let the focus into the widget, so this is only reachable after the take-over. A real click on the input row
-    // is made: Playwright refuses a click whose target is covered by another element («subtree intercepts pointer events»), which is what the card did before.
+    // While the show plays the controller does not let the focus into the widget, so this is only reachable after the take-over.
+    // Round of judges (test-design L13-13): the first form of this test clicked the centre of the input row where the page happened to stand. There the card lay
+    // 70 px BELOW the row, so the click reached the input under any `pointer-events`, and the test was green with the old CSS (`tip-card-takes-the-tap`). Now the row is
+    // first brought UNDER the card by scrolling, the overlap is asserted from the two boxes (not with `elementFromPoint`, which looks through a card that lets taps
+    // pass), and the click is a real mouse click at a point of the covered part: a card that takes the tap leaves the focus outside the widget and the test is red.
     // The cursor in the widget sends the card out of the way; the cursor leaving brings it back. Frame after-home-tip-typing-390.
-    test(`after a take-over: a click on the input row reaches the widget through the card, and the card steps aside while the cursor is in the widget`, async ({ page }) => {
+    test(`after a take-over: a click on the part of the input row the card lies over reaches the widget, and the card steps aside while the cursor is in the widget`, async ({ page }) => {
       test.setTimeout(150_000);
       await openHome(page, { width: 390, height: 844 });
       await play(page, 'ready', ready, 40_000);
@@ -546,17 +607,47 @@ for (const scheme of ['light', 'dark'] as const) {
       await play(page, 'a tip of the visitor\'s own conversation is on', (s) => s.tipOn, 40_000);
       await page.evaluate(() => window.scrollBy({ top: document.querySelector('.demo__frame')!.getBoundingClientRect().top - 105, behavior: 'instant' }));
       await stageSettled(page, true);
-      await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
+      await settleAnimations(page);
       const tipState = () => page.evaluate(() => { const tip = document.querySelector('[data-tip]') as HTMLElement; return { on: tip.classList.contains('is-on'), visibility: getComputedStyle(tip).visibility }; });
       expect(await tipState(), 'a tip is on and visible before the cursor goes to the widget').toEqual({ on: true, visibility: 'visible' });
-      const row = page.locator('typelessity-widget .pill-input');
-      await expect(row).toBeEnabled();
-      await row.click({ timeout: 15_000 });
-      await expect.poll(() => page.evaluate(() => !!(document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.activeElement), { message: 'the click put the cursor in the widget' }).toBe(true);
+      await expect(page.locator('typelessity-widget .pill-input')).toBeEnabled();
+      const spot = await bringUnderCard(page, '.pill-input');
+      expect(spot.covered, `the card lies over the input row (row centre ${Math.round(spot.rowY)}, card centre ${Math.round(spot.tipY)})`).toBe(true);
+      await page.mouse.click(spot.x, spot.y);
+      await expect.poll(() => page.evaluate(() => !!(document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.activeElement), { message: 'a click on the part of the row the card lies over put the cursor in the widget (a card that takes the tap leaves it outside)' }).toBe(true);
       expect((await tipState()).visibility, 'while the cursor is in the widget the card is out of the way').toBe('hidden');
       if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip-typing-390-${scheme}.png`) }); }
       await page.evaluate(() => ((document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.activeElement as HTMLElement).blur());
       expect((await tipState()).visibility, 'when the cursor leaves, the card is back').toBe('visible');
+    });
+
+    // Test-design Н-5: the other ways in under the card — the microphone button (and the send button) is also a part of the row. The press on the microphone moves the
+    // focus into the widget in Chromium, so the card must be out of the way while the button is down; the release starts the recording (a fake device, a granted permission).
+    // On iOS Safari a touch does not focus a <button>: not checked here (a real phone), see the card of the round.
+    test.describe('the microphone under the card', () => {
+      test.use({ permissions: ['microphone'] });
+      test(`after a take-over: a press on the microphone button under the card reaches the widget, the card steps aside, the release starts the recording`, async ({ page }) => {
+        test.setTimeout(150_000);
+        await openHome(page, { width: 390, height: 844 });
+        await play(page, 'ready', ready, 40_000);
+        await takeOverButton(page).click();
+        await acceptConsent(page);
+        await play(page, 'a tip of the visitor\'s own conversation is on', (s) => s.tipOn, 40_000);
+        await page.evaluate(() => window.scrollBy({ top: document.querySelector('.demo__frame')!.getBoundingClientRect().top - 105, behavior: 'instant' }));
+        await stageSettled(page, true);
+        await settleAnimations(page);
+        await expect(page.locator('typelessity-widget .pill-voice')).toBeEnabled({ timeout: 10_000 });
+        const spot = await bringUnderCard(page, '.pill-voice');
+        expect(spot.covered, `the card lies over the microphone button (button centre ${Math.round(spot.rowY)}, card centre ${Math.round(spot.tipY)})`).toBe(true);
+        await page.mouse.move(spot.x, spot.y);
+        await page.mouse.down();
+        await expect.poll(() => page.evaluate(() => {
+          const tip = document.querySelector('[data-tip]') as HTMLElement;
+          return { focusInWidget: !!(document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.activeElement, card: getComputedStyle(tip).visibility };
+        }), { message: 'the press on the microphone put the cursor in the widget and the card stepped aside (a card that takes the tap does neither)' }).toEqual({ focusInWidget: true, card: 'hidden' });
+        await page.mouse.up();
+        await expect(page.locator('typelessity-widget .recording-bar'), 'the release started the recording: the tap went through the card').toBeVisible({ timeout: 10_000 });
+      });
     });
   });
 }
@@ -695,6 +786,26 @@ test.describe('B3 take-over and the consent', () => {
     expect(after, 'the click reached the widget that was about to be replaced and it sent the card as a message').toBe(before);
     const s = await snap(page);
     expect(s.chain, 'the ribbon was reset by the take-over: the lights of the old conversation did not fire after it').toBe('idle');
+  });
+
+  // L13 (test-design L13-11): the helper that clicks a card of the show must not aim under the sticky header. The page is scrolled so that the card stands behind the
+  // header (the setup is asserted: the top element at the card's centre is the header); `clearOfHeader` has to bring it out (asserted), and the click takes the demo over.
+  test('(b) a card of the show that stands behind the sticky header is brought out from under it before the click, and the click takes the demo over', async ({ page }) => {
+    await openHome(page);
+    await play(page, 'cards', (s) => s.options === 3, 60_000);
+    const badge = page.locator('typelessity-widget .option-badge').first();
+    await badge.scrollIntoViewIfNeeded();
+    await page.evaluate(() => {
+      const r = (document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.querySelector('.option-badge')!.getBoundingClientRect();
+      window.scrollBy({ top: r.top - 20, behavior: 'instant' });
+    });
+    const behindHeader = await badge.boundingBox().then((b) => page.evaluate(({ x, y }) => !!document.elementFromPoint(x, y)?.closest('app-header'), { x: b!.x + b!.width / 2, y: b!.y + b!.height / 2 }));
+    expect(behindHeader, 'setup: the card stands behind the header').toBe(true);
+    await clearOfHeader(badge);
+    const centre = async () => badge.boundingBox().then((b) => page.evaluate(({ x, y }) => !!document.elementFromPoint(x, y)?.closest('app-header'), { x: b!.x + b!.width / 2, y: b!.y + b!.height / 2 }));
+    expect(await centre(), 'after the helper the centre of the card is no longer behind the header').toBe(false);
+    await clickWhenSettled(badge);
+    await expectTakenOver(page, 'a click on a card that stood behind the header');
   });
 
   test('(c) a widget that does not take the script\'s record: the show stops and the widget\'s own consent screen stays (D4)', async ({ page }) => {
