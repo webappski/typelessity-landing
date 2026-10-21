@@ -52,7 +52,12 @@ test('prerendered "/" loads its fonts from our origin and names no Google font h
   const html = readBuilt('index.html');
   assert.ok(html.includes('Typelessity'), 'home must render the brand name');
   assert.ok(!GOOGLE_FONT_HOSTS.test(html), 'the page must not load anything from Google Fonts');
-  assert.match(html, /<link[^>]+href="fonts\/fonts\.css"/, 'the page must link the self-hosted stylesheet');
+  // L15: fonts.css is no longer linked (a render-blocking request); its @font-face rules come inline (src/app/global-styles.ts).
+  assert.doesNotMatch(html, /<link[^>]+href="\/?fonts\/fonts\.css"/, 'fonts.css must not be a stylesheet request before the first paint');
+  const inline = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
+  const urls = [...readBuilt('fonts/fonts.css').matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]!.replace(/['"]/g, ''));
+  assert.ok(urls.length >= 14, `fonts.css names ${urls.length} font files`);
+  assert.deepEqual(urls.filter((u) => !inline.includes(u)), [], 'every font file of fonts.css is named by the @font-face rules inline in the page');
 });
 
 test('no text file the build shipped names a Google font host (css, js, mjs, html, txt, xml, json, webmanifest)', async () => {
@@ -109,7 +114,8 @@ test('every font the local stylesheet names is in the build', () => {
   const css = readBuilt('fonts/fonts.css');
   const urls = [...css.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1]!.replace(/['"]/g, ''));
   assert.ok(urls.length > 0, 'fonts.css must point at font files');
-  const missing = urls.filter((u) => /^https?:/.test(u) || !existsSync(new URL(u, FONTS)));
+  // L15: the urls are absolute (/fonts/…), so that they resolve the same from /fonts/fonts.css and from the inline copy in a page
+  const missing = urls.filter((u) => /^https?:/.test(u) || !u.startsWith('/fonts/') || !existsSync(new URL(u.slice(1), BROWSER)));
   assert.deepEqual(missing, [], 'fonts.css names a file that is remote or not in the build');
 });
 
@@ -148,7 +154,7 @@ test('every page carries exactly one font preload: Montserrat 400 latin, the fil
     const href = (attr(link, 'href')?.[1] ?? '').replace(/^\//, '');
     if (!expected) {
       const face = faces(css).find((f) => f.family === 'Montserrat' && f.weight[0] <= 400 && 400 <= f.weight[1] && isLatin(f));
-      expected = face ? `fonts/${face.url}` : '';
+      expected = face ? face.url.replace(/^\//, '') : '';
       if (!expected) problems.push('fonts.css has no Montserrat 400 latin face to preload');
     }
     if (expected && href !== expected) problems.push(`${page}: the preload is «${href}», fonts.css names «${expected}»`);

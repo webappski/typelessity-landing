@@ -1,5 +1,5 @@
 // Typography — Montserrat (text, headings) + Space Mono (code only, F9).
-// The files are self-hosted: public/fonts/fonts.css, linked and preloaded in index.html.
+// The files are self-hosted: public/fonts/fonts.css, inlined in every page by src/app/global-styles.ts (L15); index.html preloads the Latin file.
 
 html {
   font-size: 16px;

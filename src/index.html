@@ -30,9 +30,10 @@
        Google sent every visitor's IP there before any consent (A27). public/fonts holds the
        files and CSS Google serves for the same families and weights (fetched 2026-09-24 for
        Space Mono, 2026-10-19 for Montserrat; licences: OFL-*.txt beside the files).
-       One preload: the Latin file of Montserrat 400, the URL fonts.css names, with crossorigin. -->
+       One preload: the Latin file of Montserrat 400, the URL fonts.css names, with crossorigin.
+       No stylesheet link (L15): the @font-face rules of fonts.css and the global styles come inline, in the <style> the server
+       render writes for src/app/global-styles.ts, so the first paint waits for no stylesheet request. -->
   <link rel="preload" as="font" type="font/woff2" href="fonts/JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2" crossorigin>
-  <link rel="stylesheet" href="fonts/fonts.css">
 </head>
 <body>
   <app-root></app-root>
