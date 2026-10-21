@@ -39,7 +39,7 @@ export const serverRoutes: ServerRoute[] = [
     path: 'legal/privacy',
     renderMode: RenderMode.Server,
     status: 308,
-    headers: { Location: 'https://webappski.com/en/legal/dpa-typelessity' },
+    headers: { Location: '/privacy' },
   },
   {
     path: 'legal/terms',

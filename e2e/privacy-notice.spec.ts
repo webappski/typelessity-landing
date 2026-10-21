@@ -2,10 +2,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { effectiveRoutes, follow, respond } from './vercel-effective';
 
 // L13 (legal L-2 / gate G-3): /privacy is a prerendered page of this domain — the bytes a crawler receives, read from dist/ (npm run build first).
 // The wording is held by src/app/pages/privacy/privacy.content.spec.ts (unit tier); here: the page exists, is found (sitemap, footer of the home page
-// and of an article), is indexable and canonical to itself, and /legal/privacy still goes to the DPA until the lawyer decides (the brief).
+// and of an article), is indexable and canonical to itself, and /legal/privacy ends on it (legal F-4: the address «privacy» no longer leads to the contract between a business and its processor).
 const DIST = join(new URL('../', import.meta.url).pathname, 'dist/typelessity-landing/browser');
 const read = (p: string) => {
   if (!existsSync(join(DIST, p))) throw new Error(`${p} missing in dist — run \`npm run build\` first`);
@@ -30,8 +31,19 @@ test('/privacy is in the sitemap once, and the footer of the home page and of an
   }
 });
 
-test('/legal/privacy keeps going to the DPA (the lawyer decides where it ends); /privacy is not a redirect', () => {
-  const vercel = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8')) as { redirects: Array<{ source: string; destination: string }> };
-  assert.equal(vercel.redirects.find((r) => r.source === '/legal/privacy')?.destination, 'https://webappski.com/en/legal/dpa-typelessity');
-  assert.equal(vercel.redirects.some((r) => r.source === '/privacy'), false);
+// L13 round of judges (test-design L13-4, legal F-4): asked of the routes Vercel builds from vercel.json (@vercel/routing-utils, e2e/vercel-effective.ts), not of the raw
+// `redirects` list — a rule of `routes` or a pattern that happened to cover /privacy would not be seen by a search of `source` strings.
+test('/legal/privacy ends on /privacy (a 308), not on the DPA; /privacy and /privacy/ behave: the page is a file of dist/, the slash form is one 308 away', () => {
+  const routes = effectiveRoutes(JSON.parse(readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('../vercel.json', import.meta.url), 'utf8')));
+  const legal = respond(routes, '/legal/privacy');
+  assert.equal(legal.status, 308, '/legal/privacy is a permanent redirect');
+  assert.equal(legal.location, '/privacy', '/legal/privacy ends on the notice of this site, no longer on the contract (legal F-4)');
+  assert.doesNotMatch(String(legal.location), /dpa-typelessity/);
+  assert.equal(respond(routes, '/privacy').status, undefined, '/privacy is not redirected: a file of dist/ answers');
+  const slash = respond(routes, '/privacy/');
+  assert.equal(slash.status, 308, '/privacy/ is not a second address of the page');
+  assert.equal(slash.location, '/privacy');
+  const chained = follow(routes, '/legal/privacy/');
+  assert.equal(chained.path, '/privacy', 'the slash form of the old address also ends on /privacy');
+  assert.equal(chained.answer.status, undefined);
 });

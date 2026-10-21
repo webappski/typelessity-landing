@@ -41,7 +41,7 @@ const vercelConfig = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8
 const OFFSITE_DESTINATIONS = [
   ...new Set(
     (vercelConfig.redirects ?? [])
-      .filter((r) => r.source.startsWith('/legal/'))
+      .filter((r) => r.source.startsWith('/legal/') && /^https:\/\//.test(r.destination)) // L13 (legal F-4): /legal/privacy now ends on /privacy of this site; a relative target is not "offsite" and a bare «/privacy» would be found in any text
       .map((r) => r.destination),
   ),
 ];

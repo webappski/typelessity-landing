@@ -28,7 +28,7 @@ interface Redirect {
 }
 
 const vercelConfig = JSON.parse(
-  readFileSync(new URL('vercel.json', ROOT), 'utf8'),
+  readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('vercel.json', ROOT), 'utf8'),
 ) as { redirects?: Redirect[] };
 
 const sitemapGenerator = readFileSync(new URL('tools/build-sitemap.ts', ROOT), 'utf8');
@@ -42,15 +42,21 @@ const MANIFESTS = ['llms.txt', 'llms-full.txt'].map(
 const OFFSITE_LEGAL: Record<string, string> = {
   // c8 2026-10-03 (A45e): the TypelessForm documents (/legal/product-privacy, /legal/terms) say they are
   // TypelessForm's — «Using one does not bring you under the other's documents». Typelessity's own Terms
-  // are published (terms-typelessity). There is no Typelessity privacy policy yet: the page-wide link goes
-  // to the Typelessity DPA, honestly labelled «Data processing (DPA)», and the question form carries its own
-  // Art. 13 notice under the fields (e2e/legal-links-and-notice.spec.ts).
-  '/legal/privacy': 'https://webappski.com/en/legal/dpa-typelessity',
+  // are published (terms-typelessity). The question form carries its own Art. 13 notice under the fields
+  // (e2e/legal-links-and-notice.spec.ts); the page-wide link «Data processing (DPA)» goes to the Typelessity DPA.
+  // /legal/privacy is not here any more: since L13 the notice for a visitor of this site is the page /privacy, and
+  // the address «privacy» no longer ends in a contract (legal round F-4, SAME_SITE_LEGAL below).
   '/legal/terms': 'https://webappski.com/en/legal/terms-typelessity',
   // Typelessity's own DPA — /en/legal/dpa is TypelessForm's, a different service (A27, 24.09).
   '/legal/dpa': 'https://webappski.com/en/legal/dpa-typelessity',
   // No standalone sub-processor page on webappski; the list is Appendix B of that DPA.
   '/legal/sub-processors': 'https://webappski.com/en/legal/dpa-typelessity',
+};
+
+/** Legal paths that stay on this domain: the redirect source and the page it ends on. L13 (legal F-4): «privacy» used to end in the DPA, a contract between a
+ *  business and its processor, which is not a privacy notice; the notice of the site is /privacy. */
+const SAME_SITE_LEGAL: Record<string, string> = {
+  '/legal/privacy': '/privacy',
 };
 
 /** The one legal page that is genuinely served from this domain (prerendered). */
@@ -64,6 +70,28 @@ test('vercel.json redirects every offsite legal path to its document', () => {
 
     assert.ok(rule, `vercel.json has no redirect for ${source} — it would serve the home page at 200`);
     assert.equal(rule.destination, destination, `${source} points at the wrong document`);
+  }
+});
+
+test('/legal/privacy goes to the privacy notice of this site, /privacy, and not to the DPA (legal F-4)', () => {
+  for (const [source, destination] of Object.entries(SAME_SITE_LEGAL)) {
+    const rule = redirects.find((r) => r.source === source);
+
+    assert.ok(rule, `vercel.json has no redirect for ${source}`);
+    assert.equal(rule.destination, destination, `${source} must end on ${destination}`);
+    assert.ok(rule.permanent === true || rule.statusCode === 308, `${source} must redirect permanently`);
+    assert.ok(!/dpa-typelessity/.test(rule.destination), `${source} goes to a contract again`);
+  }
+  assert.ok(sitemapGenerator.includes("'/privacy'"), 'the sitemap generator does not list /privacy, the page /legal/privacy ends on');
+});
+
+test('the server route of /legal/privacy (inert on the static deployment, kept in step) names the same destination as vercel.json', () => {
+  const server = readFileSync(new URL('src/app/app.routes.server.ts', ROOT), 'utf8');
+  for (const [source, destination] of Object.entries(SAME_SITE_LEGAL)) {
+    const route = source.slice(1);
+    const m = server.match(new RegExp(`path: '${route}',[^}]*?Location: '([^']+)'`));
+    assert.ok(m, `app.routes.server.ts has no route with a Location for ${route}`);
+    assert.equal(m[1], destination, `${route}: app.routes.server.ts and vercel.json disagree`);
   }
 });
 
@@ -97,7 +125,7 @@ test('sitemap advertises the legal page we serve and none we redirect', () => {
     `sitemap generator no longer lists ${ONSITE_LEGAL}, the only legal page on this domain`,
   );
 
-  for (const source of Object.keys(OFFSITE_LEGAL)) {
+  for (const source of [...Object.keys(OFFSITE_LEGAL), ...Object.keys(SAME_SITE_LEGAL)]) {
     assert.ok(
       !sitemapGenerator.includes(`'${source}'`),
       `sitemap generator still lists ${source}, which is a redirect — sitemaps must list destinations, not hops`,
