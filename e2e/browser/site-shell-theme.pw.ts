@@ -136,7 +136,7 @@ for (const scheme of ['light', 'dark'] as const) {
     });
 
     // ── B1.4 the first painted frame already has the chosen theme (no flash, F10) ──
-    // The scripts of the page are blocked, so only the HTML, the inline theme script and the stylesheet link decide. The
+    // The scripts of the page are blocked, so only the HTML, the inline theme script and the inline styles decide (no stylesheet link since L15). The
     // body colour is read in the first animation frame that has a body.
     test(`B1.4 system ${scheme}, ${other(scheme)} stored, scripts blocked: the first frame is already ${other(scheme)}`, async ({ page }) => {
       await page.route('**/*.js', (route) => route.abort());

@@ -10,10 +10,11 @@ import { expectedSitemapCount } from './retired-industries';
 //   (a) the header and the footer carry no link to /industries, and (L7) every page's header and footer link to /gdpr; the footer keeps the parents, the
 //       security page and the contact address (D1, D2, F4);
 //   (b) <html> carries no data-theme: nothing on the server decides a visitor's theme;
-//   (c) the inline script that applies the stored theme stands in <head> BEFORE the first stylesheet or <style> (no flash),
-//       and every touch of localStorage in it is inside try (D3, F13);
-//   (d) the stylesheet is one blocking <link>: no media="print" swap (F10 — the critical-CSS inliner could drop the dark
-//       tokens from the first paint, and the stored «dark» on a light system would flash light);
+//   (c) the inline script that applies the stored theme stands in <head> BEFORE the first inline style (and before any stylesheet
+//       link, should one come back — since L15 there is none) (no flash), and every touch of localStorage in it is inside try (D3, F13);
+//   (d) no styles are swapped in with media="print": since L15 the styles come whole and inline (no stylesheet link, no async rest;
+//       e2e/inline-styles-dist.spec.ts) (F10 — the critical-CSS inliner could drop the dark tokens from the first paint, and the
+//       stored «dark» on a light system would flash light);
 //   (e) two theme-color metas, light and dark, with the --bg values of the mock (F18-1);
 //   (f) the server HTML of the header carries BOTH theme icons, the moon and the sun: the server cannot know the theme on screen,
 //       so a template that chooses one icon renders something else on the client than the server sent (a hydration mismatch;
@@ -107,7 +108,7 @@ test('(b) no page names a theme on <html>: data-theme is set by the visitor, not
   assert.deepEqual(offenders, []);
 });
 
-test('(c) the theme script is in <head> before the first stylesheet and the first <style>, and its storage access is in try', async (t) => {
+test('(c) the theme script is in <head> before the first inline <style> (and any stylesheet link), and its storage access is in try', async (t) => {
   const all = await load();
   await t.test('every page has it, ahead of the styles', () => {
     const problems: string[] = [];
@@ -133,7 +134,7 @@ test('(c) the theme script is in <head> before the first stylesheet and the firs
   });
 });
 
-test('(d) the stylesheet is not swapped in with media="print": one blocking <link>, so the first paint has the tokens (F10)', async () => {
+test('(d) no styles are swapped in with media="print": no stylesheet link, the styles are inline whole, so the first paint has the tokens (F10)', async () => {
   const offenders = [...(await load())].filter(([, html]) => /media="print"/i.test(html)).map(([p]) => p);
   assert.deepEqual(offenders, [], 'an inlined critical CSS with an async rest can paint the wrong theme first');
 });
