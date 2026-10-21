@@ -52,7 +52,14 @@ test('vercel.json has no routes entry that restores a filesystem phase or a catc
 });
 
 test('vercel.json keeps its redirects and headers (their content is held by the readers of those keys)', () => {
-  // five: the four offsite legal paths and /blog/gdpr-compliance -> /gdpr. The two retired articles left the block at L13 (C11: 410, not a redirect).
-  assert.ok(Array.isArray(config.redirects) && config.redirects.length === 5, `redirects block holds ${(config.redirects ?? []).length}, expected 5`);
+  // The five sources, by name: the four offsite legal paths and /blog/gdpr-compliance -> /gdpr. A count would break on the next legal redirect that is
+  // meant; the names do not. The two articles retired at L13 (C11: 410, not a redirect) must not come back as redirect sources.
+  const sources = (config.redirects ?? []).map((r) => r.source);
+  for (const wanted of ['/legal/privacy', '/legal/terms', '/legal/dpa', '/legal/sub-processors', '/blog/gdpr-compliance']) {
+    assert.ok(sources.includes(wanted), `redirects block has no source ${wanted}; it holds ${JSON.stringify(sources)}`);
+  }
+  for (const retired of ['/blog/what-we-got-wrong', '/blog/forms-vs-conversation-study']) {
+    assert.ok(!sources.some((s) => s === retired || s === `${retired}/`), `${retired} is a redirect source again: it answers 410 (C11)`);
+  }
   assert.ok(Array.isArray(config.headers) && config.headers.length >= 1, 'headers block is gone');
 });

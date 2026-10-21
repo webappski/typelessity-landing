@@ -10,6 +10,15 @@ import { getTransformedRoutes } from '@vercel/routing-utils';
 //
 // A model of the order and of the matching, not of the platform: whether a deployment answers 410 or 404 is proved by `curl` on production
 // after the push (card L13). LANDING_VERCEL_JSON points a reader at another copy of vercel.json (mutation runs).
+//
+// CASE OF AN ADDRESS — three sources that disagree, and what production does (test-design L13-1, observed 2026-10-21 ≈08:50 UTC by the test-design judge, repeated by `curl -sI` at 11:38 UTC):
+//   (1) Vercel docs, «Case sensitivity» (vercel.com/docs/project-configuration/vercel-json, read 21.10): with `routes` the `src` property is case-INsensitive;
+//       for `redirects` and `headers` the `source` is case-sensitive.
+//   (2) The vercel CLI dev router (commands/dev/index.js:16913-16916) compiles `src` with the `i` flag (unless isCaseSensitive) and also tries the path
+//       without its leading `/`; `respond()` below does neither — it is case-sensitive and matches the path as given.
+//   (3) Production: `curl -sI https://typelessity.com/INDUSTRIES` → 200 (the home page by the fallback of FL-92), not 410; `/industries` → 410. `/Industries/Home-Cleaning`
+//       and `/LEGAL/PRIVACY` → 200, not 410/308. So the platform behaves like this model (case-sensitive), not like (1) or (2). No test asserts the case of the
+//       answer; it is proved by a live `curl` after each release (mixed-case probes are in the list of HANDOFF), not by faith in the model. Do not compile with `i`.
 
 export interface VercelRoute {
   src?: string;

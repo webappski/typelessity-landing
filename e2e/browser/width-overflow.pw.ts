@@ -250,6 +250,10 @@ if (!sitemapError && paths.length > 0) {
   // narrower than the left one. It stays inside the window and the page does not scroll sideways. This test is green today; it turns red when the card goes outside the
   // window (worse), and ALSO when F-138 is fixed and the card sits in its slot (better) — then replace it with the plain «the card is inside the slot» (B6+).
   // The widget under test is the snapshot of the product's build; its sha256 is printed so that a change of the widget is seen in the log of the run.
+  // LIMITS OF THIS GUARD (test-design L13 round 2, R2-2): (1) it holds a LOCAL SNAPSHOT of the widget, not the live CDN build — a probe of the CDN widget on 21.10 gave
+  // another sha256 (66d75e43…, a 10 px shift against the snapshot's 12 px, sha 0425a0ae…), so a change that only the CDN widget has is not seen here; compare the printed sha256 with the
+  // live one before reading a green run as «the live page is as held». (2) the «worse» branches (`cardRight <= innerWidth`, `scrollWidth = innerWidth`) were NOT checked by a mutant;
+  // only the upper bound of the shift was (`fl19-guard-upper-bound-lowered`).
   for (const scheme of ['light', 'dark'] as const) {
     for (const width of [320, 360, 390, 430]) {
       test.describe(`home, demo still, ${scheme}`, () => {
