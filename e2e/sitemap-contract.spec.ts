@@ -116,11 +116,14 @@ test('sitemap: posts carry updatedAt ?? publishedAt read from the article files,
 
 // L12 (C15): the date printed under the tiers of /pricing and the <lastmod> of /pricing are one date. Read from the built bytes of both files,
 // and from the one constant they both come from (pricing.content.ts, which tools/build-sitemap.ts imports).
-test('sitemap: «Prices last updated <date>» on /pricing is the lastmod of /pricing, printed once, as text', () => {
+test('sitemap: «Page last updated <date>» on /pricing is the lastmod of /pricing, printed once, as text', () => {
   const html = read('pricing/index.html').replace(/<script[\s\S]*?<\/script>/gi, ' ');
   const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-  const printed = [...text.matchAll(/Prices last updated (\d{4}-\d{2}-\d{2})/g)].map((m) => m[1]);
-  assert.equal(printed.length, 1, `«Prices last updated» is printed ${printed.length} times`);
+  const printed = [...text.matchAll(/Page last updated (\d{4}-\d{2}-\d{2})/g)].map((m) => m[1]);
+  assert.equal(printed.length, 1, `«Page last updated» is printed ${printed.length} times`);
+  // L14 (C15): the date moves with any edit of the page (it is the lastmod), so it is the date of the PAGE; «Prices last updated» claimed that the
+  // prices changed that day, and they had not (19.10). The old label must not come back.
+  assert.doesNotMatch(text, /Prices last updated/i, 'the date is labelled as the date of the prices again; it is the date of the page');
   const lastmod = entries.find((e) => pathOf(e.loc) === '/pricing')?.lastmods[0];
   assert.equal(printed[0], lastmod, 'the date on the page is not the lastmod of /pricing');
   assert.equal(printed[0], PRICING_LAST_UPDATED, 'the date on the page is not the constant of pricing.content.ts');

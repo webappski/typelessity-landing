@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
+import { cspValues, type VercelCspConfig } from './vercel-csp';
 
 // A27 (c8, 2026-09-24): DM Sans and Space Mono came from fonts.googleapis.com / fonts.gstatic.com,
 // so every visitor's IP address went to Google before any consent — the embed a German court
@@ -122,14 +123,7 @@ test('the licences of both families are shipped beside the files: SIL Open Font 
 });
 
 test('CSP in vercel.json allows no Google font host — in the headers block and in the 410 route', () => {
-  const config = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as {
-    headers?: { headers: { key: string; value: string }[] }[];
-    routes?: { headers?: { key: string; value: string }[] }[];
-  };
-  const csp = [...(config.headers ?? []), ...(config.routes ?? [])]
-    .flatMap((h) => h.headers ?? [])
-    .filter((h) => h.key.toLowerCase() === 'content-security-policy')
-    .map((h) => h.value);
+  const csp = cspValues(JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as VercelCspConfig);
   assert.ok(csp.length >= 2, 'vercel.json must set a Content-Security-Policy in both places');
   for (const value of csp) {
     assert.ok(!GOOGLE_FONT_HOSTS.test(value), `CSP still allows Google Fonts: ${value}`);

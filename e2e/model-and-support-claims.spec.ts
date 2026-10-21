@@ -100,7 +100,7 @@ const PAGE_TRUTH: Readonly<Record<string, readonly RegExp[]>> = {
   // (configurations)» was printed by the old FAQ answer only and is on no page now (FINDINGS, L4 B1-notes).
   'index.html': [/mailto:info@webappski\.com/],
   'pricing/index.html': [/Customers speak or type their request/, /Support by email/, /contract terms agreed on request/],
-  'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /DPA is accepted in the Webappski portal before any visitor data is processed/],
+  'faq/index.html': [/mailto:info@webappski\.com/, /There is no HMAC signature/, /Publishing a configuration is refused until the Typelessity DPA has been accepted in the Webappski portal/],
   'for-ai-agents/index.html': [/mailto:info@webappski\.com/, /is designed to take an intent like this/, /bookingResult/,
     /booking \| request/],
   // L10 (FL-32, D9): two answers left /faq with the L6 rewrite and lived on nowhere else in the checked set; the facts stay where the page says them.

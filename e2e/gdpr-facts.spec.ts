@@ -148,9 +148,19 @@ test('the widget stores in the browser only what /gdpr says: local storage and s
 function readdirSyncSafe(dir: string): string[] { try { return readdirSync(dir); } catch { return []; } }
 function isDir(p: string): boolean { try { return statSync(p).isDirectory(); } catch { return false; } }
 
-test('Google appears nowhere on /gdpr while the product keeps its address lookup off', () => {
+// L14 (legal L-1, founder variant B, 21.10): the live widget on the CDN (typelessity-widget.vercel.app, built before 85c8cbb) asks Google Fonts for DM Sans and
+// Space Mono as soon as it appears on a page, before the consent question. /gdpr describes the widget on the CUSTOMER's site, where our Content-Security-Policy does
+// not apply, so it says so (the earlier guard here, «Google appears nowhere», derived the completeness of /gdpr from the CSP of typelessity.com: another perimeter).
+// The sentence goes when the widget with 85c8cbb is on the CDN (card L13 removes it together with §5 of the notice). Until then it is held here, and it is the
+// ONLY place /gdpr names Google: the address lookup (Places) is off in the product, so no Google row sits in the processor table.
+const GOOGLE_FONTS_SENTENCE =
+  'Until the next widget release, the widget asks Google Fonts (Google) for its typefaces as soon as it appears on your page, before the consent question; the visitor’s browser then sends Google its IP address and browser details. typelessity.com blocks that request with its Content-Security-Policy; your site blocks it only if its own policy does.';
+
+test('/gdpr says that the current widget asks Google Fonts before the consent question, and names Google nowhere else while the address lookup is off', () => {
   assert.match(constants(), /export const ADDRESS_LOOKUP_ENABLED: boolean = false;/, 'the address lookup is on: /gdpr must then name Google as a processor (DPA Appendix B, the Places row)');
-  assert.doesNotMatch(gdpr(), /Google/, '/gdpr names Google while the product has it off');
+  const page = gdpr();
+  assert.ok(page.includes(GOOGLE_FONTS_SENTENCE), '/gdpr lost the sentence about Google Fonts: the live widget still asks Google for its typefaces before consent (FL-38)');
+  assert.doesNotMatch(page.replace(GOOGLE_FONTS_SENTENCE, ' '), /Google/, '/gdpr names Google outside the Google Fonts sentence while the product has the address lookup off');
 });
 
 test('/for-ai-agents prints the model, the transcription model, the timeout and the languages of the product', () => {

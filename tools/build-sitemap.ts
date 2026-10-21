@@ -34,7 +34,7 @@ const STATIC_PATHS: Url[] = [
   { path: '/how-it-works', lastmod: '2026-10-19' },
   { path: '/install', lastmod: '2026-10-19' },
   // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
-  // L12 (2026-10-21): the page prints «Prices last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
+  // L12 (2026-10-21): the page prints «Page last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
   // L12 (2026-10-21): the page no longer carries BreadcrumbList (no breadcrumb is shown).
   { path: '/gdpr', lastmod: '2026-10-21' },

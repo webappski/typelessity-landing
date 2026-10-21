@@ -168,15 +168,15 @@ export const HOME = {
 
   data: {
     kicker: 'Your data',
-    h2Lead: 'Consent first.',
+    h2Lead: 'Consent before the chat.',
     h2Grad: 'Service and database in the EU.',
     sub: 'Three facts from the DPA. The full list, with who processes what and where, is on its own page.',
     link: 'Your customers’ data in Typelessity',
     // Every sentence below is a sentence of /gdpr (gdpr.content.ts): home-page.spec holds that each is there.
     cards: [
       { h: 'Consent before the chat starts', p: 'The assistant needs consent to work at all, typing and speaking alike. The visitor can withdraw consent at any time from the privacy panel inside the widget.' },
-      { h: 'Service and database in the EU', p: 'The service runs in the EU (Vercel, Frankfurt) and the database is in the EU (Supabase, Ireland). OpenAI processes data in the United States under the 2021 Standard Contractual Clauses, and Resend under the EU–US Data Privacy Framework and the 2021 SCCs.' },
-      { h: 'No training on your conversations', p: 'Under the DPA, Typelessity does not train models on conversation content. OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it.' },
+      { h: 'Service and database in the EU', p: 'The service’s functions run in the EU (Vercel, Frankfurt) and the database is in the EU (Supabase, Ireland); Vercel’s network receives each request at the point nearest the visitor. OpenAI processes data in the United States under the 2021 Standard Contractual Clauses, and Resend under the EU–US Data Privacy Framework and the 2021 SCCs.' },
+      { h: 'No training on your conversations', p: 'Under the DPA, Typelessity does not train models on conversation content. OpenAI keeps conversation text for up to 30 days to check for abuse, longer only where the law requires it or to protect its service or others from harm.' },
     ] as const,
   },
 

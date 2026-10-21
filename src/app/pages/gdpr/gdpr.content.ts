@@ -10,7 +10,7 @@ export const GDPR = {
   h1: 'Your customers’ data in Typelessity',
   // seo-lead §2.4, capsule of the mock with one correction from the DPA: Resend sits under the EU–US Data Privacy Framework and the SCCs.
   capsule:
-    'Typelessity asks for consent before the chat starts. The service runs in the EU (Vercel, Frankfurt) and the database is in the EU (Supabase, Ireland). OpenAI processes data in the United States under the 2021 Standard Contractual Clauses, and Resend under the EU–US Data Privacy Framework and the 2021 SCCs. OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it. Under the DPA, Typelessity does not train models on conversation content.',
+    'Typelessity asks for consent before the chat starts. The service’s functions run in the EU (Vercel, Frankfurt) and the database is in the EU (Supabase, Ireland); Vercel’s network receives each request at the point nearest the visitor. OpenAI processes data in the United States under the 2021 Standard Contractual Clauses, and Resend under the EU–US Data Privacy Framework and the 2021 SCCs. OpenAI keeps conversation text for up to 30 days to check for abuse, longer only where the law requires it or to protect its service or others from harm. Under the DPA, Typelessity does not train models on conversation content.',
 
   consent: {
     h2: 'The visitor is asked before the chat starts',
@@ -18,6 +18,7 @@ export const GDPR = {
     body: [
       'The question is the same in every region. The visitor can withdraw consent at any time from the privacy panel inside the widget. On your site, where the widget runs with your key, our server checks the consent record before a conversation starts and again on every message.',
       'In the visitor’s browser the widget keeps the consent record with a random visitor ID (local storage), and the session, the details collected so far and the screen state (session storage, cleared when the tab is closed). It sets no advertising or cross-site tracking storage.',
+      'Until the next widget release, the widget asks Google Fonts (Google) for its typefaces as soon as it appears on your page, before the consent question; the visitor’s browser then sends Google its IP address and browser details. typelessity.com blocks that request with its Content-Security-Policy; your site blocks it only if its own policy does.',
       'You, the business, are the controller and decide the legal basis for your booking process. Typelessity is your processor under the DPA (GDPR Article 28).',
     ],
   },
@@ -37,11 +38,11 @@ export const GDPR = {
   retention: {
     h2: 'How long it is kept',
     items: [
-      'A conversation that did not lead to a booking request is deleted within 48 hours of the visitor’s last message.',
-      'A conversation that led to a booking request has no automatic expiry: it is kept until the business erases it. To have it erased, the business sends a written instruction to info@webappski.com; the portal has no erase button today. A request for several conversations is handled within 10 working days. The copy in the business’s own mailbox is the business’s to delete.',
-      'The record that the visitor consented (an ID, the answer, the time, the website, the language of the chat window, the browser’s user agent and the IP address) is kept for 3 years.',
+      'A conversation that produced no delivery record — no request was sent or attempted — is deleted within 48 hours of the visitor’s last message.',
+      'A conversation that produced a delivery record — a booking request, an emailed request, or a failed or cancelled attempt — has no automatic expiry: it is kept until the business erases it. To have it erased, the business sends a written instruction to info@webappski.com; the portal has no erase button today. A request for several conversations is handled within 10 working days. The copy in the business’s own mailbox is the business’s to delete.',
+      'Each record that the visitor answered the consent question (an ID, the answer, the time, the website, the language of the chat window, how consent was given, the version of the notice and of the widget, the browser’s user agent and the IP address) is kept for 3 years from that answer, then deleted by the nightly job.',
       'Voice audio is never saved: it exists only while it is being transcribed.',
-      'OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it. The speech-to-text step keeps no copy.',
+      'OpenAI keeps conversation text for up to 30 days to check for abuse, longer only where the law requires it or to protect its service or others from harm. The speech-to-text step keeps no copy.',
     ],
   },
 
@@ -60,7 +61,7 @@ export const GDPR = {
     h2: 'Five checks for any AI booking widget',
     items: [
       { q: 'Where is the conversation processed and stored?', a: 'Ask for the service, the database and the AI provider by name, with the country of each. For Typelessity, see the table above.' },
-      { q: 'Does the provider train on it?', a: 'Ask for the sentence in the contract. The Typelessity DPA says that conversation content is not used to train models; OpenAI keeps conversation text for up to 30 days to check for abuse, then deletes it.' },
+      { q: 'Does the provider train on it?', a: 'Ask for the sentence in the contract. The Typelessity DPA says that conversation content is not used to train models; OpenAI keeps conversation text for up to 30 days to check for abuse, longer only where the law requires it or to protect its service or others from harm.' },
       { q: 'How is consent asked and withdrawn?', a: 'Before the chat starts, the same way in every region; withdrawn at any time from the privacy panel inside the widget.' },
       { q: 'How long are conversations kept, and how are they erased?', a: 'See “How long it is kept” above.' },
       { q: 'Which sub-processors does the DPA name?', a: 'Appendix B of the DPA lists each one, with where it processes and the basis for any transfer.' },

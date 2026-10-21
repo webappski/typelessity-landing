@@ -73,6 +73,7 @@ export const INSTALL = {
     permissions: 'And this header, so the browser lets the widget use the microphone:',
     permissionsValue: 'Permissions-Policy: microphone=(self)',
     why: 'Without img-src data: the consent checkmarks do not show.',
+    fonts: 'Until the next widget release the widget requests Google Fonts unless your Content-Security-Policy blocks it; the CSP above blocks it.',
   },
 
   cta: { title: 'Try it free on your website', primary: 'Get it free', secondary: 'See how it works' },

@@ -42,8 +42,11 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
       // L10 (D1): «natural chat in 25 languages» (the footer line, on every page) promises a conversation in 25 languages; the code has the
       // chat WINDOW in 25 languages and replies in the language set for the business. «The chat window comes in 25 languages» stays legal.
       /\bchat in \d+ languages/i,
+      // L14 (part2 L11 find 2): no page shortens the count of languages to «<n> lang» («VOICE · 25 LANG» was found on the r64 frames); the guard lived in
+      // industry-heading-and-hero-lang.spec.ts and went with it at L11. The words «25 languages» stay legal.
+      /\b\d+\+?\s+lang\b/i,
     ],
-    mutants: ['Languages: 25+ (English)', 'Chinese, Korean and Arabic', 'It replies in the customer’s language', 'It detects the language', 'Say it in any of 25 languages', '<title>Booking widget in 25 languages</title>', 'It works in Polish', 'The chat works well in German', 'Replace forms with natural chat in 25 languages.'],
+    mutants: ['Languages: 25+ (English)', 'Chinese, Korean and Arabic', 'It replies in the customer’s language', 'It detects the language', 'Say it in any of 25 languages', '<title>Booking widget in 25 languages</title>', 'It works in Polish', 'The chat works well in German', 'Replace forms with natural chat in 25 languages.', 'VOICE · 25 LANG', 'Chat in 25 lang'],
     legal: 'The chat window comes in 25 languages; the assistant replies in the language you set.',
   },
   {
@@ -63,8 +66,10 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
     patterns: [
       /data in the EU/i, /hosted in the EU/i, /EU hosting/i, /EU-only/i, /never leaves Europe/i,
       /GDPR[- ]compliant/i, /DSGVO-konform/i, /zgodny z RODO/i,
+      // L14 (legal L-6): «GDPR-aligned data flows» is the same seal in other words (it stood on /legal/security).
+      /GDPR[- ]aligned/i,
     ],
-    mutants: ['Your data in the EU', 'Hosted in the EU', 'EU hosting included', 'EU-only', 'Data never leaves Europe', 'A GDPR-compliant widget', 'Ist DSGVO-konform', 'Jest zgodny z RODO'],
+    mutants: ['Your data in the EU', 'Hosted in the EU', 'EU hosting included', 'EU-only', 'Data never leaves Europe', 'A GDPR-compliant widget', 'Ist DSGVO-konform', 'Jest zgodny z RODO', 'GDPR-aligned data flows'],
     legal: 'Service and database in the EU; OpenAI and Resend in the US under the 2021 SCCs. You are the controller, we are your processor under a DPA.',
   },
   {

@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
+import { cspValues, type VercelCspConfig } from './vercel-csp';
 
 // L3 D5 (S2): the widget on the page needs three origins in the Content-Security-Policy, and the policy is written TWICE in
 // vercel.json — in `headers[]` for every page and in the 410 route of L1б (`routes[].headers`), because routes run before
@@ -16,12 +17,8 @@ import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/core/integrations/
 // widget-fonts-csp.pw.ts puts the same text on a document in a browser. Preview check: `curl -sI $PREVIEW/` equals it.
 
 const ROOT = new URL('../', import.meta.url);
-interface Header { key: string; value: string }
-const config = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as { headers?: { headers: Header[] }[]; routes?: { headers?: Header[] }[] };
-const copies = [...(config.headers ?? []), ...(config.routes ?? [])]
-  .flatMap((h) => h.headers ?? [])
-  .filter((h) => h.key.toLowerCase() === 'content-security-policy')
-  .map((h) => h.value);
+const config = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as VercelCspConfig;
+const copies = cspValues(config);
 
 const widgetOrigin = new URL(WIDGET_SCRIPT_URL).origin;
 const apiOrigin = new URL(WIDGET_API_URL).origin;

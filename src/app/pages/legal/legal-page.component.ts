@@ -22,7 +22,7 @@ const LEGAL_TEXT: Record<LegalDoc, LegalContent> = {
     title: 'Security',
     body: `## Infrastructure
 
-The service runs on Vercel in the EU (Frankfurt, fra1). The database is Supabase Postgres in the EU (AWS eu-west-1, Ireland). OpenAI (conversation understanding and speech-to-text) and Resend (delivery of request emails) process in the United States under the 2021 Standard Contractual Clauses. The full list is Appendix B of the [Typelessity DPA](https://webappski.com/en/legal/dpa-typelessity).
+The service’s functions run on Vercel in the EU (Frankfurt, fra1); Vercel’s network receives each request at the point nearest the visitor. The database is Supabase Postgres in the EU (AWS eu-west-1, Ireland). OpenAI (conversation understanding and speech-to-text) and Resend (delivery of request emails) process in the United States under the 2021 Standard Contractual Clauses. The full list is Appendix B of the [Typelessity DPA](https://webappski.com/en/legal/dpa-typelessity).
 
 ## Encryption
 
@@ -48,7 +48,7 @@ The service runs on Vercel in the EU (Frankfurt, fra1). The database is Supabase
 
 ## Compliance
 
-GDPR-aligned data flows. The limits above are stated in Appendix A of the Typelessity DPA.
+You are the controller and Typelessity is your processor under the DPA (GDPR Article 28). Who processes what, where and on which transfer basis is on the /gdpr page; the limits above are stated in Appendix A of the Typelessity DPA.
 
 `,
   },

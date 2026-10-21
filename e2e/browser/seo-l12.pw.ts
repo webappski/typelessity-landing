@@ -42,12 +42,12 @@ for (const scheme of ['light', 'dark'] as const) {
     test.use({ colorScheme: scheme });
 
     for (const width of [390, 1440]) {
-      test(`[after-pricing-date-${width}-${scheme}] /pricing at ${width}px: «Prices last updated ${PRICING_LAST_UPDATED}» sits under the four tiers, once, readable, inside the window`, async ({ page }) => {
+      test(`[after-pricing-date-${width}-${scheme}] /pricing at ${width}px: «Page last updated ${PRICING_LAST_UPDATED}» sits under the four tiers, once, readable, inside the window`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto('/pricing');
         const line = page.locator('main p.pricing-updated');
         await expect(line).toHaveCount(1);
-        await expect(line).toHaveText(`Prices last updated ${PRICING_LAST_UPDATED}`);
+        await expect(line).toHaveText(`Page last updated ${PRICING_LAST_UPDATED}`);
         const geometry = await page.evaluate(() => {
           const cards = [...document.querySelectorAll('main article.tier')];
           const last = cards[cards.length - 1]!.getBoundingClientRect();

@@ -40,7 +40,7 @@ import { PRICING_FAQ, PRICING_LAST_UPDATED, PRICING_PAGE } from './pricing.conte
           </article>
         }
       </div>
-      <p class="pricing-updated">Prices last updated {{ lastUpdated }}</p>
+      <p class="pricing-updated">Page last updated {{ lastUpdated }}</p>
     </section>
 
     <section class="vc-wrap pricing-counts">
