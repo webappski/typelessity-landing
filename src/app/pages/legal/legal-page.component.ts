@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { MarkdownComponent } from 'ngx-markdown';
+import { provideSiteMarkdown } from '../../shared/site-markdown';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 
@@ -59,6 +60,7 @@ You are the controller and Typelessity is your processor under the DPA (GDPR Art
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, MarkdownComponent],
+  providers: [provideSiteMarkdown()],
   styleUrl: './legal-page.component.scss',
   template: `
     @let c = content();

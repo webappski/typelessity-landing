@@ -186,3 +186,61 @@ test.describe('L15-R3 reduced motion', () => {
     expect(far).toBe('none');
   });
 });
+
+// ── 4. ngx-markdown and marked load with the markdown pages only (src/app/shared/site-markdown.ts) ──
+// The texts only these libraries carry (the error of marked, the prefix of ngx-markdown) find their chunk among the scripts a page
+// really fetched. `/` fetches none of it; a client navigation from `/` to an article (the router loads the lazy page and its
+// providers in the browser, not the server render) and the direct loads of /privacy and /legal/security render their markdown.
+const MARKDOWN_JS = [/marked\(\): input parameter is undefined or null/, /\[ngx-markdown\]/];
+async function scriptsWithMarkdown(page: Page, run: () => Promise<void>): Promise<string[]> {
+  const bodies: Array<Promise<string | null>> = [];
+  const handler = (r: import('@playwright/test').Response) => {
+    if (r.request().resourceType() === 'script' && new URL(r.url()).hostname === 'localhost') bodies.push(r.text().then((t) => (MARKDOWN_JS.every((m) => m.test(t)) ? new URL(r.url()).pathname : null)).catch(() => null));
+  };
+  page.on('response', handler);
+  await run();
+  page.off('response', handler);
+  return (await Promise.all(bodies)).filter((x): x is string => !!x);
+}
+
+test('L15-M1 /: no script the page fetches is the markdown chunk', async ({ page }) => {
+  const found = await scriptsWithMarkdown(page, async () => {
+    await page.goto('/', { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle');
+  });
+  expect(found).toEqual([]);
+});
+
+test('L15-M2 a client navigation from / to an article renders its markdown (the providers come with the lazy page), with no error', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (m) => { if (m.type() === 'error' && /NG0|No provider|MarkdownService/.test(m.text())) errors.push(m.text()); });
+  await page.goto('/', { waitUntil: 'load' });
+  await page.waitForLoadState('networkidle');
+  const found = await scriptsWithMarkdown(page, async () => {
+    // a router navigation inside the hydrated app, not a document load (the server render would hide a missing provider):
+    // a click on the first link of the page to an article
+    const link = page.locator('a[href^="/blog/"]:not([href="/blog"])').first();
+    await link.scrollIntoViewIfNeeded();
+    await link.click();
+    await expect(page.locator('.blog-post__body markdown p').first()).toBeVisible({ timeout: 15_000 });
+  });
+  expect(await page.evaluate(() => performance.getEntriesByType('navigation').length), 'one document load: the article came by the router').toBe(1);
+  expect(found.length, 'the markdown chunk is fetched by the navigation').toBe(1);
+  expect(await page.locator('.blog-post__body markdown p').count()).toBeGreaterThan(3);
+  expect(errors).toEqual([]);
+});
+
+for (const path of ['/privacy', '/legal/security']) {
+  test(`L15-M2 ${path}: the page loads the markdown chunk and its hydrated <markdown> keeps the rendered text`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    const found = await scriptsWithMarkdown(page, async () => {
+      await page.goto(path, { waitUntil: 'load' });
+      await page.waitForLoadState('networkidle');
+    });
+    expect(found.length).toBe(1);
+    expect(await page.locator('.legal__body markdown :is(p, li)').count(), 'paragraphs and list items of the rendered markdown').toBeGreaterThan(4);
+    expect(errors).toEqual([]);
+  });
+}

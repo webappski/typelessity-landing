@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
+import { provideSiteMarkdown } from '../../shared/site-markdown';
 import { SeoService } from '../../core/seo/seo.service';
 import { PRIVACY, PRIVACY_LAST_UPDATED } from './privacy.content';
 
@@ -10,6 +11,7 @@ import { PRIVACY, PRIVACY_LAST_UPDATED } from './privacy.content';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MarkdownComponent],
+  providers: [provideSiteMarkdown()],
   styleUrl: '../legal/legal-page.component.scss',
   template: `
     <article class="legal vc-wrap">

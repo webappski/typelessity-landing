@@ -14,6 +14,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { fromEvent, map } from 'rxjs';
 import { MarkdownComponent } from 'ngx-markdown';
+import { provideSiteMarkdown } from '../../shared/site-markdown';
 import { PLATFORM_ID } from '@angular/core';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
@@ -35,6 +36,7 @@ export function splitJournal(body: string): { text: string; journal: string } {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, DatePipe, MarkdownComponent],
+  providers: [provideSiteMarkdown()],
   styleUrl: './blog-post.component.scss',
   template: `
     @let p = post();
