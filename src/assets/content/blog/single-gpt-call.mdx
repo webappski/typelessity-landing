@@ -2,15 +2,11 @@
 title: "Replacing a booking form with one GPT call"
 description: "One model call reads the customer's sentence and fills every detail it can; the chat asks only for what is missing. The architecture and its limits."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-20"
+updatedAt: "2026-10-21"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["architecture", "gpt-5.4-mini", "conversion"]
 ---
-
-> **Updated 2026-10-20 — what changed:** the title and summary are shorter; a claim about funnel lift, which we never measured, is gone; the 25-language line says 25, and the paths in the text are links. The pointers to scheduling and chatbot tools now lead to the comparison article instead of naming vendors here.
-
-> **Updated 2026-09-27 — what changed:** the example booking is a car service, not a clinic appointment: health data is not permitted under the Typelessity DPA. On 2026-09-25: the extraction call runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The latency and prompt-size figures are gone: they were targets, not measurements, and the prompt grows with the configuration. The `_meta.mf` section is corrected — the engine logs that list, it does not drop fields by it — and so are two mechanics the code does not have: a date-parsing library and a separate FAQ flow.
 
 <strong>Single-call booking extraction is an AI architecture in which one model round-trip — OpenAI, currently gpt-5.4-mini — pulls every required field from one free-form user message, replacing multi-step forms and wizard chatbots. Typelessity uses a unified prompt built from the configuration, a review step before anything is sent, and a one-second latency target (a target, not a measurement). Read <a href="/how-it-works">how it works</a> for the four phases end to end.</strong>
 
@@ -97,3 +93,11 @@ Open-ended advisory dialogue, agents that need long memory or external tool use,
 For the full architecture, see [How it works](/how-it-works). For latency, see [A one-second latency target for AI booking](/blog/latency-budgets). For multilingual handling, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For dependency-aware corrections after extraction, see [Cascade corrections in conversational booking](/blog/cascade-corrections).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
+
+## What changed in this article
+
+> **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
+
+> **Updated 2026-10-20 — what changed:** a claim about funnel lift, which we never measured, is gone; the 25-language line says 25. The pointers to scheduling and chatbot tools now lead to the comparison article instead of naming vendors here.
+
+> **Updated 2026-09-27 — what changed:** the example booking is a car service, not a clinic appointment: health data is not permitted under the Typelessity DPA. On 2026-09-25: the extraction call runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named. The latency and prompt-size figures are gone: they were targets, not measurements, and the prompt grows with the configuration. The `_meta.mf` section is corrected — the engine logs that list, it does not drop fields by it — and so are two mechanics the code does not have: a date-parsing library and a separate FAQ flow.

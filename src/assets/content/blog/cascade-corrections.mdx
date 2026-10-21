@@ -2,15 +2,11 @@
 title: "Cascade corrections in conversational booking"
 description: "When a customer changes one detail mid-booking, the details that depended on it must be cleared. How Typelessity tracks this and asks first."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-20"
+updatedAt: "2026-10-21"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["bugs", "algorithms", "ux", "extraction"]
 ---
-
-> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the link to how the engine works is a link, and the list of verticals no longer names a transfer service, because there is no public transfer demo. The text says "any business that takes bookings" where it said "verticals".
-
-> **Updated 2026-09-27 — what changed:** the example is an auto repair booking, not a clinic appointment: health data is not permitted under the Typelessity DPA. The post now describes what the engine does: the dependency list is called `dependsOn`, the user is asked before fields are cleared, and enrichments are fetched again when the user gives a new value — there is no ordered re-run. Gone: a reset message the widget never showed, the claim that abandonment after a cascade drops sharply (we did not measure it), a short code sample presented as the engine's code (it was not), and a cap on enrichments per config (the engine has none).
 
 <strong>Cascade-aware correction is a booking-form pattern in which editing one field clears every downstream field that depended on it. Typelessity declares dependencies in config (`dependsOn`), walks them depth-first when a filled field changes, asks the user before clearing anything, and drops the enrichment results that read a cleared field. Read <a href="/how-it-works">how it works</a> for the full extraction pipeline.</strong>
 
@@ -105,3 +101,11 @@ Any extraction or intake system with cross-field dependencies — lead capture, 
 For the extraction call that produces the initial fields, see [Why we replaced the booking form with a single GPT call](/blog/single-gpt-call). For the latency target that enrichment calls count against, see [Latency budgets](/blog/latency-budgets). For the four phases end to end, see [How it works](/how-it-works).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
+
+## What changed in this article
+
+> **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
+
+> **Updated 2026-10-20 — what changed:** the list of verticals no longer names a transfer service, because there is no public transfer demo. The text says "any business that takes bookings" where it said "verticals".
+
+> **Updated 2026-09-27 — what changed:** the example is an auto repair booking, not a clinic appointment: health data is not permitted under the Typelessity DPA. The post now describes what the engine does: the dependency list is called `dependsOn`, the user is asked before fields are cleared, and enrichments are fetched again when the user gives a new value — there is no ordered re-run. Gone: a reset message the widget never showed, the claim that abandonment after a cascade drops sharply (we did not measure it), a short code sample presented as the engine's code (it was not), and a cap on enrichments per config (the engine has none).

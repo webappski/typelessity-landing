@@ -49,7 +49,7 @@ import { getBlogPostBySlug } from '../../lib/blog-manifest.generated';
               &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><time [attr.datetime]="p.updatedAt">Updated {{ p.updatedAt | date:'mediumDate' }}</time></span>
             }
             &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><span class="blog-post__readtime">{{ readingTime(p.body) }} min read</span></span>
-            &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><span>{{ p.author }}</span></span>
+            &ngsp;<span class="blog-post__item"><span class="blog-post__sep" aria-hidden="true">·</span><a class="blog-post__author" routerLink="/about">{{ p.author }}</a></span>
           </div>
           <h1 class="blog-post__title">{{ p.title }}</h1>
           <p class="blog-post__lede">{{ p.description }}</p>
@@ -105,6 +105,8 @@ export class BlogPostComponent implements AfterViewInit {
         publishedAt: p.publishedAt,
         updatedAt: p.updatedAt,
         author: p.author,
+        // Google, «Image SEO best practices» / Discover: a large preview needs the tag (L12, C9). SeoService removes it on every other page.
+        robots: 'max-image-preview:large',
       });
       this.jsonLd.set('article', articleLd(p));
     });

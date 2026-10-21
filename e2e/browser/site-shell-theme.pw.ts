@@ -285,7 +285,7 @@ for (const scheme of ['light', 'dark'] as const) {
 
         test(`${width === 1440 && scheme === 'dark' ? '[after-home-1440-dark] ' : ''}B1.8 the columns are Product · Guides · Company`, async ({ page }) => {
           // textContent, not innerText: the mock sets these headings in capitals (text-transform), innerText would return PRODUCT.
-          const headings = await page.locator('footer.vc-footer h4').allTextContents();
+          const headings = await page.locator('footer.vc-footer h2.vc-footer-h').allTextContents();
           expect(headings.map((h) => h.trim())).toEqual(['Product', 'Guides', 'Company']);
         });
 

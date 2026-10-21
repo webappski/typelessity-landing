@@ -2,15 +2,11 @@
 title: "A one-second latency target for AI booking"
 description: "How Typelessity plans a one-second booking turn: model call, enrichment, render. A target, not a measurement: what is built and what is not."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-20"
+updatedAt: "2026-10-21"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["performance", "latency", "architecture", "gpt-5.4-mini"]
 ---
-
-> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the paths in the text are links (including the link to how the product works), and two sentences we had no measurement for are now marked as hypotheses or softened: the retry count, and the cost of one analytics script.
-
-> **Updated 2026-09-25 — what changed:** the conversation runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named, and voice is transcribed by OpenAI gpt-4o-mini-transcribe, not Whisper. The one-second figure is a target, not a measurement; the latency table this post used to show was not our measurement and is removed. So are claims the code does not back: streamed responses, enrichment running in parallel with the render, an in-house analytics endpoint.
 
 <strong>A latency budget for conversational AI booking is an upper bound on user-perceived round-trip time, split across network, model call, enrichment APIs, and render. Typelessity designs the booking turn for one second — a target, not a measurement. What makes a budget like that reachable is architecture — one extraction call per turn, not one per field — rather than post-hoc optimization. Read <a href="/blog/single-gpt-call">the single-call architecture</a>, and <a href="/how-it-works">how it works</a> for the four phases.</strong>
 
@@ -111,3 +107,11 @@ Third-party analytics SDKs — and there is no in-house analytics endpoint eithe
 For the single-call extraction architecture, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For the cascade exception, see [Cascade corrections in conversational booking](/blog/cascade-corrections). For the voice-input exception, see [Whisper vs Web Speech API for booking voice](/blog/whisper-vs-webspeech). For the multilingual prompt, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
+
+## What changed in this article
+
+> **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
+
+> **Updated 2026-10-20 — what changed:** two sentences we had no measurement for are now marked as hypotheses or softened: the retry count, and the cost of one analytics script.
+
+> **Updated 2026-09-25 — what changed:** the conversation runs on OpenAI (currently gpt-5.4-mini), a newer model than the one this post named, and voice is transcribed by OpenAI gpt-4o-mini-transcribe, not Whisper. The one-second figure is a target, not a measurement; the latency table this post used to show was not our measurement and is removed. So are claims the code does not back: streamed responses, enrichment running in parallel with the render, an in-house analytics endpoint.

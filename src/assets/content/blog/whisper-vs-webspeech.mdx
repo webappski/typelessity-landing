@@ -2,15 +2,11 @@
 title: "Whisper vs Web Speech API for booking voice"
 description: "Typelessity transcribes booking voice on its server, first with Whisper, now with gpt-4o-mini-transcribe, not in the browser. What it does and does not do."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-20"
+updatedAt: "2026-10-21"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["voice", "whisper", "speech-recognition", "gpt-4o-mini-transcribe"]
 ---
-
-> **Updated 2026-10-20 — what changed:** the title and summary are shorter, the paths in the text are links (with a link to how the product works), and one sentence is reworded: the transcription model works out the spoken language itself, the widget does not detect it.
-
-> **Updated 2026-09-25 — what changed:** Typelessity no longer transcribes with Whisper. Voice goes to OpenAI gpt-4o-mini-transcribe, and the conversation runs on OpenAI (currently gpt-5.4-mini). This post used to describe streamed audio, a fallback to the Web Speech API, a confidence prompt and per-clinic vocabulary in the transcription prompt; the widget has none of these, and the latency figures were not our measurements. The sections below now say what the code does.
 
 <strong><a href="/how-it-works">Typelessity</a> transcribes booking voice input on its own server, not with the browser's Web Speech API. It started on OpenAI Whisper and today calls OpenAI gpt-4o-mini-transcribe. The widget records the user, sends the recording once when they stop, and feeds the transcript into the same extraction step as typed text. We have not measured transcription latency or accuracy on the current model, so this post quotes neither.</strong>
 
@@ -84,3 +80,11 @@ The API now has per-result confidence and a `phrases` list in the spec. We have 
 For the extraction pipeline that consumes the transcript, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For the multilingual prompt, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For the latency target around voice input, see [A one-second latency target for AI booking](/blog/latency-budgets).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
+
+## What changed in this article
+
+> **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
+
+> **Updated 2026-10-20 — what changed:** one sentence is reworded: the transcription model works out the spoken language itself, the widget does not detect it.
+
+> **Updated 2026-09-25 — what changed:** Typelessity no longer transcribes with Whisper. Voice goes to OpenAI gpt-4o-mini-transcribe, and the conversation runs on OpenAI (currently gpt-5.4-mini). This post used to describe streamed audio, a fallback to the Web Speech API, a confidence prompt and per-clinic vocabulary in the transcription prompt; the widget has none of these, and the latency figures were not our measurements. The sections below now say what the code does.

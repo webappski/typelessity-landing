@@ -86,7 +86,8 @@
   color: var(--fg3);
   margin-top: 12px;
 
-  a { color: var(--fg2); text-decoration: none; &:hover { text-decoration: underline; } }
+  // A target of at least 24 px in height (WCAG 2.2 SC 2.5.8; Lighthouse target-size): the links were 22 px high (L12, C13).
+  a { display: inline-flex; align-items: center; min-height: 24px; color: var(--fg2); text-decoration: none; &:hover { text-decoration: underline; } }
 }
 
 // The links sit on their own line: as an inline box that wrapped to a new line, the 4px margin-left
@@ -105,6 +106,8 @@
   text-transform: uppercase;
   color: var(--fg3);
   font-weight: 600;
+  // An h2 since L12 (heading order: the footer follows h2 sections, not h4); the global h2 line-height is pinned back to what the h4 had.
+  line-height: 1.18;
   margin-bottom: 10px;
 }
 
