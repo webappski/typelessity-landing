@@ -44,7 +44,7 @@ test('every address of the sitemap, with and without a query string, answers 200
   }
 });
 
-test('dist/404.html, served under a deep address with status 404, loads clean and keeps its canonical to /404', async ({ page }) => {
+test('dist/404.html, served under a deep address with status 404, loads clean and has no canonical and says noindex', async ({ page }) => {
   const shell = join(BROWSER, '404.html');
   expect(existsSync(shell), '404.html is missing: postbuild did not build it').toBe(true);
   const body = readFileSync(shell, 'utf8');
@@ -58,9 +58,22 @@ test('dist/404.html, served under a deep address with status 404, loads clean an
   await page.route('**/zz/deep/path/x', (route) => route.fulfill({ status: 404, contentType: 'text/html; charset=utf-8', body }));
   await page.goto('/zz/deep/path/x');
   await expect(page.locator('h1')).toHaveText("This page doesn't exist");
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://typelessity.com/404');
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
   expect(errors).toEqual([]);
   expect(failed).toEqual([]);
+});
+
+// L12 (C12): the noindex belongs to the 404 screen only. The document survives a client-side navigation, so the next page must take the tag away
+// and name its own canonical again (SeoService.apply sets or removes both on every call).
+test('leaving the 404 screen by «Go home» takes noindex away and gives the home page its own canonical', async ({ page }) => {
+  await page.goto('/zz-404-check', { waitUntil: 'networkidle' });
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await page.locator('.nf__actions a', { hasText: 'Go home' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://typelessity.com');
 });
 
 test('/404 on the SSR server is not a server error and is the 404 screen, not another page (the exact status is a property of the mirror)', async ({ request }) => {

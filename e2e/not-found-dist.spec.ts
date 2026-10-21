@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { countClaims } from './claims-dictionary';
 
@@ -19,12 +19,26 @@ test('dist has 404.html and no 404/ (a page at /404 would answer 200)', () => {
   assert.ok(!existsSync(join(BROWSER, '404')), 'dist/404/ is left behind: /404 would be a page that answers 200');
 });
 
-test('404.html says the page does not exist, with one h1, base href, canonical to /404 (not the home page)', () => {
+test('404.html says the page does not exist, with one h1 and a base href', () => {
   assert.equal([...html.matchAll(/<h1[\s>]/g)].length, 1);
   assert.match(html, /<h1[^>]*>\s*This page doesn't exist\s*<\/h1>/);
   assert.match(html, /<base href="\/">/);
-  const canonical = html.match(/<link[^>]*rel="canonical"[^>]*href="([^"]*)"/)?.[1] ?? html.match(/<link[^>]*href="([^"]*)"[^>]*rel="canonical"/)?.[1];
-  assert.equal(canonical, 'https://typelessity.com/404');
+});
+
+// L12 (C12): this file is the body of every 404 and of the 410 of the retired pages (vercel.json routes → /404.html). It names no address as its
+// own — a canonical to /404 would tell a crawler that the answer for every retired address is the page /404 — and it asks not to be indexed.
+test('404.html has no rel=canonical and one robots meta with noindex (the same file is the body of the 410)', () => {
+  assert.equal([...html.matchAll(/<link[^>]*rel="canonical"/g)].length, 0, '404.html names a canonical');
+  const robots = [...html.matchAll(/<meta[^>]*name="robots"[^>]*>/g)].map((m) => m[0]);
+  assert.equal(robots.length, 1, `${robots.length} robots meta tags`);
+  assert.match(robots[0], /content="noindex"/);
+});
+
+test('every other prerendered page has no robots meta but the articles, which allow a large image preview or say nothing', () => {
+  const bad: string[] = [];
+  const walk = (dir: string) => { for (const n of readdirSync(dir)) { const f = join(dir, n); if (statSync(f).isDirectory()) walk(f); else if (n.endsWith('.html') && n !== '404.html') { const h = readFileSync(f, 'utf8'); if (/<meta[^>]*name="robots"[^>]*content="[^"]*noindex/.test(h)) bad.push(f.replace(BROWSER, '')); } } };
+  walk(BROWSER);
+  assert.deepEqual(bad, [], 'a page of the site says noindex');
 });
 
 test('404.html loads from any depth: every local script, style and font it names is a file in dist', () => {

@@ -16,6 +16,13 @@ export interface SeoInput {
   publishedAt?: string;
   updatedAt?: string;
   author?: string;
+  /**
+   * The content of `<meta name="robots">`. Every call sets or removes the tag, so a tag put by one page never stays on the next one
+   * (client-side navigation keeps the document): `noindex` on the 404 screen, `max-image-preview:large` on an article, none elsewhere.
+   */
+  robots?: 'noindex' | 'max-image-preview:large';
+  /** The page has no address of its own to name (the 404 screen, which the platform also serves under a 410): no `<link rel="canonical">`. */
+  noCanonical?: true;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -56,7 +63,15 @@ export class SeoService {
       }
     }
 
-    this.setCanonical(url);
+    if (input.robots) this.meta.updateTag({ name: 'robots', content: input.robots });
+    else this.meta.removeTag('name="robots"');
+
+    if (input.noCanonical) this.removeCanonical();
+    else this.setCanonical(url);
+  }
+
+  private removeCanonical(): void {
+    this.doc.querySelectorAll('link[rel="canonical"]').forEach((l) => l.remove());
   }
 
   private setCanonical(url: string): void {
