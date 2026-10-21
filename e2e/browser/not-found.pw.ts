@@ -82,14 +82,24 @@ test('/404 on the SSR server is not a server error and is the 404 screen, not an
   expect(await res.text()).toMatch(H1);
 });
 
-// Known defect, not repaired in L1 (card §1): after hydration the client router knows blog/:slug,
-// legal/:doc, so a bot gets 404 but a visitor sees an article or the
-// Security page. test.fail() keeps it visible and turns red when someone fixes it (then drop .fail).
-test.fail('after hydration an unknown blog or legal address shows the 404 screen', async ({ page }) => {
-  for (const p of ['/blog/no-such-post', '/legal/foo']) {
-    await page.goto(p);
-    await expect(page.locator('app-not-found'), p).toHaveCount(1);
-  }
+// Known defect FL-04, not repaired in L1 (card §1): after hydration the client router knows blog/:slug and legal/:doc, so a bot gets 404 but a visitor
+// sees the article shell («Post not found») or the Security page instead of the 404 screen. L14: one test per address, and each holds the DEFECT as
+// it is (a positive statement), not the wish: a `test.fail` turned red for any reason and told nothing about which address was fixed. When one of
+// them goes red, FL-04 is repaired for that address: turn that test into the statement «the 404 screen is shown» and close the finding.
+test('FL-04 /blog/<unknown>: after hydration the visitor sees the article shell with «Post not found», not the 404 screen', async ({ page }) => {
+  test.info().annotations.push({ type: 'known-defect', description: 'FL-04 (FINDINGS): the client router answers /blog/:slug for any slug' });
+  await page.goto('/blog/no-such-post');
+  await expect(page.locator('app-blog-post'), 'the article page is mounted').toHaveCount(1);
+  await expect(page.locator('app-blog-post')).toContainText('Post not found');
+  await expect(page.locator('app-not-found'), 'the 404 screen is not shown (this is the defect)').toHaveCount(0);
+});
+
+test('FL-04 /legal/<unknown>: after hydration the visitor sees the Security page, not the 404 screen', async ({ page }) => {
+  test.info().annotations.push({ type: 'known-defect', description: 'FL-04 (FINDINGS): the client router answers /legal/:doc for any doc and falls back to Security' });
+  await page.goto('/legal/foo');
+  await expect(page.locator('app-legal-page'), 'the legal page is mounted').toHaveCount(1);
+  await expect(page.locator('app-legal-page h1').first()).toContainText(/security/i);
+  await expect(page.locator('app-not-found'), 'the 404 screen is not shown (this is the defect)').toHaveCount(0);
 });
 
 // L11 (2026-10-20, founder: «we do not need industries»): the hub and the 37 industry pages are gone from the Angular layer too — no route, no

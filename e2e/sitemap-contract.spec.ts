@@ -177,9 +177,10 @@ function schemaNamesOf(dir: string): string[] {
 /** Last commit date of one function of schemas.ts. The regex is BRE, has no quotes inside (execFileSync has no shell: a quote becomes part of it) and `[a-z]*` instead of an alternation. */
 const schemaNameDate = (name: string): string => git('log', '-1', '--format=%cs', '--no-patch', '-L', `:^export [a-z]* ${name}\\b:${SCHEMAS}`);
 
-test('sitemap: a page is not dated before its last edit (the formula of D7: page folder, its seo.* keys and, by name, the schemas.ts functions it calls)', (t) => {
+test('sitemap: a page is not dated before its last edit (the formula of D7: page folder, its seo.* keys and, by name, the schemas.ts functions it calls)', () => {
+  // L14: no skip. A shallow clone or a tree without git has no history, and a green run on such a tree would say nothing about the dates (tests are not skipped).
   const shallow = git('rev-parse', '--is-shallow-repository') !== 'false';
-  if (shallow) return t.skip('shallow clone or no git: the formula needs history');
+  if (shallow) assert.fail('the date formula needs git history: clone without --depth');
   // the fourth member lists files a page's text also comes from: the home page
   // also draws its blog cards, its six questions and its languages from files of other pages (L4). The FAQ answers used to live with
   // the home content; since L4 the home page only reads them from the FAQ's own file (L1б: the home date was a literal that had fallen a day behind)
