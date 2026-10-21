@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { cspValues, type VercelCspConfig } from './vercel-csp';
+import { isLatinExtFace, parseUnicodeRange } from './woff2-cmap';
 
 // A27 (c8, 2026-09-24): DM Sans and Space Mono came from fonts.googleapis.com / fonts.gstatic.com,
 // so every visitor's IP address went to Google before any consent — the embed a German court
@@ -85,8 +86,18 @@ function faces(css: string): Face[] {
   });
 }
 const isLatin = (f: Face) => /U\+0000-00FF/i.test(f.ranges);
-// L15: the latin-ext face is a subset now (its range starts at U+0102, not U+0100): a face for Latin Extended-A letters that is not the latin face
-const isLatinExt = (f: Face) => !isLatin(f) && /U\+01[0-7][0-9A-F]/i.test(f.ranges);
+// L15: the latin-ext face is a subset now (its range starts at U+0102, not U+0100), and so does a vietnamese face: the face is told
+// by the code points its range names, the same predicate as font-coverage.spec.ts (isLatinExtFace, woff2-cmap.ts)
+const isLatinExt = (f: Face) => f.ranges !== '' && isLatinExtFace(parseUnicodeRange(f.ranges));
+
+test('the latin-ext predicate tells the latin-ext faces of fonts.css from the latin and the vietnamese ones (control)', () => {
+  const all = faces(readBuilt('fonts/fonts.css'));
+  const kinds = (family: string) => [...new Set(all.filter((f) => f.family === family).map((f) => (isLatin(f) ? 'latin' : isLatinExt(f) ? 'latin-ext' : 'other')))].sort();
+  // Space Mono keeps Google's three splits (latin, latin-ext, vietnamese — the vietnamese range starts at U+0102 like our subset)
+  assert.ok(all.some((f) => f.family === 'Space Mono' && /U\+1EA0-1EF9/i.test(f.ranges)), 'fonts.css lost the vietnamese face of Space Mono, the control case');
+  assert.deepEqual(kinds('Space Mono'), ['latin', 'latin-ext', 'other'], 'Space Mono: latin, latin-ext and the vietnamese face as «other»');
+  assert.deepEqual(kinds('Montserrat'), ['latin', 'latin-ext'], 'Montserrat: latin and the latin-ext subset');
+});
 
 test('fonts.css: the families are Montserrat and Space Mono, and DM Sans is not among them', async (t) => {
   const css = readBuilt('fonts/fonts.css');

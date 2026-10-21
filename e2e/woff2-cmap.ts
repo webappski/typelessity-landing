@@ -17,13 +17,15 @@ function base128(buf: Buffer, at: { p: number }): number {
   throw new Error('woff2: UIntBase128 longer than 5 bytes');
 }
 
-function cmapTable(woff2: Buffer): Buffer {
+interface Directory { tables: Array<{ tag: string; offset: number; length: number }>; data: () => Buffer }
+/** The table directory of a WOFF2 file (W3C WOFF2 §5.2) and, on demand, the decompressed table data. */
+function directory(woff2: Buffer): Directory {
   if (woff2.toString('latin1', 0, 4) !== 'wOF2') throw new Error('not a WOFF2 file');
   const numTables = woff2.readUInt16BE(12);
   const compressed = woff2.readUInt32BE(20);
   const at = { p: 48 };
   let offset = 0;
-  let cmap: { offset: number; length: number } | null = null;
+  const tables: Directory['tables'] = [];
   for (let i = 0; i < numTables; i++) {
     const flags = woff2[at.p++]!;
     let tag: string;
@@ -32,12 +34,21 @@ function cmapTable(woff2: Buffer): Buffer {
     const origLength = base128(woff2, at);
     const transformed = tag === 'glyf' || tag === 'loca' ? version === 0 : version !== 0;
     const length = transformed ? base128(woff2, at) : origLength;
-    if (tag === 'cmap') cmap = { offset, length };
+    tables.push({ tag, offset, length });
     offset += length;
   }
+  const start = at.p;
+  return { tables, data: () => brotliDecompressSync(woff2.subarray(start, start + compressed)) };
+}
+
+/** The tags of the tables of a WOFF2 file: `fvar` and `gvar` are what makes it a variable font (an axis and its glyph deltas). */
+export const woff2TableTags = (woff2: Buffer): string[] => directory(woff2).tables.map((t) => t.tag);
+
+function cmapTable(woff2: Buffer): Buffer {
+  const dir = directory(woff2);
+  const cmap = dir.tables.find((t) => t.tag === 'cmap');
   if (!cmap) throw new Error('woff2: no cmap table');
-  const data = brotliDecompressSync(woff2.subarray(at.p, at.p + compressed));
-  return data.subarray(cmap.offset, cmap.offset + cmap.length);
+  return dir.data().subarray(cmap.offset, cmap.offset + cmap.length);
 }
 
 /** Every code point the font maps to a glyph other than .notdef. */
@@ -87,3 +98,12 @@ export function parseUnicodeRange(range: string): Array<[number, number]> {
 }
 
 export const inRanges = (cp: number, ranges: ReadonlyArray<readonly [number, number]>): boolean => ranges.some(([a, b]) => a <= cp && cp <= b);
+
+const overlaps = (ranges: ReadonlyArray<readonly [number, number]>, lo: number, hi: number): boolean => ranges.some(([a, b]) => a <= hi && b >= lo);
+/**
+ * Google's latin-ext face of a family, told by its unicode-range alone: it names a Latin Extended-A letter (U+0100-017F), it is not
+ * the latin face (which names «A»), and it is not the vietnamese face, which also starts in Latin Extended-A (U+0102) but names the
+ * Vietnamese letters U+1EA0-1EF1, a span latin-ext never names (its ranges stop at U+1E9F and start again at U+1EF2).
+ */
+export const isLatinExtFace = (ranges: ReadonlyArray<readonly [number, number]>): boolean =>
+  !inRanges(0x41, ranges) && overlaps(ranges, 0x100, 0x17f) && !overlaps(ranges, 0x1ea0, 0x1ef1);

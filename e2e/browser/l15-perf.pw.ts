@@ -41,14 +41,14 @@ async function fontsOfMarked(page: Page): Promise<Array<{ text: string; fonts: s
   }
 }
 
-for (const path of ['/', '/pricing']) {
+for (const path of ['/', '/pricing', '/privacy']) {
   test(`L15-F1 ${path}: every visible text with a Latin Extended-A letter is drawn in Montserrat alone, and the latin-ext file the page fetched is the subset`, async ({ page }) => {
     const fonts: string[] = [];
     page.on('request', (r) => { if (r.resourceType() === 'font') fonts.push(new URL(r.url()).pathname); });
     await page.goto(path);
     await page.evaluate(() => document.fonts.ready);
     const nodes = await fontsOfMarked(page);
-    expect(nodes.length, `${path} must show at least one Latin Extended-A letter (Gdańsk on /, the Polish price note on /pricing)`).toBeGreaterThan(0);
+    expect(nodes.length, `${path} must show at least one Latin Extended-A letter (Gdańsk on /, the Polish price note on /pricing, the Polish line of the company details on /privacy)`).toBeGreaterThan(0);
     const fallback = nodes.filter((n) => n.fonts.some((f) => !/^Montserrat\b/.test(f)));
     expect(fallback, 'a node whose letters were partly drawn by another font').toEqual([]);
     expect(fonts.filter((f) => /montserrat-latin-ext-subset-[0-9a-f]{8}\.woff2$/.test(f)), 'the latin-ext subset is fetched once').toHaveLength(1);
