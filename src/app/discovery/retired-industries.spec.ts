@@ -69,7 +69,8 @@ test('the 410 route answers with the 404 page and carries the same security head
   assert.equal(rule.dest, '/404.html');
   const all = vercel.headers?.find((h) => h.source === '/(.*)');
   assert.ok(all, 'vercel.json has no headers block for /(.*)');
-  assert.deepEqual(rule.headers, all.headers, 'routes run before headers on Vercel, so the rule repeats the block (L1 Q-1); the copy drifted from it');
+  // routes[].headers is an object { name: value } (Vercel schema, guarded in vercel-schema.spec.ts); the /(.*) block is an array of {key, value}
+  assert.deepEqual(rule.headers, Object.fromEntries(all.headers.map((h) => [h.key, h.value])), 'routes run before headers on Vercel, so the rule repeats the block (L1 Q-1); the copy drifted from it');
   const names = (all.headers).map((h) => h.key.toLowerCase());
   for (const k of ['strict-transport-security', 'x-content-type-options', 'x-frame-options', 'referrer-policy', 'permissions-policy', 'content-security-policy']) {
     assert.ok(names.includes(k), `the /(.*) block lost ${k}`);

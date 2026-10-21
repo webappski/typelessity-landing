@@ -1,0 +1,4 @@
+url: https://openapi.vercel.sh/vercel.json
+fetched: 2026-10-21 (curl, 433761 bytes, draft-04)
+used by: src/app/discovery/vercel-schema.spec.ts (ajv 8 from node_modules, strict off, $schema key dropped)
+refresh: curl -sSL https://openapi.vercel.sh/vercel.json -o e2e/fixtures/vercel.schema.json and change the date here
