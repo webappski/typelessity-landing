@@ -1,4 +1,4 @@
-import { test as base, expect, API_ORIGIN, REDUCED_MOTION, SITE_HEADERS, underPolicy, WIDGET_ORIGIN, type Page, type Response } from './fixtures';
+import { test as base, expect, API_ORIGIN, REDUCED_MOTION, SITE_HEADERS, underPolicy, WIDGET_ORIGIN, type Locator, type Page, type Response } from './fixtures';
 import { CONTRAST_ENGINE } from './contrast-engine';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
@@ -145,10 +145,54 @@ async function play(page: Page, label: string, done: (s: Snap, t: Trace) => bool
   }
 }
 
+/**
+ * The controller of the demo watches the stage with an IntersectionObserver (threshold 0.2: the show plays only while the stage is in the window), and the
+ * observer answers in the step that draws a frame — not after a time (FL-90: four `waitForTimeout(400)` stood here). The page clock is installed, so the page's
+ * own `requestAnimationFrame` is faked and cannot be waited on; an observer is not faked. A second observer on the same stage, made after the first, is
+ * notified after it in the same step: when it reports the state wanted, the controller has already reacted to it.
+ */
+async function stageSettled(page: Page, inView: boolean): Promise<void> {
+  await page.evaluate((want) => new Promise<void>((resolve) => {
+    const stage = document.querySelector('[data-ty-demo]')!;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[entries.length - 1]!.isIntersecting === want) { io.disconnect(); resolve(); }
+    }, { threshold: 0.2 });
+    io.observe(stage);
+  }), inView);
+}
+
+/**
+ * A card of the show is clicked when it has stood still: the widget slides cards in and scrolls its own list, and a click aimed at a card that is still
+ * on its way is refused with «element is not stable» or «outside of the viewport» (FL-56: once on a full run, 3 of 3 alone). Polled by the real clock of
+ * the test, not by the page's (that one is frozen): the box must be the same on consecutive reads, then the click has a bounded time of its own.
+ */
+async function clickWhenSettled(locator: Locator): Promise<void> {
+  await locator.scrollIntoViewIfNeeded({ timeout: 30_000 });
+  let last = '';
+  await expect.poll(async () => {
+    const now = JSON.stringify(await locator.boundingBox());
+    const same = now !== 'null' && now === last;
+    last = now;
+    return same;
+  }, { message: 'the card keeps moving', intervals: [100, 100, 150, 250], timeout: 30_000 }).toBe(true);
+  await locator.click({ timeout: 30_000 });
+}
+
 /** Freeze the clock where it stands: from here only `run` and `play` move it. */
 async function freeze(page: Page): Promise<void> {
-  const now = await page.evaluate(() => Date.now());
-  await page.clock.pauseAt(new Date(now + 600));
+  // FL-56 (L13): the clock is read in the page and paused 600 ms ahead of that reading. On a machine busy with other workers more than 600 ms can pass between
+  // the two calls, and Playwright refuses to pause in the past («Cannot fast-forward to the past»): 4 runs of 20 at 8 workers failed there, in the test of
+  // FL-56 among others. The reading is taken again and the pause asked for again; the margin stays 600 ms, so the show has run the same 0.6 s of its
+  // clock when it stops. A refusal that is not «the past» is not retried.
+  for (let attempt = 1; ; attempt++) {
+    const now = await page.evaluate(() => Date.now());
+    try {
+      await page.clock.pauseAt(new Date(now + 600));
+      return;
+    } catch (error) {
+      if (attempt >= 6 || !/fast-forward to the past/.test(String(error))) throw error;
+    }
+  }
 }
 
 interface OpenOptions {
@@ -443,7 +487,9 @@ for (const scheme of ['light', 'dark'] as const) {
       let top = 0;
       for (let pass = 0; pass < 3; pass++) {
         await page.evaluate(() => window.scrollBy({ top: document.querySelector('.demo__frame')!.getBoundingClientRect().top - 105, behavior: 'instant' }));
-        await page.waitForTimeout(400); // the observer of the page answers on a real frame
+        await stageSettled(page, true); // the observer of the page has answered
+        // the frame grows with a transition (0.4 s): wait for the transition to end, not for a time
+        await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
         top = await page.evaluate(() => document.querySelector('.demo__frame')!.getBoundingClientRect().top);
         if (top >= 90 && top <= 120) break;
       }
@@ -466,8 +512,38 @@ for (const scheme of ['light', 'dark'] as const) {
         expect(inside(box.ring!), `tip ${n}: the ring of the lit block (${JSON.stringify(box.ring)}) is inside the window`).toBe(true);
         const overlap = Math.min(box.tip!.bottom, box.ring!.bottom) - Math.max(box.tip!.top, box.ring!.top);
         expect(overlap, `tip ${n}: the card covers the block it lights by ${Math.round(overlap)} px`).toBeLessThanOrEqual(0);
+        // L13 (FL-71): the card stands over the foot of the widget, where the input row is. A tap on that row must reach the widget (the card used to take
+        // it: `.tip.is-on { pointer-events: auto }`), and the card's own × must still be a button. The overlap is real at this scroll position, so the
+        // tap point is the middle of the part of the input row the card covers; if the card covered none of it, the check below would say so.
+        const hit = await page.evaluate(() => {
+          const host = document.querySelector('typelessity-widget') as HTMLElement;
+          const row = host.shadowRoot!.querySelector('.pill-input')!.getBoundingClientRect();
+          const tip = document.querySelector('[data-tip].is-on')!.getBoundingClientRect();
+          const top = Math.max(row.top, tip.top), bottom = Math.min(row.bottom, tip.bottom), left = Math.max(row.left, tip.left), right = Math.min(row.right, tip.right);
+          const covered = bottom > top && right > left;
+          const at = (x: number, y: number) => document.elementFromPoint(x, y);
+          const x = document.querySelector('[data-tip-close]')!.getBoundingClientRect();
+          const underRow = covered ? at((left + right) / 2, (top + bottom) / 2) : null;
+          const onClose = at(x.left + x.width / 2, x.top + x.height / 2);
+          return { covered, rowIsWidget: underRow ? !!underRow.closest('typelessity-widget') : null, rowTarget: underRow ? underRow.tagName + '.' + underRow.className : null, closeIsButton: !!onClose?.closest('[data-tip-close]') };
+        });
+        expect(hit.closeIsButton, `tip ${n}: the × of the card is a button that can be tapped`).toBe(true);
+        if (hit.covered) expect(hit.rowIsWidget, `tip ${n}: a tap on the part of the input row under the card reaches the widget, not the card (it hit ${hit.rowTarget})`).toBe(true);
         if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip${n}-390-${scheme}.png`) }); }
       }
+      // L13 (FL-71): the visitor puts the cursor in the input row of the widget (on a phone the keyboard comes up under it): the card steps aside while the
+      // focus is there and is back when it leaves. The state is the one the frame «after-home-tip-typing-390» shows.
+      const tipState = () => page.evaluate(() => { const tip = document.querySelector('[data-tip]') as HTMLElement; return { on: tip.classList.contains('is-on'), visibility: getComputedStyle(tip).visibility }; });
+      const focusInput = (on: boolean) => page.evaluate((focus) => {
+        const input = (document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.querySelector('.pill-input') as HTMLInputElement;
+        if (focus) input.focus(); else input.blur();
+      }, on);
+      expect(await tipState(), 'before the focus: the card is on and visible').toEqual({ on: true, visibility: 'visible' });
+      await focusInput(true);
+      expect((await tipState()).visibility, 'while the cursor is in the input row the card is out of the way').toBe('hidden');
+      if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip-typing-390-${scheme}.png`) }); }
+      await focusInput(false);
+      expect((await tipState()).visibility, 'when the cursor leaves, the card is back').toBe('visible');
     });
   });
 }
@@ -599,7 +675,7 @@ test.describe('B3 take-over and the consent', () => {
     await openHome(page);
     await play(page, 'cards', (s) => s.options === 3, 60_000);
     const before = (await calls(page)).filter((c) => /\/message$/.test(c.path)).length;
-    await page.locator('typelessity-widget .option-badge').first().click();
+    await clickWhenSettled(page.locator('typelessity-widget .option-badge').first());
     await expectTakenOver(page, 'a click on a card');
     await run(page, 5000);
     const after = (await calls(page)).filter((c) => /\/message$/.test(c.path)).length;
@@ -855,7 +931,7 @@ test.describe('B6 out of the window', () => {
     await openHome(page);
     await play(page, 'typing', (s) => ready(s) && s.inputValue.length > 5, 40_000);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(400); // the observer of the page answers on a real frame
+    await stageSettled(page, false); // the observer of the page has answered
     await run(page, 1000);
     const away = await snap(page);
     await run(page, 20_000, 1000);
@@ -863,7 +939,7 @@ test.describe('B6 out of the window', () => {
     expect(later.userMsgs, 'the show went on typing and sending while nobody saw it').toBe(away.userMsgs);
     expect(later.inputValue, 'the sentence kept growing out of the window').toBe(away.inputValue);
     await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(400);
+    await stageSettled(page, true);
     const back = await play(page, 'the show goes on', (s) => s.userMsgs >= 1 || s.inputValue.length > 5, 40_000);
     expect(back.last.widget).toBe(1);
   });
@@ -874,7 +950,7 @@ const WIDTHS = [390, 1440] as const;
 /** The show plays only while the stage is on screen (an observer, 20 %): on a phone the stage is below the first screen, so the test brings it up. */
 async function inView(page: Page): Promise<void> {
   await page.evaluate(() => document.querySelector('[data-ty-demo]')!.scrollIntoView({ block: 'start' }));
-  await page.waitForTimeout(400);
+  await stageSettled(page, true);
 }
 const MEASURE = async (page: Page, scope: string) => {
   await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));

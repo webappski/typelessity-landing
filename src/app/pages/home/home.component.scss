@@ -454,6 +454,14 @@ pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); backgrou
   .hero__grid > .tip-slot--left { align-self: end; top: auto; bottom: 8px; min-height: 0;
     .tip::after { top: -8px; bottom: auto; transform: rotate(-135deg); }
   }
+  // L13 (FL-71): the card sticks to the bottom of the window and lies over the foot of the widget, where the input row is. It used to take the tap meant
+  // for that row, and it stood over the row while the visitor typed. Now a tap goes through the card to the widget (the × stays a button), and while the
+  // cursor is in the widget the card steps aside. Where the card stands is the designer's call (FL-71 stays open); this only makes the input usable.
+  .hero__grid > .tip-slot--left .tip.is-on { pointer-events: none; }
+  .hero__grid > .tip-slot--left .tip__x { pointer-events: auto; }
+  // `.demo__frame` is the box of the home template that holds the widget: <typelessity-widget> is made by the demo controller and carries no attribute of this
+  // component, so a selector naming it would never match. :focus-within looks through the shadow root of the widget.
+  .hero__grid:has(.demo__frame:focus-within) > .tip-slot--left .tip { visibility: hidden; }
 }
 // L14 (CRO 1): on a phone the two buttons stand right under the headline and the paragraph under them; «Get it free» is on the first screen.
 @media (max-width: 480px) {
