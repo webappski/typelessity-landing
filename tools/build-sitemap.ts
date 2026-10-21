@@ -32,7 +32,8 @@ const STATIC_PATHS: Url[] = [
   // L12 (2026-10-21): the promo card is wrapped in data-nosnippet, the product node prints the four prices with their month.
   { path: '/', lastmod: '2026-10-21' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
-  { path: '/install', lastmod: '2026-10-19' },
+  // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
+  { path: '/install', lastmod: '2026-10-21' },
   // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
   // L12 (2026-10-21): the page prints «Page last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
@@ -41,7 +42,8 @@ const STATIC_PATHS: Url[] = [
   // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
   // L12 (2026-10-21): no BreadcrumbList; the product node has its four offers; a price line in the list of resources.
   { path: '/for-ai-agents', lastmod: '2026-10-21' },
-  { path: '/faq', lastmod: '2026-10-19' },
+  // L14 (2026-10-21): the answers about retention, the DPA, the network of Vercel and OpenAI's 30 days were corrected.
+  { path: '/faq', lastmod: '2026-10-21' },
   { path: '/about', lastmod: '2026-10-19' },
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
   // L12 (2026-10-21): the list no longer carries BreadcrumbList.

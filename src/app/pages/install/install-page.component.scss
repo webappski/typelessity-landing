@@ -118,6 +118,16 @@
   white-space: pre;
   overflow-x: auto;
   max-width: 100%;
+  // L14 (tester C): a line that runs past the right edge shows it. The shadow at an edge is drawn only while there is more to scroll to: the
+  // covers («local») move with the text and hide the shadows («scroll») at the ends. No script, both themes (the colours are the theme's).
+  background:
+    linear-gradient(to right, var(--bg-code) 30%, transparent) left center / 36px 100% no-repeat local,
+    linear-gradient(to left, var(--bg-code) 30%, transparent) right center / 36px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--text-primary) 38%, transparent), transparent) left center / 12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--text-primary) 38%, transparent), transparent) right center / 12px 100% no-repeat scroll,
+    var(--bg-code);
+
+  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 }
 
 .how-cta {

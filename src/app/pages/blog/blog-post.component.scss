@@ -639,6 +639,32 @@
   }
 }
 
+// ── L14 (CRO 4): the next step at the end of the text, above the list of changes ──
+.blog-post__cta {
+  max-width: var(--measure-body);
+  margin: 56px auto 40px;
+  padding: 44px 0 8px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 4vw, 36px);
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    color: var(--text-primary);
+  }
+
+  .how-cta__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 700px) { margin-top: 40px; padding-top: 32px; }
+}
+
 // ── Reduced motion ──
 @media (prefers-reduced-motion: reduce) {
   .blog-progress { transition: none; }
@@ -647,7 +673,7 @@
 
 // ── Print ──
 @media print {
-  .blog-progress, .blog-post__back, .blog-post__footer { display: none; }
+  .blog-progress, .blog-post__back, .blog-post__footer, .blog-post__cta { display: none; }
   .blog-post__body ::ng-deep table { box-shadow: none; }
   .blog-post { padding: 0; }
 }

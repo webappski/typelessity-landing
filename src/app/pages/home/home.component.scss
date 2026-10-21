@@ -443,4 +443,21 @@ pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); backgrou
 @media (max-width: 520px) {
   pre.code { white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: visible; }
   .cta-band { padding: 28px 18px; }
+
+  // L14 (FL-68, a visitor on a phone saw a frame and a circle with a digit but no words): the tip card stood in the 144 px above the tabs and
+  // scrolled away with them, because «.hero { overflow: hidden }» made the hero the scroll container of the sticky card, and a sticky card
+  // whose scroll container never scrolls does not stick. `overflow: clip` clips the same and creates no scroll container. The card now stands
+  // at the foot of the demo (the room the 144 px above the tabs were) and sticks to the bottom of the window: it is on the screen with the
+  // widget it talks about. Nothing is new: it is the sticky card of the mock, turned to the bottom edge.
+  .hero { overflow: clip; }
+  .hero__grid > .demo { padding-top: 0; padding-bottom: 150px; }
+  .hero__grid > .tip-slot--left { align-self: end; top: auto; bottom: 8px; min-height: 0;
+    .tip::after { top: -8px; bottom: auto; transform: rotate(-135deg); }
+  }
+}
+// L14 (CRO 1): on a phone the two buttons stand right under the headline and the paragraph under them; «Get it free» is on the first screen.
+@media (max-width: 480px) {
+  .hero__text > .hero__cta { order: 1; }
+  .hero__text > .lead { order: 2; }
+  .hero__text > .trust { order: 3; }
 }

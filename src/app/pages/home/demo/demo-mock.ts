@@ -78,14 +78,18 @@ const orgIdFor = (id: string): string => `00000000-0000-4000-8000-${String(Objec
 function configFor(id: string, lang: string): Record<string, unknown> {
   const s = scenario(id, lang);
   const c = s.c;
-  const fields: Record<string, unknown>[] = s.fields.map((f) => ({ id: f[0], type: f[1], label: f[2], required: true, aiHint: f[2] }));
+  // L14 (testers A and B): the widget groups the fields for its step line («1 / 3 Contact details»). Without a `group` it takes the type: a text field is
+  // «Contact details» and the name and phone at the end joined the group of the service, so the line read 1/3 → 3/3 → 1/3 within one booking. The groups
+  // are named here, in the order the booking goes: what is asked for, when, who — the step never goes back.
+  const WHEN = ['date', 'time', 'time_window'];
+  const fields: Record<string, unknown>[] = s.fields.map((f) => ({ id: f[0], type: f[1], label: f[2], required: true, aiHint: f[2], group: WHEN.includes(f[0]) ? 'datetime' : 'details' }));
   fields.push({
-    id: s.cardsField, type: 'select', label: s.cardsLabel, required: true, aiHint: s.cardsLabel,
+    id: s.cardsField, type: 'select', label: s.cardsLabel, required: true, aiHint: s.cardsLabel, group: 'details',
     // plain strings, the stored shape (validation.options: z.array(z.string()) in the product); the widget reads label and value from the string
     validation: { options: s.results.map((r) => r[0] + ' · ' + r[1]) },
   });
-  fields.push({ id: 'name', type: 'text', label: c.name, required: true, aiHint: 'Name' });
-  fields.push({ id: 'phone', type: 'phone', label: c.phone, required: true, aiHint: 'Phone' });
+  fields.push({ id: 'name', type: 'text', label: c.name, required: true, aiHint: 'Name', group: 'contact' });
+  fields.push({ id: 'phone', type: 'phone', label: c.phone, required: true, aiHint: 'Phone', group: 'contact' });
   const t = nowIso();
   return {
     id: CONFIG_ID_PREFIX + id, organizationId: orgIdFor(id), version: 1, isActive: true, createdAt: t, updatedAt: t, fields,

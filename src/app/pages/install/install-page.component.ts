@@ -41,7 +41,7 @@ import { INSTALL } from './install.content';
 
     <section class="vc-wrap install-block">
       <h2>{{ c.code.h2 }}</h2>
-      <pre class="install-code">{{ embedSnippet }}</pre>
+      <pre class="install-code" tabindex="0" role="region" aria-label="Embed code, scrolls sideways">{{ embedSnippet }}</pre>
     </section>
 
     <section class="vc-wrap install-block">
@@ -50,7 +50,7 @@ import { INSTALL } from './install.content';
       @for (p of c.where.email.b; track p) { <p class="install-p">{{ p }}</p> }
       <h3>{{ c.where.rest.h3 }}</h3>
       @for (p of c.where.rest.b; track p) { <p class="install-p">{{ p }}</p> }
-      <pre class="install-code">{{ c.where.rest.example }}</pre>
+      <pre class="install-code" tabindex="0" role="region" aria-label="Example request body, scrolls sideways">{{ c.where.rest.example }}</pre>
     </section>
 
     <section class="vc-wrap install-block">
@@ -61,11 +61,11 @@ import { INSTALL } from './install.content';
     <section class="vc-wrap install-block">
       <h2>{{ c.csp.h2 }}</h2>
       <p class="install-p">{{ c.csp.b }}</p>
-      <pre class="install-code">{{ cspText }}</pre>
+      <pre class="install-code" tabindex="0" role="region" aria-label="Content-Security-Policy to allow, scrolls sideways">{{ cspText }}</pre>
       <p class="install-p">{{ c.csp.why }}</p>
       <p class="install-p">{{ c.csp.fonts }}</p>
       <p class="install-p">{{ c.csp.permissions }}</p>
-      <pre class="install-code">{{ c.csp.permissionsValue }}</pre>
+      <pre class="install-code" tabindex="0" role="region" aria-label="Permissions-Policy header, scrolls sideways">{{ c.csp.permissionsValue }}</pre>
     </section>
 
     <section class="vc-wrap how-cta">

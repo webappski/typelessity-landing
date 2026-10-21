@@ -24,7 +24,8 @@ const read = (rel: string): string => {
 };
 const SLUGS = readdirSync(BLOG_DIR).filter((f) => f.endsWith('.mdx')).map((f) => f.replace(/\.mdx$/, '')).sort();
 const article = (slug: string) => read(`blog/${slug}/index.html`);
-const markdownOf = (html: string) => html.match(/<markdown[^>]*>([\s\S]*?)<\/markdown>/)?.[1] ?? '';
+// L14: the text and the list of changes are two <markdown> elements with the block «Try it free» between them; the body of the article is the two together, in order.
+const markdownOf = (html: string) => [...html.matchAll(/<markdown[^>]*>([\s\S]*?)<\/markdown>/g)].map((m) => m[1]).join('\n');
 
 function allHtml(): Array<[string, string]> {
   const out: Array<[string, string]> = [];
@@ -199,4 +200,30 @@ test('C14 /for-ai-agents: the two section headings say what is inside for a deve
   assert.equal((html.match(/Machine-readable feature list/gi) ?? []).length, 0);
   assert.match(html, /Typelessity is an AI conversational booking widget\./, 'the content of the section is unchanged');
   assert.match(html, /<strong[^>]*>languages_supported:<\/strong>/, 'the feature list is unchanged');
+});
+
+// ── L14 (CRO 4): the next step at the end of every article ──
+test('L14 every article: the block «Try it free on your website» stands after the text and before the list of changes, with the sign-up link of the other pages', async (t) => {
+  for (const slug of SLUGS) {
+    await t.test(slug, () => {
+      const html = article(slug);
+      const blocks = [...html.matchAll(/<section\b[^>]*\bdata-article-cta\b[^>]*>([\s\S]*?)<\/section>/g)];
+      assert.equal(blocks.length, 1, 'the page has one block «Try it free»');
+      const block = blocks[0]![1]!;
+      assert.match(block, /<h2[^>]*>Try it free on your website<\/h2>/);
+      const link = block.match(/<a\b[^>]*class="[^"]*vc-btn-primary[^"]*"[^>]*href="([^"]+)"[^>]*>\s*Get it free\s*<\/a>|<a\b[^>]*href="([^"]+)"[^>]*class="[^"]*vc-btn-primary[^"]*"[^>]*>\s*Get it free\s*<\/a>/);
+      assert.ok(link, 'the block has no «Get it free» button');
+      const href = (link![1] ?? link![2]!).replace(/&amp;/g, '&');
+      const url = new URL(href);
+      assert.equal(url.origin + url.pathname, 'https://webappski.com/en/portal/login', 'the button leads to the sign-up of the other pages');
+      assert.equal(url.searchParams.get('start'), 'typelessity');
+      assert.equal(url.searchParams.get('utm_medium'), 'blog');
+      const at = html.indexOf('data-article-cta');
+      const journal = html.indexOf('What changed in this article');
+      const answer = html.indexOf('<markdown');
+      assert.ok(answer > -1 && answer < at, 'the text of the article is before the block');
+      assert.ok(at < journal, 'the block is before the list of changes');
+      assert.equal(html.slice(journal).includes('data-article-cta'), false, 'the block is not repeated after the list');
+    });
+  }
 });

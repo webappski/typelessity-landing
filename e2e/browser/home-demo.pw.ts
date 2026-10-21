@@ -69,6 +69,8 @@ interface Snap {
   consent: boolean; consentFocused: boolean; focusInHost: boolean; note: string | null;
   chain: 'idle' | 'json' | 'api' | 'sent'; tipOn: boolean; tipN: number; tipTitle: string; tipBody: string; ring: boolean; afterOn: boolean;
   tipsToggle: string | null; tipsPressed: string | null; configId: string | null; apiUrl: string | null;
+  /** the step line of the widget («1 / 3 Contact details»): the number it counts and the name of the group; 0 / '' while the widget shows none */
+  step: number; stepLabel: string;
 }
 const SNAP = String.raw`() => {
   const w = document.querySelector('typelessity-widget');
@@ -104,12 +106,14 @@ const SNAP = String.raw`() => {
     afterOn: !!document.querySelector('[data-after].is-on'),
     tipsToggle: toggle ? toggle.textContent.trim() : null, tipsPressed: toggle ? toggle.getAttribute('aria-pressed') : null,
     configId: w ? w.getAttribute('config-id') : null, apiUrl: w ? w.getAttribute('api-url') : null,
+    step: q('.scope-status-count') ? parseInt(q('.scope-status-count').textContent, 10) || 0 : 0,
+    stepLabel: q('.scope-status-label') ? q('.scope-status-label').textContent.trim() : '',
   };
 }`;
 const snap = (page: Page): Promise<Snap> => page.evaluate(`(${SNAP})()`) as Promise<Snap>;
 
 /** What the test remembers of one stretch of the show. */
-interface Trace { tips: number[]; chain: string[]; focusInHost: boolean; spent: number; last: Snap }
+interface Trace { tips: number[]; chain: string[]; steps: Array<{ n: number; label: string }>; focusInHost: boolean; spent: number; last: Snap }
 
 /** Move the clock (never the wall) by `ms`, in steps, with a breath of real time for the routes (chunk, widget.js) to answer. */
 async function run(page: Page, ms: number, step = STEP): Promise<void> {
@@ -124,13 +128,14 @@ async function run(page: Page, ms: number, step = STEP): Promise<void> {
  * focus of the page ever stood inside the widget) is what the show left behind. Fails with the last snapshot after `limit` ms of CLOCK.
  */
 async function play(page: Page, label: string, done: (s: Snap, t: Trace) => boolean, limit = 90_000, step = STEP, trace?: Trace): Promise<Trace> {
-  const t: Trace = trace ?? { tips: [], chain: [], focusInHost: false, spent: 0, last: await snap(page) };
+  const t: Trace = trace ?? { tips: [], chain: [], steps: [], focusInHost: false, spent: 0, last: await snap(page) };
   const spentBefore = t.spent;
   for (;;) {
     const s = await snap(page);
     t.last = s;
     if (s.tipOn && t.tips[t.tips.length - 1] !== s.tipN) t.tips.push(s.tipN);
     if (t.chain[t.chain.length - 1] !== s.chain) t.chain.push(s.chain);
+    if (s.step > 0 && t.steps[t.steps.length - 1]?.n !== s.step) t.steps.push({ n: s.step, label: s.stepLabel });
     if (s.focusInHost) t.focusInHost = true;
     if (done(s, t)) return t;
     if (t.spent - spentBefore >= limit) throw new Error(`${label}: not reached in ${limit} ms of clock; the last snapshot: ${JSON.stringify(s)}`);
@@ -402,6 +407,70 @@ test.describe('B2(d) the voice, on the real clock, with a fake microphone', () =
     expect(form.fileSize, 'the recording is above the product threshold').toBeGreaterThanOrEqual(10_000);
   });
 });
+
+// ═════════════════════════════════════════════════ L14 ═════════════════════════════════════════════════════════════════════════════════
+// L14, item 7 (testers A and B, 21.10): the step line of the widget counted 1/3 → 3/3 → 1/3 inside one booking. Its groups come from the config the mock
+// serves (demo-mock.ts: `group` on every field); the widget draws them in the order of first appearance. The sequence it passed through must never go back.
+test.describe('L14 the step line of the widget never goes back', () => {
+  for (const id of ['salon', 'garage', 'table', 'freight']) {
+    test(`${id}, English: from the first question to «request received» the step number only grows, and the first step is not «Contact details»`, async ({ page }) => {
+      await openHome(page);
+      await play(page, 'ready', ready, 30_000);
+      if (id !== 'salon') await tab(page, id).click();
+      const t = await play(page, `${id}: success`, reachedSuccess, 110_000);
+      const numbers = t.steps.map((x) => x.n);
+      expect(numbers.length, `${id}: the step line was seen (the widget draws it): ${JSON.stringify(t.steps)}`).toBeGreaterThanOrEqual(2);
+      expect([...numbers].sort((a, b) => a - b), `${id}: the step number went back: ${JSON.stringify(t.steps)}`).toEqual(numbers);
+      expect(t.steps[0]!.label, `${id}: the first question is not about contact details`).not.toBe('Contact details');
+      expect(t.steps[t.steps.length - 1]!.label, `${id}: the last step before the end is the contact`).toBe('Contact details');
+    });
+  }
+});
+
+// L14, item 6 (FL-68): on a phone the tip stood in the room above the tabs and was out of the window when the widget filled it. Now the card stands in the
+// window with the block it lights. 390×844, the widget scrolled so that its top is 90–120 px from the top of the window, tips 1 and 2, two themes.
+const L14_FRAMES = process.env['L14_FRAMES'];
+for (const scheme of ['light', 'dark'] as const) {
+  test.describe(`L14 tips on a phone, 390px, ${scheme}`, () => {
+    test.use({ colorScheme: scheme });
+
+    test(`tips 1 and 2: the card is inside the window, whole, together with the ring of the block it lights, and does not cover that block`, async ({ page }) => {
+      test.setTimeout(150_000);
+      await openHome(page, { width: 390, height: 844 });
+      await play(page, 'ready', ready, 40_000);
+      // scrolled by hand, not by `scrollIntoView` (that would put the widget at 0): the visitor has the widget under the header. Two passes: the first
+      // one moves the page, the layout below it settles (the frame grows with a transition), the second one corrects.
+      let top = 0;
+      for (let pass = 0; pass < 3; pass++) {
+        await page.evaluate(() => window.scrollBy({ top: document.querySelector('.demo__frame')!.getBoundingClientRect().top - 105, behavior: 'instant' }));
+        await page.waitForTimeout(400); // the observer of the page answers on a real frame
+        top = await page.evaluate(() => document.querySelector('.demo__frame')!.getBoundingClientRect().top);
+        if (top >= 90 && top <= 120) break;
+      }
+      expect(top, 'the widget stands 90–120 px from the top of the window').toBeGreaterThanOrEqual(90);
+      expect(top).toBeLessThanOrEqual(120);
+      let trace = await play(page, 'tip 1', (s) => s.tipOn && s.tipN === 1, 40_000);
+      for (const n of [1, 2]) {
+        if (n === 2) trace = await play(page, 'tip 2', (s) => s.tipOn && s.tipN === 2 && s.ring, 60_000, STEP, trace);
+        await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
+        const box = await page.evaluate(() => {
+          const r = (sel: string) => { const e = document.querySelector(sel); if (!e) return null; const b = e.getBoundingClientRect(); return { top: b.top, bottom: b.bottom, left: b.left, right: b.right }; };
+          return { tip: r('[data-tip].is-on'), ring: r('[data-ring].is-on'), h: window.innerHeight, w: window.innerWidth, pos: getComputedStyle(document.querySelector('#hero-tips')!).position };
+        });
+        expect(box.tip, `tip ${n} is on`).not.toBeNull();
+        expect(box.pos, 'the tip card sticks (it is the sticky card of the mock)').toBe('sticky');
+        const inside = (b: { top: number; bottom: number; left: number; right: number }) => b.top >= 0 && b.bottom <= box.h && b.left >= 0 && b.right <= box.w;
+        expect(inside(box.tip!), `tip ${n}: the card (${JSON.stringify(box.tip)}) is whole inside the window ${box.w}×${box.h}`).toBe(true);
+        if (box.ring) {
+          expect(inside(box.ring), `tip ${n}: the ring of the lit block (${JSON.stringify(box.ring)}) is inside the window`).toBe(true);
+          const overlap = Math.min(box.tip!.bottom, box.ring.bottom) - Math.max(box.tip!.top, box.ring.top);
+          expect(overlap, `tip ${n}: the card covers the block it lights by ${Math.round(overlap)} px`).toBeLessThanOrEqual(0);
+        }
+        if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip${n}-390-${scheme}.png`) }); }
+      }
+    });
+  });
+}
 
 // ═════════════════════════════════════════════════ B3 ═════════════════════════════════════════════════════════════════════════════════
 const STORED = (page: Page) => page.evaluate(() => ({
