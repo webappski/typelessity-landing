@@ -78,14 +78,14 @@ test('L-8: the functions run in the EU; the network of Vercel receives each requ
   hasAll('/legal/security', PAGES.security(), [NETWORK]);
   hasAll('/faq', PAGES.faq(), [NETWORK]);
   for (const [name, text] of Object.entries({ gdpr: PAGES.gdpr(), home: PAGES.home(), security: PAGES.security(), faq: PAGES.faq() })) {
+    // the sentences L-8 names (they start with «The service runs …»); «the service runs on Vercel in Frankfurt» of the self-hosting answer is FL-72, not in the verdict
     hasNone(`/${name}`, text, ['The service runs in the EU (Vercel, Frankfurt)', 'The service runs on Vercel']);
   }
 });
 
 test('L-9: OpenAI’s 30 days are «up to 30 days … longer only where the law requires it», in all seven places, never «then deletes it»', () => {
   const places: Array<[string, string]> = [['/gdpr', PAGES.gdpr()], ['/', PAGES.home()], ['/faq', PAGES.faq()], ['llms.txt', FILES.llms()], ['llms-full.txt', FILES.llmsFull()]];
-  // the FAQ answer has always said «the text» (it speaks to «my customer conversations»); the rest of the sentence is the reviewer's
-  for (const [name, text] of places) hasAll(name, text, [name === '/faq' ? OPENAI_30.replace('conversation text', 'the text') : OPENAI_30]);
+  for (const [name, text] of places) hasAll(name, text, [OPENAI_30]);
   const gdprCount = PAGES.gdpr().split(OPENAI_30).length - 1;
   assert.equal(gdprCount, 3, `/gdpr says the OpenAI retention ${gdprCount} times, expected 3 (capsule, retention list, check 2)`);
   for (const [name, text] of places) hasNone(name, text, [/then deletes it/i]);
@@ -94,6 +94,9 @@ test('L-9: OpenAI’s 30 days are «up to 30 days … longer only where the law 
 test('L-10: the DPA answer on /faq names the mechanism — publishing a configuration is refused until the DPA is accepted', () => {
   hasAll('/faq', PAGES.faq(), ['Yes. Publishing a configuration is refused until the Typelessity DPA has been accepted in the Webappski portal.']);
   hasNone('/faq', PAGES.faq(), ['before any visitor data is processed']);
+  // L-4 on the first half of the same answer: an abandoned conversation is one with no delivery record, not one with «no booking»
+  hasNone('/faq', PAGES.faq(), ['no booking and no activity']);
+  hasAll('/faq', PAGES.faq(), ['An abandoned conversation — no delivery record and no activity for 24 hours']);
 });
 
 test('the three old phrases are in no text file of the build: «then deletes it», «Consent first», «GDPR-aligned»', () => {

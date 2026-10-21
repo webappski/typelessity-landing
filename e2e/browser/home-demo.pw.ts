@@ -449,7 +449,8 @@ for (const scheme of ['light', 'dark'] as const) {
       }
       expect(top, 'the widget stands 90–120 px from the top of the window').toBeGreaterThanOrEqual(90);
       expect(top).toBeLessThanOrEqual(120);
-      let trace = await play(page, 'tip 1', (s) => s.tipOn && s.tipN === 1, 40_000);
+      // both tips light a block of the widget (TIPS[0].sel «.welcome-badges», TIPS[1].sel «.extracted-fields»): the ring is waited for and held
+      let trace = await play(page, 'tip 1', (s) => s.tipOn && s.tipN === 1 && s.ring, 40_000);
       for (const n of [1, 2]) {
         if (n === 2) trace = await play(page, 'tip 2', (s) => s.tipOn && s.tipN === 2 && s.ring, 60_000, STEP, trace);
         await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
@@ -461,11 +462,10 @@ for (const scheme of ['light', 'dark'] as const) {
         expect(box.pos, 'the tip card sticks (it is the sticky card of the mock)').toBe('sticky');
         const inside = (b: { top: number; bottom: number; left: number; right: number }) => b.top >= 0 && b.bottom <= box.h && b.left >= 0 && b.right <= box.w;
         expect(inside(box.tip!), `tip ${n}: the card (${JSON.stringify(box.tip)}) is whole inside the window ${box.w}×${box.h}`).toBe(true);
-        if (box.ring) {
-          expect(inside(box.ring), `tip ${n}: the ring of the lit block (${JSON.stringify(box.ring)}) is inside the window`).toBe(true);
-          const overlap = Math.min(box.tip!.bottom, box.ring.bottom) - Math.max(box.tip!.top, box.ring.top);
-          expect(overlap, `tip ${n}: the card covers the block it lights by ${Math.round(overlap)} px`).toBeLessThanOrEqual(0);
-        }
+        expect(box.ring, `tip ${n} lights a block: the ring is on`).not.toBeNull();
+        expect(inside(box.ring!), `tip ${n}: the ring of the lit block (${JSON.stringify(box.ring)}) is inside the window`).toBe(true);
+        const overlap = Math.min(box.tip!.bottom, box.ring!.bottom) - Math.max(box.tip!.top, box.ring!.top);
+        expect(overlap, `tip ${n}: the card covers the block it lights by ${Math.round(overlap)} px`).toBeLessThanOrEqual(0);
         if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip${n}-390-${scheme}.png`) }); }
       }
     });
