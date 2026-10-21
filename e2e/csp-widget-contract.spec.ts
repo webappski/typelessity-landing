@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
 import { cspValues, type VercelCspConfig } from './vercel-csp';
 
-// L3 D5 (S2): the widget on the page needs three origins in the Content-Security-Policy, and the policy is written TWICE in
-// vercel.json — in `headers[]` for every page and in the 410 route of L1б (`routes[].headers`), because routes run before
+// L3 D5 (S2): the widget on the page needs three origins in the Content-Security-Policy, and the policy is written THREE times in
+// vercel.json — in `headers[]` for every page and in the two 410 routes (`routes[].headers`: L1б industries, L13 two articles), because routes run before
 // headers on Vercel. The contract, by token sets, not by substring (a substring passes `…/widget.js` with a path in
 // font-src, an `http://` origin and a stray `https:`):
 //   script-src  = 'self' + 'unsafe-inline' + cal.com + the origin of WIDGET_SCRIPT_URL
@@ -33,8 +33,8 @@ function directives(policy: string): Map<string, Set<string>> {
 }
 const sorted = (set: Set<string> | undefined) => [...(set ?? [])].sort();
 
-test('the CSP is written in vercel.json twice — the headers block and the 410 route — and the copies are equal', () => {
-  assert.ok(copies.length >= 2, `${copies.length} CSP values in vercel.json (headers[] and routes[].headers), expected at least 2`);
+test('the CSP is written in vercel.json three times — the headers block and the two 410 routes — and the copies are equal', () => {
+  assert.equal(copies.length, 3, `${copies.length} CSP values in vercel.json (headers[] and two routes[].headers), expected 3`);
   assert.equal(new Set(copies).size, 1, 'the copies of the CSP differ; routes run before headers on Vercel, so the route repeats the block');
 });
 

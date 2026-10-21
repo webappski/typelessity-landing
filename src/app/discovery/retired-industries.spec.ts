@@ -23,7 +23,8 @@ interface VercelJson { routes?: Route[]; redirects?: Rule[]; rewrites?: Rule[]; 
 // LANDING_VERCEL_JSON points the guard at another copy of vercel.json (the mutation run feeds it a spoiled one; it must go red).
 const vercel = JSON.parse(readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('vercel.json', ROOT), 'utf8')) as VercelJson;
 const gone = (vercel.routes ?? []).filter((r) => r.status === 410);
-const rule = gone[0];
+// The industries rule is the one that names /industries; L13 (C11) added a second 410 rule for two retired articles, which this file does not describe.
+const rule = gone.find((r) => r.src.includes('industries'))!;
 const taken = (path: string): boolean => new RegExp(rule.src).test(path);
 
 test('the lists are what the card says: 30 retired and 7 taken down at L11, none twice, 37 addresses in all', () => {
@@ -52,12 +53,15 @@ test('the site has no industry module any more: no data, no component, no route,
   assert.doesNotMatch(sitemap, /industr/i, 'the sitemap generator names industries');
 });
 
-test('vercel.json holds exactly one 410 route: anchored, no handle, no catch-all', () => {
-  assert.equal(gone.length, 1, `expected one route with status 410, found ${gone.length}`);
-  assert.equal(rule.handle, undefined, 'a handle phase would make the rule catch more than the list');
-  assert.match(rule.src, /^\^/, 'the src must start with ^');
-  assert.match(rule.src, /\$$/, 'the src must end with $');
-  assert.doesNotMatch(rule.src, /\.\*|\(\.\+\)|\[\^\/\]\*/, 'the src must not hold a wildcard');
+test('vercel.json holds exactly two 410 routes (the industries, the two retired articles): each anchored, no handle, no catch-all', () => {
+  assert.equal(gone.length, 2, `expected two routes with status 410, found ${gone.length}`);
+  assert.equal(gone.filter((r) => r.src.includes('industries')).length, 1, 'one rule for the industries');
+  for (const r of gone) {
+    assert.equal(r.handle, undefined, 'a handle phase would make the rule catch more than the list');
+    assert.match(r.src, /^\^/, 'the src must start with ^');
+    assert.match(r.src, /\$$/, 'the src must end with $');
+    assert.doesNotMatch(r.src, /\.\*|\(\.\+\)|\[\^\/\]\*/, 'the src must not hold a wildcard');
+  }
 });
 
 test('the 410 rule takes the hub and each of the 37 addresses that had a page, with and without a trailing slash', () => {

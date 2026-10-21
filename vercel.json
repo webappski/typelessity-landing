@@ -3,9 +3,23 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/typelessity-landing/browser",
+  "trailingSlash": false,
   "routes": [
     {
       "src": "^/industries(?:/(?:automotive-detailing|automotive-test-drives|beauty-nail-salons|beauty-spas|beauty-tattoo-studios|education-language-schools|education-music-schools|education-test-prep|fitness-martial-arts|fitness-personal-training|fitness-sports-coaching|home-cleaning|home-handyman|home-hvac|home-landscaping|home-moving|hospitality-event-venues|hospitality-hotels|hospitality-tours|pet-grooming|pet-training|pet-veterinary|professional-accounting|professional-coaching|professional-financial-advisors|professional-legal|realestate-commercial|realestate-property-management|realestate-residential|beauty-aesthetic-clinics|beauty-hair-salons|hospitality-restaurants|fitness-yoga-studios|fitness-gyms|automotive-driving-schools|automotive-repair|education-tutoring))?/?$",
+      "status": 410,
+      "dest": "/404.html",
+      "headers": {
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), geolocation=(), microphone=(self)",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cal.com https://typelessity-widget.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https://typelessity-widget.vercel.app; connect-src 'self' https://api.resend.com https://*.supabase.co https://cal.com https://typelessity.vercel.app; frame-src https://cal.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      }
+    },
+    {
+      "src": "^/blog/(?:what-we-got-wrong|forms-vs-conversation-study)/?$",
       "status": 410,
       "dest": "/404.html",
       "headers": {
@@ -43,16 +57,6 @@
       "source": "/blog/gdpr-compliance",
       "destination": "/gdpr",
       "permanent": true
-    },
-    {
-      "source": "/blog/what-we-got-wrong",
-      "destination": "/blog",
-      "permanent": true
-    },
-    {
-      "source": "/blog/forms-vs-conversation-study",
-      "destination": "/blog",
-      "permanent": true
     }
   ],
   "headers": [
@@ -68,7 +72,7 @@
       ]
     },
     {
-      "source": "/assets/fonts/(.*)",
+      "source": "/fonts/(.*)\\.woff2",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
@@ -80,9 +84,15 @@
       ]
     },
     {
-      "source": "/((?!fonts/fonts\\.css$).*)\\.(js|css|woff2|jpg|png|svg|webp|avif)",
+      "source": "/((?:main|chunk|polyfills|styles)-[A-Z0-9]{8})\\.(js|css)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/([^/]+)\\.(jpg|png|svg|webp|avif|ico)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
       ]
     },
     {

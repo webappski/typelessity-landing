@@ -24,7 +24,7 @@ test('fonts.css is cached for a short time, and no immutable rule matches it', (
 });
 
 test('the hashed build files and the font files keep the long immutable cache', () => {
-  for (const path of ['/main-ABC123.js', '/styles-XYZ789.css', '/assets/fonts/dm-sans.woff2']) {
+  for (const path of ['/main-ABCD1234.js', '/styles-WXYZ7890.css', '/fonts/i7dMIFZifjKcF5UAWdDRYE58RXi4EwSsbg.woff2']) {
     const value = rules.filter((r) => new RegExp(`^${r.source}$`).test(path)).map(cache).find(Boolean);
     assert.match(value ?? '', /max-age=31536000, immutable/, `${path} lost its long cache`);
   }

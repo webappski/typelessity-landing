@@ -52,6 +52,7 @@ test('vercel.json has no routes entry that restores a filesystem phase or a catc
 });
 
 test('vercel.json keeps its redirects and headers (their content is held by the readers of those keys)', () => {
-  assert.ok(Array.isArray(config.redirects) && config.redirects.length >= 6, 'redirects block is gone');
+  // five: the four offsite legal paths and /blog/gdpr-compliance -> /gdpr. The two retired articles left the block at L13 (C11: 410, not a redirect).
+  assert.ok(Array.isArray(config.redirects) && config.redirects.length === 5, `redirects block holds ${(config.redirects ?? []).length}, expected 5`);
   assert.ok(Array.isArray(config.headers) && config.headers.length >= 1, 'headers block is gone');
 });

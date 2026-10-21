@@ -4,12 +4,13 @@ import { readFile, readdir, access } from 'node:fs/promises';
 import { readdirSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import matter from 'gray-matter';
+import { effectiveRoutes, respond } from './vercel-effective';
 
 // A45d (c8 2026-09-25/27, founder: «decide by best practice»).
 //  - what-we-got-wrong (a history of «three GTM pivots» that predates the repo) and
 //    forms-vs-conversation-study (a «study» with no study behind it) are taken down: no page,
-//    no sitemap URL, no link to them; each old URL answers 301 → /blog (vercel.json — there is no
-//    local Vercel, so the rule is read, not requested).
+//    no sitemap URL, no link to them; each old URL answered 301 → /blog; since L13 (C11, seo-lead page audit F-17) it answers
+//    410 (vercel.json — there is no local Vercel, so the rule is read as the platform's own library reads it, not requested).
 //  - Every post is dated the day it first appeared in this repo, 2026-05-21 (`git log
 //    --diff-filter=A`); the older dates were earlier than the product. Google Search Central,
 //    «publication dates»: the visible date and the date in structured data must match, and a
@@ -43,11 +44,9 @@ async function exists(url: URL): Promise<boolean> {
   }
 }
 
-test('retired posts: no page, no sitemap URL, no link, and a 301 to /blog', async () => {
+test('retired posts: no page, no sitemap URL, no link, and a 410 (a redirect of old addresses to the unrelated list reads as a soft 404)', async () => {
   const sitemap = await read(new URL('sitemap.xml', DIST));
-  const vercel = JSON.parse(await read(new URL('vercel.json', ROOT))) as {
-    redirects: { source: string; destination: string; permanent: boolean }[];
-  };
+  const routes = effectiveRoutes(JSON.parse(await read(new URL('vercel.json', ROOT))) as object);
   const pages = ['index.html', 'blog/index.html', 'about/index.html', 'llms.txt', 'llms-full.txt'];
   const posts = (await readdir(new URL('blog/', DIST), { withFileTypes: true })).filter((e) => e.isDirectory());
   const bodies = await Promise.all([
@@ -58,15 +57,14 @@ test('retired posts: no page, no sitemap URL, no link, and a 301 to /blog', asyn
     assert.equal(await exists(new URL(`blog/${slug}/`, DIST)), false, `dist/blog/${slug} still built`);
     assert.doesNotMatch(sitemap, new RegExp(`/blog/${slug}<`), `sitemap still lists ${slug}`);
     for (const body of bodies) assert.doesNotMatch(body, new RegExp(`/blog/${slug}\\b`), `a page still links to ${slug}`);
-    const rule = vercel.redirects.find((r) => r.source === `/blog/${slug}`);
-    assert.ok(rule, `vercel.json has no redirect for /blog/${slug}`);
-    assert.equal(rule.destination, '/blog');
-    assert.equal(rule.permanent, true);
+    const answer = respond(routes, `/blog/${slug}`);
+    assert.equal(answer.status, 410, `vercel.json: /blog/${slug} answers ${answer.status}, not 410`);
+    assert.equal(answer.location, undefined, `/blog/${slug} still redirects`);
   }
 });
 
 // L7: the article gdpr-compliance became the page /gdpr. It is a merge, not a retirement: the old address goes to the page that holds
-// its answers, not to /blog (RETIRED above does not cover it). The rule stays at least a year (until 2027-10-19): a link on another
+// its answers, not to /blog and not to 410 (RETIRED above does not cover it). The rule stays at least a year (until 2027-10-19): a link on another
 // site, a bookmark and an index entry still point to the old address, and a rule removed earlier turns them into 404s. Vercel
 // answers a permanent redirect with 308; 301 and 308 are both permanent. There is no local Vercel, so the rule is read, not requested;
 // the preview answers `curl -sI <preview>/blog/gdpr-compliance` → 308, location: /gdpr (card L7 «Как проверить»).

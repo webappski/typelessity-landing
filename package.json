@@ -44,6 +44,7 @@
     "@playwright/test": "1.58.2",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
+    "@vercel/routing-utils": "^6.6.0",
     "gray-matter": "^4.0.3",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
