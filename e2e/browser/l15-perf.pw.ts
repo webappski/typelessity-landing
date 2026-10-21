@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { test, expect, type Page } from './fixtures';
+import { test, expect, type Page, type Response } from './fixtures';
 
 // L15 «скорость лендинга» (2026-10-21, pending-review/2026-10-21/L15/brief.md): what the speed changes must not cost the visitor,
 // read in Chromium from the real SSR build. The node guard e2e/font-coverage.spec.ts holds the bytes (every letter of every page is
@@ -194,7 +194,7 @@ test.describe('L15-R3 reduced motion', () => {
 const MARKDOWN_JS = [/marked\(\): input parameter is undefined or null/, /\[ngx-markdown\]/];
 async function scriptsWithMarkdown(page: Page, run: () => Promise<void>): Promise<string[]> {
   const bodies: Array<Promise<string | null>> = [];
-  const handler = (r: import('@playwright/test').Response) => {
+  const handler = (r: Response) => {
     if (r.request().resourceType() === 'script' && new URL(r.url()).hostname === 'localhost') bodies.push(r.text().then((t) => (MARKDOWN_JS.every((m) => m.test(t)) ? new URL(r.url()).pathname : null)).catch(() => null));
   };
   page.on('response', handler);
