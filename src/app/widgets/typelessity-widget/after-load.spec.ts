@@ -1,0 +1,107 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { afterLoadAndIdle } from './after-load';
+
+// FL-93 (L13): the demo (its chunk and widget.js) starts loading after load, an idle moment and — where the browser reports paint timing — the first
+// contentful paint. A fake window stands for the browser: its timers, its idle callback, its observer and its paint entries are driven by the test.
+
+interface Fake { doc: Document; fire(): void; idle(): void; paint(): void; observers: number; ran: () => number; asked: () => number }
+
+function fake(opts: { paintSupported?: boolean; painted?: boolean; hidden?: boolean; idleCallback?: boolean } = {}): Fake {
+  const timers: Array<() => void> = [];
+  const idles: Array<() => void> = [];
+  let entries: unknown[] = opts.painted ? [{ name: 'first-contentful-paint' }] : [];
+  let callback: ((l: { getEntriesByName: (n: string) => unknown[] }) => void) | null = null;
+  let observers = 0;
+  class Observer {
+    static supportedEntryTypes = opts.paintSupported === false ? ['resource'] : ['paint', 'resource'];
+    constructor(cb: (l: { getEntriesByName: (n: string) => unknown[] }) => void) { callback = cb; observers++; }
+    observe(): void { /* buffered entries are read through getEntriesByName by the page itself */ }
+    disconnect(): void { callback = null; }
+  }
+  const listeners: Array<() => void> = [];
+  const win: Record<string, unknown> = {
+    setTimeout: (fn: () => void) => { timers.push(fn); return timers.length; },
+    addEventListener: (_: string, fn: () => void) => { listeners.push(fn); },
+    PerformanceObserver: Observer,
+    performance: { getEntriesByName: (n: string) => entries.filter((e) => (e as { name: string }).name === n) },
+  };
+  let asked = 0;
+  if (opts.idleCallback !== false) win['requestIdleCallback'] = (fn: () => void) => { asked++; idles.push(fn); return idles.length; };
+  const doc = { defaultView: win, readyState: 'loading', visibilityState: opts.hidden ? 'hidden' : 'visible' } as unknown as Document;
+  let ran = 0;
+  const api = {
+    doc, observers: 0,
+    fire() { listeners.splice(0).forEach((f) => f()); timers.splice(0).forEach((f) => f()); },
+    idle() { idles.splice(0).forEach((f) => f()); timers.splice(0).forEach((f) => f()); },
+    paint() { entries = [{ name: 'first-contentful-paint' }]; callback?.({ getEntriesByName: (n) => entries.filter((e) => (e as { name: string }).name === n) }); timers.splice(0).forEach((f) => f()); },
+    ran: () => ran,
+    asked: () => asked,
+  } as Fake;
+  Object.defineProperty(api, 'observers', { get: () => observers });
+  (api as unknown as { start: () => () => void }).start = () => afterLoadAndIdle(doc, () => { ran++; });
+  return api;
+}
+const start = (f: Fake) => (f as unknown as { start: () => () => void }).start();
+
+test('before the first paint nothing starts: load and idle are not enough', () => {
+  const f = fake();
+  start(f);
+  f.fire();   // load, then the zero timer: the observer is made, the idle callback is not yet asked for
+  f.idle();
+  assert.equal(f.ran(), 0, 'the demo started before the first contentful paint');
+  assert.equal(f.observers, 1);
+});
+
+test('the paint starts it: after the paint the idle callback runs it, once', () => {
+  const f = fake();
+  start(f);
+  f.fire();
+  f.paint();
+  f.idle();
+  assert.equal(f.ran(), 1);
+  f.paint(); f.idle();
+  assert.equal(f.ran(), 1, 'once');
+  assert.equal(f.asked(), 1, 'the idle callback is asked for once: the observer let go of the paint after the first report');
+});
+
+test('a paint that has already happened does not wait for a second one', () => {
+  const f = fake({ painted: true });
+  start(f);
+  f.fire(); f.idle();
+  assert.equal(f.ran(), 1);
+  assert.equal(f.observers, 0, 'no observer is made for a paint that is in the entries');
+});
+
+test('a visitor who clicked does not wait for the paint, nor for idle', () => {
+  const f = fake();
+  const go = start(f);
+  go();
+  assert.equal(f.ran(), 1);
+  f.fire(); f.paint(); f.idle();
+  assert.equal(f.ran(), 1, 'the scheduled start does not run it a second time');
+});
+
+test('a browser with no paint timing keeps the old order: load, idle', () => {
+  const f = fake({ paintSupported: false });
+  start(f);
+  f.fire(); f.idle();
+  assert.equal(f.ran(), 1);
+  assert.equal(f.observers, 0);
+});
+
+test('a tab in the background paints nothing and does not wait for it', () => {
+  const f = fake({ hidden: true });
+  start(f);
+  f.fire(); f.idle();
+  assert.equal(f.ran(), 1);
+});
+
+test('without requestIdleCallback (Safari) a timer takes its place, after the paint', () => {
+  const f = fake({ idleCallback: false });
+  start(f);
+  f.fire();
+  f.paint();
+  f.idle();
+  assert.equal(f.ran(), 1);
+});

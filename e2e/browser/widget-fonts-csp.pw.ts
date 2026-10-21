@@ -1,4 +1,4 @@
-import { test, expect, API_ORIGIN, WIDGET_ORIGIN, type Page, REDUCED_MOTION, underPolicy } from './fixtures';
+import { test, expect, API_ORIGIN, SITE_HEADERS, WIDGET_ORIGIN, type Page, REDUCED_MOTION, underPolicy } from './fixtures';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { WIDGET_SCRIPT_URL } from '../../src/app/core/integrations/embed-snippet';
@@ -162,6 +162,48 @@ test.describe('hero, demo still', () => {
     expect(timing.start!, 'widget.js starts only after the late load event').toBeGreaterThanOrEqual(timing.loadEventEnd);
     const chunk = await page.evaluate((c) => performance.getEntriesByType('resource').find((r) => r.name.endsWith(`/${c}`))?.startTime ?? null, DEMO_CHUNK!);
     expect(chunk, 'the demo chunk starts only after the late load event').toBeGreaterThanOrEqual(timing.loadEventEnd);
+  });
+
+  // FL-93 (L13): in Google's lab the first paint of the page came at ~2.5 s, after the demo chunk (~1.5 s) and widget.js (~1.65 s) had been asked for, and the
+  // estimate of the home page's FCP/LCP counted them. The loader now also waits for the first contentful paint. A late paint is made here: the page is not
+  // displayed (`display: none` on <html>) until the test shows it, so the load event and the hydration come first, as they did in the lab, and nothing is painted.
+  // The loader that waits for load and idle only would ask for the chunk a moment after the slot says «Loading the chat…»; this one does not, until the paint.
+  test('(pre)+(e3) the loader waits for the first contentful paint even when it comes late', async ({ page, stubs }) => {
+    await underPolicy(page);
+    // the document of `/` goes out with a <style> that hides <html> (a script at document start cannot: <html> may not exist yet); the test removes it
+    await page.route('http://localhost:4000/', async (route) => {
+      if (route.request().resourceType() !== 'document') return route.fallback();
+      const response = await route.fetch();
+      const body = (await response.text()).replace('</head>', '<style id="hold-the-paint">html { display: none !important; }</style></head>');
+      const { 'content-length': _length, 'content-encoding': _encoding, ...headers } = response.headers();
+      await route.fulfill({ response, body, headers: { ...headers, ...SITE_HEADERS } });
+    });
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/', { waitUntil: 'load' });
+    await expect(page.locator('[data-slot-state="loading"], [data-slot-state="ready"]'), 'the page hydrated and the slot left its prerendered text').toHaveCount(1);
+    const requested = () => page.evaluate(({ url, chunk }) => ({
+      widget: performance.getEntriesByType('resource').some((r) => r.name === url),
+      chunk: performance.getEntriesByType('resource').some((r) => r.name.endsWith(`/${chunk}`)),
+      fcp: performance.getEntriesByName('first-contentful-paint').length,
+    }), { url: WIDGET_SCRIPT_URL, chunk: DEMO_CHUNK! });
+    // an absence is watched for longer than the idle callback may wait (4 s is its timeout; it runs within a moment on an idle page)
+    const until = Date.now() + 2500;
+    while (Date.now() < until) {
+      const s = await requested();
+      expect(s.fcp, 'nothing has been painted yet: the page is not displayed').toBe(0);
+      expect(s.chunk || s.widget, 'the demo asked for its chunk or for widget.js before the first paint').toBe(false);
+      await page.evaluate(() => new Promise<void>((resolve) => setTimeout(resolve, 250)));
+    }
+    await page.evaluate(() => { document.getElementById('hold-the-paint')!.remove(); });
+    await expectWidgetLoaded(page, () => stubs.widgetScriptRequests);
+    const timing = await page.evaluate(({ url, chunk }) => ({
+      fcp: performance.getEntriesByName('first-contentful-paint')[0]?.startTime ?? null,
+      chunk: performance.getEntriesByType('resource').find((r) => r.name.endsWith(`/${chunk}`))?.startTime ?? null,
+      start: performance.getEntriesByType('resource').find((r) => r.name === url)?.startTime ?? null,
+    }), { url: WIDGET_SCRIPT_URL, chunk: DEMO_CHUNK! });
+    expect(timing.fcp, 'the paint came once the page was shown').not.toBeNull();
+    expect(timing.chunk, 'the demo chunk starts after the late first paint').toBeGreaterThanOrEqual(timing.fcp!);
+    expect(timing.start, 'widget.js starts after the late first paint').toBeGreaterThanOrEqual(timing.fcp!);
   });
 
   test('(pre)+(f) the greeting of the first scenario stands in the widget, with its input row', async ({ page, stubs }) => {

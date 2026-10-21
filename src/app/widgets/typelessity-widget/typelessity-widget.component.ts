@@ -2,6 +2,10 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { WIDGET_SCRIPT_URL } from '../../core/integrations/embed-snippet';
 import { SLOT_TEXT, type SlotState } from '../../pages/home/demo/demo-labels';
+import { afterLoadAndIdle } from './after-load';
+
+// Moved to after-load.ts (FL-93): the same function, importable without Angular. Re-exported: the demo loader imports it from here.
+export { afterLoadAndIdle };
 
 export const WIDGET_TAG = 'typelessity-widget';
 /** Fired on the document when the <script> of the widget fails (the demo loader shows its refusal at once, not after the 10 s wait). */
@@ -18,26 +22,6 @@ let failures = 0;
 let pending: Promise<void> | null = null;
 /** Inserts the tag NOW, when the request is still waiting for its idle moment (an early click on the demo asks for it). */
 let kick: (() => void) | null = null;
-
-/**
- * Calls `run` after the `load` event and then an idle moment (L3 D6, F13.1): the prerendered HTML carries no <script> for the widget
- * and no code of the demo, so neither costs anything to the first render. Safari has no requestIdleCallback: a timer instead.
- * Returns a function that runs `run` at once (a visitor who clicked the demo does not wait for idle) — once, whichever comes first.
- */
-export function afterLoadAndIdle(doc: Document, run: () => void): () => void {
-  const win = doc.defaultView;
-  let done = false;
-  const go = () => { if (!done) { done = true; run(); } };
-  if (!win) return go;
-  const whenIdle = () =>
-    win.setTimeout(() => {
-      if (typeof win.requestIdleCallback === 'function') win.requestIdleCallback(go, { timeout: 4000 });
-      else win.setTimeout(go, 200);
-    }, 0);
-  if (doc.readyState === 'complete') whenIdle();
-  else win.addEventListener('load', whenIdle, { once: true });
-  return go;
-}
 
 /**
  * Puts the <script> of the widget on the page, once. Resolves when the tag is there (the caller waits for the definition itself:
