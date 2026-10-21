@@ -7,7 +7,8 @@ import { afterLoadAndIdle, PAINT_FUSE_MS } from './after-load';
 
 interface Fake { doc: Document; fire(): void; idle(): void; paint(): void; fuse(): void; observers: number; ran: () => number; asked: () => number }
 
-function fake(opts: { paintSupported?: boolean; painted?: boolean; hidden?: boolean; idleCallback?: boolean } = {}): Fake {
+function fake(opts: { paintSupported?: boolean; painted?: boolean; hidden?: boolean; idleCallback?: boolean; observeThrows?: boolean; browserTimers?: boolean } = {}): Fake {
+  const timerErrors: unknown[] = [];  // browserTimers: a timer callback that throws does not stop the page, the way a browser has it; the error is kept for the test
   const timers: Array<{ fn: () => void; ms: number }> = [];  // the delay is kept: the fuse (PAINT_FUSE_MS) is told from the zero timer and the 200 ms timer of Safari
   const idles: Array<() => void> = [];
   let entries: unknown[] = opts.painted ? [{ name: 'first-contentful-paint' }] : [];
@@ -16,7 +17,7 @@ function fake(opts: { paintSupported?: boolean; painted?: boolean; hidden?: bool
   class Observer {
     static supportedEntryTypes = opts.paintSupported === false ? ['resource'] : ['paint', 'resource'];
     constructor(cb: (l: { getEntriesByName: (n: string) => unknown[] }) => void) { callback = cb; observers++; }
-    observe(): void { /* buffered entries are read through getEntriesByName by the page itself */ }
+    observe(): void { if (opts.observeThrows) throw new TypeError('observe: the entry type is not supported'); /* buffered entries are read through getEntriesByName by the page itself */ }
     disconnect(): void { callback = null; }
   }
   const listeners: Array<() => void> = [];
@@ -34,7 +35,7 @@ function fake(opts: { paintSupported?: boolean; painted?: boolean; hidden?: bool
   const runTimers = (take: (ms: number) => boolean) => {
     const due = timers.filter((t) => take(t.ms));
     for (const t of due) timers.splice(timers.indexOf(t), 1);
-    due.forEach((t) => t.fn());
+    due.forEach((t) => { if (!opts.browserTimers) return t.fn(); try { t.fn(); } catch (e) { timerErrors.push(e); } });
   };
   const api = {
     doc, observers: 0,
@@ -46,6 +47,7 @@ function fake(opts: { paintSupported?: boolean; painted?: boolean; hidden?: bool
     asked: () => asked,
   } as Fake;
   Object.defineProperty(api, 'observers', { get: () => observers });
+  (api as unknown as { errors: unknown[] }).errors = timerErrors;
   (api as unknown as { start: () => () => void }).start = () => afterLoadAndIdle(doc, () => { ran++; });
   return api;
 }
@@ -137,4 +139,19 @@ test('the paint before the fuse cancels it: the fuse starts nothing a second tim
   f.fuse(); f.idle();
   assert.equal(f.ran(), 1);
   assert.equal(f.asked(), 1);
+});
+
+// An observer that cannot observe (observe() throws in a browser that lists `paint` and does not take {type, buffered}): the exception would leave through the
+// timer, nothing would wait for a paint and nothing would start the demo. It starts at once, by the old order, and the fuse that was armed does not start it again.
+test('observe() that throws does not leave the demo without a start: it runs by the old order at once, once, and the fuse is let go of', () => {
+  const f = fake({ observeThrows: true, browserTimers: true });
+  start(f);
+  f.fire();
+  f.idle();
+  assert.deepEqual((f as unknown as { errors: unknown[] }).errors, [], 'the exception left through the timer');
+  assert.equal(f.ran(), 1, 'the demo did not start without the fuse (it would wait for the visitor\'s click for good)');
+  f.fuse();
+  f.idle();
+  assert.equal(f.ran(), 1, 'once');
+  assert.equal(f.asked(), 1, 'the idle callback is asked for once: the fuse that was armed is cleared when observe() fails');
 });
