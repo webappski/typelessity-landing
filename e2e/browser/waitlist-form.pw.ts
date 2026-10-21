@@ -1,6 +1,7 @@
 import { test, expect, type Page } from './fixtures';
-import { PRE_L11_SELECT_VALUES } from '../retired-industries';
-import { BUSINESS_TYPES, EMAIL_PATTERN, INDUSTRY_VALUES } from '../../src/app/shared/contact-form/waitlist-request';
+import handler from '../../api/contact';
+import { PRE_L11_SELECT_VALUES, SEVEN_SLUGS } from '../retired-industries';
+import { ACCEPTED_INDUSTRY_VALUES, BUSINESS_TYPES, EMAIL_PATTERN, INDUSTRY_VALUES } from '../../src/app/shared/contact-form/waitlist-request';
 import { CONTRAST_ENGINE } from './contrast-engine';
 
 // A36 (2026-09-25): the question form told every visitor to «check your connection», even when the
@@ -181,13 +182,14 @@ test('a request that gets no answer asks to check the connection', async ({ page
 });
 
 // CRO r2 (2026-10-04, R2-N1): the form still offered Hospitality / Transfers / Freight, a list from the waitlist era. L11 (2026-10-20): the site
-// has no industry pages; the select is a flat list of business types kept in waitlist-request.ts, and the endpoint accepts exactly that list.
-test('the industry select offers the business types of waitlist-request.ts plus «Other» and the empty choice — the values the endpoint accepts, flat, nothing from the waitlist era', async ({ page }) => {
+// has no industry pages; the select is a flat list of business types kept in waitlist-request.ts, and the endpoint accepts that list and the legacy values of the old select.
+test('the industry select offers the business types of waitlist-request.ts plus «Other» and the empty choice — values the endpoint accepts, flat, nothing from the waitlist era', async ({ page }) => {
   await page.goto('/pricing');
   const options = await page.locator('#cf-industry option').evaluateAll((nodes) =>
     nodes.map((n) => ({ value: (n as HTMLOptionElement).value, label: (n.textContent ?? '').trim() })),
   );
-  expect(options.map((o) => o.value).sort(), 'the select and the endpoint disagree about the values').toEqual([...INDUSTRY_VALUES].sort());
+  expect(options.map((o) => o.value).sort(), 'the select and the list it is built from disagree about the values').toEqual([...INDUSTRY_VALUES].sort());
+  for (const o of options) expect(ACCEPTED_INDUSTRY_VALUES.has(o.value), `the select offers ${o.value}, which the endpoint refuses`).toBe(true);
   const real = options.filter((o) => o.value && o.value !== 'other');
   expect(real, 'the order and the words of the business types').toEqual(BUSINESS_TYPES.map((t) => ({ value: t.value, label: t.label })));
   expect(options.filter((o) => o.value === 'other')).toHaveLength(1);
@@ -195,12 +197,40 @@ test('the industry select offers the business types of waitlist-request.ts plus 
   await expect(page.locator('#cf-industry optgroup'), 'the select is a flat list').toHaveCount(0);
 });
 
-// L11 (R67 п.3): a tab opened before the release holds the select of that day; each value of it is still on the select, can be chosen, and goes to
-// the endpoint as the value (the endpoint takes it: contact-endpoint.spec.ts runs the real handler on the same frozen list).
-test('every value the select had before L11 is still a choice, and the body posted carries it', async ({ page }) => {
+// L11 (R67 п.3) and L15 (B1): the seven values the select had before L11 are still choices of the select. The other 29 of the 36 are not shown
+// any more, but a tab of /pricing opened before the release still has them in its select — that tab is modelled here by adding the option to
+// the live select (the form binds the raw string of a value it does not know, as the old build's select did). The route runs the REAL handler
+// of api/contact.ts on the body the form posts (only the network behind it — Resend — is stubbed): the status the visitor's page gets is the
+// handler's own, and the mail carries the value.
+async function submitThroughRealHandler(page: Page, value: string, sent: string[]) {
+  await page.route('**/api/contact', async (route) => {
+    const realFetch = globalThis.fetch;
+    const saved = process.env['RESEND_API_KEY'];
+    process.env['RESEND_API_KEY'] = 're_test';
+    globalThis.fetch = (async (_url: string, init: RequestInit) => { sent.push(String((JSON.parse(String(init.body)) as { text: string }).text)); return new Response('{}', { status: 200 }); }) as typeof fetch;
+    try {
+      const res = await handler(new Request('https://typelessity.com/api/contact', { method: 'POST', body: route.request().postDataBuffer() ?? '' }));
+      await route.fulfill({ status: res.status, contentType: 'application/json', body: await res.text() });
+    } finally {
+      globalThis.fetch = realFetch;
+      if (saved === undefined) delete process.env['RESEND_API_KEY']; else process.env['RESEND_API_KEY'] = saved;
+    }
+  });
+  await page.goto('/pricing');
+  await page.evaluate((v) => {
+    const select = document.querySelector('#cf-industry') as HTMLSelectElement;
+    if (![...select.options].some((o) => o.value === v)) select.append(new Option(v, v));
+  }, value);
+  await page.fill('#cf-email', 'owner@clinic.example');
+  await page.selectOption('#cf-industry', value);
+  await page.check('input[name=consent]');
+  await page.click('.cf button[type=submit]');
+}
+
+test('the seven values the select had before L11 are still choices, and the body posted carries each one', async ({ page }) => {
   const posted: string[] = [];
   await page.route('**/api/contact', (route) => { posted.push(String(JSON.parse(route.request().postData() ?? '{}').industry)); return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }); });
-  for (const value of PRE_L11_SELECT_VALUES) {
+  for (const value of SEVEN_SLUGS) {
     await page.goto('/pricing');
     await page.fill('#cf-email', 'owner@clinic.example');
     await page.selectOption('#cf-industry', value);
@@ -208,5 +238,20 @@ test('every value the select had before L11 is still a choice, and the body post
     await page.click('.cf button[type=submit]');
     await expect(page.locator('.cf__success')).toBeVisible();
   }
-  expect(posted).toEqual(PRE_L11_SELECT_VALUES);
+  expect(posted).toEqual(SEVEN_SLUGS);
 });
+
+const LEGACY_VALUES = PRE_L11_SELECT_VALUES.filter((v) => !SEVEN_SLUGS.includes(v));
+test('the 36 values of the old select are the seven it still shows and 29 legacy ones', () => {
+  expect(PRE_L11_SELECT_VALUES).toHaveLength(36);
+  expect(LEGACY_VALUES).toHaveLength(29);
+});
+for (const value of LEGACY_VALUES) {
+  test(`a tab opened before the release: industry ${value}, no longer shown by the select, still sends and the real endpoint takes it`, async ({ page }) => {
+    const sent: string[] = [];
+    await submitThroughRealHandler(page, value, sent);
+    await expect(page.locator('.cf__success'), `industry ${value}: the visitor must read the success, not the error`).toBeVisible();
+    expect(sent, `industry ${value}: one mail`).toHaveLength(1);
+    expect(sent[0]).toContain(`Industry: ${value}`);
+  });
+}

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { GONE_SLUGS, RETIRED_SLUGS, SEVEN_SLUGS } from '../../../e2e/retired-industries';
+import { GONE_SLUGS, PRE_L11_SELECT_VALUES, RETIRED_INDUSTRIES, RETIRED_SLUGS, SEVEN_SLUGS } from '../../../e2e/retired-industries';
 
 // L1б (2026-10-19): 29 thin industry pages and the clinics address answer 410. L11 (2026-10-20, founder: «we do not need industries»):
 // the hub and the seven kept pages answer 410 too, and the site has no industry page at all. Nothing redirects to a page: the clinics
@@ -31,6 +31,15 @@ test('the lists are what the card says: 30 retired and 7 taken down at L11, none
   assert.equal(SEVEN_SLUGS.length, 7);
   assert.deepEqual(RETIRED_SLUGS.filter((s) => SEVEN_SLUGS.includes(s)), []);
   assert.equal(new Set(GONE_SLUGS).size, 37, 'RETIRED + SEVEN is the 36 pages of d0cbafe plus the clinics address');
+});
+
+// L15 (B1): the frozen list of the values the production select sent until 20.10 is the 29 retired pages plus the seven kept ones — 36, the
+// size of ALL_INDUSTRIES on origin/main — and not the clinics address, which was removed from the data at A45e and was never a select value.
+test('the values of the old select are the 29 retired slugs and the seven, 36 in all, without the clinics address', () => {
+  assert.equal(PRE_L11_SELECT_VALUES.length, 36);
+  assert.equal(new Set(PRE_L11_SELECT_VALUES).size, 36, 'a value twice in the frozen list');
+  assert.deepEqual([...PRE_L11_SELECT_VALUES].sort(), [...RETIRED_INDUSTRIES.map((i) => i.slug), ...SEVEN_SLUGS].sort());
+  assert.equal(PRE_L11_SELECT_VALUES.includes('beauty-aesthetic-clinics'), false);
 });
 
 test('the site has no industry module any more: no data, no component, no route, no prerender', () => {

@@ -5,9 +5,9 @@
 // Without RESEND_API_KEY: returns 503 with a clear "not configured" message so deploy succeeds and integration owners can wire it.
 // Any other body — no type, another type — is refused: there is no other form.
 // The body is checked before anything is read from it: a JSON object, every field a string, lengths bounded,
-// `plan` and `industry` one of the values the form's selects offer. Any miss is a 400 and nothing is sent.
+// `plan` and `industry` one of the values the form's selects offer or offered until 2026-10-20 (a tab opened before that still sends the old ones). Any miss is a 400 and nothing is sent.
 
-import { EMAIL_PATTERN, INDUSTRY_VALUES } from '../src/app/shared/contact-form/waitlist-request';
+import { EMAIL_PATTERN, ACCEPTED_INDUSTRY_VALUES } from '../src/app/shared/contact-form/waitlist-request';
 
 interface ContactPayload {
   email?: string;
@@ -86,7 +86,7 @@ function readPayload(raw: unknown): ContactPayload | string {
     if (((body[k] as string | undefined) ?? '').length > LIMITS[k]) return `${k} is too long`;
   }
   if (!PLANS.has((body['plan'] as string | undefined) ?? '')) return 'Unknown plan';
-  if (!INDUSTRY_VALUES.has((body['industry'] as string | undefined) ?? '')) return 'Unknown industry';
+  if (!ACCEPTED_INDUSTRY_VALUES.has((body['industry'] as string | undefined) ?? '')) return 'Unknown industry';
   return body as ContactPayload;
 }
 

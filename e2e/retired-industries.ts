@@ -59,10 +59,51 @@ export const RETIRED_SLUGS: string[] = [...RETIRED_INDUSTRIES.map((i) => i.slug)
 export const GONE_SLUGS: string[] = [...RETIRED_SLUGS, ...SEVEN_SLUGS];
 
 /**
- * The values the form's industry select sent before L11 (the seven slugs; the 30 were never in it). Frozen: they come from the old component
- * (contact-form.component.ts at dd3c9d4), not from today's BUSINESS_TYPES — a tab opened before the release still sends them.
+ * The values the form's industry select sent in production until 2026-10-20 (L11): all 36 slugs of ALL_INDUSTRIES, the select being built from
+ * getIndustriesByCategory(). Frozen, written out in the order of the data: read from origin/main at 9badff6 —
+ *   git show origin/main:src/app/lib/industries/index.ts   (ALL_INDUSTRIES = batch1 + batch2 + batch3, «8 + 14 + 14 = 36»; the clinics page is gone)
+ *   git show origin/main:src/app/lib/industries/industries-batch-{1,2,3}.ts | grep "slug:"   (36 lines; derivation: pending-review/2026-10-21/L15/pre-l11-derive.log)
+ * not from today's BUSINESS_TYPES (seven of them) and not from the dd3c9d4 intermediate commit. A tab of /pricing opened before the release
+ * still sends any of them, and the endpoint must take each. `beauty-aesthetic-clinics` is NOT among them: that page was removed at A45e.
  */
-export const PRE_L11_SELECT_VALUES: string[] = [...SEVEN_SLUGS];
+export const PRE_L11_SELECT_VALUES: string[] = [
+  'beauty-hair-salons',
+  'beauty-nail-salons',
+  'beauty-spas',
+  'beauty-tattoo-studios',
+  'professional-legal',
+  'professional-accounting',
+  'professional-financial-advisors',
+  'professional-coaching',
+  'fitness-personal-training',
+  'fitness-gyms',
+  'fitness-yoga-studios',
+  'fitness-martial-arts',
+  'fitness-sports-coaching',
+  'home-cleaning',
+  'home-handyman',
+  'home-hvac',
+  'home-landscaping',
+  'home-moving',
+  'automotive-repair',
+  'automotive-detailing',
+  'automotive-test-drives',
+  'automotive-driving-schools',
+  'education-tutoring',
+  'education-language-schools',
+  'education-music-schools',
+  'education-test-prep',
+  'hospitality-restaurants',
+  'hospitality-hotels',
+  'hospitality-event-venues',
+  'hospitality-tours',
+  'realestate-residential',
+  'realestate-commercial',
+  'realestate-property-management',
+  'pet-veterinary',
+  'pet-grooming',
+  'pet-training',
+];
 
 /** Categories that exist no more, and the phrases that named them. `legal` alone is not here: «legal basis» is a fair use. */
 export const RETIRED_CATEGORIES = ['Professional Services', 'Home Services', 'Real Estate', 'Pet Services'] as const;

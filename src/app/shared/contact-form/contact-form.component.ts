@@ -136,7 +136,7 @@ export class ContactFormComponent {
 
   protected readonly status = signal<Status>('idle');
 
-  // The options of the industry select; the endpoint reads the same list (waitlist-request.ts).
+  // The options of the industry select (waitlist-request.ts); the endpoint takes these and the legacy values of the old select.
   protected readonly businessTypes = BUSINESS_TYPES;
 
   protected async submit(): Promise<void> {

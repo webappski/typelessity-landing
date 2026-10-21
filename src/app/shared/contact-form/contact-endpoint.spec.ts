@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import handler, { FALLBACK_FROM, FALLBACK_TO, LIMITS, PLANS } from '../../../../api/contact';
-import { PRE_L11_SELECT_VALUES, RETIRED_SLUGS } from '../../../../e2e/retired-industries';
-import { BUSINESS_TYPES, EMAIL_PATTERN, waitlistRequestBody } from './waitlist-request';
+import { PRE_L11_SELECT_VALUES } from '../../../../e2e/retired-industries';
+import { ACCEPTED_INDUSTRY_VALUES, BUSINESS_TYPES, EMAIL_PATTERN, INDUSTRY_VALUES, LEGACY_INDUSTRY_VALUES, waitlistRequestBody } from './waitlist-request';
 
 // A36 (c8, 2026-09-24): with CONTACT_TO unset the form mailed hello@typelessity.com, a domain
 // with no MX record — every request was lost. The real handler runs here; only the network is stubbed.
@@ -183,24 +183,39 @@ test('plan and industry must be values the form offers', async () => {
     assert.equal(status, 400, `industry ${JSON.stringify(industry)} is not on the form`);
     assert.equal(sent.length, 0);
   }
-  // The options the form offers today (the select is built from BUSINESS_TYPES, the endpoint reads INDUSTRY_VALUES: one list)
+  // The options the form offers today (the select is built from BUSINESS_TYPES; the endpoint reads ACCEPTED_INDUSTRY_VALUES: these and the legacy values)
   for (const industry of ['', 'other', ...BUSINESS_TYPES.map((t) => t.value)]) {
     assert.equal((await submit({}, { ...WAITLIST, industry })).status, 200, `industry ${JSON.stringify(industry)} is on the form`);
   }
-  // L11 (R67 п.3): a tab opened before the release holds the select of that day. Its values are written out in e2e/retired-industries.ts
-  // (frozen: they come from the old component, not from today's list), and the real handler must still take each one — a value the endpoint
-  // refused would turn into a 400 on a form that worked a minute ago.
+  // L15 (B1, code-review of the batch, 21.10): the select of production until 20.10 offered 36 industries (ALL_INDUSTRIES, `git show origin/main:`
+  // src/app/lib/industries/…). Their slugs are written out in e2e/retired-industries.ts, frozen from origin/main — not from today's list and not
+  // from an intermediate commit. A tab of /pricing opened before the release sends any of them; the real handler must take each one, send the
+  // mail and put the value into it as before — a 400 here is «We couldn't send your request» on a form that worked a minute ago.
+  assert.equal(PRE_L11_SELECT_VALUES.length, 36);
   for (const industry of PRE_L11_SELECT_VALUES) {
     const { status, sent } = await submit({}, { ...WAITLIST, industry });
     assert.equal(status, 200, `industry ${industry} was on the form before the release and must still be accepted`);
     assert.equal(sent.length, 1, `industry ${industry}: the mail was not sent`);
+    assert.match(String(sent[0].body['text']), new RegExp(`^Industry: ${industry}$`, 'm'), `industry ${industry}: the mail does not carry the value`);
   }
-  // L1б: the 30 retired pages never were in the select; a body that carries one is refused
-  for (const industry of RETIRED_SLUGS) {
+  // The clinics address was removed from the data at A45e and never was a select value; a slug that was never offered is a 400, as is any
+  // spelling of a real one. The legacy list is exactly the 36, not «anything shaped like a slug».
+  for (const industry of ['beauty-aesthetic-clinics', 'home-cleaning-x', 'Beauty-Hair-Salons', ' fitness-gyms', 'fitness-gyms ', 'industries', 'education']) {
+    assert.ok(!PRE_L11_SELECT_VALUES.includes(industry) && !INDUSTRY_VALUES.has(industry), `${industry} is in a list it must not be in`);
     const { status, sent } = await submit({}, { ...WAITLIST, industry });
-    assert.equal(status, 400, `industry ${industry} is a retired page and must be refused`);
+    assert.equal(status, 400, `industry ${industry} was never on the form and must be refused`);
     assert.equal(sent.length, 0, `industry ${industry}: a mail was sent`);
   }
+});
+
+// The seam (R67 п.3): the product literal and the list frozen from origin/main are written apart and held against each other here, so a value
+// dropped from (or added to) the endpoint's list shows up as a difference, not as a quietly smaller set.
+test('the endpoint accepts exactly: none, «other», and the 36 values of the old select — the select shows the seven of them', () => {
+  assert.deepEqual([...ACCEPTED_INDUSTRY_VALUES].sort(), ['', 'other', ...PRE_L11_SELECT_VALUES].sort());
+  assert.deepEqual([...LEGACY_INDUSTRY_VALUES].sort(), PRE_L11_SELECT_VALUES.filter((v) => !BUSINESS_TYPES.some((t) => t.value === v)).sort());
+  assert.equal(LEGACY_INDUSTRY_VALUES.length, 29);
+  assert.deepEqual([...INDUSTRY_VALUES].sort(), ['', 'other', ...BUSINESS_TYPES.map((t) => t.value)].sort());
+  for (const t of BUSINESS_TYPES) assert.ok(PRE_L11_SELECT_VALUES.includes(t.value), `${t.value} is offered by the select but was never on the old one`);
 });
 
 // The form must not let a visitor type what the endpoint then refuses: the inputs carry the endpoint's limits as maxlength.
