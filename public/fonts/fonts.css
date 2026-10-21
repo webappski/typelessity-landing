@@ -1,11 +1,20 @@
-/* latin-ext */
+/* Montserrat latin-ext is a SUBSET (L15, 2026-10-21): Google's latin-ext file (JTUSjIg1_i6t8kCHKm459WdhyyTh89ZNpQ.woff2, 68 224 bytes,
+   632 code points) was fetched before the first paint for one visible letter («ń» in «Gdańsk») and cost the simulated FCP/LCP two
+   steps of 150 ms (pending-review/2026-10-21/L13/perf-opus-review.md §3). The subset keeps the letters of Polish, Czech, Slovak,
+   Romanian and Hungarian (54 code points, the variable wght axis kept), and the unicode-range below names exactly the code points it has.
+   Made with fontTools 4.67 (OFL 1.1 allows a modified copy; the licence, OFL-Montserrat.txt, has no Reserved Font Name):
+     pyftsubset JTUSjIg1_i6t8kCHKm459WdhyyTh89ZNpQ.woff2 --text="ąćęłńśźżĄĆĘŁŃŚŹŻčďěňřšťůžČĎĚŇŘŠŤŮŽĺľŕĹĽŔășțĂȘȚşţŞŢőűŐŰ" \
+       --layout-features='*' --flavor=woff2 --output-file=montserrat-latin-ext-subset-<first 8 of sha256>.woff2
+   A new letter on a page that the subset lacks turns e2e/font-coverage.spec.ts red with the letter and the page: add it to --text,
+   run the command again, and give the file its new name (the year-long immutable cache of /fonts/*.woff2 needs a new name per content). */
+/* latin-ext (subset, see the top of this file) */
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(JTUSjIg1_i6t8kCHKm459WdhyyTh89ZNpQ.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url(montserrat-latin-ext-subset-165838ae.woff2) format('woff2');
+  unicode-range: U+0102-0107, U+010C-010F, U+0118-011B, U+0139-013A, U+013D-013E, U+0141-0144, U+0147-0148, U+0150-0151, U+0154-0155, U+0158-015B, U+015E-0165, U+016E-0171, U+0179-017E, U+0218-021B;
 }
 /* latin */
 @font-face {
@@ -16,14 +25,14 @@
   src: url(JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* latin-ext */
+/* latin-ext (subset, see the top of this file) */
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(JTUSjIg1_i6t8kCHKm459WdhyyTh89ZNpQ.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url(montserrat-latin-ext-subset-165838ae.woff2) format('woff2');
+  unicode-range: U+0102-0107, U+010C-010F, U+0118-011B, U+0139-013A, U+013D-013E, U+0141-0144, U+0147-0148, U+0150-0151, U+0154-0155, U+0158-015B, U+015E-0165, U+016E-0171, U+0179-017E, U+0218-021B;
 }
 /* latin */
 @font-face {
@@ -34,14 +43,14 @@
   src: url(JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* latin-ext */
+/* latin-ext (subset, see the top of this file) */
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(JTUSjIg1_i6t8kCHKm459WdhyyTh89ZNpQ.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url(montserrat-latin-ext-subset-165838ae.woff2) format('woff2');
+  unicode-range: U+0102-0107, U+010C-010F, U+0118-011B, U+0139-013A, U+013D-013E, U+0141-0144, U+0147-0148, U+0150-0151, U+0154-0155, U+0158-015B, U+015E-0165, U+016E-0171, U+0179-017E, U+0218-021B;
 }
 /* latin */
 @font-face {
@@ -52,14 +61,14 @@
   src: url(JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* latin-ext */
+/* latin-ext (subset, see the top of this file) */
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(JTUSjIg1_i6t8kCHKm459WdhyyTh89ZNpQ.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url(montserrat-latin-ext-subset-165838ae.woff2) format('woff2');
+  unicode-range: U+0102-0107, U+010C-010F, U+0118-011B, U+0139-013A, U+013D-013E, U+0141-0144, U+0147-0148, U+0150-0151, U+0154-0155, U+0158-015B, U+015E-0165, U+016E-0171, U+0179-017E, U+0218-021B;
 }
 /* latin */
 @font-face {

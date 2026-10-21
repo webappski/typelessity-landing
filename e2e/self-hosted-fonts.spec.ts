@@ -80,7 +80,8 @@ function faces(css: string): Face[] {
   });
 }
 const isLatin = (f: Face) => /U\+0000-00FF/i.test(f.ranges);
-const isLatinExt = (f: Face) => /U\+0100-/i.test(f.ranges);
+// L15: the latin-ext face is a subset now (its range starts at U+0102, not U+0100): a face for Latin Extended-A letters that is not the latin face
+const isLatinExt = (f: Face) => !isLatin(f) && /U\+01[0-7][0-9A-F]/i.test(f.ranges);
 
 test('fonts.css: the families are Montserrat and Space Mono, and DM Sans is not among them', async (t) => {
   const css = readBuilt('fonts/fonts.css');
