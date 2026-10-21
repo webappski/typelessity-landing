@@ -9,7 +9,10 @@ import { join, relative } from 'node:path';
 //   (b) every page carries BOTH themes whole in its inline styles: the stored choice (`[data-theme=dark]`), the system dark while
 //       nothing is chosen (`:not([data-theme=light])` inside `prefers-color-scheme: dark`), and the light :root — the defect of
 //       d79e866's Beasties run was exactly a page without the dark rules (critical CSS by a DOM that has no data-theme);
-//   (c) every @font-face of fonts.css is inline (the browser finds the font files in the HTML, one step earlier than through a CSS).
+//   (c) every @font-face of fonts.css is inline (the browser finds the font files in the HTML, one step earlier than through a CSS);
+//   (d) no HTML comment of a page names a style, link or script tag: (a)–(c) here, site-shell-dist (c) and font-coverage read the
+//       tags with regular expressions, and a «<style>» written inside a comment would open a match that runs on to the next real
+//       tag (code review of L15, item 4: src/index.html carried one in every page).
 // The browser side (the computed tokens of both themes on the first frame, scripts blocked) is e2e/browser/l15-perf.pw.ts L15-S1.
 // Run `npm run build` first.
 
@@ -62,4 +65,11 @@ test('(c) every @font-face of fonts.css is inline in every page: the same faces 
     }
   }
   assert.deepEqual(problems, []);
+});
+
+test('(d) no HTML comment of any page names a <style>, <link> or <script> tag (the tag regexes of the guards would glue it to the next real tag)', () => {
+  const offenders = pages().flatMap(([p, html]) => [...html.matchAll(/<!--([\s\S]*?)-->/g)]
+    .filter((m) => /<\/?(?:style|link|script)\b/i.test(m[1]!))
+    .map((m) => `${p}: ${m[1]!.replace(/\s+/g, ' ').trim().slice(0, 90)}`));
+  assert.deepEqual(offenders, [], 'write the comment without angle brackets, or keep it out of the HTML (src/index.html goes into every page)');
 });

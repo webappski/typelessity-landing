@@ -14,6 +14,13 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
  * destroyed, so its <style> is never removed; the browser reuses the server's <style> on hydration.
  * fonts.css stays the one source of the faces (public/fonts, also served at /fonts/fonts.css); its url() are absolute (/fonts/…)
  * so that they resolve the same from that file and from a page at any address.
+ *
+ * The fonts (moved here from a comment of src/index.html, which went into every page — L15 code review, item 4): Montserrat
+ * (text, headings) and Space Mono (code) are self-hosted, because loading them from Google sent every visitor's IP there before
+ * any consent (A27). public/fonts holds Google's files for the same families and weights (fetched 2026-09-24 for Space Mono,
+ * 2026-10-19 for Montserrat) and our subset of the Montserrat latin-ext file (the top of fonts.css says how it is made);
+ * licences: OFL-*.txt beside the files. src/index.html has one preload: the Latin file of Montserrat 400, the URL fonts.css
+ * names, with crossorigin. It has no stylesheet link: the rules come inline in the style element of this component.
  */
 @Component({
   selector: 'app-global-styles',
