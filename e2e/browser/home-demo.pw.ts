@@ -531,18 +531,31 @@ for (const scheme of ['light', 'dark'] as const) {
         if (hit.covered) expect(hit.rowIsWidget, `tip ${n}: a tap on the part of the input row under the card reaches the widget, not the card (it hit ${hit.rowTarget})`).toBe(true);
         if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip${n}-390-${scheme}.png`) }); }
       }
-      // L13 (FL-71): the visitor puts the cursor in the input row of the widget (on a phone the keyboard comes up under it): the card steps aside while the
-      // focus is there and is back when it leaves. The state is the one the frame «after-home-tip-typing-390» shows.
+    });
+
+    // L13 (FL-71): the case the finding is about — the visitor has taken the demo over and wants to type, and the card of a tip stands over the foot of the widget.
+    // While the show plays the controller does not let the focus into the widget, so this is only reachable after the take-over. A real click on the input row
+    // is made: Playwright refuses a click whose target is covered by another element («subtree intercepts pointer events»), which is what the card did before.
+    // The cursor in the widget sends the card out of the way; the cursor leaving brings it back. Frame after-home-tip-typing-390.
+    test(`after a take-over: a click on the input row reaches the widget through the card, and the card steps aside while the cursor is in the widget`, async ({ page }) => {
+      test.setTimeout(150_000);
+      await openHome(page, { width: 390, height: 844 });
+      await play(page, 'ready', ready, 40_000);
+      await takeOverButton(page).click();
+      await acceptConsent(page);
+      await play(page, 'a tip of the visitor\'s own conversation is on', (s) => s.tipOn, 40_000);
+      await page.evaluate(() => window.scrollBy({ top: document.querySelector('.demo__frame')!.getBoundingClientRect().top - 105, behavior: 'instant' }));
+      await stageSettled(page, true);
+      await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
       const tipState = () => page.evaluate(() => { const tip = document.querySelector('[data-tip]') as HTMLElement; return { on: tip.classList.contains('is-on'), visibility: getComputedStyle(tip).visibility }; });
-      const focusInput = (on: boolean) => page.evaluate((focus) => {
-        const input = (document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.querySelector('.pill-input') as HTMLInputElement;
-        if (focus) input.focus(); else input.blur();
-      }, on);
-      expect(await tipState(), 'before the focus: the card is on and visible').toEqual({ on: true, visibility: 'visible' });
-      await focusInput(true);
-      expect((await tipState()).visibility, 'while the cursor is in the input row the card is out of the way').toBe('hidden');
+      expect(await tipState(), 'a tip is on and visible before the cursor goes to the widget').toEqual({ on: true, visibility: 'visible' });
+      const row = page.locator('typelessity-widget .pill-input');
+      await expect(row).toBeEnabled();
+      await row.click({ timeout: 15_000 });
+      await expect.poll(() => page.evaluate(() => !!(document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.activeElement), { message: 'the click put the cursor in the widget' }).toBe(true);
+      expect((await tipState()).visibility, 'while the cursor is in the widget the card is out of the way').toBe('hidden');
       if (L14_FRAMES) { mkdirSync(L14_FRAMES, { recursive: true }); await page.screenshot({ path: join(L14_FRAMES, `after-home-tip-typing-390-${scheme}.png`) }); }
-      await focusInput(false);
+      await page.evaluate(() => ((document.querySelector('typelessity-widget') as HTMLElement).shadowRoot!.activeElement as HTMLElement).blur());
       expect((await tipState()).visibility, 'when the cursor leaves, the card is back').toBe('visible');
     });
   });
