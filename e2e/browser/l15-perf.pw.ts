@@ -159,22 +159,28 @@ test('L15-R1 /: the hidden ring runs no animation, and no animation on the page 
   expect(await page.evaluate(`(${BOX_SHADOW_ANIMATIONS})()`), 'box-shadow animations (not composited)').toEqual([]);
 });
 
-test('L15-R2 /: the shown ring pulses by opacity alone, its two glows are the two ends of the old pulse (4 px at 0.14, 9 px at 0.06)', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/', { waitUntil: 'load' });
-  await expect(page.locator('[data-ring].is-on'), 'a tip turns the ring on').toHaveCount(1, { timeout: 45_000 });
-  const animations = await page.evaluate(`(${RING_ANIMATIONS})()`) as Array<{ name: string; pseudo: string; state: string; props: string[] }>;
-  expect(animations.map((a) => a.pseudo).sort(), 'one animation on each glow layer').toEqual(['::after', '::before']);
-  for (const a of animations) {
-    expect(a.props, `${a.name} ${a.pseudo} animates only opacity`).toEqual(['opacity']);
-    expect(a.state).toBe('running');
-  }
-  expect(await page.evaluate(`(${BOX_SHADOW_ANIMATIONS})()`)).toEqual([]);
-  const glows = await page.locator('[data-ring]').evaluate((el) => [getComputedStyle(el, '::before').boxShadow, getComputedStyle(el, '::after').boxShadow, getComputedStyle(el).boxShadow]);
-  expect(glows[0]).toBe('rgba(247, 115, 0, 0.14) 0px 0px 0px 4px');
-  expect(glows[1]).toBe('rgba(247, 115, 0, 0.06) 0px 0px 0px 9px');
-  expect(glows[2], 'the ring itself draws no glow of its own any more').toBe('none');
-});
+// The ring frames L15/frames/after-l15-ring-{0ms,1100ms}-1440-{light,dark}.png (the two ends of the pulse, animations paused) hold this statement.
+for (const scheme of ['light', 'dark'] as const) {
+  test.describe(`L15-R2 ${scheme}`, () => {
+    test.use({ colorScheme: scheme });
+    test(`[after-l15-ring-1440-${scheme}] L15-R2 /: the shown ring pulses by opacity alone, its two glows are the two ends of the old pulse (4 px at 0.14, 9 px at 0.06)`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await expect(page.locator('[data-ring].is-on'), 'a tip turns the ring on').toHaveCount(1, { timeout: 45_000 });
+      const animations = await page.evaluate(`(${RING_ANIMATIONS})()`) as Array<{ name: string; pseudo: string; state: string; props: string[] }>;
+      expect(animations.map((a) => a.pseudo).sort(), 'one animation on each glow layer').toEqual(['::after', '::before']);
+      for (const a of animations) {
+        expect(a.props, `${a.name} ${a.pseudo} animates only opacity`).toEqual(['opacity']);
+        expect(a.state).toBe('running');
+      }
+      expect(await page.evaluate(`(${BOX_SHADOW_ANIMATIONS})()`)).toEqual([]);
+      const glows = await page.locator('[data-ring]').evaluate((el) => [getComputedStyle(el, '::before').boxShadow, getComputedStyle(el, '::after').boxShadow, getComputedStyle(el).boxShadow]);
+      expect(glows[0]).toBe('rgba(247, 115, 0, 0.14) 0px 0px 0px 4px');
+      expect(glows[1]).toBe('rgba(247, 115, 0, 0.06) 0px 0px 0px 9px');
+      expect(glows[2], 'the ring itself draws no glow of its own any more').toBe('none');
+    });
+  });
+}
 
 test.describe('L15-R3 reduced motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
