@@ -301,6 +301,12 @@ async function withCls(page: Page): Promise<void> {
 }
 for (const [width, height] of [[390, 844], [768, 1024], [1280, 800], [1440, 844], [1440, 900]] as const) {
   test(`${width}×${height}: a visitor from an assistant (b) gets the page with the same layout shift as a visitor with no referrer, none of it in the strip, and the strip is out of the window when its text changes`, async ({ page }) => {
+    // The swap of the page's own font is NOT what this test measures, and it is the one thing that depends on the machine. When Montserrat arrives after a frame has been painted
+    // (a busy machine, a slow disk) the text is drawn again and the page shifts by 0.0006 at 390 px, 0.0003 above: it failed the real pre-push once (b·ChatGPT 0.00061 against a 0, d8e3f8b,
+    // load 5-9) and not in the six runs before it. The fallback font has Montserrat's metrics (D2), so with the file never arriving the page stands as it will stand and there is no swap
+    // to time. The swap itself is held by l15-font-cls.pw.ts (the files 1 500 ms late, a ceiling of 0.0010), which is deterministic by design. The files of the widget come from
+    // the widget's origin and are not touched.
+    await page.route((url) => url.hostname === 'localhost' && url.pathname.endsWith('.woff2'), (route) => route.abort());
     await withCls(page);
     const measured: Record<string, { cls: number; strip: number }> = {};
     for (const { label, referer } of [STATES[0]!, STATES[1]!, STATES[4]!]) {
