@@ -200,8 +200,10 @@
   &:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 .demo__label { font-size: 13px; color: var(--fg3); }
-.demo__langrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.langs { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+// L17 D1: ONE line «in English Polski Deutsch …+22» — «in» is never alone on a line (nowrap), and the row is the anchor of the tooltip of «…+22».
+.demo__langrow { display: flex; flex-wrap: nowrap; align-items: baseline; gap: 10px; position: relative; }
+.langs { display: inline-flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; min-width: 0; }
+.langs__more { display: inline-flex; }
 .lang { height: 38px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--chip-bd); background: var(--chip); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--fg);
   &:hover { border-color: var(--accent); }
   &.is-on { background: var(--ink-soft); color: var(--ink); font-weight: 700; border-color: var(--accent); }
@@ -210,8 +212,19 @@
 .lang--more { display: inline-flex; align-items: center; gap: 6px; font-size: 18px; letter-spacing: 1px;
   small { font-size: 12px; letter-spacing: 0; font-weight: 600; color: var(--fg3); }
 }
-.demo__more { margin: 0; font-size: 13px; line-height: 1.6; color: var(--fg2); padding: 10px 14px; border-radius: var(--radius-s); background: var(--chip); border: 1px solid var(--chip-bd); }
-.demo__langnote { margin: -2px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--fg3); max-width: 70ch; }
+.demo__langnote { margin: -2px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--fg3); }   // one sentence now: the old max-width 70ch is not needed
+// The list of the other languages is the tooltip of «…+22» (founder 22.10): under the row, over the caption and the top of the frame, never over the tabs or the buttons.
+// Shown by hover, by keyboard focus and when pinned by a click/Enter; never by `display: none` or `hidden` (the button is DESCRIBED by it, a robot reads it).
+.demo__more { position: absolute; left: 0; top: calc(100% + 8px); z-index: 7; width: min(420px, calc(100vw - 2 * var(--container-pad))); margin: 0; font-size: 13px; line-height: 1.6; color: var(--fg2);
+  padding: 10px 14px; border-radius: var(--radius-s); background: var(--card); border: 1px solid var(--chip-bd); box-shadow: var(--island-shadow);
+  visibility: hidden; opacity: 0; transition: opacity 0.15s ease, visibility 0s linear 0.15s;
+  &::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; height: 10px; } // bridges the gap to the button: the pointer can travel to the tooltip (WCAG 1.4.13 hoverable)
+}
+.langs__more:hover .demo__more, .langs__more:focus-within .demo__more, .langs__more.is-pinned .demo__more { visibility: visible; opacity: 1; transition-delay: 0s; }
+.langs__more.is-dismissed .demo__more { visibility: hidden; opacity: 0; } // Esc (WCAG 1.4.13 dismissible)
+@media (prefers-reduced-motion: reduce) { .demo__more { transition: none; } }
+// A touch screen has no hover: no «…+22» and no tooltip (the full list of 25 stays on the page, in #languages).
+@media (hover: none), (pointer: coarse) { .langs__more { display: none; } }
 // ONE height from the first paint: the widget draws into it later and nothing moves (CLS). The value is demo-labels.ts SLOT_HEIGHT_PX,
 // set on `.demo` as --slot-h / --slot-h-sm; the controller fixes the widget panel to the same two numbers.
 .demo__frame { transition: min-height 0.4s ease; border-radius: 24px; box-shadow: var(--widget-ring); min-height: var(--slot-h, 720px); overflow: hidden; background: #fff; position: relative;
@@ -445,6 +458,13 @@ pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); backgrou
   .demo__tabs { flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; }
   .langs { max-width: 100%; }
   .lang { padding: 0 12px; }
+  // L17 D1 (rev. 1 + 3): the row «in English Polski Deutsch» is tighter; Freight is not drawn on a phone (founder 22.10: no sideways scrolling, three tabs fit from 300 px).
+  // The controller skips a tab that is not drawn (demo-controller.ts nextShownIndex). It stays in the DOM: the server does not know the screen.
+  .demo__langrow { gap: 8px; margin-top: 4px; }
+  .langs { gap: 4px; }
+  .lang { padding: 0 10px; }
+  .lang--more { gap: 3px; }
+  .tab[data-scenario-tab='freight'] { display: none; }
   .tip-slot { min-height: 150px; }
   .tip__steps { display: none; }
   .demo__frame { min-height: var(--slot-h-sm, 640px); }

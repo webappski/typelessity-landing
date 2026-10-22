@@ -122,6 +122,22 @@ test('C2(d) the languages: the list holds the languages of the product and no ot
   assert.deepEqual(seen, LANDING_LANGUAGES.map((l) => l.code), 'every item carries the code of its language in `lang`, in the order of the data');
   const buttons = [...home.matchAll(/<button\b[^>]*\bdata-lang="([a-z]{2})"/g)].map((m) => m[1]);
   assert.deepEqual(buttons, DEMO_LANGS.map((l) => l.code), 'language buttons of the demo');
+  assert.deepEqual(buttons, ['en', 'pl', 'de'], 'founder 22.10: the row is «in English Polski Deutsch …+22» — three buttons');
+  // the other languages are the tooltip of «…+N»: exactly the 25 minus the buttons, no name twice, every one of the 25 once in the row and the tooltip
+  const tip = /<span\b[^>]*\bid="langs-more"[^>]*>([\s\S]*?)<\/span>\s*<\/span>/.exec(home);
+  assert.ok(tip, 'the tooltip span #langs-more is on the page');
+  assert.match(tip[0], /role="tooltip"/);
+  assert.doesNotMatch(tip[0], /\bhidden\b/, 'the tooltip is shown and hidden by CSS, never by the hidden attribute (a robot reads it, the button is described by it)');
+  const tipText = textOf(tip[1]!);
+  assert.match(tipText, /^22 more chat languages: /);
+  const named = tipText.slice('22 more chat languages: '.length).split('. This demo plays')[0]!.split(' · ');
+  assert.equal(named.length, codes.length - buttons.length, 'the tooltip names 25 minus the buttons');
+  const buttonNames = [...home.matchAll(/<button\b[^>]*\bdata-lang="[a-z]{2}"[^>]*>([\s\S]*?)<\/button>/g)].map((m) => textOf(m[1]!));
+  assert.deepEqual([...buttonNames, ...named].sort(), LANDING_LANGUAGES.map((l) => l.native).sort(), 'every language of the product once, in the buttons or in the tooltip');
+  assert.match(tipText, /This demo plays three of the 25\.$/);
+  const moreTag = /<button\b[^>]*\bdata-langs-more\b[^>]*>/.exec(home)![0];
+  assert.doesNotMatch(moreTag, /\btitle=/, 'no title: the browser would show a second tooltip');
+  assert.match(moreTag, /aria-describedby="langs-more"/);
   const more = textOf(/<button\b[^>]*\bdata-langs-more\b[^>]*>([\s\S]*?)<\/button>/.exec(home)?.[1] ?? '');
   assert.match(more, new RegExp(`\\+${codes.length - buttons.length}\\b`), `«+N» of the more-button is ${codes.length - buttons.length}: ${more}`);
   assert.equal(codes.length - buttons.length, LANDING_LANGUAGES.length - DEMO_LANGS.length);
@@ -130,14 +146,15 @@ test('C2(d) the languages: the list holds the languages of the product and no ot
   assert.match(home, /data-take-over/);
 });
 
-test('C2(e) the caption under the languages is ONE paragraph that holds both the language sentence and the sentence about scripted replies', () => {
-  const paragraphs = [...home.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((m) => textOf(m[1]!));
-  const holders = paragraphs.filter((p) => p.includes('answers in the language you set for your business') && p.includes('The replies in this demo are scripted.'));
-  assert.equal(holders.length, 1, 'D1: the two sentences must sit in one <p>');
-  assert.equal(holders[0], LANGNOTE);
-  assert.match(holders[0]!, /^The chat window comes in 25 languages\./);
+test('C2(e) the caption under the languages is ONE sentence — the number of languages — and says nothing about scripted replies (founder 22.10)', () => {
   const classed = /<p\b[^>]*class="demo__langnote"[^>]*>([\s\S]*?)<\/p>/.exec(home)?.[1];
-  assert.equal(textOf(classed ?? ''), LANGNOTE, 'the paragraph carries the class demo__langnote');
+  assert.ok(classed, 'the paragraph carries the class demo__langnote');
+  // written out on purpose: the number comes from the 25 locales of the product (C2(d) counts them), not from the template under test
+  assert.equal(textOf(classed), 'The chat window comes in 25 languages.');
+  assert.equal(textOf(classed), LANGNOTE);
+  assert.equal([...home.matchAll(/class="demo__langnote"/g)].length, 1, 'one caption');
+  assert.doesNotMatch(textOf(classed), /scripted/i, 'the warning about scripted replies left the caption (founder 22.10); the note under the frame keeps the demo honest');
+  assert.doesNotMatch(textOf(classed), /answers in the language you set|Pick one to see it/, 'the three other sentences are gone');
 });
 
 const LINKS = (): string[] => [

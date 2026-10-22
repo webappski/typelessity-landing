@@ -1,6 +1,6 @@
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, PLATFORM_ID, afterNextRender, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener, OnInit, PLATFORM_ID, afterNextRender, inject, signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
@@ -51,7 +51,10 @@ export class HomeComponent implements OnInit {
   protected readonly scenario = signal('salon');
   protected readonly lang = signal('en');
   protected readonly tipsOff = signal(false);
+  /** «…+22» is pinned open by a click or Enter (aria-expanded); hover and keyboard focus show the tooltip by CSS alone */
   protected readonly moreOpen = signal(false);
+  /** Esc closes the tooltip while the pointer or the focus is still on it (WCAG 1.4.13 dismissible); leaving the button brings it back to normal */
+  protected readonly moreDismissed = signal(false);
   protected readonly tabs = DEMO_TABS;
   protected readonly langs = DEMO_LANGS;
   protected readonly cap = DEMO_CAPTIONS;
@@ -116,7 +119,11 @@ export class HomeComponent implements OnInit {
   protected setLang(code: string): void { this.session()?.setLang(code); }
   protected takeOver(): void { this.session()?.takeOver(); }
   protected setTips(off: boolean): void { this.session()?.setTips(off); }
-  protected toggleMore(): void { this.moreOpen.update((v) => !v); }
+  /** a click or Enter pins the tooltip (or unpins it); after Esc it must show again, so the dismissal is lifted first */
+  protected toggleMore(): void { this.moreDismissed.set(false); this.moreOpen.update((v) => !v); }
+
+  @HostListener('document:keydown.escape')
+  protected closeMore(): void { this.moreDismissed.set(true); this.moreOpen.set(false); }
 
   ngOnInit(): void {
     this.seo.apply({

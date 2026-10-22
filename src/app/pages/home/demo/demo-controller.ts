@@ -13,6 +13,7 @@ import {
 } from './demo-script';
 import { DEMO_API_ORIGIN, installDemoMock, mockState, uninstallDemoMock } from './demo-mock';
 import { SLOT_HEIGHT_MOBILE_PX, SLOT_HEIGHT_PX, SLOT_MOBILE_MAX_WIDTH_PX } from './demo-labels';
+import { nextShownIndex } from './next-scenario';
 
 export { installDemoMock, uninstallDemoMock, DEMO_API_ORIGIN };
 
@@ -144,6 +145,8 @@ export function createDemoController(root: HTMLElement, hooks: DemoHooks, start:
   const host = stage?.querySelector<HTMLElement>('[data-widget-host]') ?? null;
   const mountEl = host?.querySelector<HTMLElement>('[data-widget-mount]') ?? null;
   if (!stage || !host || !mountEl) throw new Error('home demo: the stage is not on the page');
+  /** a tab is drawn when it has a box: «Freight» is `display: none` at 720 px and below (L17 D1.3) */
+  const tabShown = (id: string): boolean => (stage.querySelector(`[data-scenario-tab="${id}"]`)?.getClientRects().length ?? 0) > 0;
 
   const note = stage.querySelector<HTMLElement>('[data-demo-note]');
   const chain = root.querySelector<HTMLElement>('[data-ty-chain]');
@@ -554,7 +557,7 @@ export function createDemoController(root: HTMLElement, hooks: DemoHooks, start:
                           hideTip(); ok.click();
                           T(() => {
                             if (myGen === gen && auto) {
-                              idx = (idx + 1) % ids.length;
+                              idx = nextShownIndex(ids, idx, tabShown);
                               hooks.scenario(ids[idx]!);
                               play();
                             }

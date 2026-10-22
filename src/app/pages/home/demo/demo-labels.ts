@@ -1,5 +1,5 @@
 // What the prerender of the home-page demo draws and what the loader needs before the demo chunk exists (L4, F18): the labels of the
-// tabs and of the five chat languages, the captions, the three texts of the empty slot (F11) and the one height of the slot (CLS).
+// tabs and of the three chat languages, the captions, the three texts of the empty slot (F11) and the one height of the slot (CLS).
 // This file is in the main bundle. It must never import demo-script.ts, demo-mock.ts or demo-controller.ts: those three travel
 // together in one lazy chunk (C2(c): the scenarios are in exactly one file of dist, and index.html does not name it).
 import { LANDING_LANGUAGES } from '../../../core/languages/landing-languages';
@@ -16,22 +16,21 @@ export const DEMO_TABS: readonly { readonly id: string; readonly label: string }
   { id: 'freight', label: 'Freight' },
 ];
 
-/** The five chat languages the demo plays, with their own names (the buttons carry `lang`). The code is the product's locale code. */
+/** The three chat languages the demo has a button for, with their own names (the buttons carry `lang`). The code is the product's locale code. Founder 22.10: «in English Polski Deutsch …+22». */
 export const DEMO_LANGS: readonly { readonly code: string; readonly name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'pl', name: 'Polski' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'ru', name: 'Русский' },
-  { code: 'es', name: 'Español' },
 ];
 
-/** The 25 languages of the chat window minus the five the demo plays — «+20» is computed, never typed. */
+/** The 25 languages of the chat window minus the three the demo has a button for — «+22» is computed, never typed. */
 export const LANGS_MORE_COUNT = LANDING_LANGUAGES.length - DEMO_LANGS.length;
-export const LANGS_MORE_NAMES: readonly string[] = LANDING_LANGUAGES.slice(DEMO_LANGS.length).map((l) => l.native);
+/** By code, not by position: with another trio of buttons a slice would drop one language and repeat another. */
+export const LANGS_MORE_NAMES: readonly string[] = LANDING_LANGUAGES.filter((l) => !DEMO_LANGS.some((d) => d.code === l.code)).map((l) => l.native);
 const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
 
-/** The caption under the language buttons: one paragraph, two sentences about the language and one about the scripted replies (D1). */
-export const LANGNOTE = `The chat window comes in ${LANDING_LANGUAGES.length} languages. Pick one to see it. The assistant answers in the language you set for your business. The replies in this demo are scripted.`;
+/** The caption under the language buttons: one sentence, the number of languages (founder 22.10; the warning about scripted replies left the caption, the note under the frame keeps the demo honest). */
+export const LANGNOTE = `The chat window comes in ${LANDING_LANGUAGES.length} languages.`;
 export const LANGS_MORE_HEAD = `${LANGS_MORE_COUNT} more chat languages:`;
 export const LANGS_MORE_TAIL = `This demo plays ${NUMBER_WORDS[DEMO_LANGS.length] ?? DEMO_LANGS.length} of the ${LANDING_LANGUAGES.length}.`;
 export const LANGS_MORE_TITLE = `${LANGS_MORE_COUNT} more chat languages`;

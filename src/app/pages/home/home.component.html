@@ -61,14 +61,16 @@
                   <button class="lang" type="button" [class.is-on]="lang() === l.code" [attr.lang]="l.code" [attr.aria-pressed]="lang() === l.code"
                     [attr.data-lang]="l.code" [disabled]="slot() === 'failed'" (click)="setLang(l.code)">{{ l.name }}</button>
                 }
-                <button class="lang lang--more" type="button" [class.is-on]="moreOpen()" [attr.aria-expanded]="moreOpen()" aria-controls="langs-more"
-                  data-langs-more [attr.title]="moreTitle" [attr.aria-label]="moreTitle" (click)="toggleMore()">…<small>+{{ moreCount }}</small></button>
+                <span class="langs__more" [class.is-pinned]="moreOpen()" [class.is-dismissed]="moreDismissed()" (mouseenter)="moreDismissed.set(false)" (mouseleave)="moreDismissed.set(false)" (focusin)="moreDismissed.set(false)" (focusout)="moreDismissed.set(false)">
+                  <button class="lang lang--more" type="button" [class.is-on]="moreOpen()" [attr.aria-expanded]="moreOpen()" aria-describedby="langs-more"
+                    data-langs-more [attr.aria-label]="moreTitle" (click)="toggleMore()">…<small>+{{ moreCount }}</small></button>
+                  <span class="demo__more" id="langs-more" role="tooltip"><b>{{ moreHead }}</b> {{ moreNames }}. {{ moreTail }}</span>
+                </span>
               </div>
             </div>
           </div>
         </div>
         <p class="demo__langnote">{{ langnote }}</p>
-        <p class="demo__more" id="langs-more" [attr.hidden]="moreOpen() ? null : ''"><b>{{ moreHead }}</b> {{ moreNames }}. {{ moreTail }}</p>
         <div class="demo__frame">
           <app-typelessity-widget [state]="slot()" />
           <div class="ring" data-ring aria-hidden="true"><span class="ring__n" data-ring-n>1</span></div>

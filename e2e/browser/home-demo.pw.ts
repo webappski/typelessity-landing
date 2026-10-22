@@ -399,7 +399,9 @@ test.describe('B2 the show', () => {
     });
   }
 
-  for (const lang of ['pl', 'de', 'ru', 'es']) {
+  // L17 D1 (founder 22.10): the row has three language buttons, English, Polski and Deutsch; Русский and Español have no button on the page any more
+  // (their scripts stay in demo-script.ts and are held by home-demo-contract.spec.ts; no door of the page reaches them), so the browser plays pl and de.
+  for (const lang of ['pl', 'de']) {
     test(`(b) ${lang}: a click on the language starts the same business again in that language, as far as «request received»`, async ({ page }) => {
       const { script } = await demo();
       await openHome(page);
@@ -413,6 +415,23 @@ test.describe('B2 the show', () => {
       await expectRequestScreen(page, 'salon', lang, t);
       const typed = ((await calls(page)).find((c) => c.method === 'POST' && /\/message$/.test(c.path))!.body as { text: string }).text;
       expect(typed, 'the typed sentence is the one of the language').toBe(sc.phrase);
+    });
+  }
+
+  // L17 D1.3: «Freight» is not drawn at 720 px and below; the round of the demo goes salon → garage → table → freight → salon and must not stop at a tab nobody can see.
+  for (const [width, next] of [[1440, 'freight'], [390, 'salon']] as const) {
+    test(`(e) ${width} px: after the request of «table» is sent, the show moves on to «${next}»${width <= 720 ? ' — the hidden Freight is skipped' : ''}`, async ({ page }) => {
+      await openHome(page, { width, height: 900 });
+      await play(page, 'ready', ready, 30_000);
+      await tab(page, 'table').click();
+      const { script } = await demo();
+      const t = await play(page, 'table: success', (s) => reachedSuccess(s) && s.configId === `${script.CONFIG_ID_PREFIX}table`, 110_000);
+      expect(t.last.configId, 'the business that played is «table»').toBe(`${script.CONFIG_ID_PREFIX}table`);
+      expect(await tab(page, 'freight').evaluate((e) => e.getClientRects().length > 0), 'Freight is drawn at 1440 only').toBe(width > 720);
+      await run(page, 33_000); // the show waits 31 s on the «sent» screen, then starts the next business (the page follows the clock: one more step draws the tab)
+      await expect.poll(async () => { await run(page, 500); return (await snap(page)).configId; }, { message: `the next business is ${next}`, timeout: 20_000 }).toBe(`${script.CONFIG_ID_PREFIX}${next}`);
+      await expect(tab(page, next), `the tab of ${next} is the selected one`).toHaveAttribute('aria-selected', 'true');
+      await expect(tab(page, 'table')).toHaveAttribute('aria-selected', 'false');
     });
   }
 
