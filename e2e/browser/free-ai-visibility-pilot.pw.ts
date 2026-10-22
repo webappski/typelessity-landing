@@ -317,8 +317,8 @@ for (const [width, height] of [[390, 844], [768, 1024], [1280, 800], [1440, 844]
     for (const [label, m] of Object.entries(measured)) {
       expect(m.strip, `${label}: the strip is no source of a layout shift`).toBe(0);
       expect(Math.abs(m.cls - measured['a']!.cls), `${label}: CLS ${m.cls} vs a ${measured['a']!.cls}`).toBeLessThanOrEqual(0.0005);
-      // The page's own layout shift is 0 at every size, in every state (it was 0.0123 at 1440×844 between 0906004 and the fix of FL-116: the status text of the demo slot,
-      // centred, moved when the page took over, as the demo frame had come up into the first screen). Strict on purpose: the shift is exactly 0, no ceiling.
+      // The page's own layout shift is 0 at every size, in every state (it was 0.0123 at 1440×844 between 0906004 and the fix of FL-116: the CARD of the demo widget was seen at
+      // 400, then 600, then 720 px and its content moved, as the demo frame had come up into the first screen; l17-widget-panel.pw.ts holds the cause). Strict on purpose: exactly 0.
       expect(m.cls, `${label}: CLS of the page at ${width}×${height}`).toBeLessThanOrEqual(0);
     }
   });

@@ -56,18 +56,19 @@ const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const STRIP_DIRS = ['src/app/pages/home/pilot-offer', 'src/app/core/pilot-offer'];
 const stripSources = (): Array<[string, string]> => STRIP_DIRS.flatMap((d) => readdirSync(join(ROOT, d)).filter((f) => /\.(ts|html)$/.test(f) && !f.endsWith('.spec.ts')).map((f): [string, string] => [`${d}/${f}`, readFileSync(join(ROOT, d, f), 'utf8')]));
 
-test('the notice says that the home page reads where the visitor came from, why, that nothing is stored or sent to us, and what the strip link carries', () => {
+test('the notice says that the site reads the utm_source at entry and the home page the referrer, why, that nothing is stored or sent to us, and what the strip link carries', () => {
   const body = flat(PRIVACY.body);
   for (const part of [
-    'On the home page, your browser checks the address of the page you came from and the utm_source in the link, only to choose which of two texts the Webappski strip shows',
-    'nothing is stored and nothing is sent to us',
-    'the link to webappski.com carries a campaign marker (utm_source=typelessity.com, utm_content=a, b, a-name or b-name)',
-    'tells webappski.com whether you came from an AI assistant; the browser sends no referrer',
+    'When you open any page of this site, your browser reads the utm_source of the address once, as the site loads in your tab, and keeps it in memory only while the site stays open there',
+    'only the Webappski strip on the home page uses it, together with the address of the page you came from (which only the home page reads), to choose which of two texts the strip shows',
+    'Nothing is stored and nothing is sent to us',
+    'the link to webappski.com carries four campaign parameters (utm_source=typelessity.com, utm_campaign=free-pilot, utm_medium=banner and utm_content=a, b, a-name or b-name)',
+    'which tell webappski.com whether you came from an AI assistant; the browser sends no referrer',
     'webappski.com is run by the same person',
   ]) assert.ok(body.includes(part), `the notice lost: ${part}`);
   // it stands in the section about the browser, after the sentence about the theme and before the demo
   const browser = PRIVACY.body.slice(PRIVACY.body.indexOf('## What stays in your browser'), PRIVACY.body.indexOf('## The question form'));
-  assert.ok(browser.indexOf('(`ty-theme`)') < browser.indexOf('On the home page, your browser checks') && browser.indexOf('On the home page, your browser checks') < browser.indexOf('Once the page has painted'));
+  assert.ok(browser.indexOf('(`ty-theme`)') < browser.indexOf('When you open any page of this site') && browser.indexOf('When you open any page of this site') < browser.indexOf('Once the page has painted'));
   assert.ok(PRIVACY_LAST_UPDATED >= '2026-10-22', `the notice is dated on or after the day of the paragraph: ${PRIVACY_LAST_UPDATED}`);
 });
 
@@ -80,9 +81,20 @@ test('what the notice says about the strip is true of its code: it reads referre
   for (const [name, text] of files) {
     assert.doesNotMatch(text, /localStorage|sessionStorage|document\.cookie|\bfetch\(|XMLHttpRequest|sendBeacon|HttpClient/, `${name}: the notice says nothing is stored and nothing is sent`);
   }
+  // «When you open any page … reads the utm_source once, as the site loads, keeps it in memory»: the application builds the service at its start, on any page, and the service reads the
+  // query once, into a field, with no storage («only the home page reads the address of the page you came from»: no other file of the site reads document.referrer)
+  assert.match(readFileSync(join(ROOT, 'src/app/app.ts'), 'utf8'), /constructor\(\) \{ inject\(EntryUtmSource\); \}/, 'the application builds the entry service at its start, on any page');
+  const entry = readFileSync(join(ROOT, 'src/app/core/pilot-offer/entry-utm-source.ts'), 'utf8');
+  assert.match(entry, /readonly value: string \| null = isPlatformBrowser\(inject\(PLATFORM_ID\)\)[\s\S]*?\.get\('utm_source'\)/, 'read once into a field, in the browser only');
+  const walk = (dir: string): string[] => readdirSync(join(ROOT, dir), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${dir}/${e.name}`) : /\.ts$/.test(e.name) && !e.name.endsWith('.spec.ts') ? [`${dir}/${e.name}`] : []));
+  const readers = walk('src/app').filter((f) => /\b(?:document|doc)\.referrer\b/.test(readFileSync(join(ROOT, f), 'utf8')));
+  assert.deepEqual(readers.filter((f) => !f.startsWith('src/app/pages/home/pilot-offer/')), [], 'only the strip on the home page reads document.referrer');
+  assert.ok(readers.length > 0, 'the strip reads it');
+  const queryReaders = walk('src/app').filter((f) => /\.get\('utm_source'\)/.test(readFileSync(join(ROOT, f), 'utf8')));
+  assert.deepEqual(queryReaders, ['src/app/core/pilot-offer/entry-utm-source.ts'], 'the utm_source of the address is read in one place');
   // the marker: the values of the notice are the values of the component
   const comp = readFileSync(join(ROOT, 'src/app/pages/home/pilot-offer/free-pilot-offer.component.ts'), 'utf8');
-  assert.match(comp, /utm_source=typelessity\.com&utm_campaign=free-pilot&utm_medium=banner/);
+  assert.match(comp, /utm_source=typelessity\.com&utm_campaign=free-pilot&utm_medium=banner/, 'the three fixed parameters of the notice; utm_content is the fourth, below');
   assert.match(comp, /utm_content=\$\{this\.source\(\)\.state\}`/, 'the button carries utm_content=a|b');
   assert.match(comp, /utm_content=\$\{this\.source\(\)\.state\}-name`/, 'the name link carries utm_content=a-name|b-name');
   // the browser sends no referrer: every link of the strip that leaves the site has noreferrer

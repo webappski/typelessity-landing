@@ -236,8 +236,7 @@ test('the founder\'s claim «AI named Typelessity» / «named us» stands only i
   const claim = /\bAI named Typelessity\b|\b(?:Came from \w+\? It|\w+) named us\b/;
   const holders: string[] = [];
   for (const [path, body] of pages) {
-    const raw = path.endsWith('.html') ? body : body;
-    if (!claim.test(path.endsWith('.html') ? visibleText(raw) : raw)) continue;
+    if (!claim.test(path.endsWith('.html') ? visibleText(body) : body)) continue;
     holders.push(path);
   }
   assert.deepEqual(holders, ['index.html'], 'the claim is on / and only on /');
