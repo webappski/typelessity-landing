@@ -442,7 +442,10 @@ export function createDemoController(root: HTMLElement, hooks: DemoHooks, start:
     let n = 0;
     (function g(): void {
       if (widget !== el) return;
-      if (el.shadowRoot && el.shadowRoot.querySelector('.widget-container, .consent-modal-container')) return grow();
+      // FL-116: the panel is fixed to the slot's height AS SOON AS the widget has its shadow root, before its first frame. It used to wait for the card to be drawn (polled every
+      // 100 ms), and the card was seen at 400, then 600, then 720 px: the content of the panel moved twice, and since L17 the frame stands high enough for that to be in the first screen.
+      if (el.shadowRoot) grow();
+      if (el.shadowRoot && el.shadowRoot.querySelector('.widget-container, .consent-modal-container')) return;
       if (++n < 60) later(g, 100);
     })();
     hooks.mounted();

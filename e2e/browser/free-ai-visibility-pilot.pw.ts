@@ -299,7 +299,7 @@ async function withCls(page: Page): Promise<void> {
     }).observe({ type: 'layout-shift', buffered: true });
   });
 }
-for (const [width, height] of [[390, 844], [1440, 844]] as const) {
+for (const [width, height] of [[390, 844], [768, 1024], [1280, 800], [1440, 844], [1440, 900]] as const) {
   test(`${width}×${height}: a visitor from an assistant (b) gets the page with the same layout shift as a visitor with no referrer, none of it in the strip, and the strip is out of the window when its text changes`, async ({ page }) => {
     await withCls(page);
     const measured: Record<string, { cls: number; strip: number }> = {};
@@ -317,10 +317,9 @@ for (const [width, height] of [[390, 844], [1440, 844]] as const) {
     for (const [label, m] of Object.entries(measured)) {
       expect(m.strip, `${label}: the strip is no source of a layout shift`).toBe(0);
       expect(Math.abs(m.cls - measured['a']!.cls), `${label}: CLS ${m.cls} vs a ${measured['a']!.cls}`).toBeLessThanOrEqual(0.0005);
-      // The page's own shift is held with a ceiling, not at 0: FL-116 — since L17 the demo frame stands higher, and at 1440×844 the status text of the slot («The demo chat runs
-      // in the real widget…», 88 px) is in the first screen; when the page takes over it is replaced by the one line «Loading the chat…», the text is centred and moves.
-      // Measured 0.0123 at 1440×844 (0 on 7c9cfa6, where the frame was below the fold), 0 at 390×844. Not the strip: the same in a and in b.
-      expect(m.cls, `${label}: CLS of the page`).toBeLessThanOrEqual(width >= 1000 ? 0.015 : 0.001);
+      // The page's own layout shift is 0 at every size, in every state (it was 0.0123 at 1440×844 between 0906004 and the fix of FL-116: the status text of the demo slot,
+      // centred, moved when the page took over, as the demo frame had come up into the first screen). Strict on purpose: the shift is exactly 0, no ceiling.
+      expect(m.cls, `${label}: CLS of the page at ${width}×${height}`).toBeLessThanOrEqual(0);
     }
   });
 }
