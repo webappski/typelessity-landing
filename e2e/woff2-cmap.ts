@@ -107,3 +107,16 @@ const overlaps = (ranges: ReadonlyArray<readonly [number, number]>, lo: number, 
  */
 export const isLatinExtFace = (ranges: ReadonlyArray<readonly [number, number]>): boolean =>
   !inRanges(0x41, ranges) && overlaps(ranges, 0x100, 0x17f) && !overlaps(ranges, 0x1ea0, 0x1ef1);
+
+/** The vertical metrics of a WOFF2 file: units per em (`head`) and the ascender, descender and line gap of `hhea` (neither table is transformed — WOFF2 §5.1). L17 D2. */
+export function woff2Metrics(woff2: Buffer): { unitsPerEm: number; ascent: number; descent: number; lineGap: number } {
+  const dir = directory(woff2);
+  const data = dir.data();
+  const table = (tag: string): Buffer => {
+    const t = dir.tables.find((x) => x.tag === tag);
+    if (!t) throw new Error(`woff2: no ${tag} table`);
+    return data.subarray(t.offset, t.offset + t.length);
+  };
+  const head = table('head'), hhea = table('hhea');
+  return { unitsPerEm: head.readUInt16BE(18), ascent: hhea.readInt16BE(4), descent: hhea.readInt16BE(6), lineGap: hhea.readInt16BE(8) };
+}

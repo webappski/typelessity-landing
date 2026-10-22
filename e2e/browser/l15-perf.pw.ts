@@ -18,7 +18,9 @@ async function fontsOfMarked(page: Page): Promise<Array<{ text: string; fonts: s
       if (!/^Montserrat\b/.test(getComputedStyle(el).fontFamily.replace(/["']/g, ''))) continue;
       const own = Array.from(el.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent ?? '').join('');
       const r = el.getBoundingClientRect();
-      if (!ext.test(own) || r.width < 1 || r.height < 1) continue;
+      // L17: the tooltip of «…+22» is in the page all the time and holds every name of the 22 languages (Cyrillic, Greek and Japanese among them: no Montserrat file has them, the
+      // system draws them by design), but while it is closed it is `visibility: hidden` and nobody sees it. `checkVisibility()` alone says true for it; the text a visitor sees is meant here.
+      if (!ext.test(own) || r.width < 1 || r.height < 1 || getComputedStyle(el).visibility === 'hidden') continue;
       el.setAttribute('data-ty-ext', String(i++));
       out.push(own.trim().slice(0, 60));
     }

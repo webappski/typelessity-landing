@@ -1,31 +1,31 @@
 import { test, expect, underPolicy } from './fixtures';
 
-// KNOWN SHIFT, FL-107; the cure is a fallback font with Montserrat's metrics (size-adjust), a token → designer.
+// The layout shift of the font swap (FL-107, FL-114) — held with a ceiling so that the cure cannot quietly leave.
 //
-// With `font-display: swap` the first paint draws the text in the fallback font, and when the Montserrat file arrives later the
-// text is drawn again in Montserrat: lines of a different width move what stands next to them (on `/`: the h1 line with `.gtext`,
-// the icons of the buttons, the line under the pilot). Measured by the judges of L15 (test-design L15-perf, 2026-10-21) the same
-// before L15 (production e4bdf7a) and after it, so it is not a regression of L15; it is held here so that it cannot grow unseen.
-// Conditions: Chromium, every .woff2 answered 1 500 ms late (the page's own fonts; the widget's DM Sans is refused by the CSP of
-// vercel.json, as in production), everything else untimed, the headers of vercel.json on the document (underPolicy).
-// The ceilings are the measured value with a margin: `/` ≤ 0.0025 at 390 × 844 (measured 0.0020) and ≤ 0.0075 at 1440 × 844
-// (measured 0.0070), `/pricing` 0 at 390. Both widths are 844 high: the judge's probe (cls.mjs) ran 1440 at × 844, not × 900; at
-// × 900 the same swap measures 0.0076 on `/`, HEAD and production alike (L15/cls-perf2-probes.log).
-// FL-114, found by this test (2026-10-21): `/pricing` at 1440 shifts too, 0.0481 (× 844) — the tiers, the sub-heading and the
-// buttons, the same swap, the same on production e4bdf7a; the judges measured `/pricing` at 390 only. Held at ≤ 0.053.
-// When the fallback font gets Montserrat's metrics, both pages measure 0: lower the ceilings to 0 and drop the word KNOWN.
+// With `font-display: swap` the first paint draws the text in the fallback font, and when the Montserrat file arrives later the text is drawn again in
+// Montserrat. Before L17 the fallback was the system font at its own width and line box (`system-ui`), and lines of a different width moved what stood next
+// to them: on `/` 0.0020 (390 × 844) and 0.0070 (1440 × 844), on `/pricing` at 1440 0.0481 (the tiers, the sub-heading and the buttons), measured by the judges of
+// L15 (test-design L15-perf, 2026-10-21) the same before L15 (production e4bdf7a) and after it.
+// L17 D2 (2026-10-22): `Montserrat Fallback` (public/fonts/fonts.css) is the system Arial scaled to Montserrat's width and line box (size-adjust, ascent-,
+// descent-, line-gap-override) and stands right after Montserrat in `--font-display` and `--font-body`. The shift is not 0 — the sizes are an average over the
+// letters of two pages, so a line of other letters is a few pixels off — but it is small; the ceilings below are the values measured on the build plus the same margin
+// as before. The KNOWN word and the «designer» note are gone: the token exists.
+// Conditions: Chromium, every .woff2 answered 1 500 ms late (the page's own fonts; the widget's DM Sans is refused by the CSP of vercel.json, as in production),
+// everything else untimed, the headers of vercel.json on the document (underPolicy). Both widths are 844 high: the judge's probe (cls.mjs) ran 1440 at × 844, not × 900.
+// Not covered: a machine without Arial (Android, some Linux): `local('Arial')` finds nothing there, and the swap is what it was before L17 (no harm, no gain);
+// Safari does not apply `ascent-override` (caniuse, 22.10), so the position inside a line may differ by a fraction of a pixel there; Windows and Firefox were not measured.
 const FONT_DELAY_MS = 1500;
 const CASES = [
-  { path: '/', width: 390, height: 844, ceiling: 0.0025, id: 'FL-107' },
-  { path: '/', width: 1440, height: 844, ceiling: 0.0075, id: 'FL-107' },
+  { path: '/', width: 390, height: 844, ceiling: 0.0010, id: 'FL-107' },
+  { path: '/', width: 1440, height: 844, ceiling: 0.0010, id: 'FL-107' },
   { path: '/pricing', width: 390, height: 844, ceiling: 0, id: 'FL-107' },
-  { path: '/pricing', width: 1440, height: 844, ceiling: 0.053, id: 'FL-114' },
+  { path: '/pricing', width: 1440, height: 844, ceiling: 0.0090, id: 'FL-114' },
 ];
 
 for (const c of CASES) {
   test.describe(`L15-C1 ${c.width}`, () => {
     test.use({ viewport: { width: c.width, height: c.height }, isMobile: c.width < 500, hasTouch: c.width < 500, deviceScaleFactor: 2 });
-    test(`L15-C1 ${c.path} at ${c.width}×${c.height}, fonts ${FONT_DELAY_MS} ms late: the layout shift of the font swap stays ≤ ${c.ceiling} (known shift, ${c.id}; the cure is a fallback font with Montserrat's metrics (size-adjust), a token → designer)`, async ({ page }) => {
+    test(`L15-C1 ${c.path} at ${c.width}×${c.height}, fonts ${FONT_DELAY_MS} ms late: the layout shift of the font swap stays ≤ ${c.ceiling} (${c.id}; the fallback font has Montserrat's metrics)`, async ({ page }) => {
       await underPolicy(page);
       const delayed: string[] = [];
       const finished: string[] = [];
@@ -49,7 +49,7 @@ for (const c of CASES) {
       expect(state.montserrat, 'a Montserrat face is loaded: the swap really happened').toBeGreaterThan(0);
       test.info().annotations.push({ type: 'cls', description: `${c.path} ${c.width}×${c.height}: ${state.cls.toFixed(4)}` });
       console.log(`L15-C1 ${c.path} ${c.width}x${c.height} CLS ${state.cls.toFixed(4)}`);
-      expect(state.cls, `CLS of ${c.path} at ${c.width}: more than ${c.ceiling} — the font swap moves more than it did on 2026-10-21 (${c.id})`).toBeLessThanOrEqual(c.ceiling);
+      expect(state.cls, `CLS of ${c.path} at ${c.width}: more than ${c.ceiling} — the font swap moves more than it did on 2026-10-22 with Montserrat Fallback (${c.id})`).toBeLessThanOrEqual(c.ceiling);
     });
   });
 }

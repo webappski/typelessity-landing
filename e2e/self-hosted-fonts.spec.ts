@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { cspValues, type VercelCspConfig } from './vercel-csp';
-import { isLatinExtFace, parseUnicodeRange } from './woff2-cmap';
+import { inRanges, isLatinExtFace, parseUnicodeRange, woff2Metrics } from './woff2-cmap';
 
 // A27 (c8, 2026-09-24): DM Sans and Space Mono came from fonts.googleapis.com / fonts.gstatic.com,
 // so every visitor's IP address went to Google before any consent — the embed a German court
@@ -99,14 +99,62 @@ test('the latin-ext predicate tells the latin-ext faces of fonts.css from the la
   assert.deepEqual(kinds('Montserrat'), ['latin', 'latin-ext'], 'Montserrat: latin and the latin-ext subset');
 });
 
-test('fonts.css: the families are Montserrat and Space Mono, and DM Sans is not among them', async (t) => {
+test('fonts.css: the families are Montserrat, its local fallback and Space Mono, and DM Sans is not among them', async (t) => {
   const css = readBuilt('fonts/fonts.css');
   const families = new Set(faces(css).map((f) => f.family));
-  await t.test('Montserrat and Space Mono are declared', () => {
-    assert.deepEqual([...families].sort(), ['Montserrat', 'Space Mono']);
+  await t.test('Montserrat, Montserrat Fallback (L17 D2) and Space Mono are declared', () => {
+    assert.deepEqual([...families].sort(), ['Montserrat', 'Montserrat Fallback', 'Space Mono']);
   });
   await t.test('DM Sans is not in fonts.css: the widget serves its own from its origin, and one source keeps the widget-font test able to fail (D4)', () => {
     assert.ok(!css.includes('DM Sans'), 'fonts.css still names DM Sans');
+  });
+});
+
+// L17 D2 (FL-107, FL-114): «Montserrat Fallback» is the system Arial scaled to Montserrat's width and line box, so the swap from the fallback to the file moves
+// nothing. It is a font of the visitor's machine (`local()`), not a file of ours: no `url(`, no request, no new licence. The metrics are not typed into the test:
+// they are read from the shipped Montserrat file (hhea, head) and the overrides must equal ascent / (unitsPerEm × size-adjust) — the formulas of
+// developer.chrome.com/blog/font-fallbacks. The widths (size-adjust) come from a frequency-weighted measure of the text of / and /pricing (22.10).
+test('Montserrat Fallback: four local() faces, no url(), the unicode-range of Montserrat, the line box of the Montserrat file', async (t) => {
+  const css = readBuilt('fonts/fonts.css');
+  const blocks = [...css.matchAll(/@font-face\s*\{([^}]*)\}/g)].map((m) => m[1]!).filter((b) => /font-family:\s*['"]Montserrat Fallback['"]/.test(b));
+  const prop = (b: string, name: string): string => b.match(new RegExp(`${name}:\\s*([^;]+)`))?.[1]?.trim() ?? '';
+  await t.test('four faces that tile the weights 100–900 without a gap and name a system font only', () => {
+    assert.equal(blocks.length, 4);
+    const weights = blocks.map((b) => prop(b, 'font-weight').split(/\s+/).map(Number)).sort((x, y) => x[0]! - y[0]!);
+    assert.deepEqual(weights, [[100, 449], [450, 549], [550, 649], [650, 900]]);
+    for (const b of blocks) {
+      assert.doesNotMatch(b, /url\(/, 'a local() face asks for no file');
+      assert.match(prop(b, 'src'), /^local\('[^']+'\)(, local\('[^']+'\))*$/, 'src names system fonts only');
+      assert.match(prop(b, 'font-style'), /^normal$/);
+    }
+    const regular = blocks.filter((b) => Number(prop(b, 'font-weight').split(/\s+/)[0]) < 550), bold = blocks.filter((b) => Number(prop(b, 'font-weight').split(/\s+/)[0]) >= 550);
+    for (const b of regular) assert.match(prop(b, 'src'), /local\('Arial'\)/);
+    for (const b of bold) assert.match(prop(b, 'src'), /local\('Arial Bold'\)/, 'weights 550 and up are drawn from Arial Bold, not from a synthetic bold of Arial');
+  });
+  await t.test('the unicode-range is the union of the two Montserrat faces: a letter Montserrat lacks (Cyrillic, Greek) is not drawn in stretched Arial', () => {
+    const own = faces(css).filter((f) => f.family === 'Montserrat').flatMap((f) => parseUnicodeRange(f.ranges));
+    const fallback = blocks.flatMap((b) => parseUnicodeRange(prop(b, 'unicode-range')));
+    const sample = (ranges: ReadonlyArray<readonly [number, number]>): number[] => ranges.flatMap(([a, z]) => [a, z, Math.floor((a + z) / 2)]);
+    for (const cp of [...sample(own), ...sample(fallback)]) assert.equal(inRanges(cp, fallback), inRanges(cp, own), `U+${cp.toString(16)} is in one range and not in the other`);
+    for (const cp of [0x41, 0x7a, 0x20ac, 0x0141, 0x017e]) assert.ok(inRanges(cp, fallback), `U+${cp.toString(16)} is covered`);
+    for (const cp of [0x0416, 0x03a9, 0x3042]) assert.ok(!inRanges(cp, fallback), `U+${cp.toString(16)} (Cyrillic, Greek, Japanese) is not covered`);
+    for (let i = 1; i < blocks.length; i++) assert.equal(prop(blocks[i]!, 'unicode-range'), prop(blocks[0]!, 'unicode-range'), 'the four faces carry one range');
+  });
+  await t.test('ascent-override, descent-override and line-gap-override follow from the hhea of the shipped Montserrat file and the face\'s own size-adjust', () => {
+    const file = readFileSync(new URL('fonts/JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2', BROWSER));
+    const m = woff2Metrics(file);
+    const pct = (v: string): number => parseFloat(v) / 100;
+    for (const b of blocks) {
+      const adjust = pct(prop(b, 'size-adjust'));
+      assert.ok(adjust > 1.0 && adjust < 1.2, `size-adjust ${adjust}: Arial is narrower than Montserrat, the scale is above 100 %`);
+      assert.ok(Math.abs(pct(prop(b, 'ascent-override')) - m.ascent / (m.unitsPerEm * adjust)) < 0.0006, `ascent-override of ${prop(b, 'font-weight')}`);
+      assert.ok(Math.abs(pct(prop(b, 'descent-override')) - Math.abs(m.descent) / (m.unitsPerEm * adjust)) < 0.0006, `descent-override of ${prop(b, 'font-weight')}`);
+      assert.equal(pct(prop(b, 'line-gap-override')), m.lineGap / (m.unitsPerEm * adjust));
+    }
+  });
+  await t.test('the font stacks name it right after Montserrat', () => {
+    const tokens = readFileSync(new URL('src/styles/tokens.scss', ROOT), 'utf8');
+    for (const name of ['--font-display', '--font-body']) assert.match(tokens, new RegExp(`${name}:\\s*'Montserrat', 'Montserrat Fallback', system-ui`), `${name}`);
   });
 });
 
