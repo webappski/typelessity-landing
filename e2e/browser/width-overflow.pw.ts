@@ -245,20 +245,20 @@ if (!sitemapError && paths.length > 0) {
     });
   }
 
-  // FL-19 / FL-96 (L13, test-design L13-14), a KNOWN deviation of the product's widget, held as it is (the way 3817568 held FL-04), not hidden and not red: the card the
-  // widget draws (`.widget-container`) stands 8–14 px to the RIGHT of its slot on a phone (its `left: auto` on `.inline`, the product's F-138), so the right margin is
-  // narrower than the left one. It stays inside the window and the page does not scroll sideways. This test is green today; it turns red when the card goes outside the
-  // window (worse), and ALSO when F-138 is fixed and the card sits in its slot (better) — then replace it with the plain «the card is inside the slot» (B6+).
-  // The widget under test is the snapshot of the product's build; its sha256 is printed so that a change of the widget is seen in the log of the run.
-  // LIMITS OF THIS GUARD (test-design L13 round 2, R2-2): (1) it holds a LOCAL SNAPSHOT of the widget, not the live CDN build — a probe of the CDN widget on 21.10 gave
-  // another sha256 (66d75e43…, a 10 px shift against the snapshot's 12 px, sha 0425a0ae…), so a change that only the CDN widget has is not seen here; compare the printed sha256 with the
-  // live one before reading a green run as «the live page is as held». (2) the «worse» branches (`cardRight <= innerWidth`, `scrollWidth = innerWidth`) were NOT checked by a mutant;
-  // only the upper bound of the shift was (`fl19-guard-upper-bound-lowered`).
+  // FL-19 / FL-96 → B6+ (22.10). Until 22.10 this test HELD a known deviation of the product's widget: the card the widget draws (`.widget-container`) stood 8–14 px to the
+  // RIGHT of its slot on a phone (its `left: auto` on `.inline`, the product's F-138), and the test turned red when the card sat in its slot — «then replace it with the plain
+  // `the card is inside the slot` (B6+)» (its own text, L13, test-design L13-14). The product fixed it: ~/Projects/typelessity 292ffc6 «an inline widget stands exactly in its host —
+  // on a phone the floating card's rule moved it 10 px right, and its border made it 2 px wider everywhere» (T3y, F-138); the snapshot of the product's build this suite takes
+  // (widget.js sha256 ec6015e7…, printed below) has the fix, and the old test went red by its own design, on the card being in its slot (shift 0). This is that replacement, and it is
+  // stricter than the old one, not looser: the card stands in its slot to the pixel (±1), inside the window, and the page does not scroll sideways, at 320/360/390/430 in both themes.
+  // LIMITS OF THIS GUARD (unchanged from L13 round 2): (1) it holds a LOCAL SNAPSHOT of the widget, not the live CDN build (typelessity-widget.vercel.app) — until the product's build
+  // with 292ffc6 is published, the live page still shows the old shift; compare the printed sha256 with the live one before reading a green run as «the live page is as held».
+  // (2) FL-19 as a customer-facing statement stays open until then: pricing-faq-facts.spec.ts holds that no answer claims the demo fits a phone.
   for (const scheme of ['light', 'dark'] as const) {
     for (const width of [320, 360, 390, 430]) {
       test.describe(`home, demo still, ${scheme}`, () => {
         test.use({ colorScheme: scheme, ...REDUCED_MOTION });
-        test(`/ @${width} ${scheme}: the card of the widget is 8–14 px right of its slot (known, FL-96), inside the window, the page does not scroll sideways`, async ({ page }) => {
+        test(`/ @${width} ${scheme}: the card of the widget stands in its slot (F-138 fixed in the product, T3y), inside the window, the page does not scroll sideways`, async ({ page }) => {
           const sha = readManifest().sha256;
           test.info().annotations.push({ type: 'widget.js sha256', description: sha });
           console.log(`FL-19 guard: widget.js sha256 ${sha}`);
@@ -273,9 +273,8 @@ if (!sitemapError && paths.length > 0) {
             const card = document.querySelector('typelessity-widget')!.shadowRoot!.querySelector('.widget-container')!.getBoundingClientRect();
             return { slotLeft: slot.left, slotRight: slot.right, cardLeft: card.left, cardRight: card.right, iw: window.innerWidth, sw: document.documentElement.scrollWidth };
           });
-          const shift = m.cardRight - m.slotRight;
-          expect(shift, `FL-19 (known): the card's right edge ${m.cardRight} against the slot's ${m.slotRight} — 8–14 px right of it. Less: F-138 is fixed, replace this test with B6+. More: it got worse. ${JSON.stringify(m)}`).toBeGreaterThanOrEqual(8);
-          expect(shift).toBeLessThanOrEqual(14);
+          expect(Math.abs(m.cardLeft - m.slotLeft), `the card's left edge ${m.cardLeft} against the slot's ${m.slotLeft} (F-138 is fixed in the product, 292ffc6): ${JSON.stringify(m)}`).toBeLessThanOrEqual(1);
+          expect(Math.abs(m.cardRight - m.slotRight), `the card's right edge ${m.cardRight} against the slot's ${m.slotRight}: ${JSON.stringify(m)}`).toBeLessThanOrEqual(1);
           expect(m.cardRight, 'the card stays inside the window').toBeLessThanOrEqual(m.iw);
           expect(m.sw, 'the page does not scroll sideways').toBe(m.iw);
         });
