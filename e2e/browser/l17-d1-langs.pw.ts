@@ -52,6 +52,8 @@ for (const scheme of ['light', 'dark'] as const) {
       test(`[d1-${width}-${scheme}-desk] one row «in English Polski Deutsch …+22», one caption sentence, the list of 22 is a tooltip: hover, keep, Esc, Tab, Enter`, async ({ page }) => {
         await openAt(page, width, scheme);
         const row = page.locator('.demo__langrow');
+        // the row near the top of the window: the tooltip (up to 130 px high, 8 px under the row) is wholly in view, so the pointer can be put on it
+        await page.evaluate(() => window.scrollTo(0, Math.max(0, document.querySelector('.demo__top')!.getBoundingClientRect().top + window.scrollY - 100)));
         // ONE line: the buttons share a top, the label stands inside their height — none wraps
         await expectOneLine(row, ['en', 'pl', 'de'], true, `at ${width}`);
         await expect(row.locator('button[data-lang]')).toHaveCount(3);

@@ -423,6 +423,9 @@ test.describe('B2 the show', () => {
     test(`(e) ${width} px: after the request of «table» is sent, the show moves on to «${next}»${width <= 720 ? ' — the hidden Freight is skipped' : ''}`, async ({ page }) => {
       await openHome(page, { width, height: 900 });
       await play(page, 'ready', ready, 30_000);
+      // the show plays only while the stage is in the window (threshold 0.2); a click that scrolls the tab to the foot of a 900 px window leaves the stage out of it
+      await page.evaluate(() => document.querySelector('[data-ty-demo]')!.scrollIntoView({ block: 'start' }));
+      await stageSettled(page, true);
       await tab(page, 'table').click();
       const { script } = await demo();
       const t = await play(page, 'table: success', (s) => reachedSuccess(s) && s.configId === `${script.CONFIG_ID_PREFIX}table`, 110_000);
