@@ -31,7 +31,8 @@ interface Url {
 const STATIC_PATHS: Url[] = [
   // L11 (2026-10-20): the home page has one block for «any business that takes bookings»; L4 (2026-10-20): it was rebuilt (title, description, H1, the demo, six questions of /faq).
   // L12 (2026-10-21): the promo card is wrapped in data-nosnippet, the product node prints the four prices with their month.
-  { path: '/', lastmod: '2026-10-21' },
+  // L17 (2026-10-22): the language row of the demo and its tooltip, the Webappski strip after the demo (text by the visitor's source), the fallback font Montserrat Fallback.
+  { path: '/', lastmod: '2026-10-22' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
   { path: '/install', lastmod: '2026-10-21' },
