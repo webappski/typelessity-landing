@@ -1,0 +1,50 @@
+// L17 D4: the strip of typelessform.com (free-pilot-offer.component.scss, rev. 10) on the tokens of this landing (src/styles/tokens.scss), inside .hero > .vc-wrap after
+// the demo. Differences from the TypelessForm file, each with its reason:
+//   · orange TEXT is --ink, never --accent/--accent-hover (e2e/accent-text-guard.spec.ts; #FA8A01 on #F7F8FA is below 4.5:1); --accent stays the 4px bar, a fill;
+//   · the focus ring is --fg: --accent on --bg2 is 2.67:1, below the 3:1 of WCAG 2.2 SC 1.4.11;
+//   · NO height reserve (founder 22.10): the TypelessForm file reserves `--rows` lines per width band so that state b does not move the strip. Here the strip is below the
+//     first screen at every width, the card is as tall as its content, and the button stands right under the text with the gap of 16px.
+:host { display: block; }
+
+.pilot-offer-wrap { padding-top: 56px; }
+.pilot-offer {
+  box-sizing: border-box; max-width: var(--container); margin: 0 auto; padding: 24px;
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'copy' 'action'; align-items: start; row-gap: 16px; text-align: left;
+  color: var(--fg); background: var(--bg2); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius);
+}
+.pilot-offer__copy { grid-area: copy; min-width: 0; }
+.pilot-offer__text { font-size: 24px; line-height: 1.25; }
+.pilot-offer__title, .pilot-offer__line2 { margin: 0; font-family: var(--font-body); font-size: 1em; font-weight: 600; color: var(--fg); text-wrap: pretty; }
+.t-short, .short { display: none; }
+.hl { color: var(--ink); font-weight: 700; }
+.pilot-offer__name {
+  color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  &:hover { color: inherit; text-decoration-thickness: 2px; }
+  &:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; border-radius: 2px; }
+}
+.pilot-offer__action { grid-area: action; justify-self: start; min-width: 0; max-width: 100%; }
+.pilot-offer__button {
+  box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-width: 160px; min-height: 44px; max-width: 100%; padding: 12px 32px;
+  border: 1px solid var(--fg2); border-radius: 8px; background: transparent; color: var(--fg); font-size: 16px; font-weight: 500; line-height: 1.5; text-align: center; text-decoration: none;
+  &:hover, &:focus-visible { background: color-mix(in srgb, var(--fg) 10%, transparent); border-color: var(--fg); color: var(--fg); text-decoration: none; }
+  &:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+}
+.nobr { white-space: nowrap; }
+
+@media (max-width: 850px) { .pilot-offer { padding: 16px; } .pilot-offer__text { font-size: 20px; } }
+@media (max-width: 720px) { .pilot-offer-wrap { padding-top: 40px; } }
+@media (max-width: 767px) { .pilot-offer__button { padding: 8px 32px; } }
+@media (max-width: 600px) { .long { display: none; } .short { display: inline; } }
+// the hero of a phone has 150px of room under the demo for the sticky tip (home.component.scss, ≤520): the strip needs no extra top gap there
+@media (max-width: 520px) { .pilot-offer-wrap { padding-top: 0; } }
+@media (max-width: 449px) { .pilot-offer__button { padding: 8px 16px; } }
+@media (max-width: 419px) { .pilot-offer__text { font-size: 18px; } .t-long { display: none; } .t-short { display: inline; } }
+
+@media (min-width: 1100px) {
+  .pilot-offer { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'title title' 'line2 action'; column-gap: 32px; row-gap: 0; align-items: last baseline; }
+  .pilot-offer__copy, .pilot-offer__text { display: contents; }
+  .pilot-offer__title { grid-area: title; }
+  .pilot-offer__line2 { grid-area: line2; .long .hl { display: block; } }
+  .pilot-offer__action { grid-area: action; justify-self: end; }
+  .pilot-offer__button { white-space: nowrap; }
+}

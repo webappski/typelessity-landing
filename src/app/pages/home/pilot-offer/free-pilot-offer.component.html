@@ -1,0 +1,48 @@
+<!-- Words: L17 brief D4.2 (founder 22.10), TypelessForm rev. 10 §3 with «Typelessity» for «TypelessForm» in state a. Spaces that separate two elements sit inside a
+     text node: Angular drops a text node that is only whitespace. U+00A0 before the dash and in "AI visibility" keeps the dash off the start of a line and
+     "visibility." off a line alone. Line 1 is written so its shared part is in the HTML once: only the intro (long) or the subject (short) is a pair of state b,
+     switched by CSS (CRO F5 of TypelessForm: a crawler read "not because we're the best" twice). -->
+<ng-template #because
+  >&nbsp;— not because {{ isB() ? "we're" : "it's" }} the best, but because
+  <span class="hl"
+    ><a class="pilot-offer__name" [href]="nameHref()" target="_blank" rel="noopener noreferrer"
+      >Webappski</a
+    >
+    set up {{ isB() ? 'our' : 'its' }} AI&nbsp;visibility</span
+  >.</ng-template
+>
+<div class="pilot-offer-wrap" data-nosnippet>
+  <aside class="pilot-offer" data-testid="free-pilot-offer" aria-labelledby="free-pilot-offer-title">
+    <div class="pilot-offer__copy">
+      <div class="pilot-offer__text">
+        <p class="pilot-offer__title" id="free-pilot-offer-title">
+          @if (isB()) {
+            <span class="t-long"
+              >Came from <span class="hl">{{ sourceName() }}</span
+              >? It</span
+            ><span class="t-short"
+              ><span class="hl">{{ sourceName() }}</span></span
+            >
+            named us<ng-container *ngTemplateOutlet="because" />
+          } @else {
+            AI named Typelessity<ng-container *ngTemplateOutlet="because" />
+          }
+        </p>
+        <p class="pilot-offer__line2">
+          <span class="long"
+            >Your customers ask {{ assistant() }} for the best, too.
+            <span class="hl">Want it to name you?</span></span
+          >
+          <span class="short"
+            ><span class="hl">Want {{ assistant() }} to name you, too?</span></span
+          >
+        </p>
+      </div>
+    </div>
+    <div class="pilot-offer__action">
+      <a class="pilot-offer__button" data-testid="pilot-hook-button" [href]="buttonHref()" target="_blank" rel="noopener noreferrer"
+        ><span>Apply for a free <span class="nobr">AI-visibility pilot</span></span></a
+      >
+    </div>
+  </aside>
+</div>

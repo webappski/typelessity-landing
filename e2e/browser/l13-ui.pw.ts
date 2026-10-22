@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect, type Page } from './fixtures';
-import { BADGE, COPY } from '../free-pilot-copy';
+import { BUTTON } from '../free-pilot-copy';
 import { PRIVACY_LAST_UPDATED } from '../../src/app/pages/privacy/privacy.content';
 import { CONTRAST_ENGINE } from './contrast-engine';
 
@@ -40,17 +40,16 @@ for (const scheme of ['light', 'dark'] as const) {
     test.describe(`L13 ${width}px ${scheme}`, () => {
       test.use({ colorScheme: scheme });
 
-      test(`[after-home-pilot-${width}-${scheme}] the card's button says «Apply for the AEO pilot», the badge still names Webappski, and the card no longer calls its button a «free pilot»`, async ({ page }) => {
+      // L17 D4 (founder 22.10): the card of FL-62 became the strip of typelessform.com; it has no badge and its button says «Apply for a free AI-visibility pilot». The word
+      // «pilot» now stands beside the tariff «Free pilot» again (brief D4.6, the founder decides); what stays held: the button leads to the application page of Webappski.
+      test(`[after-home-pilot-${width}-${scheme}] the strip's button says «Apply for a free AI-visibility pilot», there is no badge, and the address is the application page of Webappski`, async ({ page }) => {
         await page.setViewportSize({ width, height });
         await page.goto('/');
         const offer = page.getByTestId('free-pilot-offer');
-        await expect(offer.locator('.pilot-offer__badge')).toHaveText(BADGE);
+        await expect(offer.locator('.pilot-offer__badge')).toHaveCount(0);
         const button = offer.getByTestId('pilot-hook-button');
-        await expect(button).toHaveText('Apply for the AEO pilot');
-        await expect(button).toHaveText(COPY[3]!);
+        await expect(button).toHaveText(BUTTON);
         expect(await button.getAttribute('href'), 'the address of the button is the application page of Webappski').toMatch(/^https:\/\/webappski\.com\/en\/free-aeo-pilot\?utm_source=typelessity\.com/);
-        const card = (await offer.innerText()).toLowerCase();
-        expect(card, 'the card does not say «free pilot» in its button any more; its badge says «Free AEO pilot»').not.toContain('apply for the free pilot');
         await expectSurface(page, scheme);
         await shot(page, `after-home-pilot-${width}-${scheme}`);
       });

@@ -19,6 +19,7 @@ import {
   SLOT_HEIGHT_MOBILE_PX, SLOT_HEIGHT_PX, staticChain, type SlotState,
 } from './demo/demo-labels';
 import { DemoSession } from './demo/demo-session';
+import { FreePilotOfferComponent } from './pilot-offer/free-pilot-offer.component';
 
 const esc = (s: string): string => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -26,7 +27,7 @@ const esc = (s: string): string => s.replace(/&/g, '&amp;').replace(/</g, '&lt;'
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TypelessityWidgetComponent, IconComponent],
+  imports: [RouterLink, TypelessityWidgetComponent, IconComponent, FreePilotOfferComponent],
   styleUrl: './home.component.scss',
   templateUrl: './home.component.html',
 })

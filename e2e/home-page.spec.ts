@@ -272,8 +272,8 @@ test('C2(k) the sections come in the order of D7', () => {
     HOME.chain.kicker, HOME.whatItIs.kicker, HOME.steps.kicker, HOME.business.kicker, HOME.data.kicker, HOME.blog.kicker, HOME.faq.kicker, HOME.languages.kicker, HOME.cta.eyebrow,
   ]);
   const at = (needle: string): number => { const i = home.indexOf(needle); assert.ok(i >= 0, `${needle} is not on /`); return i; };
-  const order = ['free-pilot-offer', 'class="hero"', 'data-ty-chain', 'id="how"', 'id="any-business"', 'class="plaque"', 'id="languages"', 'class="cta-band"'].map(at);
-  assert.deepEqual([...order].sort((a, b) => a - b), order, 'banner, hero, chain, how, any business, plaque, languages, call to action');
+  const order = ['class="hero"', 'free-pilot-offer', 'data-ty-chain', 'id="how"', 'id="any-business"', 'class="plaque"', 'id="languages"', 'class="cta-band"'].map(at);
+  assert.deepEqual([...order].sort((a, b) => a - b), order, 'hero, the Webappski strip (after the demo, L17 D4), chain, how, any business, plaque, languages, call to action');
 });
 
 test('C2(l) «Your data» says only what /gdpr says: every sentence of the three cards is printed on /gdpr', () => {
