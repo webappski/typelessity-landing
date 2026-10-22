@@ -215,9 +215,17 @@ const STRIP_TEXTS = [
   BUTTON,
 ];
 
-test('the Webappski strip: no duration and no counted claim of the dictionary in any of its states (a, b × four assistants, long and short lines, the button)', () => {
+// WHAT THIS GUARD DOES NOT DO, written out (test-design F-3, 22.10): the dictionary counts nothing in the strip, and that is a BLIND SPOT, not a finding. «AI named Typelessity» is
+// a claim of the class «popularity and endorsement» (K3) that no pattern of K3 catches, and the last measurement of Typelessity says 0 % (13.10, resources/typelessity/measure/
+// 2026-10-13-day0: ChatGPT and Gemini, 0 of 96 answers name the brand). The founder ACCEPTED the risk on 22.10, in his words («принять риск! да!»), against the warning of the
+// coordinator and the verdicts of the lawyer (L17-1) and the CRO. The expectation below is therefore a decision with a date, not a measurement of the strip's wording.
+// REVIEW when a fresh measurement of Typelessity shows more than 0 %, or 14 days after the release of this strip, whichever is first: then the expectation is either kept by a new
+// decision or replaced by a pattern that catches the claim. Nobody makes the dictionary catch these words to turn this red; nobody lets another claim of this class through.
+const ACCEPTED_BY_FOUNDER_2026_10_22: ClaimCounts = {};
+
+test('the Webappski strip: no duration and the counted claims of the dictionary are exactly the ones the founder accepted on 22.10, in every state (a, b × four assistants, long and short lines, the button)', () => {
   for (const text of STRIP_TEXTS) {
-    assert.deepEqual(countClaims(text), {}, `the dictionary counts a claim in the strip: «${text}»`);
+    assert.deepEqual(countClaims(text), ACCEPTED_BY_FOUNDER_2026_10_22, `the dictionary counts a claim in the strip that the founder did not accept on 22.10: «${text}»`);
     assert.ok(!DURATION.test(text), `a duration in the strip: «${text}»`);
   }
   assert.ok(STRIP_TEXTS.length >= 20, 'the loop is not empty');

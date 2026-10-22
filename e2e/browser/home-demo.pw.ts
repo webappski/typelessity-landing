@@ -698,6 +698,9 @@ async function expectTakenOver(page: Page, how: string): Promise<void> {
   expect(s.consent, `${how}: the widget shows its own consent screen`).toBe(true);
   expect(s.consentFocused, `${how}: the focus is inside the consent screen`).toBe(true);
   expect(s.note, `${how}: the show is stopped`).toBe(script.DEMO_TEXT.noteStopped);
+  // L17 F-1 (test-design, 22.10): the honesty of the demo is held by a LITERAL. The line above compares the page with the script's own text and would stay green if the script lost the
+  // words. The warning left the caption of the language row (founder 22.10); this is where the visitor reads that the replies are scripted, so the words are written out here.
+  expect(s.note, `${how}: the note after a take-over says the replies are scripted (a literal, not read from the script)`).toContain('the replies in this demo are scripted');
   const stored = await STORED(page);
   const record = stored.consent ? (JSON.parse(stored.consent) as { userId?: string }) : null;
   expect(record?.userId === script.SCRIPT_USER_ID, `${how}: the record the script laid down is gone`).toBe(false);
@@ -757,6 +760,7 @@ test.describe('B3 take-over and the consent', () => {
       await toTyping(page);
       const before = await snap(page);
       expect(before.note, 'the show is on').toBe(script.DEMO_TEXT.noteAuto);
+      expect(before.note, 'the note under the frame while the show plays (a literal)').toContain('Demo conversation in the real widget');
       expect(before.focusInHost, 'the show has not moved the focus of the page into the widget').toBe(false);
       if (door === 'the button') {
         await takeOverButton(page).click();

@@ -433,7 +433,9 @@ test('line 1 never ends on a lone word and never starts a line with the dash, in
 // ── the addresses survive the attribution of webappski.com ───────────────────────────────────────────────────────────────────────────────────────
 
 // webappka keeps a query key only if it matches UTM_KEY_PATTERN (webappka src/app/shared/constants/utm-key.ts:8), a value trimmed and cut to 120 characters
-// (inbound-attribution.service.ts:75-76). The pattern is written out, not imported: this repository is checked out alone.
+// (inbound-attribution.service.ts:75-76). The pattern is written out, not imported: this repository is checked out alone. IT IS A COPY: source
+// ~/Projects/webappka/src/app/shared/constants/utm-key.ts:8 (last commit 8b526902, 2026-10-19), compared with the file on 22.10 (test-design F-8). When webappka changes the pattern or the
+// 120-character cut this literal goes stale and nothing here turns red; compare the two when the attribution of webappski.com is touched.
 const WEBAPPKA_UTM_KEY_PATTERN = /^utm_[a-z0-9_]{1,30}$/i;
 test('every address of the strip survives the attribution of webappski.com in a and in b', async ({ page }) => {
   for (const { label, referer } of [STATES[0]!, STATES[1]!]) {
@@ -446,6 +448,40 @@ test('every address of the strip survives the attribution of webappski.com in a 
       for (const key of params.keys()) expect(key).toMatch(WEBAPPKA_UTM_KEY_PATTERN);
       for (const value of params.values()) expect(value, href).toMatch(/^[\w.-]{1,120}$/);
       expect(new URL(href).hostname).toBe('webappski.com');
+    }
+  }
+});
+
+// ── test-design F-4 and F-7 (22.10) ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+test('the strip is as tall in every state (a = b) at 851 px and wider, up to 2560, so the change of the text after hydration never changes its height there', async ({ page }) => {
+  test.setTimeout(120_000);
+  const heights: Record<string, Record<number, number>> = {};
+  for (const { label, copy, state, referer } of STATES) {
+    await open(page, '/', { referer, width: 1280 });
+    await expectState(page, copy, state, 1280);
+    heights[label] = {};
+    for (const width of [851, 1100, 1440, 1920, 2560]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      heights[label]![width] = (await offerOf(page).boundingBox())!.height;
+    }
+  }
+  for (const width of [851, 1100, 1440, 1920, 2560]) {
+    for (const { label } of STATES) {
+      expect(Math.abs(heights[label]![width]! - heights['a']![width]!), `${label} at ${width}: ${heights[label]![width]} against a ${heights['a']![width]}`).toBeLessThanOrEqual(0.5);
+    }
+  }
+});
+
+test('both links of the strip that leave the site carry rel="noopener noreferrer" in a and in b (the privacy notice says the browser sends no referrer)', async ({ page }) => {
+  for (const { label, referer } of [STATES[0]!, STATES[1]!, STATES[4]!]) {
+    await open(page, '/', { referer, width: 1280 });
+    const rels = await offerOf(page).locator('a').evaluateAll((nodes) => nodes.map((n) => ({ href: n.getAttribute('href') ?? '', rel: (n.getAttribute('rel') ?? '').split(/\s+/), target: n.getAttribute('target') })));
+    expect(rels, label).toHaveLength(2);
+    for (const l of rels) {
+      expect(l.rel, `${label}: ${l.href}`).toEqual(expect.arrayContaining(['noopener', 'noreferrer']));
+      expect(l.target, `${label}: ${l.href}`).toBe('_blank');
     }
   }
 });

@@ -41,7 +41,8 @@ for (const [width, height] of [[1440, 900], [1280, 800], [768, 1024], [390, 844]
     await page.setViewportSize({ width, height });
     await page.goto('/');
     await expect.poll(() => page.evaluate(() => !!document.querySelector('typelessity-widget')?.shadowRoot?.querySelector('.widget-container')), { message: 'the widget drew its card', timeout: 20_000 }).toBe(true);
-    await page.waitForTimeout(800); // the old poll fixed the height up to 100 ms later: let it have its chance
+    // the old poll fixed the height up to 100 ms later: let it have its chance — not a time but 30 frames with the card in them (a frame is at least 16 ms: 480 ms, more on a busy machine)
+    await page.waitForFunction(() => (window as unknown as { __seen: string[] }).__seen.length >= 30, null, { timeout: 20_000 });
     const m = await page.evaluate(() => ({ first: (window as unknown as { __first: string[] }).__first, seen: (window as unknown as { __seen: string[] }).__seen }));
     expect(m.first.length, 'the card was seen being added (the observer works)').toBeGreaterThan(0);
     expect(m.first, `the first sight of the card: ${JSON.stringify(m.first)}`).toEqual(m.first.map(() => `${fixed}px`));
