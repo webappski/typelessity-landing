@@ -18,7 +18,8 @@ export const CONTROLLER_SENTENCE =
   'Lizaveta Isayeuskaya, sole proprietorship (jednoosobowa działalność gospodarcza), the owner of webappski.com, ul. Leona Staniszewskiego 19a, 81-603 Gdynia, Poland, VAT ID (EU): PL5862379862';
 
 /** The date of the page: printed under the heading and the `lastmod` of /privacy in the sitemap (tools/build-sitemap.ts imports it) — one constant, as PRICING_LAST_UPDATED. */
-export const PRIVACY_LAST_UPDATED = '2026-10-21';
+// 22.10 (L17, legal L17-3): the paragraph about the Webappski strip on the home page (the browser reads where the visitor came from; the link carries a campaign marker)
+export const PRIVACY_LAST_UPDATED = '2026-10-22';
 
 export const PRIVACY = {
   title: 'Privacy on typelessity.com',
@@ -35,7 +36,11 @@ Our host, Vercel Inc. (United States), receives your IP address and browser deta
 
 ## What stays in your browser
 
-The site sets no analytics, advertising or tracking storage. If you choose a theme, the choice is kept in your browser (\`ty-theme\`). Once the page has painted, the demo on the home page loads by itself. It loads the chat script from our widget host, typelessity-widget.vercel.app, which is also on Vercel. This site's Content-Security-Policy does not let your browser fetch fonts or stylesheets from Google, so typelessity.com sends no request to Google Fonts. It keeps a placeholder consent record in this site's browser storage and its session in session storage; if you click into the demo, the placeholder is replaced by your own answer to the demo's consent question. These are removed when you leave the page; one display setting of the chat window stays in session storage until you close the tab. What you type or say in the demo is answered by a script in your browser and is not sent to a server.
+The site sets no analytics, advertising or tracking storage. If you choose a theme, the choice is kept in your browser (\`ty-theme\`).
+
+On the home page, your browser checks the address of the page you came from and the utm_source in the link, only to choose which of two texts the Webappski strip shows; nothing is stored and nothing is sent to us. If you click the strip, the link to webappski.com carries a campaign marker (utm_source=typelessity.com, utm_content=a, b, a-name or b-name) that tells webappski.com whether you came from an AI assistant; the browser sends no referrer. webappski.com is run by the same person.
+
+Once the page has painted, the demo on the home page loads by itself. It loads the chat script from our widget host, typelessity-widget.vercel.app, which is also on Vercel. This site's Content-Security-Policy does not let your browser fetch fonts or stylesheets from Google, so typelessity.com sends no request to Google Fonts. It keeps a placeholder consent record in this site's browser storage and its session in session storage; if you click into the demo, the placeholder is replaced by your own answer to the demo's consent question. These are removed when you leave the page; one display setting of the chat window stays in session storage until you close the tab. What you type or say in the demo is answered by a script in your browser and is not sent to a server.
 
 ## The question form
 
