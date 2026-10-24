@@ -107,3 +107,38 @@ test('the article checker catches the old wording (mutants: the old Weakness, th
     assert.notDeepEqual(simplybookIssues(mdx), [], `the checker missed ${what}`);
   }
 });
+
+// AEO24-TYL-5 (2026-10-25): the same class for Calendly — «On its pricing page Calendly lists no AI chat for the people who book» was wrong as written
+// (that page lists «Ask Callie interactive chat», for the account owner). The class is every sentence of the form «<…> page <…> lists no <…>» in the article,
+// whatever the vendor: an absence claim is stated positively, from the vendor's own pages, with the check date, or it is not stated.
+export function absenceClaims(mdx: string): string[] {
+  return mdx.split('\n').map((l, i) => [i + 1, l] as const).filter(([, l]) => /\bpages?\b[^.\n]{0,40}\blists no\b/i.test(l)).map(([i, l]) => `${i}: ${l.slice(0, 90)}`);
+}
+
+/** What is wrong with the Calendly block; empty = it describes Callie from the vendor's pages with a check date. */
+export function calendlyIssues(mdx: string): string[] {
+  const block = mdx.match(/### Calendly\n([\s\S]*?)\n### /)?.[1] ?? '';
+  if (!block) return ['the «### Calendly» block is gone'];
+  const weakness = block.split('\n').find((l) => l.startsWith('**Weakness:**')) ?? '';
+  const issues: string[] = [];
+  if (!/Callie/.test(weakness)) issues.push('the Weakness line does not name Callie');
+  if (!/checked 20\d\d-\d\d-\d\d/.test(weakness)) issues.push('the Weakness line has no check date');
+  return issues;
+}
+
+test('the article has no absence claim of the form «<page> lists no <thing>», and the Calendly block describes Callie from the vendor\'s pages with a check date', () => {
+  assert.deepEqual(absenceClaims(ARTICLE_SRC), []);
+  assert.deepEqual(calendlyIssues(ARTICLE_SRC), []);
+});
+
+test('the absence-claim checker catches the old Calendly sentence and an undated Weakness (mutants)', () => {
+  const m1 = ARTICLE_SRC.replace(/\*\*Weakness:\*\* Calendly's AI assistant Callie[^\n]*/, '**Weakness:** On its pricing page Calendly lists no AI chat for the people who book.');
+  const m2 = ARTICLE_SRC.replace(/\(beta; its pages, checked 20\d\d-\d\d-\d\d\)/, '(beta)');
+  const m3 = ARTICLE_SRC.replace('### Botpress', '### Botpress\n\n**Note:** the pricing page of Botpress lists no free plan.');
+  assert.notEqual(m1, ARTICLE_SRC, 'mutant 1 did not change the article — the pattern is stale');
+  assert.notDeepEqual(absenceClaims(m1), [], 'the checker missed the old Calendly sentence');
+  assert.notEqual(m2, ARTICLE_SRC, 'mutant 2 did not change the article — the pattern is stale');
+  assert.notDeepEqual(calendlyIssues(m2), [], 'the checker missed the undated Weakness');
+  assert.notEqual(m3, ARTICLE_SRC, 'mutant 3 did not change the article — the pattern is stale');
+  assert.notDeepEqual(absenceClaims(m3), [], 'the checker missed an absence claim about another vendor');
+});
