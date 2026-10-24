@@ -26,7 +26,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "Best AI booking widgets for websites in 2026",
     "description": "Calendly, SimplyBook.me, Botpress, NoForm.ai and Typelessity compared: what each one is for, where it fits and when it is the wrong choice.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-10-25",
     "category": "Comparison"
   },
   {
