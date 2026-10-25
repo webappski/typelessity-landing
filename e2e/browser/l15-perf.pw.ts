@@ -43,7 +43,7 @@ async function fontsOfMarked(page: Page): Promise<Array<{ text: string; fonts: s
   }
 }
 
-for (const path of ['/', '/pricing', '/privacy']) {
+for (const path of ['/', '/demo', '/pricing', '/privacy']) {
   test(`L15-F1 ${path}: every visible text with a Latin Extended-A letter is drawn in Montserrat alone, and the latin-ext file the page fetched is the subset`, async ({ page }) => {
     const fonts: string[] = [];
     page.on('request', (r) => { if (r.resourceType() === 'font') fonts.push(new URL(r.url()).pathname); });
@@ -78,7 +78,7 @@ const CASES = [
 for (const c of CASES) {
   test.describe(`L15-S1 ${c.name}`, () => {
     test.use({ colorScheme: c.scheme });
-    for (const path of ['/', '/pricing', '/blog/best-ai-booking-widgets-2026']) {
+    for (const path of ['/', '/demo', '/pricing', '/blog/best-ai-booking-widgets-2026']) {
       test(`L15-S1 ${path}, scripts blocked: every colour token of the theme comes from the inline styles, and no stylesheet is requested`, async ({ page }) => {
         expect(c.tokens.length, 'the token parser found the colour tokens of the theme').toBeGreaterThanOrEqual(15);
         const sheets: string[] = [];

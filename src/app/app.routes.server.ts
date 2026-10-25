@@ -3,6 +3,7 @@ import { BLOG_SLUGS } from './lib/blog-manifest.generated';
 
 const STATIC_PAGES = [
   '',
+  'demo',
   'how-it-works',
   'install',
   'pricing',

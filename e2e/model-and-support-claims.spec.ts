@@ -28,7 +28,7 @@ import { readFile, readdir } from 'node:fs/promises';
 const DIST = new URL('../dist/typelessity-landing/browser/', import.meta.url);
 
 const PAGES = ['index.html', 'pricing/index.html', 'faq/index.html', 'for-ai-agents/index.html',
-  'how-it-works/index.html', 'about/index.html', 'llms.txt', 'llms-full.txt'];
+  'how-it-works/index.html', 'about/index.html', 'demo/index.html', 'llms.txt', 'llms-full.txt'];
 
 const BANNED: readonly RegExp[] = [
   // support levels
@@ -127,7 +127,11 @@ async function posts(): Promise<string[]> {
 
 function banned(path: string, body: string): void {
   for (const re of BANNED) assert.doesNotMatch(body, re, `${path} still says ${re}`);
-  for (const re of BANNED_A45C) assert.doesNotMatch(body, re, `${path} still says ${re}`);
+  // TY-DEMO: /demo is scanned like the other pages, with one exception — the name MedBook, held on that page by the guard at the end of this file.
+  for (const re of BANNED_A45C) {
+    if (path === 'demo/index.html' && re.source === 'MedBook') continue;
+    assert.doesNotMatch(body, re, `${path} still says ${re}`);
+  }
 }
 
 // The home page shows compact tier cards without bullets; /pricing carries the full cards.
@@ -161,13 +165,77 @@ test('every blog post the build emitted: no old model, unmeasured latency or mis
 // A45c. The hero used to rotate five demos; only the first was prerendered, so the rest were checked in the scripts the build
 // emitted. L3 (F3.3) removed that rotation — the hero holds the real widget now — but the test stays: it scans every script
 // the build shipped, which is where the demo scenarios of L4 would be written, and a medical demo must not come back through them.
-test('the emitted scripts: no medical demo in the hero rotation', async () => {
+//
+// TY-DEMO (25.10, founder: «a simple example; we do not give it to medical practices, we only show how well it copes with a complex
+// task»): the /demo page names MedBook, as an example, and the lazy chunk of that page carries the name. So the ban on the NAME is narrowed,
+// explicitly and in one place: MedBook may stand in the chunk of /demo (found by the selector inside it, not by its hashed file name) and in
+// demo/index.html, and only together with the mark («Typelessity is not available to medical practices», «Do not enter real health data»).
+// Everywhere else — every other script, every other page, the llms files, the sitemap — the name stays banned, and the medical SCENARIO
+// (cardiology, GET /doctors, doctorGender) stays banned in every file, the /demo chunk included. The mark is held by the mutants below.
+const MEDBOOK = /MedBook/i;
+const DEMO_CHUNK = /app-demo-page/;
+const MEDBOOK_MARK: readonly RegExp[] = [/Typelessity is not available to medical practices/, /Do not enter real health data/];
+const MEDICAL_SCENARIO: readonly RegExp[] = [/cardiolog/i, /GET \/doctors/i, /doctorGender/];
+
+/** What is wrong with the name MedBook in these scripts: it stands outside the chunk of /demo, or in that chunk without the whole mark. */
+function medbookScriptProblems(files: ReadonlyArray<readonly [name: string, body: string]>): string[] {
+  const problems: string[] = [];
+  for (const [name, body] of files) {
+    if (!MEDBOOK.test(body)) continue;
+    if (!DEMO_CHUNK.test(body)) problems.push(`${name}: names MedBook outside the chunk of /demo`);
+    else for (const re of MEDBOOK_MARK) if (!re.test(body)) problems.push(`${name}: names MedBook without ${re}`);
+  }
+  return problems;
+}
+
+/** The same for the prerendered /demo page: every <article> that names MedBook holds the whole mark inside it. */
+function medbookCardProblems(html: string): string[] {
+  const problems: string[] = [];
+  for (const [card] of html.matchAll(/<article\b[\s\S]*?<\/article>/g)) {
+    if (!MEDBOOK.test(card)) continue;
+    for (const re of MEDBOOK_MARK) if (!re.test(card)) problems.push(`the MedBook card has no ${re}`);
+  }
+  return problems;
+}
+
+test('the emitted scripts: no medical scenario anywhere, MedBook only in the chunk of /demo and next to its mark', async () => {
   const files = (await readdir(DIST)).filter((f) => f.endsWith('.js'));
   assert.ok(files.length > 0, 'no scripts under dist/browser — run `npm run build` first');
+  const scripts: Array<readonly [string, string]> = [];
   for (const f of files) {
     const body = await read(f);
-    for (const re of [/cardiolog/i, /MedBook/i, /GET \/doctors/i, /doctorGender/]) {
-      assert.doesNotMatch(body, re, `${f} still says ${re}`);
-    }
+    scripts.push([f, body]);
+    for (const re of MEDICAL_SCENARIO) assert.doesNotMatch(body, re, `${f} still says ${re}`);
   }
+  assert.deepEqual(medbookScriptProblems(scripts), []);
+  assert.ok(scripts.some(([, b]) => DEMO_CHUNK.test(b) && MEDBOOK.test(b)), 'no script of /demo carries MedBook — the guard would pass on nothing');
+});
+
+test('MedBook outside /demo: no page, llms file or sitemap of the build names it, and /demo names it only inside its card with the mark', async () => {
+  const all = (await readdir(DIST, { recursive: true })).filter((f) => /\.(html|txt|xml)$/.test(f)).sort();
+  assert.ok(all.includes('demo/index.html'), 'dist has no demo/index.html');
+  const named: string[] = [];
+  for (const f of all) {
+    const body = await read(f);
+    if (MEDBOOK.test(body) && f !== 'demo/index.html') named.push(f);
+  }
+  assert.deepEqual(named, [], 'a file other than /demo names MedBook');
+  const demo = await read('demo/index.html');
+  assert.match(demo, MEDBOOK, '/demo no longer shows MedBook');
+  assert.deepEqual(medbookCardProblems(demo), []);
+  // outside its card the name must not stand: the title, the description and the lead do not name it either
+  assert.doesNotMatch(demo.replace(/<article\b[\s\S]*?<\/article>/g, ' '), MEDBOOK, 'MedBook stands on /demo outside a card');
+});
+
+// Mutants of the guard (a test that has not been seen to fail proves nothing): each is the chunk or the card of /demo with one thing taken away.
+test('MedBook guard mutants: the mark taken out, or the name put into another chunk, is caught', () => {
+  const chunk = 'selectors:[["app-demo-page"]],name:"MedBook",note:"Typelessity is not available to medical practices. This demo only shows how the widget copes. Do not enter real health data."';
+  assert.deepEqual(medbookScriptProblems([['chunk-demo.js', chunk]]), [], 'the real chunk passes');
+  assert.equal(medbookScriptProblems([['chunk-demo.js', chunk.replace('Typelessity is not available to medical practices.', '')]]).length, 1, 'the sentence «not available to medical practices» removed');
+  assert.equal(medbookScriptProblems([['chunk-demo.js', chunk.replace('Do not enter real health data.', '')]]).length, 1, 'the sentence «Do not enter real health data» removed');
+  assert.equal(medbookScriptProblems([['main.js', chunk.replace('app-demo-page', 'app-home')]]).length, 1, 'MedBook in a chunk that is not /demo');
+  const card = '<article class="card"><h3>MedBook</h3><p>Typelessity is not available to medical practices. Do not enter real health data.</p></article>';
+  assert.deepEqual(medbookCardProblems(card), [], 'the real card passes');
+  assert.equal(medbookCardProblems(card.replace('Typelessity is not available to medical practices. ', '')).length, 1, 'the card without the first sentence');
+  assert.equal(medbookCardProblems(card.replace(/<p>[\s\S]*<\/p>/, '')).length, 2, 'the card without the mark at all');
 });

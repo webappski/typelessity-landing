@@ -33,6 +33,8 @@ const STATIC_PATHS: Url[] = [
   // L12 (2026-10-21): the promo card is wrapped in data-nosnippet, the product node prints the four prices with their month.
   // L17 (2026-10-22): the language row of the demo and its tooltip, the Webappski strip after the demo (text by the visitor's source), the fallback font Montserrat Fallback.
   { path: '/', lastmod: '2026-10-22' },
+  // TY-DEMO (2026-10-25): new — four made-up businesses and what a booking looks like on each (what the visitor says, what the widget asks, the request the business gets).
+  { path: '/demo', lastmod: '2026-10-25' },
   { path: '/how-it-works', lastmod: '2026-10-19' },
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
   { path: '/install', lastmod: '2026-10-21' },

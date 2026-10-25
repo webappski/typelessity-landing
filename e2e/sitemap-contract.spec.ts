@@ -200,7 +200,7 @@ test('sitemap: a page is not dated before its last edit (the formula of D7: page
     ['/', 'home', 'home', ['src/app/pages/faq/faq.content.ts', 'src/app/pages/how-it-works/how-it-works.content.ts', 'src/app/core/languages/landing-languages.ts']],
     ['/how-it-works', 'how-it-works', 'howItWorks'], ['/install', 'install', 'install'], ['/pricing', 'pricing', 'pricing'], ['/gdpr', 'gdpr', 'gdpr'],
     ['/for-ai-agents', 'for-ai-agents', 'forAiAgents'], ['/faq', 'faq', 'faq'],
-    ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'],
+    ['/about', 'about', 'about'], ['/blog', 'blog', 'blog'], ['/demo', 'demo', 'demo'],
     ['/privacy', 'privacy'], ['/legal/security', 'legal'],
   ];
   const bad: string[] = [];

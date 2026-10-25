@@ -1,0 +1,83 @@
+// /demo — the classes of the home page (home.component.scss), written again here because a component's styles do not leave it.
+// Only tokens of src/styles/tokens.scss: no colour of its own. Orange is a fill (--accent); orange text is --ink (e2e/accent-text-guard.spec.ts).
+// New: .demo-k, .scene, .scene__label, .demo-card__cta and .demo-note (a tint of --ink-soft with the --border-accent frame).
+
+:host {
+  display: block;
+  --mini: color-mix(in srgb, var(--fg) 4%, transparent);
+  --radius-s: 8px;
+  --btn-shadow: 0 6px 14px rgba(247, 115, 0, 0.30);
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+// ── type ──
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink);
+  i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+}
+.gtext { color: var(--ink); }
+.h1 { font-size: clamp(38px, 5.4vw, 56px); letter-spacing: -0.05em; line-height: 1; font-weight: 600; }
+.h3 { font-size: 20px; letter-spacing: -0.025em; line-height: 1.25; font-weight: 600; }
+.lead { font-size: 18px; line-height: 1.62; color: var(--fg2); max-width: 36em; }
+
+// ── buttons ──
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: var(--radius-s);
+  font-weight: 600; font-size: 15px; border: 1px solid transparent; cursor: pointer; white-space: nowrap; letter-spacing: -0.005em;
+}
+.btn--primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--text-on-accent); box-shadow: var(--btn-shadow); }
+.btn--ghost { background: var(--chip); border-color: var(--chip-bd); color: var(--fg); }
+
+// ── sections ──
+.sec { border-top: 1px solid var(--line); padding: 96px 0; }
+.sec--hero { border-top: 0; padding: 56px 0 40px; }
+.sec--alt { background: var(--bg2); }
+.sec__head { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; margin-bottom: 0; }
+
+// ── cards ──
+.grid { display: grid; gap: 20px; }
+.grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { position: relative; border-radius: var(--radius); background: var(--card); border: 1px solid var(--border); padding: 26px; display: flex; flex-direction: column; gap: 14px; min-width: 0;
+  &::before { content: ''; position: absolute; left: 28px; right: 28px; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.8; }
+  p { color: var(--fg2); font-size: 15px; }
+}
+.demo-k { font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg3); }
+.scene { display: flex; flex-direction: column; gap: 8px; }
+.scene__label { font-size: 12px; font-weight: 600; color: var(--fg3); letter-spacing: 0.02em; }
+.scene__chat { display: flex; flex-direction: column; gap: 8px; }
+.bubble { max-width: 92%; border-radius: 12px 12px 12px 4px; padding: 10px 14px; font-size: 14px; line-height: 1.45; background: var(--mini); border: 1px solid var(--line); }
+.bubble--me { align-self: flex-end; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--text-on-accent); border: 0; border-radius: 12px 12px 4px 12px; }
+.bubble--ai { align-self: flex-start; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { padding: 6px 13px; border-radius: 8px; font-size: 13px; background: var(--chip); border: 1px solid var(--chip-bd); }
+.req { border-radius: var(--radius-s); background: var(--mini); border: 1px solid var(--line); padding: 12px 14px;
+  b.t { display: block; font-size: 11px; letter-spacing: 0.14em; color: var(--ink); margin-bottom: 6px; }
+  .row { display: flex; gap: 10px; padding: 5px 0; font-size: 13px; border-top: 1px solid var(--line); align-items: center; }
+  .row span:first-child { width: 92px; flex: 0 0 92px; color: var(--fg3); }
+  .row span:nth-child(2) { flex: 1; font-weight: 500; min-width: 0; }
+}
+.tick { color: var(--ok); }
+.demo-card__cta { margin-top: auto; padding-top: 6px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.card .demo-note { border-radius: var(--radius-s); background: var(--ink-soft); border: 1px solid var(--border-accent); padding: 12px 14px; font-size: 14px; line-height: 1.5; color: var(--fg);
+  b { font-weight: 600; }
+}
+.fine { margin: 20px 0 0; font-size: 13.5px; color: var(--fg3); max-width: 46em; }
+
+// ── the road to the pilot ──
+.want { flex-direction: row; align-items: center; justify-content: space-between; gap: 24px;
+  h2 { font-size: 26px; letter-spacing: -0.03em; line-height: 1.2; font-weight: 600; margin: 0 0 6px; }
+  p { margin: 0; }
+}
+
+@media (max-width: 860px) {
+  .grid--2 { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 720px) {
+  .sec { padding: 56px 0; }
+  .sec--hero { padding: 32px 0 28px; }
+  .lead { font-size: 16.5px; }
+  .card { padding: 20px; }
+  .btn { white-space: normal; height: auto; min-height: 48px; padding-block: 10px; text-align: center; width: 100%; }
+  .want { flex-direction: column; align-items: stretch; }
+}

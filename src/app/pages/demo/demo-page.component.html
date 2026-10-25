@@ -1,0 +1,67 @@
+<section class="sec sec--hero">
+  <div class="vc-wrap">
+    <div class="sec__head">
+      <span class="eyebrow"><i></i>{{ copy.eyebrow }}</span>
+      <h1 class="h1">{{ copy.h1 }} <span class="gtext">{{ copy.h1Accent }}</span></h1>
+      <p class="lead">{{ copy.lead }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--alt" aria-labelledby="demos-h">
+  <div class="vc-wrap">
+    <h2 class="sr-only" id="demos-h">The demo websites</h2>
+    <div class="grid grid--2">
+      @for (card of cards; track card.id) {
+        <article class="card" [attr.data-demo]="card.id">
+          <span class="demo-k">{{ card.kind }}</span>
+          <h3 class="h3">{{ card.name }}</h3>
+          @if (card.note; as note) {
+            <p class="demo-note"><b>{{ note.lead }}</b> {{ note.body }} <b>{{ note.warning }}</b></p>
+          }
+          <div class="scene">
+            <span class="scene__label">{{ labels.says }}</span>
+            <div class="scene__chat"><div class="bubble bubble--me">{{ card.says }}</div></div>
+          </div>
+          <div class="scene">
+            <span class="scene__label">{{ labels.asks }}</span>
+            <div class="scene__chat"><div class="bubble bubble--ai">{{ card.asks }}</div></div>
+            @if (card.picks; as picks) {
+              <ul class="opts" [attr.aria-label]="labels.picked">
+                @for (pick of picks; track pick) {
+                  <li class="opt">{{ pick }}</li>
+                }
+              </ul>
+            }
+          </div>
+          <div class="req">
+            <b class="t">{{ card.requestTitle }}</b>
+            @for (row of card.request; track row[0]) {
+              <div class="row"><span>{{ row[0] }}</span><span>{{ row[1] }}</span><span class="tick" aria-hidden="true">✓</span></div>
+            }
+          </div>
+          @if (button(card); as b) {
+            <div class="demo-card__cta">
+              <a class="btn btn--ghost" [href]="b.href" target="_blank" rel="noopener">{{ b.label }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg><span class="sr-only">{{ b.srLabel }}</span></a>
+            </div>
+          }
+        </article>
+      }
+    </div>
+    @if (copy.fine; as fine) {
+      <p class="fine">{{ fine }}</p>
+    }
+  </div>
+</section>
+
+<section class="sec">
+  <div class="vc-wrap">
+    <div class="card want">
+      <div>
+        <h2>{{ strip.title }}</h2>
+        <p>{{ strip.text }}</p>
+      </div>
+      <a class="btn btn--primary" [href]="signupUrl">{{ strip.cta }}</a>
+    </div>
+  </div>
+</section>

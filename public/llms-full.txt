@@ -30,6 +30,12 @@
 
 ---
 
+## Demo — https://typelessity.com/demo
+
+Made-up businesses, each with its own booking. For each one the page shows what a visitor says, what the chat asks and the request the business gets. The scenarios come from the product's own demo configurations.
+
+---
+
 ## How it works — https://typelessity.com/how-it-works
 
 Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT call per turn, enrichment APIs, cascade-aware corrections, no hardcoded regex.

@@ -7,6 +7,7 @@ import type { TranslationMap } from './translation.types';
 
 export const EN: TranslationMap = {
   // ── Navigation ──
+  'nav.demo': 'Demo',
   'nav.howItWorks': 'How It Works',
   'nav.install': 'Install',
   'nav.pricing': 'Pricing',
@@ -33,6 +34,8 @@ export const EN: TranslationMap = {
   // ── SEO meta (title is suffixed with " — Typelessity" by SeoService; descriptions ≤155 chars) ──
   'seo.home.title': 'AI booking assistant for your website',
   'seo.home.description': 'Typelessity is an AI booking assistant (a booking widget) for your site: customers say what they want by voice or text; you get a booking request.',
+  'seo.demo.title': 'Typelessity demo: from one sentence to a booking request',
+  'seo.demo.description': 'Made-up businesses, each with its own booking. For each: what a visitor says, what the chat asks and the request the business receives.',
   'seo.howItWorks.title': 'How Typelessity works: from chat to booking request',
   'seo.howItWorks.description': 'Chat, select, review, send: the AI booking assistant turns one sentence into a booking request; if your booking system has an API, it asks it what is free.',
   'seo.install.title': 'Add an AI booking widget to your website',
