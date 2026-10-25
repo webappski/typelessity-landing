@@ -169,8 +169,8 @@ test('/for-ai-agents prints the model, the transcription model, the timeout and 
   assert.ok(model, 'the product has no DEFAULT_MODEL');
   const page = agents();
   assert.ok(page.includes(`extraction_model: OpenAI (currently ${model})`), `/for-ai-agents does not say «OpenAI (currently ${model})»`);
-  const transcribe = product('packages/api/src/app/api/transcribe/route.ts').match(/model:\s*'([^']+)'/)?.[1];
-  assert.ok(transcribe, 'the transcribe route has no model');
+  const transcribe = product('packages/api/src/lib/model-usage.ts').match(/TRANSCRIPTION_MODEL\s*=\s*'([^']+)'/)?.[1];
+  assert.ok(transcribe, 'the product has no TRANSCRIPTION_MODEL');
   assert.ok(page.includes(`voice_input: OpenAI ${transcribe}`), `/for-ai-agents does not say «voice_input: OpenAI ${transcribe}»`);
   const timeout = numberConst(product('packages/shared/src/types/enrichment.ts'), 'DEFAULT_ENRICHMENT_TIMEOUT_MS');
   assert.ok(page.includes(`enrichment_timeout_ms: ${timeout} by default`), `/for-ai-agents does not say the enrichment timeout is ${timeout}`);
