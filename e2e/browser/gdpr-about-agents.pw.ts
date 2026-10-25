@@ -87,16 +87,16 @@ for (const scheme of ['light', 'dark'] as const) {
 }
 
 test.describe('the header with the new item', () => {
-  // The burger takes over below 1020 px (header.component.scss). At 1021 px the six links and the button share the row with
+  // The burger takes over below 1020 px (header.component.scss). At 1021 px the seven links (Demo first since TY-DEMO, 25.10) and the button share the row with
   // the logo: the longest label that was added must not wrap or push anything out of the header.
   test('Data & privacy sits after Pricing, is the current page on /gdpr, and at 1021 px the links stay in one row inside the header', async ({ page }) => {
     await page.setViewportSize({ width: 1021, height: 800 });
     await page.goto('/gdpr');
     const links = page.locator('header nav[aria-label="Primary"] a');
-    await expect(links).toHaveText(['How It Works', 'Install', 'Pricing', 'Data & privacy', 'Blog', 'FAQ']);
+    await expect(links).toHaveText(['Demo', 'How It Works', 'Install', 'Pricing', 'Data & privacy', 'Blog', 'FAQ']);
     await expect(page.locator('header nav[aria-label="Primary"] a[aria-current="page"]')).toHaveText('Data & privacy');
     const boxes = await links.evaluateAll((as) => as.map((a) => { const r = a.getBoundingClientRect(); return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: r.left, right: r.right }; }));
-    expect(new Set(boxes.map((b) => b.top)).size, 'all six links are in one row').toBe(1);
+    expect(new Set(boxes.map((b) => b.top)).size, 'all seven links are in one row').toBe(1);
     const header = await page.locator('header.vc-nav').evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth, right: el.getBoundingClientRect().right }));
     expect(header.scroll, 'the header is not wider than itself').toBeLessThanOrEqual(header.client);
     expect(Math.max(...boxes.map((b) => b.right)), 'the last link ends inside the header').toBeLessThanOrEqual(header.right);
