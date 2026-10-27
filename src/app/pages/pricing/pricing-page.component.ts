@@ -34,13 +34,13 @@ import { PRICING_FAQ, PRICING_LAST_UPDATED, PRICING_PAGE } from './pricing.conte
             </ul>
             @if (!tier.comingSoon) {
               <a class="vc-btn vc-btn-primary vc-btn-block vc-btn-lg" [href]="signupUrl('pricing', tier.slug)">{{ tier.cta }}</a>
+              <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
             } @else {
               <span class="vc-btn vc-btn-muted vc-btn-block vc-btn-lg">Coming soon</span>
             }
           </article>
         }
       </div>
-      <p class="vc-cta-note vc-cta-note--grid">{{ t.t('nav.getStartedNote') }}</p>
       <p class="pricing-updated">Page last updated {{ lastUpdated }}</p>
     </section>
 
@@ -85,9 +85,9 @@ import { PRICING_FAQ, PRICING_LAST_UPDATED, PRICING_PAGE } from './pricing.conte
       <h2>Try it free on your website</h2>
       <div class="how-cta__actions">
         <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('pricing', 'free-pilot')">Get it free</a>
+        <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">See how it works</a>
       </div>
-      <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
     </section>
   `,
 })

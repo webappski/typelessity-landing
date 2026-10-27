@@ -660,6 +660,13 @@
     gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
+    // C1 (CRO 27.10): the line stands under «Get it free» — a line of its own under the row, between the buttons in a column.
+    > .vc-cta-note { order: 2; flex-basis: 100%; margin: 0; }
+    @media (max-width: 380px) {
+      flex-direction: column;
+      align-items: center;
+      > .vc-cta-note { order: 0; flex-basis: auto; }
+    }
   }
 
   @media (max-width: 700px) { margin-top: 40px; padding-top: 32px; }

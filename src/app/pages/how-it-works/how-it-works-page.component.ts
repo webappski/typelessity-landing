@@ -133,9 +133,9 @@ import { HOW } from './how-it-works.content';
       <h2>{{ c.cta.title }}</h2>
       <div class="how-cta__actions">
         <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('how-it-works', 'free-pilot')">{{ c.cta.primary }}</a>
+        <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/install">{{ c.cta.secondary }}</a>
       </div>
-      <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
     </section>
   `,
 })

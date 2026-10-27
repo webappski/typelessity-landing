@@ -9,11 +9,11 @@
         <p class="lead">{{ c.hero.capsule }}</p>
         <div class="hero__cta">
           <a class="btn btn--primary btn--lg" [href]="signupUrl('hero', 'free-pilot')">{{ c.hero.cta.primary }} <app-icon name="arrow" [size]="18" /></a>
+          <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
           <button class="btn btn--ghost btn--lg" data-take-over type="button" [disabled]="slot() === 'failed'" (click)="takeOver()">
             <app-icon name="mic" [size]="18" />{{ c.hero.cta.secondary }}
           </button>
         </div>
-        <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
         <p class="trust">{{ c.hero.trust[0] }}<br>{{ c.hero.trust[1] }}</p>
       </div>
 
@@ -331,9 +331,9 @@
         <p>{{ c.cta.sub }}</p>
         <div class="cta-band__actions">
           <a class="btn btn--primary btn--lg" [href]="signupUrl('home-cta', 'free-pilot')">{{ c.cta.primary }}</a>
+          <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
           <a class="btn btn--ghost btn--lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
         </div>
-        <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
       </div>
       <div class="cta-band__code">
         <p class="cta-band__note">{{ codeNote }}</p>

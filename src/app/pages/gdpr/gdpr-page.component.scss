@@ -146,5 +146,13 @@
     gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
+    // C1 (CRO 27.10): the line stands under «Get it free»: a line of its own under the row while both buttons fit one line,
+    // and between the buttons once they stand in a column (the column is set at the width below which they no longer fit).
+    > .vc-cta-note { order: 2; flex-basis: 100%; margin: 0; }
+    @media (max-width: 380px) {
+      flex-direction: column;
+      align-items: center;
+      > .vc-cta-note { order: 0; flex-basis: auto; }
+    }
   }
 }

@@ -83,3 +83,51 @@ for (const scheme of ['light', 'dark'] as const) {
     });
   });
 }
+
+// C1 (CRO 27.10; founder 27.10 «Чиним до пуша»): the line explains the button it stands under. The tests above hold it under the button OR ITS ROW, and when a
+// row turned into a column on a phone the line stood under the second button («Try the chat now», «See how it works»), or under the last tier of /pricing.
+// Here the measure is the layout, not the DOM: of what a visitor sees in the section (links, buttons, lines) under «Get it free» and across its width, the
+// nearest is its line, 0 to 32 px below, at every width where a row turns into a column and back (each threshold ±1: 380/381, 479/480, 500/501, 720/721).
+const WIDTHS = [320, 360, 380, 381, 390, 414, 479, 480, 500, 501, 720, 721, 1021, 1440];
+
+async function nearestUnderButtons(page: Page) {
+  return page.evaluate(() => {
+    const seen = (el: Element) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden'; };
+    const out: { button: string; nearest: string; isLine: boolean; gap: number }[] = [];
+    const buttons = [...document.querySelectorAll<HTMLAnchorElement>('main a[href*="portal/login"]')].filter((a) => /\b(vc-btn|btn)\b/.test(a.className));
+    for (const a of buttons) {
+      const b = a.getBoundingClientRect();
+      let best: { el: Element; top: number } | null = null;
+      for (const el of (a.closest('section') ?? document.body).querySelectorAll('a, button, .vc-cta-note')) {
+        if (el === a || a.contains(el) || el.contains(a) || !seen(el)) continue;
+        const r = el.getBoundingClientRect();
+        if (r.top < b.bottom - 1 || Math.min(r.right, b.right) - Math.max(r.left, b.left) <= 0) continue;
+        if (!best || r.top < best.top) best = { el, top: r.top };
+      }
+      out.push({
+        button: a.textContent!.trim(),
+        nearest: best ? `${best.el.tagName.toLowerCase()}.${String(best.el.className).split(' ')[0]} «${best.el.textContent!.trim().slice(0, 32)}»` : 'nothing',
+        isLine: !!best && best.el.classList.contains('vc-cta-note'),
+        gap: best ? Math.round(best.top - b.bottom) : -1,
+      });
+    }
+    return out;
+  });
+}
+
+for (const path of PAGES) {
+  test(`[C1] ${path}: under every «Get it free» the nearest thing a visitor sees is its line, 0 to 32 px below, from 320 to 1440 px`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(path);
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      const rows = await nearestUnderButtons(page);
+      expect(rows.length, `${path} at ${width}px has a button into the portal in its content`).toBeGreaterThanOrEqual(1);
+      for (const r of rows) {
+        expect.soft(r.isLine, `${path} at ${width}px: under «${r.button}» the nearest thing is ${r.nearest}`).toBe(true);
+        expect.soft(r.gap, `${path} at ${width}px: the gap from «${r.button}» to what is under it`).toBeGreaterThanOrEqual(0);
+        expect.soft(r.gap, `${path} at ${width}px: the gap from «${r.button}» to what is under it`).toBeLessThanOrEqual(32);
+      }
+    }
+  });
+}

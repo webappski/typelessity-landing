@@ -57,9 +57,9 @@ import { FAQ_GROUPS } from './faq.content';
       <h2>Try it free on your website</h2>
       <div class="how-cta__actions">
         <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('faq', 'free-pilot')">Get it free</a>
+        <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">See how it works</a>
       </div>
-      <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
     </section>
   `,
 })

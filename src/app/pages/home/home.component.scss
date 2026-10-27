@@ -79,6 +79,8 @@
 }
 .hero__text { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; padding-top: 28px; }
 .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+// C1 (CRO 27.10): the line under «Get it free» is a line of its own under both buttons; on a phone (≤720 px, buttons full width) it stands between them.
+.hero__cta > .vc-cta-note { order: 2; flex-basis: 100%; margin: 0; }
 .chip { display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 14px 0 6px; border-radius: 8px; background: var(--chip); border: 1px solid var(--chip-bd); font-size: 13px; color: var(--fg2); }
 .chip__dot { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(90deg, var(--accent), var(--accent2)); display: grid; place-items: center;
   i { width: 7px; height: 7px; border-radius: 50%; background: var(--text-on-accent); }
@@ -315,6 +317,7 @@
 }
 .cta-band__copy { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
 .cta-band__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.cta-band__actions > .vc-cta-note { order: 2; flex-basis: 100%; margin: 0; } // C1: as in the hero; the column is set at ≤480 px
 .cta-band__code { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .cta-band__note { margin: 0 0 4px; font-size: 13.5px; line-height: 1.55; }
 pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.12); font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; overflow-x: auto; color: #F2F4F8; }
@@ -350,6 +353,7 @@ pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); backgrou
   .facts div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .lead { font-size: 16.5px; }
   .hero__cta .btn { width: 100%; }
+  .hero__cta > .vc-cta-note { order: 0; } // C1: between the two full-width buttons, right under «Get it free»
   .tabs { max-width: 100%; overflow-x: auto; }
   .tab { padding: 0 12px; flex: 1 0 auto; }
   .demo__tabs { flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; }
@@ -397,7 +401,9 @@ pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); backgrou
 // L14 (CRO 1): on a phone the two buttons stand right under the headline and the paragraph under them; «Get it free» is on the first screen.
 @media (max-width: 480px) {
   .hero__text > .hero__cta { order: 1; }
-  .hero__text > .vc-cta-note { order: 1; } // TY-INSTALL: same order as the buttons, so it stands right under them (the DOM order breaks the tie)
+  // C1 (CRO 27.10): «Get it free» (141 px) and «See how it works» (201 px) need 354 px; below 481 px they stand in a column, the line between them.
+  .cta-band__actions { flex-direction: column; align-items: flex-start; }
+  .cta-band__actions > .vc-cta-note { order: 0; flex-basis: auto; }
   .hero__text > .lead { order: 2; }
   .hero__text > .trust { order: 3; }
 }
