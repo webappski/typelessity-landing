@@ -149,6 +149,7 @@ for (const scheme of ['light', 'dark'] as const) {
 // repainted on every frame (trace 21.10: 237 Paint events in the 2 s after load against 5 without it, L15/trace-note.md) and
 // Lighthouse flagged a non-composited animation on every run. The look stays: the two glows are the two ends of the old pulse.
 const RING_ANIMATIONS = String.raw`() => document.getAnimations().filter((a) => a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('[data-ring]')).map((a) => ({
+  type: a.constructor.name, node: a.effect.target.matches('[data-ring]') ? 'ring' : String(a.effect.target.className),
   name: a.animationName || '', pseudo: a.effect.pseudoElement || '', state: a.playState,
   props: [...new Set(a.effect.getKeyframes().flatMap((k) => Object.keys(k)).filter((p) => !['offset', 'computedOffset', 'easing', 'composite'].includes(p)))] }))`;
 const BOX_SHADOW_ANIMATIONS = String.raw`() => document.getAnimations().filter((a) => a.effect && a.effect.getKeyframes().some((k) => 'boxShadow' in k)).map((a) => (a.animationName || '?') + ' on ' + (a.effect.target && a.effect.target.className))`;
@@ -156,8 +157,10 @@ const BOX_SHADOW_ANIMATIONS = String.raw`() => document.getAnimations().filter((
 test('L15-R1 /: the hidden ring runs no animation, and no animation on the page animates box-shadow', async ({ page }) => {
   await page.goto('/', { waitUntil: 'load' });
   await expect(page.locator('[data-ring]')).toHaveCount(1);
-  expect(await page.locator('[data-ring]').evaluate((el) => el.classList.contains('is-on')), 'the ring is hidden at load').toBe(false);
-  expect(await page.evaluate(`(${RING_ANIMATIONS})()`), 'animations of the hidden ring').toEqual([]);
+  // one read: the class and the animations of the same frame (a tip timer may turn the ring on between two reads under load)
+  const hidden = await page.evaluate(`({ on: document.querySelector('[data-ring]').classList.contains('is-on'), animations: (${RING_ANIMATIONS})() })`) as { on: boolean; animations: unknown[] };
+  expect(hidden.on, 'the ring is hidden at load').toBe(false);
+  expect(hidden.animations, 'animations of the hidden ring').toEqual([]);
   expect(await page.evaluate(`(${BOX_SHADOW_ANIMATIONS})()`), 'box-shadow animations (not composited)').toEqual([]);
 });
 
@@ -168,9 +171,21 @@ for (const scheme of ['light', 'dark'] as const) {
     test(`[after-l15-ring-1440-${scheme}] L15-R2 /: the shown ring pulses by opacity alone, its two glows are the two ends of the old pulse (4 px at 0.14, 9 px at 0.06)`, async ({ page }) => {
       await page.setViewportSize({ width: 1440, height: 900 });
       await page.goto('/', { waitUntil: 'load' });
-      await expect(page.locator('[data-ring].is-on'), 'a tip turns the ring on').toHaveCount(1, { timeout: 45_000 });
-      const animations = await page.evaluate(`(${RING_ANIMATIONS})()`) as Array<{ name: string; pseudo: string; state: string; props: string[] }>;
-      expect(animations.map((a) => a.pseudo).sort(), 'one animation on each glow layer').toEqual(['::after', '::before']);
+      await expect(page.locator('[data-ring]')).toHaveCount(1);
+      // A tip turns the ring on, and the ring fades in by its own opacity transition (.ring { transition: opacity 0.3s }, home.component.scss):
+      // the pulse is read once no transition of the ring itself runs, in the same frame that sees the ring on — a state, not a timer. The
+      // poll runs on every frame from before the ring turns on, so it sees the fade too; a wait for the class first (polled about every
+      // 500 ms) ended past the fade on a quiet machine and inside it under load: 27.10 the pre-push at load 33 read 62–570 ms after .is-on
+      // and saw a third animation, that CSSTransition on .ring.
+      const settled = await page.waitForFunction(`(() => {
+        const el = document.querySelector('[data-ring]');
+        if (!el || !el.classList.contains('is-on')) return false;
+        if (el.getAnimations().some((a) => a.constructor.name === 'CSSTransition' && a.playState === 'running')) return false;
+        return (${RING_ANIMATIONS})();
+      })()`, undefined, { polling: 'raf', timeout: 45_000 }).catch((e: Error) => { throw new Error(`a tip turns the ring on and its fade-in ends within 45 s: ${e.message}`); });
+      const animations = await settled.jsonValue() as Array<{ type: string; node: string; name: string; pseudo: string; state: string; props: string[] }>;
+      expect(animations.filter((a) => a.node === 'ring' && !a.pseudo), 'the ring itself runs no animation once its fade-in is over').toEqual([]);
+      expect(animations.map((a) => `${a.type} ${a.node}${a.pseudo}`).sort(), 'one CSS animation on each glow layer').toEqual(['CSSAnimation ring::after', 'CSSAnimation ring::before']);
       for (const a of animations) {
         expect(a.props, `${a.name} ${a.pseudo} animates only opacity`).toEqual(['opacity']);
         expect(a.state).toBe('running');
