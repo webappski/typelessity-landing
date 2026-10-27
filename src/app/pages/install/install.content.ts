@@ -1,17 +1,35 @@
 // The words of /install (L5). The facts under them are read from the code of the other side by e2e/install-facts.spec.ts:
 // the headers, the retries and the HTTPS rule from the product, the policy lines from the portal that hands out the Install step.
+// TY-INSTALL (founder 26.10): the config of the site comes first, the code after it. The code is the same for every site; the widget finds
+// the config by the address of the page, and with no config for that address the API answers 404 (e2e/install-config-first.spec.ts reads it).
 
 export const INSTALL = {
   kicker: 'Install',
   h1: 'Add Typelessity to your website',
-  // seo-lead §2.3: the mock capsule plus the sentence about HTTPS.
+  // seo-lead §2.3 opened with «paste two lines of HTML»; founder 26.10 moved the config in front of the code.
   capsule:
-    'Set up the widget in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system. You need access to your site’s HTML, an address that should receive the requests, and your site must use HTTPS.',
+    'Start with your site’s config in the Webappski portal: set it up yourself in simple steps, or we set it up with you for free. Then paste the code from the portal’s Install step, and receive booking requests by email or straight into your booking system. You need access to your site’s HTML, an address that should receive the requests, and your site must use HTTPS.',
+
+  configFirst: {
+    h2: 'First: your site’s config (required)',
+    lead: 'The widget works on your site only after your site’s config is set up and published in the Webappski portal. Two ways to get there:',
+    self: {
+      h3: 'Yourself, in simple steps',
+      b: 'Create a free account in the Webappski portal, choose Typelessity and go through the setup steps; the last step, Install, gives you the code.',
+      cta: 'Get it free',
+    },
+    withUs: {
+      h3: 'With us, for free',
+      b: 'Write what your site is and how bookings work today. We set up the config with you for free: we reply by email and arrange a call.',
+      cta: 'Write to us',
+    },
+  },
 
   requirements: {
     h2: 'What you need',
     items: [
-      'Access to the HTML of your website, to paste two lines into a page.',
+      'Your site’s config in the Webappski portal: a free account, set up by you or with us.',
+      'Access to the HTML of your website, to paste the code from the Install step into a page.',
       'Where the requests should go: an email address, or the address of your own endpoint (REST).',
       'A website on HTTPS. Browsers allow the microphone only on a secure page, so on plain HTTP the voice input does not work.',
     ],
@@ -20,20 +38,24 @@ export const INSTALL = {
   stepsH2: 'Three steps',
   steps: [
     {
-      h: 'Set it up in the portal',
-      b: 'Step by step: Your business → Questions → Data & delivery → Messages → Review → Install. Or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back.',
+      h: 'Account and site config — required',
+      link: 'Create a free account in the Webappski portal',
+      b: 'Then go step by step: Your business → Questions → Data & delivery → Messages → Review → Install. Or let your own AI write it: copy our instructions into ChatGPT or Claude with your API docs and paste the answer back.',
     },
     {
-      h: 'Paste two lines of HTML',
+      h: 'Paste the code from the Install step',
       b: 'The Install step shows the exact code for your platform. Before you publish, you can try the widget as a customer.',
     },
     {
       h: 'Receive the requests',
       b: 'Each request arrives by email, or as JSON at your own endpoint (REST), shaped by the field mapping in your config.',
     },
-  ],
+  ] as readonly { h: string; b: string; link?: string }[],
 
-  code: { h2: 'The code' },
+  code: {
+    h2: 'The code',
+    note: 'Example. The Install step in your portal shows this code for your platform. It works on your site only after your site’s config is published there: the widget finds the config by your site’s address.',
+  },
 
   where: {
     h2: 'Where the requests go',
@@ -74,6 +96,12 @@ export const INSTALL = {
     permissionsValue: 'Permissions-Policy: microphone=(self)',
     why: 'Without img-src data: the consent checkmarks do not show.',
     fonts: 'Until the next widget release the widget requests Google Fonts unless your Content-Security-Policy blocks it; the CSP above blocks it.',
+  },
+
+  form: {
+    kicker: 'Questions',
+    h2: 'Questions before you start?',
+    sub: 'Tell us what your site is and how bookings work today. We set up your config with you for free: we reply by email and arrange a call.',
   },
 
   cta: { title: 'Try it free on your website', primary: 'Get it free', secondary: 'See how it works' },

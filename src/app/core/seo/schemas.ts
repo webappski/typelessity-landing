@@ -90,7 +90,7 @@ export function softwareApplicationLd(): Json {
       'Enrichment APIs (fetch mechanics, slots, routes mid-conversation)',
       'Cascade-aware corrections',
       'Consent asked before the chat starts',
-      'Two-line HTML embed (web component)',
+      'HTML embed (web component), after the site’s config is set up in the Webappski portal',
       'Booking sent to your endpoint (REST) or by email',
     ],
     publisher: orgRef(),

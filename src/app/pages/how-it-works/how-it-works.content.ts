@@ -94,8 +94,8 @@ export const HOW = {
 
   installTeaser: {
     kicker: 'Install',
-    title: 'Two lines of HTML',
-    sub: 'It is a standard web component (a custom HTML element) that you paste into your page.',
+    title: 'Config first, then the code',
+    sub: 'First your site’s config in the Webappski portal; then the code from its Install step, a standard web component (a custom HTML element) that you paste into your page.',
     link: 'Add Typelessity to your website',
   },
 

@@ -147,6 +147,6 @@ export function demoButton(card: DemoCard): DemoButton | null {
 
 export const DEMO_STRIP = {
   title: 'Want it on your website?',
-  text: 'Paste two lines of HTML. It works next to the booking system you already use.',
+  text: 'Set up your site’s config in the Webappski portal, then paste the code. It works next to the booking system you already use.',
   cta: 'Get it free',
 } as const;

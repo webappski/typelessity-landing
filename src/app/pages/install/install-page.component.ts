@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { EMBED_SNIPPET, WIDGET_CSP } from '../../core/integrations/embed-snippet';
+import { ContactFormComponent } from '../../shared/contact-form/contact-form.component';
 import { pilotSignupUrl } from '../home/home.content';
 import { INSTALL } from './install.content';
 
@@ -10,13 +11,30 @@ import { INSTALL } from './install.content';
   selector: 'app-install-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [ContactFormComponent, RouterLink],
   styleUrl: './install-page.component.scss',
   template: `
     <section class="vc-wrap install-hero">
       <div class="vc-kicker"><span class="vc-kicker-bar"></span>{{ c.kicker }}</div>
       <h1>{{ c.h1 }}</h1>
       <p class="vc-section-sub">{{ c.capsule }}</p>
+    </section>
+
+    <section id="config-first" class="vc-wrap install-block">
+      <h2>{{ c.configFirst.h2 }}</h2>
+      <p class="install-p">{{ c.configFirst.lead }}</p>
+      <div class="install-config">
+        <div class="install-config__way">
+          <h3>{{ c.configFirst.self.h3 }}</h3>
+          <p class="install-p">{{ c.configFirst.self.b }}</p>
+          <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('install', 'config-first')">{{ c.configFirst.self.cta }}</a>
+        </div>
+        <div class="install-config__way">
+          <h3>{{ c.configFirst.withUs.h3 }}</h3>
+          <p class="install-p">{{ c.configFirst.withUs.b }}</p>
+          <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/install" fragment="setup-with-us">{{ c.configFirst.withUs.cta }}<span aria-hidden="true"> ↓</span></a>
+        </div>
+      </div>
     </section>
 
     <section class="vc-wrap install-block">
@@ -33,7 +51,7 @@ import { INSTALL } from './install.content';
           <li class="install-step">
             <span class="install-step__n" aria-hidden="true">{{ i + 1 }}</span>
             <h3 class="install-step__h">{{ s.h }}</h3>
-            <p class="install-step__b">{{ s.b }}</p>
+            <p class="install-step__b">@if (s.link) { <a [href]="signupUrl('install', 'step-1')">{{ s.link }}</a>. } {{ s.b }}</p>
           </li>
         }
       </ol>
@@ -41,6 +59,7 @@ import { INSTALL } from './install.content';
 
     <section class="vc-wrap install-block">
       <h2>{{ c.code.h2 }}</h2>
+      <p class="install-p">{{ c.code.note }}</p>
       <pre class="install-code" tabindex="0" role="region" aria-label="Embed code, scrolls sideways">{{ embedSnippet }}</pre>
     </section>
 
@@ -66,6 +85,15 @@ import { INSTALL } from './install.content';
       <p class="install-p">{{ c.csp.fonts }}</p>
       <p class="install-p">{{ c.csp.permissions }}</p>
       <pre class="install-code" tabindex="0" role="region" aria-label="Permissions-Policy header, scrolls sideways">{{ c.csp.permissionsValue }}</pre>
+    </section>
+
+    <section id="setup-with-us" class="vc-wrap install-form">
+      <header class="vc-section-h">
+        <div class="vc-kicker"><span class="vc-kicker-bar"></span>{{ c.form.kicker }}</div>
+        <h2>{{ c.form.h2 }}</h2>
+        <p class="vc-section-sub">{{ c.form.sub }}</p>
+      </header>
+      <app-contact-form />
     </section>
 
     <section class="vc-wrap how-cta">

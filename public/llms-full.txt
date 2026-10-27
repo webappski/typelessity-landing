@@ -10,7 +10,7 @@
 
 **TL;DR.** Typelessity is an AI conversational booking widget that replaces multi-step forms with a single chat. Users describe their booking in plain language; the widget extracts structured data, validates it, calls enrichment APIs (e.g. fetch available mechanics after a service is chosen), and submits the booking request by email or REST POST. The chat window comes in 25 languages; it supports voice input and adapts to any business that takes bookings.
 
-**Stats.** Chat-window languages 25. Free pilot €0, up to 50 submissions a month. Four phases (Chat → Select → Review → Confirm). Two lines of HTML to integrate.
+**Stats.** Chat-window languages 25. Free pilot €0, up to 50 submissions a month. Four phases (Chat → Select → Review → Confirm). Integration: site config in the Webappski portal first, then the embed code.
 
 **Four phases.**
 1. Chat — User describes booking in plain language; The AI model — OpenAI (currently gpt-5.4-mini) — reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
@@ -42,13 +42,13 @@ Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT c
 
 The widget is a Lit web component. The API is a Node service. The AI provider is OpenAI, called through Typelessity's own account; there is no custom provider option. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
 
-Embed: two lines of HTML — a `<script type="module">` tag loading https://typelessity-widget.vercel.app/widget.js and a `<typelessity-widget api-url="https://typelessity.vercel.app">` element. The embed code comes from your setup in the Webappski portal, which shows the exact code to paste into your page. Your site must use HTTPS.
+Embed (after the site’s config is published in the Webappski portal): a `<script type="module">` tag loading https://typelessity-widget.vercel.app/widget.js and a `<typelessity-widget api-url="https://typelessity.vercel.app">` element; the widget finds the config by the address of the site, and with no published config for that address the API answers 404. The embed code comes from your setup in the Webappski portal, which shows the exact code to paste into your page. Your site must use HTTPS.
 
 ---
 
 ## Install — https://typelessity.com/install
 
-Set up Typelessity in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system.
+First your site’s config in the Webappski portal, yourself or with us for free; then the code from the Install step. Requests by email or to your system.
 
 ---
 

@@ -23,6 +23,26 @@ async function fillAndSubmit(page: Page) {
   await page.click('.cf button[type=submit]');
 }
 
+// TY-INSTALL (founder 26.10): /install carries the same form as /pricing («Questions before you start?»), the way «with us, for free» to the
+// config of the site. It is one component, so the request goes to the same endpoint with the same body; /api/contact is stubbed.
+test('the form of /install posts to /api/contact the way the form of /pricing does and thanks by email', async ({ page }) => {
+  const posts: Record<string, unknown>[] = [];
+  await page.route('**/api/contact', async (route) => {
+    posts.push(route.request().postDataJSON());
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+  await page.goto('/install');
+  await expect(page.locator('#setup-with-us form.cf')).toHaveCount(1);
+  await page.fill('#cf-email', 'owner@salon.example');
+  await page.fill('#cf-website', 'https://salon.example');
+  await page.fill('#cf-message', 'Hair salon, bookings by phone today. Please set up the config with us.');
+  await page.check('input[name=consent]');
+  await page.click('#setup-with-us .cf button[type=submit]');
+  await expect(page.locator('.cf__success')).toContainText('Thanks — we’ll reply by email.');
+  expect(posts).toHaveLength(1);
+  expect(posts[0]).toMatchObject({ email: 'owner@salon.example', consent: true, plan: '', type: 'waitlist_request' });
+});
+
 // c8 2026-10-03 (legal + CRO verdicts on the landing release): the consent box was decorative — an
 // unticked form was sent — and the plan select forced a visitor with a question to claim a paid plan.
 // The box now blocks the send, the endpoint refuses a body without it, and a plan is optional.

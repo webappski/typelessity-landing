@@ -126,9 +126,9 @@ export const HOME = {
       { n: String(LANGUAGE_COUNT), l: 'Languages of the chat window' },
       { n: PRICING.tiers[0].price, l: `Free pilot, up to ${PILOT_REQUESTS} booking requests a month` },
       { n: String(HOW.phases.length), l: `Steps: ${HOW.phases.map((p) => p.name).join(' → ')}` },
+      // TY-INSTALL (founder 27.10): the stat used to be «2 lines of code your web developer pastes»; the config of the site comes first.
+      { n: '2 ways', l: 'To set up your site’s config: yourself in the Webappski portal, or with us for free' },
     ] as const,
-    // the fourth number is the lines of the embed code: derived in the component from EMBED_SNIPPET
-    codeLabel: 'Of code your web developer pastes on your site',
     facts: [
       ['Replaces', 'Multi-step booking forms and dropdowns'],
       ['Works with', 'Your booking system through its API (REST), set up by your web developer. No API: you get the request by email. Nothing to migrate.'],

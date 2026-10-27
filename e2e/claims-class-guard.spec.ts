@@ -386,10 +386,13 @@ test('llms-full.txt prints the Session and Booking shapes /for-ai-agents prints,
   assert.doesNotMatch(agents, /schemas are stable/i);
 });
 
-test('the structured data names the embed as the two-line web component it is', () => {
+// TY-INSTALL (founder 26.10): the embed is a web component, but never «two lines»: it works after the site's config is set up in the portal.
+// The class «two lines without the config» is held by e2e/install-config-first.spec.ts (K1); this test holds the one feature line it replaced.
+test('the structured data names the embed as the web component it is, after the config of the site', () => {
   const home = pages.get('index.html')!;
   assert.doesNotMatch(home, /One-line HTML or React embed/);
-  assert.match(home, /Two-line HTML embed \(web component\)/);
+  assert.doesNotMatch(home, /Two-line HTML embed/);
+  assert.match(home, /HTML embed \(web component\), after the site’s config is set up in the Webappski portal/);
 });
 
 // ── A56. competitor cells ────────────────────────────────────────────────────────────────────────

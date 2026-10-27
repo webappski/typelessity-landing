@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { EMBED_SNIPPET } from '../../core/integrations/embed-snippet';
+import { INSTALL } from '../install/install.content';
 import { PadNumberPipe } from '../../core/utils/pad-number.pipe';
 import { pilotSignupUrl } from '../home/home.content';
 import { HOW } from './how-it-works.content';
@@ -123,6 +124,7 @@ import { HOW } from './how-it-works.content';
         <h2>{{ c.installTeaser.title }}</h2>
         <p class="vc-section-sub">{{ c.installTeaser.sub }}</p>
       </header>
+      <p class="how-embed__caption">{{ codeNote }}</p>
       <pre class="how-embed__code">{{ embedSnippet }}</pre>
       <p class="how-embed__note"><a routerLink="/install">{{ c.installTeaser.link }}</a></p>
     </section>
@@ -142,6 +144,7 @@ export class HowItWorksPageComponent implements OnInit {
   protected readonly c = HOW;
   protected readonly signupUrl = pilotSignupUrl;
   protected readonly embedSnippet = EMBED_SNIPPET;
+  protected readonly codeNote = INSTALL.code.note;
 
   ngOnInit(): void {
     this.seo.apply({

@@ -64,7 +64,7 @@ export const FAQ_GROUPS: readonly FaqGroup[] = [
       { q: 'Does it connect to Booksy, Google Calendar or Calendly?',
         a: 'Not with a ready-made connector yet. If your booking system has an API, your web developer connects it through a REST endpoint. If not, every booking request reaches you by email.' },
       { q: 'How long does integration take?',
-        a: 'We have not measured a typical setup time, so we do not quote one. Setup is a wizard in the Webappski portal that you complete yourself.' },
+        a: 'We have not measured a typical setup time, so we do not quote one. Setup starts with your site’s config in the Webappski portal: a wizard you complete yourself, or we set it up with you for free (write to us on /install). The embed code comes from the Install step at the end.' },
       { q: 'Can I self-host Typelessity?',
         a: 'No. Typelessity is a hosted service: the service runs on Vercel in Frankfurt and the database on Supabase in Ireland, and there is no on-premise or self-hosted build. The widget is a Lit web component and the API is a Next.js service; conversations are understood by OpenAI through our account.' },
       { q: 'How does the widget submit to my backend?',

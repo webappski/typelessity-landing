@@ -39,7 +39,7 @@ export const EN: TranslationMap = {
   'seo.howItWorks.title': 'How Typelessity works: from chat to booking request',
   'seo.howItWorks.description': 'Chat, select, review, send: the AI booking assistant turns one sentence into a booking request; if your booking system has an API, it asks it what is free.',
   'seo.install.title': 'Add an AI booking widget to your website',
-  'seo.install.description': 'Set up Typelessity in the Webappski portal, paste two lines of HTML, and receive booking requests by email or straight into your booking system.',
+  'seo.install.description': 'First your site’s config in the Webappski portal, yourself or with us for free; then the code from the Install step. Requests by email or to your system.',
   'seo.pricing.title': 'Pricing: free pilot, then €39–€399 a month — Typelessity',
   'seo.pricing.description': 'Free Pilot €0 (50 booking requests a month), Starter €39, Pro €149, Enterprise €399 a month. Every plan starts with the free pilot.',
   'seo.faq.title': 'Typelessity FAQ: AI booking widget, pricing, GDPR, setup',

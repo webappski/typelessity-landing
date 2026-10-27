@@ -8,6 +8,7 @@ import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { organizationLd, softwareApplicationLd, websiteLd } from '../../core/seo/schemas';
 import { EMBED_SNIPPET } from '../../core/integrations/embed-snippet';
+import { INSTALL } from '../install/install.content';
 import { LANDING_LANGUAGES } from '../../core/languages/landing-languages';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { TypelessityWidgetComponent } from '../../widgets/typelessity-widget/typelessity-widget.component';
@@ -43,8 +44,8 @@ export class HomeComponent implements OnInit {
   protected readonly signupUrl = pilotSignupUrl;
   protected readonly embedSnippet = EMBED_SNIPPET;
   protected readonly pilotRequests = PILOT_REQUESTS;
-  /** the fourth number of «What it is»: the lines of the embed code, counted from the code itself */
-  protected readonly embedLines = EMBED_SNIPPET.split('\n').length;
+  /** the note above the embed code in the band: the same words as on /install (the guard e2e/install-config-first.spec.ts reads them from there) */
+  protected readonly codeNote = INSTALL.code.note;
 
   // ── the demo ──
   /** What the slot says: `prerender` in the HTML, `loading` after hydration, `failed`, `ready` once the widget stands in it. */

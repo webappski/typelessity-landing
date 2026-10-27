@@ -149,7 +149,6 @@
       @for (s of c.whatItIs.stats; track s.l) {
         <div class="stat"><b>{{ s.n }}</b><span>{{ s.l }}</span></div>
       }
-      <div class="stat"><b>{{ embedLines }} lines</b><span>{{ c.whatItIs.codeLabel }}</span></div>
     </div>
     <dl class="facts">
       @for (f of c.whatItIs.facts; track f[0]) {
@@ -334,6 +333,7 @@
         </div>
       </div>
       <div class="cta-band__code">
+        <p class="cta-band__note">{{ codeNote }}</p>
         <pre class="code" [attr.aria-label]="c.cta.codeLabel">{{ embedSnippet }}</pre>
         <a class="link link--on-dark" routerLink="/install">{{ c.cta.install }}</a>
       </div>
