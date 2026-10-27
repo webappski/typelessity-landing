@@ -148,19 +148,33 @@ test('the widget stores in the browser only what /gdpr says: local storage and s
 function readdirSyncSafe(dir: string): string[] { try { return readdirSync(dir); } catch { return []; } }
 function isDir(p: string): boolean { try { return statSync(p).isDirectory(); } catch { return false; } }
 
-// L14 (legal L-1, founder variant B, 21.10): the live widget on the CDN (typelessity-widget.vercel.app, built before 85c8cbb) asks Google Fonts for DM Sans and
-// Space Mono as soon as it appears on a page, before the consent question. /gdpr describes the widget on the CUSTOMER's site, where our Content-Security-Policy does
-// not apply, so it says so (the earlier guard here, «Google appears nowhere», derived the completeness of /gdpr from the CSP of typelessity.com: another perimeter).
-// The sentence goes when the widget with 85c8cbb is on the CDN (card L13 removes it together with §5 of the notice). Until then it is held here, and it is the
-// ONLY place /gdpr names Google: the address lookup (Places) is off in the product, so no Google row sits in the processor table.
-const GOOGLE_FONTS_SENTENCE =
-  'Until the next widget release, the widget asks Google Fonts (Google) for its typefaces as soon as it appears on your page, before the consent question; the visitor’s browser then sends Google its IP address and browser details. typelessity.com blocks that request with its Content-Security-Policy; your site blocks it only if its own policy does.';
+// LG-1 (legal 27.10; was L14, legal L-1, founder variant B, 21.10): since 85c8cbb the widget takes its typefaces from its own origin, and that widget is on the
+// CDN since 26.10 (typelessity-widget.vercel.app/widget.js, last-modified 26.10 07:45 GMT, asks neither fonts.googleapis.com nor fonts.gstatic.com). So /gdpr no
+// longer says that the widget asks Google before the consent question, and it names Google nowhere while the address lookup (Places) is off. The fact is READ
+// from the widget code, comments left out: if the widget asks a Google Fonts host again, this goes red first, and /gdpr, /install and llms-full.txt say so again
+// (the sentence of variant B: git show c51f1f2:src/app/pages/gdpr/gdpr.content.ts) before that widget is released.
+function widgetFilesAsking(host: RegExp): string[] {
+  const root = join(PRODUCT_ROOT, 'packages/widget/src');
+  assert.ok(existsSync(root), `нет исходника продукта: ${root}`);
+  const out: string[] = [];
+  const walk = (dir: string) => {
+    for (const e of readdirSyncSafe(dir)) {
+      const p = join(dir, e);
+      if (isDir(p)) walk(p);
+      else if (p.endsWith('.ts') && !/\.(spec|test)\.ts$/.test(p)) {
+        const code = readFileSync(p, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+        if (host.test(code)) out.push(p);
+      }
+    }
+  };
+  walk(root);
+  return out;
+}
 
-test('/gdpr says that the current widget asks Google Fonts before the consent question, and names Google nowhere else while the address lookup is off', () => {
+test('/gdpr names Google nowhere: the widget code asks no Google Fonts host and the address lookup is off', () => {
   assert.match(constants(), /export const ADDRESS_LOOKUP_ENABLED: boolean = false;/, 'the address lookup is on: /gdpr must then name Google as a processor (DPA Appendix B, the Places row)');
-  const page = gdpr();
-  assert.ok(page.includes(GOOGLE_FONTS_SENTENCE), '/gdpr lost the sentence about Google Fonts: the live widget still asks Google for its typefaces before consent (FL-38)');
-  assert.doesNotMatch(page.replace(GOOGLE_FONTS_SENTENCE, ' '), /Google/, '/gdpr names Google outside the Google Fonts sentence while the product has the address lookup off');
+  assert.deepEqual(widgetFilesAsking(/fonts\.(googleapis|gstatic)\.com/), [], 'the widget code asks Google Fonts again: /gdpr, /install and llms-full.txt must say so before that widget is released (legal L-1, variant B)');
+  assert.doesNotMatch(gdpr(), /Google/, '/gdpr names Google, but the widget asks no Google host and the address lookup is off (LG-1: the Google Fonts sentence is no longer true)');
 });
 
 test('/for-ai-agents prints the model, the transcription model, the timeout and the languages of the product', () => {

@@ -83,7 +83,6 @@ import { INSTALL } from './install.content';
       <p class="install-p">{{ c.csp.b }}</p>
       <pre class="install-code" tabindex="0" role="region" aria-label="Content-Security-Policy to allow, scrolls sideways">{{ cspText }}</pre>
       <p class="install-p">{{ c.csp.why }}</p>
-      <p class="install-p">{{ c.csp.fonts }}</p>
       <p class="install-p">{{ c.csp.permissions }}</p>
       <pre class="install-code" tabindex="0" role="region" aria-label="Permissions-Policy header, scrolls sideways">{{ c.csp.permissionsValue }}</pre>
     </section>

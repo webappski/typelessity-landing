@@ -18,7 +18,6 @@ export const GDPR = {
     body: [
       'The question is the same in every region. The visitor can withdraw consent at any time from the privacy panel inside the widget. On your site, where the widget runs with your key, our server checks the consent record before a conversation starts and again on every message.',
       'In the visitor’s browser the widget keeps the consent record with a random visitor ID (local storage), and the session, the details collected so far and the screen state (session storage, cleared when the tab is closed). It sets no advertising or cross-site tracking storage.',
-      'Until the next widget release, the widget asks Google Fonts (Google) for its typefaces as soon as it appears on your page, before the consent question; the visitor’s browser then sends Google its IP address and browser details. typelessity.com blocks that request with its Content-Security-Policy; your site blocks it only if its own policy does.',
       'You, the business, are the controller and decide the legal basis for your booking process. Typelessity is your processor under the DPA (GDPR Article 28).',
     ],
   },

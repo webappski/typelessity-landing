@@ -37,10 +37,13 @@ const GOOGLE_SHORT = 'Until the next widget release the widget requests Google F
 const OPENAI_30 = 'OpenAI keeps conversation text for up to 30 days to check for abuse, longer only where the law requires it or to protect its service or others from harm';
 const NETWORK = 'Vercel’s network receives each request at the point nearest the visitor';
 
-test('L-1: /gdpr, /install and llms-full.txt tell that the current widget asks Google Fonts before consent (variant B)', () => {
-  hasAll('/gdpr', PAGES.gdpr(), [GOOGLE_LONG]);
-  hasAll('/install', PAGES.install(), [GOOGLE_SHORT]);
-  hasAll('llms-full.txt', FILES.llmsFull(), [GOOGLE_LONG]);
+// LG-1 (legal 27.10): the widget on the CDN takes its typefaces from its own origin since 26.10 (85c8cbb), so the sentences of variant B (L-1, 21.10) are no
+// longer true and no page or file keeps them. That the widget code asks no Google Fonts host is held at the seam in e2e/gdpr-facts.spec.ts.
+test('L-1 / LG-1: /gdpr, /install and llms-full.txt no longer say that the widget asks Google Fonts', () => {
+  const gone = [GOOGLE_LONG, GOOGLE_SHORT, /Google Fonts/];
+  hasNone('/gdpr', PAGES.gdpr(), gone);
+  hasNone('/install', PAGES.install(), gone);
+  hasNone('llms-full.txt', FILES.llmsFull(), gone);
 });
 
 test('L-4: a conversation with a delivery record is kept; the page says what a delivery record is (gdpr, faq, llms-full)', () => {

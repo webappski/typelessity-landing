@@ -4,12 +4,12 @@ import { readFileSync } from 'node:fs';
 import { WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
 import { cspValues, type VercelCspConfig } from './vercel-csp';
 
-// L12 (C16, decision on FL-38), meaning corrected at L14 (legal L-1). The widget loaded from its CDN asks for Google Fonts. The site answers with a
-// Content-Security-Policy that blocks that request (checked 2026-10-20 over CDP: `Network.requestWillBeSent` then `loadingFailed blockedReason=csp`; the request
-// never reaches Google, the widget falls back to a system font). This file holds ONE thing: the CSP of typelessity.com does not open Google Fonts. It does not
-// hold what /gdpr must say — that is another perimeter: /gdpr describes the widget on the customer's site, where this CSP does not apply, and there the live widget
-// does ask Google before consent. That sentence is held by e2e/gdpr-facts.spec.ts. If this test goes red, the CSP was opened to Google Fonts, the block on our own
-// site is gone and the visitor's IP reaches Google here too: write that on /gdpr (FL-38, gate) BEFORE the policy is changed.
+// L12 (C16, decision on FL-38), meaning corrected at L14 (legal L-1) and at LG-1 (legal 27.10). Until 26.10 the widget loaded from its CDN asked for Google Fonts
+// and this policy blocked that request (checked 2026-10-20 over CDP: `Network.requestWillBeSent` then `loadingFailed blockedReason=csp`). Since 26.10 the widget on
+// the CDN takes its typefaces from its own origin (85c8cbb) and asks Google nothing; the block stays as a second line. This file holds ONE thing: the CSP of
+// typelessity.com does not open Google Fonts. What /gdpr must say is another perimeter (the widget on the customer's site, where this CSP does not apply): it is held
+// by e2e/gdpr-facts.spec.ts, which reads the widget code. If this test goes red, the CSP was opened to Google Fonts: if the widget asks Google again, the visitor's
+// IP would reach Google here too — write that on /gdpr (FL-38, gate) BEFORE the policy is changed.
 // vercel.json is read as the file that ships; CSP_VERCEL_JSON points the mutation run at a copy (vercel.json itself stays untouched).
 
 const ROOT = new URL('../', import.meta.url);
