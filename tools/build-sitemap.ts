@@ -32,28 +32,36 @@ const STATIC_PATHS: Url[] = [
   // L11 (2026-10-20): the home page has one block for «any business that takes bookings»; L4 (2026-10-20): it was rebuilt (title, description, H1, the demo, six questions of /faq).
   // L12 (2026-10-21): the promo card is wrapped in data-nosnippet, the product node prints the four prices with their month.
   // L17 (2026-10-22): the language row of the demo and its tooltip, the Webappski strip after the demo (text by the visitor's source), the fallback font Montserrat Fallback.
-  { path: '/', lastmod: '2026-10-22' },
+  // TY-INSTALL (2026-10-27): the stat «2 lines of code» became «2 ways to set up the config»; the note above the code in the band; the line under «Get it free»; the feature line of the markup says the embed comes after the config.
+  { path: '/', lastmod: '2026-10-27' },
   // TY-DEMO (2026-10-25): new — four made-up businesses and what a booking looks like on each (what the visitor says, what the widget asks, the request the business gets).
-  { path: '/demo', lastmod: '2026-10-25' },
-  { path: '/how-it-works', lastmod: '2026-10-19' },
+  // TY-INSTALL (2026-10-27): the strip says to set up the config first; the line under «Get it free».
+  { path: '/demo', lastmod: '2026-10-27' },
+  // TY-INSTALL (2026-10-27): «Config first, then the code» with the note above the code; the line under «Get it free»; the feature line of the markup.
+  { path: '/how-it-works', lastmod: '2026-10-27' },
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
-  { path: '/install', lastmod: '2026-10-21' },
+  // TY-INSTALL (2026-10-27): the page starts with the config of the site (two ways, the form of /pricing, the note above the code); the description and the lines under «Get it free».
+  { path: '/install', lastmod: '2026-10-27' },
   // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
   // L12 (2026-10-21): the page prints «Page last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
   // L12 (2026-10-21): the page no longer carries BreadcrumbList (no breadcrumb is shown).
-  { path: '/gdpr', lastmod: '2026-10-21' },
+  // TY-INSTALL (2026-10-27): the line under «Get it free» in the closing strip.
+  { path: '/gdpr', lastmod: '2026-10-27' },
   // L13 (2026-10-21): new — the notice for a visitor of this website (legal L-2, G-3); a draft for the lawyer. The page prints «Page last updated <date>» with the same constant.
   { path: '/privacy', lastmod: PRIVACY_LAST_UPDATED },
   // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
   // L12 (2026-10-21): no BreadcrumbList; the product node has its four offers; a price line in the list of resources.
-  { path: '/for-ai-agents', lastmod: '2026-10-21' },
+  // TY-INSTALL (2026-10-27): the line about /install names the config first; the feature line of the markup.
+  { path: '/for-ai-agents', lastmod: '2026-10-27' },
   // L14 (2026-10-21): the answers about retention, the DPA, the network of Vercel and OpenAI's 30 days were corrected.
-  { path: '/faq', lastmod: '2026-10-21' },
+  // TY-INSTALL (2026-10-27): the answer about setup starts with the config (yourself or with us); the line under «Get it free».
+  { path: '/faq', lastmod: '2026-10-27' },
   { path: '/about', lastmod: '2026-10-19' },
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
   // L12 (2026-10-21): the list no longer carries BreadcrumbList.
-  { path: '/blog', lastmod: '2026-10-21' },
+  // TY-INSTALL (2026-10-27): the closing strip of an article carries the line under «Get it free» (the folder of the page holds the post component).
+  { path: '/blog', lastmod: '2026-10-27' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here
   // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.

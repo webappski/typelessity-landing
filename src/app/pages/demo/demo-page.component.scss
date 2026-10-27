@@ -68,6 +68,10 @@
   h2 { font-size: 26px; letter-spacing: -0.03em; line-height: 1.2; font-weight: 600; margin: 0 0 6px; }
   p { margin: 0; }
 }
+// TY-INSTALL: the button of the strip with the line under it (the line is a paragraph, so `.want p` would zero its margin).
+.want__action { display: flex; flex-direction: column; align-items: flex-start; max-width: 320px;
+  .vc-cta-note { margin: 10px 0 0; }
+}
 
 @media (max-width: 860px) {
   .grid--2 { grid-template-columns: minmax(0, 1fr); }

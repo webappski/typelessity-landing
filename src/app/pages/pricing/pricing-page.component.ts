@@ -40,6 +40,7 @@ import { PRICING_FAQ, PRICING_LAST_UPDATED, PRICING_PAGE } from './pricing.conte
           </article>
         }
       </div>
+      <p class="vc-cta-note vc-cta-note--grid">{{ t.t('nav.getStartedNote') }}</p>
       <p class="pricing-updated">Page last updated {{ lastUpdated }}</p>
     </section>
 
@@ -86,6 +87,7 @@ import { PRICING_FAQ, PRICING_LAST_UPDATED, PRICING_PAGE } from './pricing.conte
         <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('pricing', 'free-pilot')">Get it free</a>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">See how it works</a>
       </div>
+      <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
     </section>
   `,
 })

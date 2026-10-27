@@ -4,6 +4,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, relative } from 'node:path';
 import { INSTALL } from '../src/app/pages/install/install.content';
+import { EN } from '../src/app/i18n/translations.en';
 
 // TY-INSTALL (founder 26.10: «Ни в коем случае мы не должны показывать, что эти только две строчки. Сначала перед этими двумя
 // строчками надо написать, что обязательно надо сделать конфиг для вашего сайта»). The classes of the guard, by the number the
@@ -11,6 +12,9 @@ import { INSTALL } from '../src/app/pages/install/install.content';
 //   K1  no sentence, stat or structured-data line says «two lines» / «2 lines» / «two-line» without saying «config»;
 //   K2  the config comes before the code: the sentence that opens /install, the block #config-first, and the note
 //       INSTALL.code.note above every embed code on /install, /how-it-works and /;
+//   K3  every button that leads into the Webappski portal is followed, up to the end of its section (or of the header), by the line
+//       EN['nav.getStartedNote'] («Free account in the Webappski portal → set up your site in simple steps → get your code»); a text link into the
+//       portal names the account itself. The browser side (visible under the button, 390 and 1440, both themes, the phone menu) is e2e/browser/cta-note.pw.ts;
 //   K4  the «Questions before you start?» form on /install is the form of /pricing, not a copy of it;
 //   K5  what the note says about the code is read from the code of the product: the embed carries no key of a site,
 //       and the API answers 404 when the address of the page has no config (R67 п.3, the seam is read, not typed).
@@ -154,4 +158,52 @@ test('[K5] the note is true: the embed carries only api-url, and the product ans
       assert.deepEqual(attrs(visibleText(b[0])), ['api-url'], `${path}: the embed code carries more than api-url (a key of the site would make the note false)`);
     }
   }
+});
+
+// ── K3 ───────────────────────────────────────────────────────────────────────────────────────────
+// Founder 26.10: «всегда, когда юзер нажимает на get it free, надо объяснять юзеру, что мы сейчас перенаправим его на админку, ему надо создать кабинет,
+// если у него еще нету». The portal is webappski.com/en/portal/login (pilotSignupUrl); the line stands in the same section as the button, after it.
+const NOTE = EN['nav.getStartedNote'];
+const PORTAL = /href="https:\/\/webappski\.com\/en\/portal\/login/;
+
+function portalLinksWithoutTheirLine(html: string): string[] {
+  const out: string[] = [];
+  for (const m of html.matchAll(/<a\b[^>]*>/gi)) {
+    if (!PORTAL.test(m[0])) continue;
+    const after = html.slice(m.index! + m[0].length);
+    const label = visibleText(after.slice(0, Math.max(after.indexOf('</a>'), 0))).trim();
+    if (/class="[^"]*\b(?:vc-btn|btn)\b/.test(m[0])) {
+      const end = after.search(/<\/(?:section|header)>/);
+      if (!visibleText(end < 0 ? after : after.slice(0, end)).includes(NOTE)) out.push(`«${label}» has no line after it`);
+    } else if (!/account/i.test(label)) {
+      out.push(`the text link «${label}» does not name the account`);
+    }
+  }
+  return out;
+}
+
+test('[K3] the checker catches a button into the portal with no line after it and lets the line, and a text link that names the account, through', () => {
+  const button = '<a class="vc-btn vc-btn-primary" href="https://webappski.com/en/portal/login?start=typelessity">Get it free</a>';
+  for (const mutant of [
+    `<section>${button}</section>`,
+    `<header>${button}</header><section><p>${NOTE}</p></section>`,
+    `<section><a href="https://webappski.com/en/portal/login?start=typelessity">Sign in</a></section>`,
+  ]) assert.ok(portalLinksWithoutTheirLine(mutant).length > 0, `K3 does not catch «${mutant}»`);
+  for (const legal of [
+    `<section>${button}<p class="vc-cta-note">${NOTE}</p></section>`,
+    `<header>${button}<span class="vc-sr-only">${NOTE}</span></header>`,
+    `<section><a href="https://webappski.com/en/portal/login?start=typelessity">Create a free account in the Webappski portal</a></section>`,
+  ]) assert.deepEqual(portalLinksWithoutTheirLine(legal), [], `K3 flags the legal form «${legal}»`);
+});
+
+test('[K3] every button into the portal, on every page, has the line after it in its section or its header', () => {
+  const offenders: string[] = [];
+  let buttons = 0;
+  for (const [path, html] of pages) {
+    if (!path.endsWith('.html')) continue;
+    buttons += [...html.matchAll(/<a\b[^>]*>/gi)].filter((m) => PORTAL.test(m[0])).length;
+    for (const o of portalLinksWithoutTheirLine(html)) offenders.push(`${path}: ${o}`);
+  }
+  assert.ok(buttons >= 30, `expected the buttons of the whole site (header on every page), found ${buttons}`);
+  assert.deepEqual(offenders, [], 'a button into the portal does not say where it leads');
 });

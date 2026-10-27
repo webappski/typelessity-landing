@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { EMBED_SNIPPET, WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
+import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
 
 // A43 (founder 2026-09-25): from the 30.09 release the Free Pilot is open and Typelessity is set up
 // in the Webappski portal. This reads what visitors and AI crawlers receive — the prerendered pages,
@@ -53,13 +53,19 @@ test('the embed code shown is the one the portal hands out', async () => {
   }
 });
 
-test('the line count of HTML to integrate is the embed code\'s own', async () => {
-  const lines = EMBED_SNIPPET.split('\n').length;
+// TY-INSTALL (founder 26.10, 27.10): the home stat used to count the lines of the embed code («2 lines», from EMBED_SNIPPET) and so sold the install as two
+// lines. It now counts the ways to the config of the site, and the number is /install's own — the cards of #config-first — not a literal of the home page.
+// That no sentence says «two lines» without the config is held by e2e/install-config-first.spec.ts (K1).
+test('the home stat counts the ways to the config: the number is the cards of /install, and no stat counts the lines of the embed code', async () => {
   for (const path of SURFACES) {
     const body = unescape(await read(path));
     assert.doesNotMatch(body, /\b(?:one|1) line of HTML|>\s*1 line\s*</i, `${path} still says one line of HTML`);
   }
-  assert.match(unescape(await read('index.html')), new RegExp(`>\\s*${lines} lines\\s*<`), `the home stats must say ${lines} lines`);
+  const ways = [...(await read('install/index.html')).matchAll(/class="[^"]*\binstall-config__way\b/g)].length;
+  assert.ok(ways >= 2, `/install shows ${ways} ways to the config, expected at least the two the home page names`);
+  const home = unescape(await read('index.html'));
+  assert.match(home, new RegExp(`<b[^>]*>\\s*${ways} ways\\s*</b>`), `the home stats must say ${ways} ways, as many as /install has`);
+  assert.doesNotMatch(home, />\s*\d+ lines\s*</i, 'a stat on the home page counts the lines of the embed code again');
 });
 
 // L3 (D6, S5, M8, M27): the hero holds the real widget, and the page does not ask for its script. The prerendered HTML carries

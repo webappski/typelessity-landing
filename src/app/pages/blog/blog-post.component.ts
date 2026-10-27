@@ -77,6 +77,7 @@ export function splitJournal(body: string): { text: string; journal: string } {
             <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('blog', 'free-pilot')">Get it free</a>
             <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">See how it works</a>
           </div>
+          <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
         </section>
 
         @if (parts().journal) {

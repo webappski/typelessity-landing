@@ -61,7 +61,10 @@
         <h2>{{ strip.title }}</h2>
         <p>{{ strip.text }}</p>
       </div>
-      <a class="btn btn--primary" [href]="signupUrl">{{ strip.cta }}</a>
+      <div class="want__action">
+        <a class="btn btn--primary" [href]="signupUrl">{{ strip.cta }}</a>
+        <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
+      </div>
     </div>
   </div>
 </section>

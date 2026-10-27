@@ -8,7 +8,7 @@
  * updated …», pricing-page.component.ts) and the `<lastmod>` of /pricing in tools/build-sitemap.ts. e2e/sitemap-contract.spec.ts holds that the
  * two are the same day in the built bytes, and that a page is not dated before its last edit; edit anything in this folder, move this date.
  */
-export const PRICING_LAST_UPDATED = '2026-10-21';
+export const PRICING_LAST_UPDATED = '2026-10-27';
 
 export const PRICING_PAGE = {
   kicker: 'Pricing',

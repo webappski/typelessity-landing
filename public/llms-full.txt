@@ -1,6 +1,6 @@
 # Typelessity — full content (llms-full.txt)
 
-> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat. The chat window comes in 25 languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-10-25.
+> Typelessity is an AI conversational booking widget that replaces traditional booking forms with natural-language chat. The chat window comes in 25 languages. Built by Webappski. This file concatenates the public pages for LLM ingestion. Last updated 2026-10-27.
 
 ---
 

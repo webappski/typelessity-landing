@@ -28,7 +28,9 @@
       <svg class="vc-theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6L4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>
     </button>
 
-    <a class="vc-btn vc-btn-primary vc-nav-cta" [href]="signupUrl">{{ t.t('nav.getStarted') }}</a>
+    <a class="vc-btn vc-btn-primary vc-nav-cta" [href]="signupUrl" aria-describedby="nav-cta-note">{{ t.t('nav.getStarted') }}</a>
+    <!-- Founder 27.10: no visible line under the button on a wide screen (the header is one row of 60 px); the line is read out, and shown in the phone menu and under every button on the pages. -->
+    <span class="vc-sr-only" id="nav-cta-note">{{ t.t('nav.getStartedNote') }}</span>
 
     <button #burger class="vc-icon-btn vc-burger" type="button" (click)="toggleMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-controls="mobile-menu" aria-label="Menu">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -50,7 +52,8 @@
       <a routerLink="/gdpr" (click)="closeMenu()">{{ t.t('nav.gdpr') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <a routerLink="/blog" (click)="closeMenu()">{{ t.t('nav.blog') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <a routerLink="/faq" (click)="closeMenu()">{{ t.t('nav.faq') }}<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block vc-menu-cta" [href]="signupUrl" (click)="closeMenu()">{{ t.t('nav.getStarted') }}</a>
+      <a class="vc-btn vc-btn-primary vc-btn-lg vc-btn-block vc-menu-cta" [href]="signupUrl" (click)="closeMenu()" aria-describedby="menu-cta-note">{{ t.t('nav.getStarted') }}</a>
+      <p class="vc-cta-note vc-cta-note--menu" id="menu-cta-note">{{ t.t('nav.getStartedNote') }}</p>
     </div>
   }
 </header>

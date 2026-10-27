@@ -16,6 +16,8 @@ export const EN: TranslationMap = {
   'nav.blog': 'Blog',
   'nav.about': 'About',
   'nav.getStarted': 'Get it free',
+  // TY-INSTALL (founder 26.10): said under every «Get it free» that opens the portal; e2e/install-config-first.spec.ts (K3) reads this key.
+  'nav.getStartedNote': 'Free account in the Webappski portal → set up your site in simple steps → get your code',
 
   // ── Footer ──
   'footer.tagline': 'AI conversational booking widget: a chat instead of the booking form. The chat window comes in 25 languages.',

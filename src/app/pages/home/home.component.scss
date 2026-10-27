@@ -286,6 +286,7 @@
   > * { position: relative; }
 }
 .plaque__actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.plaque__actions .vc-cta-note { margin: -2px 0 6px; } // TY-INSTALL: the line belongs to the button above it, not to the link below
 .bignum { margin: 10px 0; font-size: clamp(88px, 12vw, 136px); letter-spacing: -0.06em; font-weight: 600; line-height: 0.9; color: var(--fg); }
 .post { display: flex; flex-direction: column; gap: 10px; }
 .post__tag { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
@@ -396,6 +397,7 @@ pre.code { margin: 0; padding: 18px 20px; border-radius: var(--radius); backgrou
 // L14 (CRO 1): on a phone the two buttons stand right under the headline and the paragraph under them; «Get it free» is on the first screen.
 @media (max-width: 480px) {
   .hero__text > .hero__cta { order: 1; }
+  .hero__text > .vc-cta-note { order: 1; } // TY-INSTALL: same order as the buttons, so it stands right under them (the DOM order breaks the tie)
   .hero__text > .lead { order: 2; }
   .hero__text > .trust { order: 3; }
 }

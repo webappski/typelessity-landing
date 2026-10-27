@@ -28,6 +28,7 @@ import { INSTALL } from './install.content';
           <h3>{{ c.configFirst.self.h3 }}</h3>
           <p class="install-p">{{ c.configFirst.self.b }}</p>
           <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('install', 'config-first')">{{ c.configFirst.self.cta }}</a>
+          <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
         </div>
         <div class="install-config__way">
           <h3>{{ c.configFirst.withUs.h3 }}</h3>
@@ -102,6 +103,7 @@ import { INSTALL } from './install.content';
         <a class="vc-btn vc-btn-primary vc-btn-lg" [href]="signupUrl('install', 'free-pilot')">{{ c.cta.primary }}</a>
         <a class="vc-btn vc-btn-ghost vc-btn-lg" routerLink="/how-it-works">{{ c.cta.secondary }}</a>
       </div>
+      <p class="vc-cta-note">{{ t.t('nav.getStartedNote') }}</p>
     </section>
   `,
 })

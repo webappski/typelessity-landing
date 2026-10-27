@@ -138,6 +138,31 @@ pre {
   }
 }
 
+// TY-INSTALL: the line under a «Get it free» that opens the portal. Inherits the alignment of the block it stands in (left, or centred in the closing strips).
+.vc-cta-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-wrap: balance;
+
+  &--grid { margin-top: 18px; text-align: center; }
+  &--menu { margin: 4px 4px 0; text-align: center; }
+}
+
+// Read out by a screen reader, not shown.
+.vc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .vc-btn-muted {
   background: var(--bg-secondary);
   color: var(--text-muted);
