@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { pilotSignupUrl } from '../home/home.content';
-import { DEMO_CARDS, DEMO_STRIP, SCENE_LABELS, demoButton, demoCopy } from './demo.content';
+import { DEMO_CARDS, DEMO_STRIP, SCENE_LABELS, demoButton, demoCopy, demoHost } from './demo.content';
 
 @Component({
   selector: 'app-demo-page',
@@ -20,6 +20,7 @@ export class DemoPageComponent implements OnInit {
   protected readonly labels = SCENE_LABELS;
   protected readonly strip = DEMO_STRIP;
   protected readonly button = demoButton;
+  protected readonly host = demoHost;
   /** the same address as «Get it free» in the header */
   protected readonly signupUrl = pilotSignupUrl('nav', 'free-pilot');
 

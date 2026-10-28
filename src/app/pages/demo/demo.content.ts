@@ -2,10 +2,10 @@
 // the product (packages/api/src/scripts/fixtures/demos/<id>.json of ~/Projects/typelessity, checked against expected-steps.json), not the
 // script of the home page (pages/home/demo/demo-script.ts). The words are the mock's, pending-review/2026-10-25/TY-DEMO/mocks/BRIEF.md §1.
 //
-// `live` is false on every card: on 25.10 the Typelessity widget is switched off on all four demo sites (the embeds are commented out
-// before the founder's from-scratch check, Glow carries TypelessForm). A card shows its button only while `live` is true, and the page
-// then also switches to the texts written for a live demo. Switching a demo on is one line here, after the founder has checked the site
-// (e2e/demo-page-dist.spec.ts holds both states).
+// TYL-DEMO-LIVE (28.10): the button to the demo site stands on every card and no flag switches it (founder: «whether the widget is on those
+// sites yet does not matter — the full layout must be there already»; he puts the widgets on himself). The card is a hybrid (founder, 28.10):
+// the picture of the site on top, the scenario below, the button at the foot. The sentence about the assistant asking for consent before it
+// starts describes what the widget does on a site, so it stays off the page until the founder has checked the widget on the four sites.
 
 const UTM = { source: 'typelessity.com', medium: 'demo-page' } as const;
 
@@ -24,8 +24,6 @@ export interface DemoCard {
   readonly note?: { readonly lead: string; readonly body: string; readonly warning: string };
   /** the address of the demo site (business.domain of the fixture) */
   readonly liveUrl: string;
-  /** the Typelessity widget answers on that site; the founder has checked it */
-  readonly live: boolean;
 }
 
 export const MEDBOOK_NOTE = {
@@ -45,7 +43,6 @@ export const DEMO_CARDS: readonly DemoCard[] = [
     requestTitle: 'THE SALON GETS A REQUEST',
     request: [['Date', 'Saturday'], ['Time', '14:00'], ['Treatment', 'Hair Coloring'], ['Contact', 'Name, phone, e-mail']],
     liveUrl: 'https://glow-studio-demo.netlify.app',
-    live: false,
   },
   {
     id: 'autopro',
@@ -59,7 +56,6 @@ export const DEMO_CARDS: readonly DemoCard[] = [
       ['Time', 'Saturday, a free slot'], ['Contact', 'Name, phone, e-mail'],
     ],
     liveUrl: 'https://autopro-service-demo.netlify.app',
-    live: false,
   },
   {
     id: 'transedge',
@@ -74,7 +70,6 @@ export const DEMO_CARDS: readonly DemoCard[] = [
       ['Contact', 'Name, phone, e-mail'],
     ],
     liveUrl: 'https://transedge-freight.netlify.app',
-    live: false,
   },
   {
     id: 'medbook',
@@ -88,7 +83,6 @@ export const DEMO_CARDS: readonly DemoCard[] = [
     ],
     note: MEDBOOK_NOTE,
     liveUrl: 'https://medbook-vue.netlify.app',
-    live: false,
   },
 ];
 
@@ -102,30 +96,21 @@ export interface DemoPageCopy {
   readonly h1: string;
   readonly h1Accent: string;
   readonly lead: string;
-  /** under the grid; null when there is nothing to say yet */
-  readonly fine: string | null;
+  /** under the grid */
+  readonly fine: string;
 }
 
-/** The mock's words, written for a demo that works: they send the reader to the site and promise a chat there. */
-const COPY_LIVE: DemoPageCopy = {
-  eyebrow: 'Live demos',
-  h1: 'Try it on a demo website.',
-  h1Accent: 'Each one asks for different things.',
-  lead: 'Made-up businesses with Typelessity on their sites. Each card shows what a visitor says, what the widget asks and what the business gets. Open one and send a request in the chat — typed or spoken.',
-  fine: 'Each site opens in a new tab. Use made-up details. Before it starts, the assistant asks your permission to process what you type or say with AI.',
-};
-
-/** Today's words: the same cards without the button, so nothing on the page sends the reader to a site where the chat is off. */
+/** The words of the page: the scenarios, and one line under the cards about the new tab and the made-up details. */
 const COPY_SCENARIOS: DemoPageCopy = {
   eyebrow: 'Demo scenarios',
   h1: 'See how a booking goes in the chat.',
   h1Accent: 'Each business asks for different things.',
   lead: 'Made-up businesses. Each card shows what a visitor says, what the widget asks and what the business gets.',
-  fine: null,
+  fine: 'Each site opens in a new tab. The businesses are made up, so use made-up details.',
 };
 
-export function demoCopy(cards: readonly DemoCard[] = DEMO_CARDS): DemoPageCopy {
-  return cards.some((c) => c.live) ? COPY_LIVE : COPY_SCENARIOS;
+export function demoCopy(): DemoPageCopy {
+  return COPY_SCENARIOS;
 }
 
 export interface DemoButton {
@@ -135,14 +120,18 @@ export interface DemoButton {
   readonly srLabel: string;
 }
 
-/** The button of a card — null while the demo is not switched on, so that no link to a demo site is printed. */
-export function demoButton(card: DemoCard): DemoButton | null {
-  if (!card.live) return null;
+/** The button of a card: the address of its site with the utm of the page. */
+export function demoButton(card: DemoCard): DemoButton {
   const url = new URL(card.liveUrl);
   url.searchParams.set('utm_source', UTM.source);
   url.searchParams.set('utm_medium', UTM.medium);
   url.searchParams.set('utm_content', card.id);
   return { href: url.toString(), label: DEMO_BUTTON, srLabel: `${card.name} (opens in a new tab)` };
+}
+
+/** The host the picture of a card shows in its frame — the honest address of the demo site. */
+export function demoHost(card: DemoCard): string {
+  return new URL(card.liveUrl).host;
 }
 
 export const DEMO_STRIP = {

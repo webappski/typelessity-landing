@@ -238,4 +238,10 @@ test('MedBook guard mutants: the mark taken out, or the name put into another ch
   assert.deepEqual(medbookCardProblems(card), [], 'the real card passes');
   assert.equal(medbookCardProblems(card.replace('Typelessity is not available to medical practices. ', '')).length, 1, 'the card without the first sentence');
   assert.equal(medbookCardProblems(card.replace(/<p>[\s\S]*<\/p>/, '')).length, 2, 'the card without the mark at all');
+  // TYL-DEMO-LIVE: the card now carries the picture and the button of the demo site, so the name stands in the host, the link and the
+  // screen-reader text as well — a card with those and without the mark is caught on the new shape too.
+  const hybrid = '<article class="card card--site"><a class="card__shot" href="https://medbook-vue.netlify.app/"><span class="card__url">medbook-vue.netlify.app</span><img alt="" src="/demo/medbook.webp"></a>'
+    + '<p>Typelessity is not available to medical practices. Do not enter real health data.</p><a class="btn" href="https://medbook-vue.netlify.app/">Open the demo site<span class="sr-only">MedBook (opens in a new tab)</span></a></article>';
+  assert.deepEqual(medbookCardProblems(hybrid), [], 'the card with the picture and the button passes with its mark');
+  assert.equal(medbookCardProblems(hybrid.replace(/<p>[\s\S]*?<\/p>/, '')).length, 2, 'the card with the host and the button of MedBook and no mark');
 });

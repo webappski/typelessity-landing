@@ -10,41 +10,46 @@
 
 <section class="sec sec--alt" aria-labelledby="demos-h">
   <div class="vc-wrap">
-    <h2 class="sr-only" id="demos-h">The demo websites</h2>
+    <h2 class="sr-only" id="demos-h">The demo scenarios</h2>
     <div class="grid grid--2">
       @for (card of cards; track card.id) {
-        <article class="card" [attr.data-demo]="card.id">
-          <span class="demo-k">{{ card.kind }}</span>
-          <h3 class="h3">{{ card.name }}</h3>
-          @if (card.note; as note) {
-            <p class="demo-note"><b>{{ note.lead }}</b> {{ note.body }} <b>{{ note.warning }}</b></p>
-          }
-          <div class="scene">
-            <span class="scene__label">{{ labels.says }}</span>
-            <div class="scene__chat"><div class="bubble bubble--me">{{ card.says }}</div></div>
-          </div>
-          <div class="scene">
-            <span class="scene__label">{{ labels.asks }}</span>
-            <div class="scene__chat"><div class="bubble bubble--ai">{{ card.asks }}</div></div>
-            @if (card.picks; as picks) {
-              <ul class="opts" [attr.aria-label]="labels.picked">
-                @for (pick of picks; track pick) {
-                  <li class="opt">{{ pick }}</li>
-                }
-              </ul>
+        @let b = button(card);
+        <article class="card card--site" [attr.data-demo]="card.id">
+          <a class="card__shot" [href]="b.href" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+            <span class="card__bar"><i></i><i></i><i></i><span class="card__url">{{ host(card) }}</span></span>
+            <img class="card__img" [src]="'/demo/' + card.id + '.webp'" alt="" width="800" height="500" [attr.loading]="$first ? 'eager' : 'lazy'" decoding="async">
+          </a>
+          <div class="card__body">
+            <span class="demo-k">{{ card.kind }}</span>
+            <h3 class="h3">{{ card.name }}</h3>
+            @if (card.note; as note) {
+              <p class="demo-note"><b>{{ note.lead }}</b> {{ note.body }} <b>{{ note.warning }}</b></p>
             }
-          </div>
-          <div class="req">
-            <b class="t">{{ card.requestTitle }}</b>
-            @for (row of card.request; track row[0]) {
-              <div class="row"><span>{{ row[0] }}</span><span>{{ row[1] }}</span><span class="tick" aria-hidden="true">✓</span></div>
-            }
-          </div>
-          @if (button(card); as b) {
+            <div class="scene">
+              <span class="scene__label">{{ labels.says }}</span>
+              <div class="scene__chat"><div class="bubble bubble--me">{{ card.says }}</div></div>
+            </div>
+            <div class="scene">
+              <span class="scene__label">{{ labels.asks }}</span>
+              <div class="scene__chat"><div class="bubble bubble--ai">{{ card.asks }}</div></div>
+              @if (card.picks; as picks) {
+                <ul class="opts" [attr.aria-label]="labels.picked">
+                  @for (pick of picks; track pick) {
+                    <li class="opt">{{ pick }}</li>
+                  }
+                </ul>
+              }
+            </div>
+            <div class="req">
+              <b class="t">{{ card.requestTitle }}</b>
+              @for (row of card.request; track row[0]) {
+                <div class="row"><span>{{ row[0] }}</span><span>{{ row[1] }}</span><span class="tick" aria-hidden="true">✓</span></div>
+              }
+            </div>
             <div class="demo-card__cta">
               <a class="btn btn--ghost" [href]="b.href" target="_blank" rel="noopener">{{ b.label }} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg><span class="sr-only">{{ b.srLabel }}</span></a>
             </div>
-          }
+          </div>
         </article>
       }
     </div>

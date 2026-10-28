@@ -71,36 +71,72 @@ test('D5 /demo prints the four cards in the order of the mock, each with the thr
   }
 });
 
-// APPROVED p.1: the Typelessity widget answers on none of the four demo sites on 25.10, so no card leads to one. A card that is switched on
-// (`live: true` in demo.content.ts, one line after the founder has checked the site) prints exactly one link, to its site, in a new tab with
-// rel=noopener; a card that is off prints none. Read from the same list the page is drawn from, so the flag is held in both states.
-test('D6 a card links to its demo site if and only if it is switched on, and then in a new tab with rel=noopener', () => {
+// TYL-DEMO-LIVE (28.10, founder: «a card is the picture of the site on top and what we already had below»): every card links to its demo site
+// twice — the picture (outside the tab order and hidden from a screen reader: one stop per address) and the button «Open the demo site» —
+// in a new tab with rel=noopener. No flag switches the button. The picture is a decorative <img> of fixed size; the first one is eager (it
+// stands in the first screen at 390 and at 1280), the rest are lazy.
+test('D6 every card links to its demo site from the picture and from the button, in a new tab with rel=noopener; one tab stop, the button', () => {
   const html = read('demo/index.html');
   const cards = [...html.matchAll(/<article\b[^>]*data-demo="([^"]+)"[\s\S]*?<\/article>/g)];
   assert.equal(cards.length, DEMO_CARDS.length);
   for (const [card, id] of cards) {
     const demo = DEMO_CARDS.find((c) => c.id === id)!;
     const anchors = [...card.matchAll(/<a\b[^>]*>/gi)].map((m) => m[0]);
-    if (!demo.live) { assert.deepEqual(anchors, [], `${id} is off and prints a link`); continue; }
-    assert.equal(anchors.length, 1, `${id} is on and prints ${anchors.length} links`);
-    assert.match(anchors[0]!, /target="_blank"/);
-    assert.match(anchors[0]!, /rel="noopener"/);
-    assert.ok(anchors[0]!.replace(/&amp;/g, '&').includes(`href="${new URL(demo.liveUrl).origin}/?utm_source=typelessity.com&utm_medium=demo-page&utm_content=${id}"`), `${id}: the address of the button`);
+    assert.equal(anchors.length, 2, `${id} prints ${anchors.length} links, not the picture and the button`);
+    for (const a of anchors) {
+      assert.match(a, /target="_blank"/, `${id}: a link without a new tab`);
+      assert.match(a, /rel="noopener"/, `${id}: a link without rel=noopener`);
+      assert.ok(a.replace(/&amp;/g, '&').includes(`href="${new URL(demo.liveUrl).origin}/?utm_source=typelessity.com&utm_medium=demo-page&utm_content=${id}"`), `${id}: the address of a link`);
+    }
+    const [shot, button] = anchors as [string, string];
+    assert.match(shot, /class="card__shot"/, `${id}: the first link is not the picture`);
+    assert.match(shot, /tabindex="-1"/, `${id}: the picture is in the tab order`);
+    assert.match(shot, /aria-hidden="true"/, `${id}: the picture is read twice`);
+    assert.doesNotMatch(button, /tabindex|aria-hidden/, `${id}: the button is out of the tab order or hidden`);
+    assert.match(card, new RegExp(`<a\\b[^>]*>\\s*Open the demo site[\\s\\S]*?<span\\b[^>]*class="sr-only"[^>]*>${demo.name} \\(opens in a new tab\\)</span>`), `${id}: the label and the screen-reader text of the button`);
+    assert.match(card, new RegExp(`<span\\b[^>]*class="card__url"[^>]*>${new URL(demo.liveUrl).host}</span>`), `${id}: the honest address in the frame of the picture`);
+    const imgs = [...card.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
+    assert.equal(imgs.length, 1, `${id}: ${imgs.length} images`);
+    assert.match(imgs[0]!, new RegExp(`\\ssrc="/demo/${id}\\.webp"`), `${id}: the source of the picture`);
+    assert.match(imgs[0]!, /\swidth="800"/);
+    assert.match(imgs[0]!, /\sheight="500"/);
+    assert.match(imgs[0]!, /\salt=""/, `${id}: the picture is decorative — the name is in the heading and in the button`);
+    assert.match(imgs[0]!, new RegExp(`\\sloading="${id === 'glow' ? 'eager' : 'lazy'}"`), `${id}: loading`);
   }
-  // outside the cards no link leads to a demo site, whatever the flags say
+  // outside the cards no link leads to a demo site
   const outside = html.replace(/<article\b[\s\S]*?<\/article>/g, ' ');
   assert.doesNotMatch(outside, /netlify\.app/i);
 });
 
-test('D7 the words of the page follow the flags: the scenario words while no demo is on, the words of a live demo once one is; the strip leads where the header does', () => {
+// The pictures are the previews of the four demo sites: 800×500 WebP, at most 60 KB each (BRIEF §6: the mobile speed bar is #75).
+function webpSize(buf: Buffer): { width: number; height: number } {
+  assert.equal(buf.toString('ascii', 0, 4), 'RIFF');
+  assert.equal(buf.toString('ascii', 8, 12), 'WEBP');
+  const kind = buf.toString('ascii', 12, 16);
+  if (kind === 'VP8 ') return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
+  if (kind === 'VP8L') { const b = buf.readUInt32LE(21); return { width: (b & 0x3fff) + 1, height: ((b >> 14) & 0x3fff) + 1 }; }
+  if (kind === 'VP8X') return { width: buf.readUIntLE(24, 3) + 1, height: buf.readUIntLE(27, 3) + 1 };
+  throw new Error(`unknown WebP chunk ${kind}`);
+}
+
+test('D7 the four previews are in the build: WebP, 800×500, at most 60 KB each', () => {
+  for (const card of DEMO_CARDS) {
+    const buf = readFileSync(join(BROWSER, 'demo', `${card.id}.webp`));
+    assert.ok(buf.length <= 60 * 1024, `${card.id}.webp is ${Math.round(buf.length / 1024)} KB`);
+    assert.deepEqual(webpSize(buf), { width: 800, height: 500 }, `${card.id}.webp size`);
+  }
+});
+
+test('D8 the words of the page do not depend on a flag; the line about the new tab stands under the cards and above the strip; the strip leads where the header does', () => {
   const html = read('demo/index.html');
   const copy = demoCopy();
   assert.ok(html.includes(copy.h1) && html.includes(copy.eyebrow), 'the page does not print the h1 and the eyebrow of demoCopy()');
-  if (DEMO_CARDS.some((c) => c.live)) assert.equal(copy.h1, 'Try it on a demo website.');
-  else {
-    assert.equal(copy.h1, 'See how a booking goes in the chat.');
-    assert.doesNotMatch(html, /Try it on a demo website|Live demos|Open the demo site/);
-  }
+  assert.equal(copy.h1, 'See how a booking goes in the chat.');
+  assert.doesNotMatch(html, /Try it on a demo website|Live demos/);
+  assert.equal((html.match(/Open the demo site/g) ?? []).length, DEMO_CARDS.length, 'one button per card');
+  // the first «Get it free» is in the header, above the cards: the strip is the last one
+  const fine = html.indexOf(copy.fine);
+  assert.ok(fine > html.lastIndexOf('</article>') && fine < html.lastIndexOf('Get it free'), 'the line about the new tab is not between the last card and the strip');
   const cta = [...html.matchAll(/<a\b[^>]*\shref="([^"]*)"[^>]*>\s*Get it free\s*<\/a>/gi)].map((m) => m[1]!.replace(/&amp;/g, '&'));
   assert.ok(cta.length >= 2, 'the header and the strip both say «Get it free»');
   assert.equal(new Set(cta).size, 1, 'the strip and the header lead to different addresses');
