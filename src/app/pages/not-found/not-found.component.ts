@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { TranslationService } from '../../i18n/translation.service';
 import { SeoService } from '../../core/seo/seo.service';
+import { NOT_FOUND_SEO } from '../../core/seo/not-found-seo';
 
 @Component({
   selector: 'app-not-found',
@@ -29,13 +30,6 @@ export class NotFoundComponent implements OnInit {
   private readonly seo = inject(SeoService);
 
   ngOnInit(): void {
-    this.seo.apply({
-      title: '404 — Page not found',
-      description: 'The link you followed may be broken, or the page may have been moved.',
-      path: '/404',
-      // The file is the body of every 404 and of the 410 of the retired pages: it names no address as its own and asks not to be indexed (L12, C12).
-      robots: 'noindex',
-      noCanonical: true,
-    });
+    this.seo.apply(NOT_FOUND_SEO);
   }
 }

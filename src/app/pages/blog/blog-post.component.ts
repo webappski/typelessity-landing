@@ -19,6 +19,7 @@ import { PLATFORM_ID } from '@angular/core';
 import { TranslationService } from '../../i18n/translation.service';
 import { JsonLdService } from '../../core/seo/json-ld.service';
 import { SeoService } from '../../core/seo/seo.service';
+import { NOT_FOUND_SEO } from '../../core/seo/not-found-seo';
 import { articleLd } from '../../core/seo/schemas';
 import { getBlogPostBySlug } from '../../lib/blog-manifest.generated';
 import { pilotSignupUrl } from '../home/home.content';
@@ -124,6 +125,8 @@ export class BlogPostComponent implements AfterViewInit {
       const p = this.post();
       if (!p) {
         this.jsonLd.remove('article');
+        // An address with no article is shown as the 404 screen's head, whatever document the platform put under it (the home page today, 404.html once the platform answers 404): noindex, no canonical (SEO24-TYL-2).
+        this.seo.apply(NOT_FOUND_SEO);
         return;
       }
       this.seo.apply({

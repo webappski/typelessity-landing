@@ -61,7 +61,8 @@ const STATIC_PATHS: Url[] = [
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
   // L12 (2026-10-21): the list no longer carries BreadcrumbList.
   // TY-INSTALL (2026-10-27): the closing strip of an article carries the line under «Get it free» (the folder of the page holds the post component).
-  { path: '/blog', lastmod: '2026-10-27' },
+  // SEO24-TYL-2 (2026-10-28): the post component answers an unknown slug with the head of the 404 screen (the folder of the page holds the post component).
+  { path: '/blog', lastmod: '2026-10-28' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here
   // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.
