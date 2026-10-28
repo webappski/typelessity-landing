@@ -36,7 +36,8 @@ const STATIC_PATHS: Url[] = [
   { path: '/', lastmod: '2026-10-27' },
   // TY-DEMO (2026-10-25): new — four made-up businesses and what a booking looks like on each (what the visitor says, what the widget asks, the request the business gets).
   // TY-INSTALL (2026-10-27): the strip says to set up the config first; the line under «Get it free».
-  { path: '/demo', lastmod: '2026-10-27' },
+  // TYL-DEMO-LIVE (2026-10-28): every scenario card carries the preview of its demo site and the button «Open the demo site».
+  { path: '/demo', lastmod: '2026-10-28' },
   // TY-INSTALL (2026-10-27): «Config first, then the code» with the note above the code; the line under «Get it free»; the feature line of the markup.
   { path: '/how-it-works', lastmod: '2026-10-27' },
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
