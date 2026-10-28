@@ -4,8 +4,8 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { countClaims } from './claims-dictionary';
 
-// The shell Vercel serves for an address with no file (vercel.json: framework null, so there is no SPA
-// fallback). Built by `postbuild` from the prerendered route /404: browser/404/index.html is moved to
+// The shell Vercel serves for an address with no file (vercel.json: the filesystem phase and the route behind it that answers 404 with this
+// file, SEO24-TYL-1; e2e/vercel-404-dist.spec.ts holds the routing). Built by `postbuild` from the prerendered route /404: browser/404/index.html is moved to
 // browser/404.html and browser/404/ is removed — otherwise /404 would answer 200 on the platform.
 // Reads the built bytes (run `npm run build` first). LANDING_DIST points at another copy of dist.
 

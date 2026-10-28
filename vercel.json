@@ -3,8 +3,14 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/typelessity-landing/browser",
-  "trailingSlash": false,
   "routes": [
+    {
+      "src": "^/(.*)/$",
+      "headers": {
+        "Location": "/$1"
+      },
+      "status": 308
+    },
     {
       "src": "^/industries(?:/(?:automotive-detailing|automotive-test-drives|beauty-nail-salons|beauty-spas|beauty-tattoo-studios|education-language-schools|education-music-schools|education-test-prep|fitness-martial-arts|fitness-personal-training|fitness-sports-coaching|home-cleaning|home-handyman|home-hvac|home-landscaping|home-moving|hospitality-event-venues|hospitality-hotels|hospitality-tours|pet-grooming|pet-training|pet-veterinary|professional-accounting|professional-coaching|professional-financial-advisors|professional-legal|realestate-commercial|realestate-property-management|realestate-residential|beauty-aesthetic-clinics|beauty-hair-salons|hospitality-restaurants|fitness-yoga-studios|fitness-gyms|automotive-driving-schools|automotive-repair|education-tutoring))?/?$",
       "status": 410,
@@ -30,90 +36,112 @@
         "Permissions-Policy": "camera=(), geolocation=(), microphone=(self)",
         "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cal.com https://typelessity-widget.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https://typelessity-widget.vercel.app; connect-src 'self' https://api.resend.com https://*.supabase.co https://cal.com https://typelessity.vercel.app; frame-src https://cal.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
       }
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/legal/privacy",
-      "destination": "/privacy",
-      "permanent": true
     },
     {
-      "source": "/legal/terms",
-      "destination": "https://webappski.com/en/legal/terms-typelessity",
-      "permanent": true
+      "src": "^/legal/privacy$",
+      "headers": {
+        "Location": "/privacy"
+      },
+      "status": 308
     },
     {
-      "source": "/legal/dpa",
-      "destination": "https://webappski.com/en/legal/dpa-typelessity",
-      "permanent": true
+      "src": "^/legal/terms$",
+      "headers": {
+        "Location": "https://webappski.com/en/legal/terms-typelessity"
+      },
+      "status": 308
     },
     {
-      "source": "/legal/sub-processors",
-      "destination": "https://webappski.com/en/legal/dpa-typelessity",
-      "permanent": true
+      "src": "^/legal/dpa$",
+      "headers": {
+        "Location": "https://webappski.com/en/legal/dpa-typelessity"
+      },
+      "status": 308
     },
     {
-      "source": "/blog/gdpr-compliance",
-      "destination": "/gdpr",
-      "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), geolocation=(), microphone=(self)" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cal.com https://typelessity-widget.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https://typelessity-widget.vercel.app; connect-src 'self' https://api.resend.com https://*.supabase.co https://cal.com https://typelessity.vercel.app; frame-src https://cal.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" }
-      ]
+      "src": "^/legal/sub-processors$",
+      "headers": {
+        "Location": "https://webappski.com/en/legal/dpa-typelessity"
+      },
+      "status": 308
     },
     {
-      "source": "/fonts/(.*)\\.woff2",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "src": "^/blog/gdpr-compliance$",
+      "headers": {
+        "Location": "/gdpr"
+      },
+      "status": 308
     },
     {
-      "source": "/fonts/fonts.css",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
+      "src": "^(?:/(.*))$",
+      "headers": {
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), geolocation=(), microphone=(self)",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cal.com https://typelessity-widget.vercel.app; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https://typelessity-widget.vercel.app; connect-src 'self' https://api.resend.com https://*.supabase.co https://cal.com https://typelessity.vercel.app; frame-src https://cal.com; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      },
+      "continue": true
     },
     {
-      "source": "/((?:main|chunk|polyfills|styles)-[A-Z0-9]{8})\\.(js|css)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "src": "^/fonts(?:/(.*))\\.woff2$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
     },
     {
-      "source": "/([^/]+)\\.(jpg|png|svg|webp|avif|ico)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
+      "src": "^/fonts/fonts\\.css$",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      },
+      "continue": true
     },
     {
-      "source": "/sitemap(.*)\\.xml",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" },
-        { "key": "Content-Type", "value": "application/xml; charset=utf-8" }
-      ]
+      "src": "^(?:/((?:main|chunk|polyfills|styles)-[A-Z0-9]{8}))\\.(js|css)$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
     },
     {
-      "source": "/llms.txt",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=86400" },
-        { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
-      ]
+      "src": "^(?:/([^/]+))\\.(jpg|png|svg|webp|avif|ico)$",
+      "headers": {
+        "Cache-Control": "public, max-age=86400"
+      },
+      "continue": true
     },
     {
-      "source": "/robots.txt",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
-      ]
+      "src": "^/sitemap(.*)\\.xml$",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "Content-Type": "application/xml; charset=utf-8"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/llms\\.txt$",
+      "headers": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "Content-Type": "text/plain; charset=utf-8"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/robots\\.txt$",
+      "headers": {
+        "Cache-Control": "public, max-age=86400"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/(.*)$",
+      "status": 404,
+      "dest": "/404.html"
     }
   ]
 }

@@ -1,6 +1,6 @@
 // Build-time, after `ng build`: turn the prerendered route /404 into dist/<project>/browser/404.html.
-// Vercel serves a file called 404.html, from the root of the output directory, for an address with no
-// file behind it (vercel.json sets "framework": null, so there is no SPA fallback to index.html).
+// vercel.json ends its `routes` with the filesystem phase and one route that answers 404 with this file for an address with no
+// file behind it (SEO24-TYL-1; "framework": null drops the preset, and with it the SPA fallback to index.html).
 // The folder 404/ is removed: left behind, /404 would be a real page that answers 200.
 
 import { existsSync, readFileSync, renameSync, rmSync } from 'node:fs';

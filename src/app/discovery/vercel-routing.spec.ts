@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { follow, loadRoutes, loadVercelConfig, matching, respond } from '../../../e2e/vercel-effective';
+import { effectiveRoutes, follow, loadRoutes, loadVercelConfig, matching, respond } from '../../../e2e/vercel-effective';
 import { GONE_SLUGS } from '../../../e2e/retired-industries';
 
 // L13 (2026-10-21), cards C1, C10, C11 of the SEO page audit: one spelling of every address (`trailingSlash: false`), a year-long `immutable` only
@@ -13,15 +13,16 @@ import { GONE_SLUGS } from '../../../e2e/retired-industries';
 const config = loadVercelConfig();
 const routes = loadRoutes();
 
-test('vercel.json passes the platform\'s own transformation and has no catch-all that hides a file behind a rule', () => {
+test('vercel.json passes the platform\'s own transformation, and the library gives the list back as it was written (the order is the file\'s, not the library\'s)', () => {
   assert.ok(routes.length > 10, 'the transformation returned no routes');
-  assert.equal(routes.some((r) => r.handle), false, 'a handle phase puts the redirects and headers behind it (FL-92: the variant that was not shipped)');
+  assert.deepEqual(routes, config['routes'], 'the library moved, added or dropped a route: a key of the old form stands beside `routes`');
+  assert.equal(routes.filter((r) => r.handle).length, 1, 'one filesystem phase');
 });
 
 // C1: Vercel docs «trailingSlash: false … a path that ends with a forward slash will respond with a 308 status code and redirect to the path
 // without the trailing slash» (vercel.com/docs/project-configuration/vercel-json#trailingslash, read 2026-10-21). Before it, /x and /x/ both gave 200.
 test('C1: an address with a trailing slash answers 308 to the same address without one, the home page and the files are left alone', () => {
-  assert.equal(config['trailingSlash'], false);
+  assert.equal(config['trailingSlash'], undefined, 'trailingSlash is a key of the old form: the slash rule is the first route of the list');
   for (const slashed of ['/how-it-works/', '/pricing/', '/blog/best-ai-booking-widgets-2026/', '/install/', '/legal/security/']) {
     const a = respond(routes, slashed);
     assert.equal(a.status, 308, `${slashed}: ${a.status}`);
@@ -109,4 +110,33 @@ test('the security headers reach every address that is not ended by a rule', () 
     const h = respond(routes, p).headers;
     for (const name of ['strict-transport-security', 'content-security-policy', 'x-content-type-options', 'x-frame-options']) assert.ok(h[name], `${p} lost ${name}`);
   }
+});
+
+// SEO24-TYL-1: the ORDER of the list, asked of a made-up set of files (the real dist/ is asked in e2e/vercel-404-dist.spec.ts, which needs a build; this one runs in the hook).
+// A route that answers 404 placed in front of the filesystem phase would answer it for the pages as well; a rule placed behind the phase would not be reached by a page.
+const FILES = new Set(['/', '/pricing', '/privacy', '/robots.txt', '/404.html', '/main-IBOLA52H.js', '/api/contact']);
+const fileOf = (path: string): boolean => FILES.has(path);
+
+test('an address with no file answers 404 with 404.html and the headers of a page; an address with a file is answered by the file', () => {
+  const pageHeaders = respond(routes, '/', fileOf).headers;
+  for (const p of ['/zz-404-check', '/HOW-IT-WORKS', '/blog/nope-xyz', '/a/b/c', '/foo.js']) {
+    const a = respond(routes, p, fileOf);
+    assert.equal(a.status, 404, `${p}: ${a.status}`);
+    assert.equal(a.dest, '/404.html', p);
+    assert.deepEqual(a.headers, pageHeaders, `${p}: the 404 lost the headers of a page`);
+  }
+  for (const p of FILES) {
+    const a = respond(routes, p, fileOf);
+    assert.equal(a.served, true, `${p}: a file is there but ${a.status} answers`);
+    assert.equal(a.status, undefined, p);
+  }
+});
+
+test('the rules in front of the phase still answer before it: a redirect, the 410 pages, and the slash form one hop from a page', () => {
+  assert.equal(respond(routes, '/legal/privacy', fileOf).status, 308);
+  assert.equal(respond(routes, '/industries', fileOf).status, 410);
+  assert.equal(respond(routes, '/blog/what-we-got-wrong', fileOf).status, 410);
+  const hop = follow(routes, '/pricing/', fileOf);
+  assert.equal(hop.hops, 1);
+  assert.equal(hop.answer.served, true);
 });

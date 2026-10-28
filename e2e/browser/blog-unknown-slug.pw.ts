@@ -6,8 +6,8 @@ import { join } from 'node:path';
 // The path that matters is the browser's. Today the platform answers an address with no file with the home page and a 200 (the audit of 24.10:
 // canonical of the home page, no robots); the router then mounts the article shell over that document and prints «Post not found», and it used to
 // leave the head of the home page as it was. The local SSR server does not show this (it answers the same address with the 404 screen and its noindex
-// already in the bytes), so these tests put the bytes the platform sends in place of the document: dist's index.html with a 200 (today) and
-// dist's 404.html with a 404 (after SEO24-TYL-1). The head of the 404 screen is READ from a page that shows it, not typed here.
+// already in the bytes), so these tests put the bytes the platform sends in place of the document: dist's index.html with a 200 (what the platform sent until SEO24-TYL-1, and what the mirror still sends: FL-141) and
+// dist's 404.html with a 404 (since SEO24-TYL-1: vercel.json, e2e/vercel-404-dist.spec.ts). The head of the 404 screen is READ from a page that shows it, not typed here.
 
 const BROWSER = join(process.cwd(), 'dist', 'typelessity-landing', 'browser');
 const ARTICLE = 'latency-budgets';
@@ -48,14 +48,14 @@ async function expectIsTheHeadOf404Screen(page: Page, screen: Head): Promise<voi
   expect(await head(page)).toEqual(screen);
 }
 
-test('today: the platform answers /blog/<unknown> with the home page and a 200 — after boot the head is the head of the 404 screen', async ({ page }) => {
+test('before SEO24-TYL-1: the platform answered /blog/<unknown> with the home page and a 200 — after boot the head is the head of the 404 screen', async ({ page }) => {
   const screen = await headOf404Screen(page);
   await serveAs(page, UNKNOWN, 'index.html', 200);
   await page.goto(UNKNOWN, { waitUntil: 'networkidle' });
   await expectIsTheHeadOf404Screen(page, screen);
 });
 
-test('after SEO24-TYL-1: the platform answers /blog/<unknown> with 404.html and a 404 — the article shell leaves the head as it is', async ({ page }) => {
+test('since SEO24-TYL-1: the platform answers /blog/<unknown> with 404.html and a 404 — the article shell leaves the head as it is', async ({ page }) => {
   const screen = await headOf404Screen(page);
   await serveAs(page, UNKNOWN, '404.html', 404);
   await page.goto(UNKNOWN, { waitUntil: 'networkidle' });

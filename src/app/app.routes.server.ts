@@ -32,7 +32,7 @@ export const serverRoutes: ServerRoute[] = [
   // These never fire on the live site: the project deploys as static output, so the SSR
   // server is not in the request path and each of these paths fell through to the SPA
   // fallback index.html (HTTP 200 carrying the home page under a legal URL). The enforcing
-  // layer is the `redirects` block in vercel.json, guarded by
+  // layer is the redirect routes of vercel.json, guarded by
   // src/app/discovery/legal-redirects.spec.ts — change the two together.
   //
   // Kept here deliberately: correct and inert today, correct and active if SSR is switched on.
