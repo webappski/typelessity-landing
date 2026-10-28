@@ -4,6 +4,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { readdirSync, readFileSync } from 'node:fs';
 import { LANDING_LANGUAGES, NOT_SUPPORTED_LANGUAGES } from './claims-dictionary';
+import { loadRoutes } from './vercel-effective';
 
 // R42/R36 smoke for the discovery manifests (llms.txt / llms-full.txt). These are the first
 // files an AI crawler reads, and they are served verbatim — whatever URL they print is the URL
@@ -28,21 +29,14 @@ const MANIFESTS = ['llms.txt', 'llms-full.txt'] as const;
 /** The one legal document genuinely served from this domain (prerendered page). */
 const ONSITE_LEGAL_URL = 'typelessity.com/legal/security';
 
-interface Redirect {
-  source: string;
-  destination: string;
-}
-
-const vercelConfig = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as {
-  redirects?: Redirect[];
-};
-
-/** Offsite legal destinations, derived from the redirect table — never hardcoded here. */
+/** Offsite legal destinations, derived from the redirects the platform runs for /legal/* — never hardcoded here. L13 (legal F-4): /legal/privacy now ends on /privacy of this
+ *  site; a relative target is not "offsite" and a bare «/privacy» would be found in any text. */
 const OFFSITE_DESTINATIONS = [
   ...new Set(
-    (vercelConfig.redirects ?? [])
-      .filter((r) => r.source.startsWith('/legal/') && /^https:\/\//.test(r.destination)) // L13 (legal F-4): /legal/privacy now ends on /privacy of this site; a relative target is not "offsite" and a bare «/privacy» would be found in any text
-      .map((r) => r.destination),
+    loadRoutes()
+      .filter((r) => r.status === 308 && (r.src ?? '').startsWith('^/legal/'))
+      .map((r) => r.headers?.['Location'] ?? '')
+      .filter((destination) => /^https:\/\//.test(destination)),
   ),
 ];
 

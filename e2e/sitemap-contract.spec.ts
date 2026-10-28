@@ -5,6 +5,7 @@ import { join, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import matter from 'gray-matter';
 import { expectedSitemapCount, GONE_SLUGS } from './retired-industries';
+import { loadRoutes, respond } from './vercel-effective';
 import { PRICING_LAST_UPDATED } from '../src/app/pages/pricing/pricing.content';
 import { PRIVACY_LAST_UPDATED } from '../src/app/pages/privacy/privacy.content';
 
@@ -96,10 +97,11 @@ test('sitemap: every prerendered page has its own <title>, and no title is print
   assert.deepEqual([...byTitle].filter(([, ps]) => ps.length > 1).map(([t, ps]) => `${t} ← ${ps.join(', ')}`), [], 'two pages print the same <title>');
 });
 
-test('sitemap: no address is the source of a redirect in vercel.json', () => {
-  const vj = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8')) as { redirects: { source: string }[] };
-  for (const e of entries) for (const r of vj.redirects) {
-    assert.ok(!new RegExp(`^${r.source}$`).test(pathOf(e.loc)), `${e.loc} is redirected by ${r.source}`);
+test('sitemap: no address is redirected, taken down or otherwise ended by a rule of vercel.json', () => {
+  const routes = loadRoutes();
+  for (const e of entries) {
+    const answer = respond(routes, pathOf(e.loc));
+    assert.equal(answer.status, undefined, `${e.loc} is answered ${answer.status} by a rule of vercel.json (${answer.location ?? answer.dest ?? 'no target'})`);
   }
 });
 

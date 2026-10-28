@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
+import { follow, loadRoutes, respond } from '../../../e2e/vercel-effective';
 import { GONE_SLUGS, PRE_L11_SELECT_VALUES, RETIRED_INDUSTRIES, RETIRED_SLUGS, SEVEN_SLUGS } from '../../../e2e/retired-industries';
 
 // L1б (2026-10-19): 29 thin industry pages and the clinics address answer 410. L11 (2026-10-20, founder: «we do not need industries»):
@@ -15,17 +16,14 @@ import { GONE_SLUGS, PRE_L11_SELECT_VALUES, RETIRED_INDUSTRIES, RETIRED_SLUGS, S
 
 const ROOT = new URL('../../../', import.meta.url);
 
-interface Header { key: string; value: string }
-interface Route { src: string; status?: number; dest?: string; headers?: Header[] | Record<string, string>; handle?: string }
-interface Rule { source: string; destination?: string }
-interface VercelJson { routes?: Route[]; redirects?: Rule[]; rewrites?: Rule[]; headers?: Array<{ source: string; headers: Header[] }> }
-
+// Asked of the routes the platform runs (e2e/vercel-effective.ts): which address answers 410, with which headers, and where the slash form goes.
 // LANDING_VERCEL_JSON points the guard at another copy of vercel.json (the mutation run feeds it a spoiled one; it must go red).
-const vercel = JSON.parse(readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('vercel.json', ROOT), 'utf8')) as VercelJson;
-const gone = (vercel.routes ?? []).filter((r) => r.status === 410);
+const routes = loadRoutes();
+const gone = routes.filter((r) => r.status === 410);
 // The industries rule is the one that names /industries; L13 (C11) added a second 410 rule for two retired articles, which this file does not describe.
-const rule = gone.find((r) => r.src.includes('industries'))!;
-const taken = (path: string): boolean => new RegExp(rule.src).test(path);
+const rule = gone.find((r) => (r.src ?? '').includes('industries'))!;
+// An address with a trailing slash goes one hop to the address without it (C1), so «takes» is asked after the hop.
+const taken = (path: string): boolean => follow(routes, path).answer.status === 410;
 
 test('the lists are what the card says: 30 retired and 7 taken down at L11, none twice, 37 addresses in all', () => {
   assert.equal(RETIRED_SLUGS.length, 30);
@@ -55,12 +53,12 @@ test('the site has no industry module any more: no data, no component, no route,
 
 test('vercel.json holds exactly two 410 routes (the industries, the two retired articles): each anchored, no handle, no catch-all', () => {
   assert.equal(gone.length, 2, `expected two routes with status 410, found ${gone.length}`);
-  assert.equal(gone.filter((r) => r.src.includes('industries')).length, 1, 'one rule for the industries');
+  assert.equal(gone.filter((r) => (r.src ?? '').includes('industries')).length, 1, 'one rule for the industries');
   for (const r of gone) {
     assert.equal(r.handle, undefined, 'a handle phase would make the rule catch more than the list');
-    assert.match(r.src, /^\^/, 'the src must start with ^');
-    assert.match(r.src, /\$$/, 'the src must end with $');
-    assert.doesNotMatch(r.src, /\.\*|\(\.\+\)|\[\^\/\]\*/, 'the src must not hold a wildcard');
+    assert.match(r.src ?? '', /^\^/, 'the src must start with ^');
+    assert.match(r.src ?? '', /\$$/, 'the src must end with $');
+    assert.doesNotMatch(r.src ?? '', /\.\*|\(\.\+\)|\[\^\/\]\*/, 'the src must not hold a wildcard');
   }
 });
 
@@ -80,24 +78,25 @@ test('the 410 rule leaves look-alikes, unknown slugs and the rest of the site al
 
 test('the 410 route answers with the 404 page and carries the same security headers as every other page', () => {
   assert.equal(rule.dest, '/404.html');
-  const all = vercel.headers?.find((h) => h.source === '/(.*)');
-  assert.ok(all, 'vercel.json has no headers block for /(.*)');
-  // routes[].headers is an object { name: value } (Vercel schema, guarded in vercel-schema.spec.ts); the /(.*) block is an array of {key, value}
-  assert.deepEqual(rule.headers, Object.fromEntries(all.headers.map((h) => [h.key, h.value])), 'routes run before headers on Vercel, so the rule repeats the block (L1 Q-1); the copy drifted from it');
-  const names = (all.headers).map((h) => h.key.toLowerCase());
+  const everyPage = respond(routes, '/').headers;
+  const names = Object.keys(everyPage);
   for (const k of ['strict-transport-security', 'x-content-type-options', 'x-frame-options', 'referrer-policy', 'permissions-policy', 'content-security-policy']) {
-    assert.ok(names.includes(k), `the /(.*) block lost ${k}`);
+    assert.ok(names.includes(k), `a page of the site lost ${k}`);
   }
+  // a 410 rule ends the walk before the rule for every page is reached, so it repeats the headers (L1 Q-1)
+  assert.deepEqual(Object.fromEntries(Object.entries(rule.headers ?? {}).map(([k, v]) => [k.toLowerCase(), v])), everyPage, 'the 410 rule drifted from the headers of every page');
 });
 
-test('no redirect or rewrite takes a retired address or the hub: the clinics redirect is gone, nothing sends them to a page', () => {
-  const sources = [...(vercel.redirects ?? []), ...(vercel.rewrites ?? [])].map((r) => r.source);
+test('no rule redirects a retired address or the hub to another address: the clinics redirect is gone, nothing sends them to a page', () => {
   const probes = ['/industries', '/industries/', ...GONE_SLUGS.flatMap((s) => [`/industries/${s}`, `/industries/${s}/`])];
-  // a Vercel source is path-to-regexp: «:slug» is one segment, «(.*)» and «*» take the rest
-  const pattern = (s: string) => new RegExp(`^${s.replace(/:[A-Za-z_]+\*/g, '.*').replace(/:[A-Za-z_]+/g, '[^/]+').replace(/\*/g, '.*')}$`);
-  const hit = sources.filter((s) => probes.some((p) => {
-    try { return pattern(s).test(p); } catch { return s === p; }
-  }));
-  assert.deepEqual(hit, []);
-  assert.ok(!sources.some((s) => /beauty-aesthetic-clinics/.test(s)), 'the clinics redirect is back');
+  // the one hop that is allowed is the slash form to the same address without the slash (C1)
+  const sideways = probes.filter((p) => {
+    const location = respond(routes, p).location;
+    return location !== undefined && location !== p.replace(/\/$/, '');
+  });
+  assert.deepEqual(sideways, []);
+  assert.deepEqual(probes.filter((p) => follow(routes, p).answer.status !== 410), [], 'a retired address does not end on 410');
+  const redirects = routes.filter((r) => (r.status ?? 0) >= 300 && (r.status ?? 0) < 400);
+  assert.ok(redirects.length > 0, 'the redirects of vercel.json were not read');
+  assert.ok(!redirects.some((r) => /beauty-aesthetic-clinics/.test(r.src ?? '')), 'the clinics redirect is back');
 });

@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
-import { cspValues, type VercelCspConfig } from './vercel-csp';
+import { cspValues } from './vercel-csp';
+import { loadRoutes } from './vercel-effective';
 
 // L12 (C16, decision on FL-38), meaning corrected at L14 (legal L-1) and at LG-1 (legal 27.10). Until 26.10 the widget loaded from its CDN asked for Google Fonts
 // and this policy blocked that request (checked 2026-10-20 over CDP: `Network.requestWillBeSent` then `loadingFailed blockedReason=csp`). Since 26.10 the widget on
@@ -10,15 +10,12 @@ import { cspValues, type VercelCspConfig } from './vercel-csp';
 // typelessity.com does not open Google Fonts. What /gdpr must say is another perimeter (the widget on the customer's site, where this CSP does not apply): it is held
 // by e2e/gdpr-facts.spec.ts, which reads the widget code. If this test goes red, the CSP was opened to Google Fonts: if the widget asks Google again, the visitor's
 // IP would reach Google here too — write that on /gdpr (FL-38, gate) BEFORE the policy is changed.
-// vercel.json is read as the file that ships; CSP_VERCEL_JSON points the mutation run at a copy (vercel.json itself stays untouched).
+// vercel.json is read as the file that ships; LANDING_VERCEL_JSON points the mutation run at a copy (vercel.json itself stays untouched).
 
-const ROOT = new URL('../', import.meta.url);
-const path = process.env['CSP_VERCEL_JSON'];
-const config = JSON.parse(readFileSync(path ?? new URL('vercel.json', ROOT), 'utf8')) as VercelCspConfig;
-const policies = cspValues(config);
+const policies = cspValues(loadRoutes());
 const GOOGLE_FONTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
-test('the CSP exists in vercel.json (headers and the 410 route), so the next test reads something', () => {
+test('the CSP exists in vercel.json (the rule for every page and the 410 rules), so the next test reads something', () => {
   assert.ok(policies.length >= 2, `${policies.length} CSP values found`);
 });
 

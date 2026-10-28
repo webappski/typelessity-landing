@@ -17,6 +17,7 @@ import { test as base, expect, type Page, type Route } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../../src/app/core/integrations/embed-snippet';
+import { loadRoutes, respond } from '../vercel-effective';
 import { SNAPSHOT_DIST, readManifest, type Manifest } from './widget-snapshot';
 
 export * from '@playwright/test';
@@ -29,15 +30,14 @@ export * from '@playwright/test';
 export const REDUCED_MOTION = { contextOptions: { reducedMotion: 'reduce' as const } };
 
 /**
- * The headers `vercel.json` puts on every page (`/(.*)`): the local server sets none, so a spec that wants to prove anything under them
- * puts them on the document itself (underPolicy below). Read from the file, not typed here.
+ * The headers `vercel.json` puts on every page: the local server sets none, so a spec that wants to prove anything under them
+ * puts them on the document itself (underPolicy below). Asked of the site, not of the keys of the file: what a page of the site answers with (e2e/vercel-effective.ts).
  */
 export const SITE_HEADERS: Record<string, string> = (() => {
-  const config = JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8')) as { headers: { source: string; headers: { key: string; value: string }[] }[] };
-  const rule = config.headers.find((h) => h.source === '/(.*)');
+  const answered = respond(loadRoutes(), '/pricing').headers;
   const pick = (name: string): string => {
-    const value = rule?.headers.find((h) => h.key.toLowerCase() === name.toLowerCase())?.value;
-    if (!value) throw new Error(`vercel.json has no ${name} on /(.*)`);
+    const value = answered[name.toLowerCase()];
+    if (!value) throw new Error(`vercel.json sets no ${name} on a page`);
     return value;
   };
   return { 'content-security-policy': pick('Content-Security-Policy'), 'permissions-policy': pick('Permissions-Policy') };

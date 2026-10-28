@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { effectiveRoutes, follow, matching, respond } from '../../../e2e/vercel-effective';
+import { follow, loadRoutes, loadVercelConfig, matching, respond } from '../../../e2e/vercel-effective';
 import { GONE_SLUGS } from '../../../e2e/retired-industries';
 
 // L13 (2026-10-21), cards C1, C10, C11 of the SEO page audit: one spelling of every address (`trailingSlash: false`), a year-long `immutable` only
@@ -11,9 +10,8 @@ import { GONE_SLUGS } from '../../../e2e/retired-industries';
 //
 // LANDING_VERCEL_JSON points the guard at another copy of vercel.json (the mutation run feeds it the old rules; each must go red).
 
-const ROOT = new URL('../../../', import.meta.url);
-const config = JSON.parse(readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('vercel.json', ROOT), 'utf8')) as Record<string, unknown>;
-const routes = effectiveRoutes(config);
+const config = loadVercelConfig();
+const routes = loadRoutes();
 
 test('vercel.json passes the platform\'s own transformation and has no catch-all that hides a file behind a rule', () => {
   assert.ok(routes.length > 10, 'the transformation returned no routes');
@@ -71,12 +69,11 @@ test('C11: the 410 rules leave look-alikes and the live articles alone', () => {
   }
 });
 
-test('every 410 rule carries exactly the headers of the block for every page (routes run before headers, so the rule repeats them)', () => {
-  const block = (config['headers'] as Array<{ source: string; headers: Array<{ key: string; value: string }> }>).find((h) => h.source === '/(.*)')!;
-  const expected = Object.fromEntries(block.headers.map((h) => [h.key.toLowerCase(), h.value]));
+test('every 410 rule carries exactly the headers of every page (a 410 rule ends the walk before the rule for every page is reached, so it repeats them)', () => {
+  const expected = respond(routes, '/').headers;
   const gone = routes.filter((r) => r.status === 410);
   assert.equal(gone.length, 2, `expected the industries rule and the blog rule, found ${gone.length} routes with status 410`);
-  for (const r of gone) assert.deepEqual(Object.fromEntries(Object.entries(r.headers ?? {}).map(([k, v]) => [k.toLowerCase(), v])), expected, `a 410 rule drifted from the block for every page: ${r.src?.slice(0, 40)}`);
+  for (const r of gone) assert.deepEqual(Object.fromEntries(Object.entries(r.headers ?? {}).map(([k, v]) => [k.toLowerCase(), v])), expected, `a 410 rule drifted from the headers of every page: ${r.src?.slice(0, 40)}`);
 });
 
 // C10: `immutable` is a promise that the file at this URL never changes. Only a file whose name carries a hash of its content can keep it.

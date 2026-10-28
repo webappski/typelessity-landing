@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { effectiveRoutes, follow, respond } from './vercel-effective';
+import { follow, loadRoutes, respond } from './vercel-effective';
 
 // L13 (legal L-2 / gate G-3): /privacy is a prerendered page of this domain — the bytes a crawler receives, read from dist/ (npm run build first).
 // The wording is held by src/app/pages/privacy/privacy.content.spec.ts (unit tier); here: the page exists, is found (sitemap, footer of the home page
@@ -34,7 +34,7 @@ test('/privacy is in the sitemap once, and the footer of the home page and of an
 // L13 round of judges (test-design L13-4, legal F-4): asked of the routes Vercel builds from vercel.json (@vercel/routing-utils, e2e/vercel-effective.ts), not of the raw
 // `redirects` list — a rule of `routes` or a pattern that happened to cover /privacy would not be seen by a search of `source` strings.
 test('/legal/privacy ends on /privacy (a 308), not on the DPA; /privacy and /privacy/ behave: the page is a file of dist/, the slash form is one 308 away', () => {
-  const routes = effectiveRoutes(JSON.parse(readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('../vercel.json', import.meta.url), 'utf8')));
+  const routes = loadRoutes();
   const legal = respond(routes, '/legal/privacy');
   assert.equal(legal.status, 308, '/legal/privacy is a permanent redirect');
   assert.equal(legal.location, '/privacy', '/legal/privacy ends on the notice of this site, no longer on the contract (legal F-4)');

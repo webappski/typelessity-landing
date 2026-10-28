@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { effectiveRoutes, respond } from './vercel-effective';
+import { loadRoutes, respond } from './vercel-effective';
 
 // L13, card C10 (seo-lead page audit F-15): `immutable` promises that the file at a URL never changes. Every file the build puts in dist/ is
 // asked what vercel.json says about it (the platform's own route list, e2e/vercel-effective.ts); the answer must be a year-long `immutable`
@@ -19,7 +19,7 @@ import { effectiveRoutes, respond } from './vercel-effective';
 
 const ROOT = new URL('../', import.meta.url).pathname;
 const DIST = join(ROOT, 'dist/typelessity-landing/browser');
-const routes = effectiveRoutes(JSON.parse(readFileSync(process.env['LANDING_VERCEL_JSON'] ?? join(ROOT, 'vercel.json'), 'utf8')) as object);
+const routes = loadRoutes();
 
 function files(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name)) : [join(dir, e.name)]));

@@ -1,15 +1,7 @@
-// The Content-Security-Policy values written in vercel.json. They sit in two shapes, and Vercel's schema fixes which is which (guard: src/app/discovery/vercel-schema.spec.ts):
-//   headers[].headers  an array of { key, value }   (the block for every page)
-//   routes[].headers   an object { "Header-Name": "value" }   (the 410 rule, L14)
-// A reader that treated both as arrays broke when the rule took the object form it must have; this helper reads both, so the specs below read the file Vercel reads.
+import type { VercelRoute } from './vercel-effective';
 
-export interface VercelCspConfig {
-  headers?: Array<{ headers?: Array<{ key: string; value: string }> }>;
-  routes?: Array<{ headers?: Record<string, string> }>;
-}
-
-export function cspValues(config: VercelCspConfig): string[] {
-  const fromBlocks = (config.headers ?? []).flatMap((b) => b.headers ?? []).filter((h) => h.key.toLowerCase() === 'content-security-policy').map((h) => h.value);
-  const fromRoutes = (config.routes ?? []).flatMap((r) => Object.entries(r.headers ?? {})).filter(([name]) => name.toLowerCase() === 'content-security-policy').map(([, value]) => value);
-  return [...fromBlocks, ...fromRoutes];
+// The Content-Security-Policy values vercel.json sets, read from the routes the platform runs (e2e/vercel-effective.ts), not from the keys of the file: the block for
+// every page and the two 410 rules each end up as a route with the header, however the file is written. A policy written three times is three values here.
+export function cspValues(routes: VercelRoute[]): string[] {
+  return routes.flatMap((r) => Object.entries(r.headers ?? {})).filter(([name]) => name.toLowerCase() === 'content-security-policy').map(([, value]) => value);
 }

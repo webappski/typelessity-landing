@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { loadRoutes, respond } from './vercel-effective';
 
 // The discovery core a crawler reads before any page: robots.txt, the IndexNow key, /legal/security.
 // Reads the built bytes (run `npm run build` first). LANDING_DIST points at another copy of dist.
@@ -24,8 +25,8 @@ test('IndexNow: the key file name, its content and the default key of scripts/in
   for (const base of [join(ROOT, 'public'), BROWSER]) {
     assert.equal(rd(join(base, `${key}.txt`)).trim(), key, `${base}: content of ${key}.txt`);
   }
-  const vj = JSON.parse(rd(join(ROOT, 'vercel.json'))) as { redirects: { source: string }[] };
-  for (const r of vj.redirects) assert.ok(!new RegExp(`^${r.source}$`).test(`/${key}.txt`), `${r.source} catches the key file`);
+  const answer = respond(loadRoutes(), `/${key}.txt`);
+  assert.equal(answer.status, undefined, `a rule of vercel.json answers ${answer.status} for the key file (${answer.location ?? 'no location'})`);
 });
 
 test('/legal/security (FL-02): a built page with one h1 «Security», canonical to itself, in the sitemap, no redirect on it', () => {
@@ -34,8 +35,8 @@ test('/legal/security (FL-02): a built page with one h1 «Security», canonical 
   assert.match(html, /<h1[^>]*>\s*Security\s*<\/h1>/);
   assert.match(html, /rel="canonical"[^>]*href="https:\/\/typelessity\.com\/legal\/security"|href="https:\/\/typelessity\.com\/legal\/security"[^>]*rel="canonical"/);
   assert.match(rd(join(BROWSER, 'sitemap.xml')), /<loc>https:\/\/typelessity\.com\/legal\/security<\/loc>/);
-  const vj = JSON.parse(rd(join(ROOT, 'vercel.json'))) as { redirects: { source: string }[] };
-  for (const r of vj.redirects) assert.ok(!new RegExp(`^${r.source}$`).test('/legal/security'), `${r.source} catches /legal/security`);
+  const answer = respond(loadRoutes(), '/legal/security');
+  assert.equal(answer.status, undefined, `a rule of vercel.json answers ${answer.status} for /legal/security (${answer.location ?? 'no location'})`);
 });
 
 // L10 (D4, FL-27): the Encryption lines of /legal/security are the two lines of the published DPA (Art. 32 measures A-2 «In transit», A-3 «At rest»).

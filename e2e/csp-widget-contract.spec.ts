@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { WIDGET_API_URL, WIDGET_SCRIPT_URL } from '../src/app/core/integrations/embed-snippet';
-import { cspValues, type VercelCspConfig } from './vercel-csp';
+import { cspValues } from './vercel-csp';
+import { loadRoutes } from './vercel-effective';
 
 // L3 D5 (S2): the widget on the page needs three origins in the Content-Security-Policy, and the policy is written THREE times in
-// vercel.json — in `headers[]` for every page and in the two 410 routes (`routes[].headers`: L1б industries, L13 two articles), because routes run before
-// headers on Vercel. The contract, by token sets, not by substring (a substring passes `…/widget.js` with a path in
+// vercel.json — for every page and in the two 410 routes (L1б industries, L13 two articles), because a 410 rule ends the walk before the rule for every page is reached.
+// The contract, by token sets, not by substring (a substring passes `…/widget.js` with a path in
 // font-src, an `http://` origin and a stray `https:`):
 //   script-src  = 'self' + 'unsafe-inline' + cal.com + the origin of WIDGET_SCRIPT_URL
 //   font-src    = 'self' + data: + the origin of WIDGET_SCRIPT_URL            (the widget draws DM Sans from its own origin)
@@ -16,9 +16,7 @@ import { cspValues, type VercelCspConfig } from './vercel-csp';
 // origin moves this test with it. `vercel.json` is not applied locally; this file is the proof of what is deployed, and
 // widget-fonts-csp.pw.ts puts the same text on a document in a browser. Preview check: `curl -sI $PREVIEW/` equals it.
 
-const ROOT = new URL('../', import.meta.url);
-const config = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as VercelCspConfig;
-const copies = cspValues(config);
+const copies = cspValues(loadRoutes());
 
 const widgetOrigin = new URL(WIDGET_SCRIPT_URL).origin;
 const apiOrigin = new URL(WIDGET_API_URL).origin;
@@ -33,9 +31,9 @@ function directives(policy: string): Map<string, Set<string>> {
 }
 const sorted = (set: Set<string> | undefined) => [...(set ?? [])].sort();
 
-test('the CSP is written in vercel.json three times — the headers block and the two 410 routes — and the copies are equal', () => {
-  assert.equal(copies.length, 3, `${copies.length} CSP values in vercel.json (headers[] and two routes[].headers), expected 3`);
-  assert.equal(new Set(copies).size, 1, 'the copies of the CSP differ; routes run before headers on Vercel, so the route repeats the block');
+test('the CSP is set three times in vercel.json — the rule for every page and the two 410 rules — and the copies are equal', () => {
+  assert.equal(copies.length, 3, `${copies.length} rules set a CSP (the rule for every page and the two 410 rules), expected 3`);
+  assert.equal(new Set(copies).size, 1, 'the copies of the CSP differ; a 410 rule ends the walk before the rule for every page, so it repeats the policy');
 });
 
 test('the origins come from the embed code: https, no path, two different hosts', () => {

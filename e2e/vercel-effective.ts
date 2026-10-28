@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { getTransformedRoutes } from '@vercel/routing-utils';
 
 // What Vercel does with vercel.json, read the way Vercel reads it. The platform does not run locally (FL-55), but the library it uses to turn
@@ -36,6 +38,26 @@ export interface Answer {
   dest?: string;
   /** every header the routes passed on the way added, later ones over earlier ones (names lower-cased) */
   headers: Record<string, string>;
+}
+
+/**
+ * The ONE place that opens vercel.json: the project's file, or the copy LANDING_VERCEL_JSON points at (mutation runs, and the run on a candidate before it replaces the file).
+ * A reader asks what the site answers (`respond`, `follow`, `matching`), not what keys the file has: the keys are one way to write the rules, the list of
+ * routes below is what the platform runs, and it is the same list whichever way the file is written. src/app/discovery/vercel-readers.spec.ts fails on a spec that opens
+ * the file on its own. Relative to the working directory: `npm test`, the git hooks and playwright all start at the root of the repo.
+ */
+export function loadVercelConfig(): Record<string, unknown> {
+  const path = process.env['LANDING_VERCEL_JSON'] ? resolve(process.env['LANDING_VERCEL_JSON']) : join(process.cwd(), 'vercel.json');
+  return JSON.parse(readFileSync(path, 'utf8')) as Record<string, unknown>;
+}
+
+/** The rules of the file in the order the platform runs them. Throws when no rule sets a Content-Security-Policy: every page of the site has one, and a reader that took an
+ *  empty list for the file would pass over «no redirect catches X» without having looked at anything. */
+export function loadRoutes(): VercelRoute[] {
+  const routes = effectiveRoutes(loadVercelConfig());
+  const setsCsp = routes.some((r) => Object.keys(r.headers ?? {}).some((k) => k.toLowerCase() === 'content-security-policy'));
+  if (!setsCsp) throw new Error('vercel.json gives no rule that sets a Content-Security-Policy: the readers would pass over an empty list');
+  return routes;
 }
 
 export function effectiveRoutes(config: object): VercelRoute[] {

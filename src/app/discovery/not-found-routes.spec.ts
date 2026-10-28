@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadVercelConfig } from '../../../e2e/vercel-effective';
 
 // An unknown address must answer 404, not 200 with the home page under a foreign URL (soft 404).
 // Cause (card L1, 19.10): the Angular preset of Vercel prepends {handle:filesystem} and
@@ -16,9 +17,7 @@ import { join } from 'node:path';
 // guard at a mutated copy (mutation run).
 
 const ROOT = new URL('../../../', import.meta.url).pathname;
-const config = JSON.parse(
-  readFileSync(process.env['LANDING_VERCEL_JSON'] ?? join(ROOT, 'vercel.json'), 'utf8'),
-) as {
+const config = loadVercelConfig() as {
   framework?: string | null;
   buildCommand?: string;
   outputDirectory?: string;

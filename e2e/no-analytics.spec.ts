@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { cspValues } from './vercel-csp';
+import { loadRoutes } from './vercel-effective';
 
 // Founder 2026-09-24: PostHog is off typelessity.com — the SDK, the CSP hosts, and the cookie
 // banner that existed only to gate it. A browser network check would not guard this: the old
@@ -81,13 +83,7 @@ test('prerendered "/" has no cookie-consent dialog and no PostHog script', async
 });
 
 test('CSP in vercel.json allows no PostHog host', () => {
-  const config = JSON.parse(readFileSync(new URL('vercel.json', ROOT), 'utf8')) as {
-    headers?: { headers: { key: string; value: string }[] }[];
-  };
-  const csp = (config.headers ?? [])
-    .flatMap((h) => h.headers)
-    .filter((h) => h.key.toLowerCase() === 'content-security-policy')
-    .map((h) => h.value);
+  const csp = cspValues(loadRoutes());
   assert.ok(csp.length > 0, 'vercel.json must set a Content-Security-Policy');
   for (const value of csp) {
     assert.ok(!/posthog/i.test(value), `CSP still allows PostHog: ${value}`);

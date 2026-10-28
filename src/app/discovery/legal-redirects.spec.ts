@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { loadRoutes, respond } from '../../../e2e/vercel-effective';
 
 // Only one legal document is a page on this domain: /legal/security. The rest live on
 // webappski.com. app.routes.server.ts declares 308s for them, but this project deploys as
@@ -20,16 +21,8 @@ import { readFileSync } from 'node:fs';
 
 const ROOT = new URL('../../../', import.meta.url);
 
-interface Redirect {
-  source: string;
-  destination: string;
-  permanent?: boolean;
-  statusCode?: number;
-}
-
-const vercelConfig = JSON.parse(
-  readFileSync(process.env['LANDING_VERCEL_JSON'] ?? new URL('vercel.json', ROOT), 'utf8'),
-) as { redirects?: Redirect[] };
+// What vercel.json answers is asked of the routes the platform runs (e2e/vercel-effective.ts), not of the keys of the file.
+const routes = loadRoutes();
 
 const sitemapGenerator = readFileSync(new URL('tools/build-sitemap.ts', ROOT), 'utf8');
 
@@ -62,25 +55,23 @@ const SAME_SITE_LEGAL: Record<string, string> = {
 /** The one legal page that is genuinely served from this domain (prerendered). */
 const ONSITE_LEGAL = '/legal/security';
 
-const redirects = vercelConfig.redirects ?? [];
-
 test('vercel.json redirects every offsite legal path to its document', () => {
   for (const [source, destination] of Object.entries(OFFSITE_LEGAL)) {
-    const rule = redirects.find((r) => r.source === source);
+    const answer = respond(routes, source);
 
-    assert.ok(rule, `vercel.json has no redirect for ${source} — it would serve the home page at 200`);
-    assert.equal(rule.destination, destination, `${source} points at the wrong document`);
+    assert.ok(answer.status !== undefined, `vercel.json has no redirect for ${source} — it would serve the home page at 200`);
+    assert.equal(answer.location, destination, `${source} points at the wrong document`);
   }
 });
 
 test('/legal/privacy goes to the privacy notice of this site, /privacy, and not to the DPA (legal F-4)', () => {
   for (const [source, destination] of Object.entries(SAME_SITE_LEGAL)) {
-    const rule = redirects.find((r) => r.source === source);
+    const answer = respond(routes, source);
 
-    assert.ok(rule, `vercel.json has no redirect for ${source}`);
-    assert.equal(rule.destination, destination, `${source} must end on ${destination}`);
-    assert.ok(rule.permanent === true || rule.statusCode === 308, `${source} must redirect permanently`);
-    assert.ok(!/dpa-typelessity/.test(rule.destination), `${source} goes to a contract again`);
+    assert.ok(answer.status !== undefined, `vercel.json has no redirect for ${source}`);
+    assert.equal(answer.location, destination, `${source} must end on ${destination}`);
+    assert.equal(answer.status, 308, `${source} must redirect permanently`);
+    assert.ok(!/dpa-typelessity/.test(String(answer.location)), `${source} goes to a contract again`);
   }
   assert.ok(sitemapGenerator.includes("'/privacy'"), 'the sitemap generator does not list /privacy, the page /legal/privacy ends on');
 });
@@ -99,22 +90,15 @@ test('offsite legal redirects are permanent (308), not temporary', () => {
   // A 302/307 tells crawlers the old URL is still the canonical one, so the duplicate
   // never fully clears. 308 also preserves the method, unlike 301.
   for (const source of Object.keys(OFFSITE_LEGAL)) {
-    const rule = redirects.find((r) => r.source === source)!;
-    const isPermanent = rule.permanent === true || rule.statusCode === 308;
-
-    assert.ok(isPermanent, `${source} must redirect permanently (permanent: true => 308)`);
+    assert.equal(respond(routes, source).status, 308, `${source} must redirect permanently (308)`);
   }
 });
 
-test('no redirect rule can swallow the prerendered /legal/security page', () => {
-  // A convenience wildcard (/legal/(.*) or /legal/:doc*) would take the real page offsite.
-  for (const rule of redirects) {
-    assert.notEqual(rule.source, ONSITE_LEGAL, `${ONSITE_LEGAL} is a real page here — it must not redirect`);
-    assert.ok(
-      !/^\/legal\/?(\(|:|\*)/.test(rule.source),
-      `redirect source "${rule.source}" is a wildcard under /legal and would swallow ${ONSITE_LEGAL}`,
-    );
-  }
+test('no rule can swallow the prerendered /legal/security page', () => {
+  // A convenience wildcard (/legal/(.*) or /legal/:doc*) would take the real page offsite: asked of the site, no rule ends the walk on it.
+  const answer = respond(routes, ONSITE_LEGAL);
+  assert.equal(answer.status, undefined, `${ONSITE_LEGAL} is a real page here — a rule answers ${answer.status} for it`);
+  assert.equal(answer.location, undefined, `${ONSITE_LEGAL} redirects to ${answer.location}`);
 });
 
 test('sitemap advertises the legal page we serve and none we redirect', () => {
