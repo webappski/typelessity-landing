@@ -42,7 +42,8 @@ const STATIC_PATHS: Url[] = [
   { path: '/how-it-works', lastmod: '2026-10-27' },
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
   // TY-INSTALL (2026-10-27): the page starts with the config of the site (two ways, the form of /pricing, the note above the code); the description and the lines under «Get it free».
-  { path: '/install', lastmod: '2026-10-27' },
+  // TY-F111 (2026-11-05): the owner's email is «New booking request from <brand>», a row is named by the field's label, Reply goes to the customer when the form has one email field.
+  { path: '/install', lastmod: '2026-11-05' },
   // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
   // L12 (2026-10-21): the page prints «Page last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },

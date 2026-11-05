@@ -88,13 +88,26 @@ test('the headers and the retry rules on the page are the ones the product sends
 test('the email subject and the success title on the page are the ones the product uses', () => {
   const mail = product('packages/api/src/services/email-forwarder.service.ts');
   const subject = mail.match(/const subject = `([^$`]*)\$\{brand\}`/)?.[1];
-  assert.equal(subject, 'New lead from ', 'the email subject changed — fix /install');
+  assert.equal(subject, 'New booking request from ', 'the email subject changed — fix /install');
   const en = product('packages/shared/src/i18n/en.ts');
   const title = en.match(/'widget\.success\.requestTitle':\s*'([^']*)'/)?.[1];
   assert.equal(title, 'Request Received', 'the success title of the email path changed — fix /install');
   const text = INSTALL();
-  assert.ok(text.includes('New lead from'), '/install does not print the subject «New lead from»');
+  assert.ok(text.includes('New booking request from'), '/install does not print the subject «New booking request from»');
+  assert.ok(!text.includes('New lead from'), '/install still prints the old subject «New lead from»');
   assert.ok(text.includes(`“${title}”`) || text.includes(`"${title}"`), `/install does not print the success title «${title}»`);
+});
+
+test('the rows and the Reply button of the owner’s email are what /install says: a row is named by the field’s label, Reply goes to the customer only when the form has exactly one email field', () => {
+  const mail = product('packages/api/src/services/email-forwarder.service.ts');
+  // The product names a row by the label of the field in the config and falls back to the key only when no field matches.
+  assert.ok(/const label = field\?\.label[^;]*;\s*return \{ name: label \|\| key/.test(mail), 'the rows of the owner’s email are no longer named by the field label — fix /install');
+  // Reply-To is set only for ONE email field of the form (two: the code cannot tell which is the customer’s own).
+  assert.ok(/emailFields\.length === 1 \? emailFields\[0\] : undefined/.test(mail), 'the Reply-To rule is no longer «exactly one email field» — fix /install');
+  const text = INSTALL();
+  assert.ok(text.includes('the field’s label'), '/install does not say that a row is named by the field’s label');
+  assert.ok(!/the field’s key/.test(text), '/install still says that a row is named by the field’s key');
+  assert.ok(text.includes('exactly one email field') && /Reply goes straight to the customer/.test(text), '/install does not say that Reply goes to the customer when the form has exactly one email field');
 });
 
 test('the <title> bytes of the two pages are exact: /install carries the brand once, /how-it-works says it in its own words and gets no suffix', () => {

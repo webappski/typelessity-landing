@@ -62,7 +62,8 @@ export const INSTALL = {
     email: {
       h3: 'By email',
       b: [
-        'The email goes to the address you set. The subject is “New lead from <your business name>”, and the body has one line per detail: the field’s key and its value, for example date: 2026-10-20.',
+        'The email goes to the address you set. The subject is “New booking request from <your business name>”, and the body has one line per detail: the field’s label from your config and its value, for example Date: 2026-10-20.',
+        'If your form has exactly one email field and the customer filled it in with a valid address, Reply goes straight to the customer. In any other case Reply does not reach the customer, so use the details in the body.',
         'The request is saved before it is sent. If the email cannot be sent, it is retried once a day, up to 5 attempts.',
       ],
     },

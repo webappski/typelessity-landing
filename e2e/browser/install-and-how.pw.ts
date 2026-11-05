@@ -47,6 +47,26 @@ for (const scheme of ['light', 'dark'] as const) {
         await noSideScroll(page);
       });
 
+      // TY-F111 commit 2: the block «By email» is three paragraphs of one kind (the subject and the rows, when Reply goes to the customer, the retry rule);
+      // the new paragraph is read as its sisters are: same size, same colour, inside the column, and the page does not scroll sideways.
+      test(`[after-install-email-${width}-${scheme}] /install at ${width}px: «By email» has the subject and rows, the Reply rule and the retry rule as three paragraphs of one look, the page is ${scheme} and does not scroll sideways`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/install');
+        const paragraphs = page.locator('main section', { has: page.getByRole('heading', { level: 3, name: INSTALL.where.email.h3 }) }).first().locator('h3').first().locator('xpath=following-sibling::p[count(preceding-sibling::h3) = 1]');
+        await expect(paragraphs).toHaveCount(3);
+        await expect(paragraphs.nth(0)).toContainText('New booking request from');
+        await expect(paragraphs.nth(1)).toContainText('Reply goes straight to the customer');
+        await expect(paragraphs.nth(1)).toBeVisible();
+        const looks = await paragraphs.evaluateAll((ps) => ps.map((p) => {
+          const s = getComputedStyle(p), r = p.getBoundingClientRect(), column = p.parentElement!.getBoundingClientRect();
+          return { size: s.fontSize, color: s.color, weight: s.fontWeight, inside: r.left >= column.left - 1 && r.right <= column.right + 1 };
+        }));
+        expect(new Set(looks.map((l) => `${l.size}|${l.color}|${l.weight}`)).size, 'the three paragraphs have one look').toBe(1);
+        expect(looks.every((l) => l.inside), 'every paragraph is inside the column').toBe(true);
+        await expectSurface(page, scheme);
+        await noSideScroll(page);
+      });
+
       // TY-INSTALL (founder 26.10): /install starts with the config of the site. One statement per frame (R69 rev. 3): the block #config-first
       // stands under the H1 and above the three steps, its two ways are cards of the colour of the theme, side by side on a desktop and one under
       // the other on a phone, the way in is a button, and the page does not scroll sideways.
