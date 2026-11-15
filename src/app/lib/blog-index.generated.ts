@@ -58,7 +58,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "Whisper vs Web Speech API for booking voice",
     "description": "Typelessity transcribes booking voice on its server, first with Whisper, now with gpt-4o-mini-transcribe, not in the browser. What it does and does not do.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Engineering"
   },
   {

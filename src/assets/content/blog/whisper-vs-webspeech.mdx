@@ -2,7 +2,7 @@
 title: "Whisper vs Web Speech API for booking voice"
 description: "Typelessity transcribes booking voice on its server, first with Whisper, now with gpt-4o-mini-transcribe, not in the browser. What it does and does not do."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-21"
+updatedAt: "2026-11-15"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["voice", "whisper", "speech-recognition", "gpt-4o-mini-transcribe"]
@@ -23,7 +23,7 @@ The Web Speech API ships in Chromium browsers and costs the site nothing at the 
 ## How does Typelessity handle voice input today?
 
 1. **Recording.** The widget records with the browser's `MediaRecorder`. The audio stays in the browser while the user speaks.
-2. **One upload.** When the user stops — or after two minutes — the widget sends the whole recording once to Typelessity's API. Nothing is sent while the user is still speaking.
+2. **One upload.** When the user stops — or after 100 seconds — the widget sends the whole recording once to Typelessity's API. Nothing is sent while the user is still speaking.
 3. **Transcription.** The API calls OpenAI `gpt-4o-mini-transcribe` with one fixed prompt: *"Form data. Preserve email indicators as spoken words. Keep natural speech patterns."* The prompt is the same for every business and carries no names or domain terms. The widget sends no language hint, so the transcription model works out the spoken language itself.
 4. **Extraction.** The transcript enters the same extraction step as typed text — see [Replacing a booking form with one GPT call](/blog/single-gpt-call).
 
