@@ -31,7 +31,7 @@ const BLOG_PAGES: ReadonlyArray<readonly [slug: string, title: string, descripti
   ['designing-for-ai-agents', 'What typelessity.com publishes for AI agents', 'JSON-LD, llms.txt and the /for-ai-agents page: what each one says about Typelessity, what it is for, and what no AI engine has promised us.'],
   ['whisper-vs-webspeech', 'Whisper vs Web Speech API for booking voice', 'Typelessity transcribes booking voice on its server, first with Whisper, now with gpt-4o-mini-transcribe, not in the browser. What it does and does not do.'],
   ['25-languages-one-prompt', '25 interface languages, one booking prompt', 'The chat window comes in 25 languages; the assistant replies in the language you set and reads what customers write. One prompt, no per-language code.'],
-  ['single-gpt-call', 'Replacing a booking form with one GPT call', "One model call reads the customer's sentence and fills every detail it can; the chat asks only for what is missing. The architecture and its limits."],
+  ['single-gpt-call', 'Replacing a booking form with one sentence', "One model call reads the customer's whole sentence and fills the details it states; the chat asks for the rest. When an extra call runs, and the limits."],
   ['cascade-corrections', 'Cascade corrections in conversational booking', 'When a customer changes one detail mid-booking, the details that depended on it must be cleared. How Typelessity tracks this and asks first.'],
 ];
 const SUFFIX = ' — Typelessity';

@@ -2,7 +2,7 @@
 title: "Best AI booking widgets for websites in 2026"
 description: "Calendly, SimplyBook.me, Botpress, NoForm.ai and Typelessity compared: what each one is for, where it fits and when it is the wrong choice."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-25"
+updatedAt: "2026-11-15"
 author: "Alex Isa"
 category: "Comparison"
 tags: ["comparison", "ai-booking", "calendly", "simplybook", "botpress", "noform"]
@@ -24,7 +24,7 @@ An AI booking widget is a website surface — usually embedded as a script or we
 Three forces converged in the last two years and made the booking-form interface look obsolete:
 
 - **Multilingual LLMs.** Large language models read many languages without per-language code. Typelessity's chat window comes in 25 languages; see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt).
-- **Small structured-output models.** Compact models — Typelessity uses OpenAI's gpt-5.4-mini — return structured JSON in a single call, which is what makes a one-call conversational turn possible. For the one-second target Typelessity designs for (a target, not a measurement), see [A one-second latency target for AI booking](/blog/latency-budgets).
+- **Small structured-output models.** Compact models — Typelessity uses OpenAI's gpt-5.4-mini — return structured JSON, which is what lets a conversational turn run on one model call. For the one-second target Typelessity designs for (a target, not a measurement), see [A one-second latency target for AI booking](/blog/latency-budgets).
 - **Procurement questions.** Buyers now ask where the service runs, which sub-processors see the data and whether there is a DPA. See [GDPR and an AI booking widget](/gdpr) for what to check.
 
 The result: replacing a 7-field booking form with a 1-message extraction is a product decision, not a research question.
@@ -83,7 +83,7 @@ Listed alphabetically. Each entity uses the same template — *What it is*, *Bes
 
 ### Typelessity
 
-**What it is:** a conversational AI booking widget. It replaces multi-step booking forms with a chat that extracts every required field in a single GPT round-trip and sends the booking request by email, or as JSON to your booking system if it has an API (REST). The chat window comes in 25 languages; voice input is transcribed by OpenAI gpt-4o-mini-transcribe.
+**What it is:** a conversational AI booking widget. It replaces multi-step booking forms with a chat that reads the whole message and fills the fields it states in one model call, and sends the booking request by email, or as JSON to your booking system if it has an API (REST). The chat window comes in 25 languages; voice input is transcribed by OpenAI gpt-4o-mini-transcribe.
 
 **Best for:** Service businesses that want a booking chat on their own site instead of a form: hair and beauty salons, restaurants, yoga and fitness studios, driving schools, auto repair, gyms, tutoring and any other business that takes bookings.
 
@@ -91,7 +91,7 @@ Listed alphabetically. Each entity uses the same template — *What it is*, *Bes
 
 **Weakness:** Typelessity is a younger entrant; brand recognition is lower than Calendly or SimplyBook.me. It does not include payments, staff scheduling, or a CRM — it is the booking front end, not the booking platform. For a business with no existing booking backend at all, Typelessity is the wrong starting point — consider SimplyBook.me first, layer Typelessity on later.
 
-**Unique strength:** Single-call extraction (one GPT round-trip per turn, see [Replacing a booking form with one GPT call](/blog/single-gpt-call)), corrections that clear dependent fields only after asking (see [Cascade corrections in conversational booking](/blog/cascade-corrections)), a chat window in 25 languages from one prompt, and a one-second latency target (a target, not a measurement). Purpose-built for the form-replacement category specifically.
+**Unique strength:** Whole-message extraction (one model call reads each message, see [Replacing a booking form with one sentence](/blog/single-gpt-call)), corrections that clear dependent fields only after asking (see [Cascade corrections in conversational booking](/blog/cascade-corrections)), a chat window in 25 languages from one prompt, and a one-second latency target (a target, not a measurement). Purpose-built for the form-replacement category specifically.
 
 ## Comparison table
 
@@ -205,7 +205,7 @@ A vendor exhibiting any of the following is a vendor still figuring out the cate
 
 ## When AI booking widgets are the wrong tool
 
-The form is the right primitive when the schema is huge (50+ fields), compliance copy must be inline with each field, users need to upload supporting documents, or the use case is regulatory submission rather than service booking. For appointment booking, restaurant reservations and beauty-service intake, a single-call extraction fits. For 50-field tax intake or KYC submission — keep the form.
+The form is the right primitive when the schema is huge (50+ fields), compliance copy must be inline with each field, users need to upload supporting documents, or the use case is regulatory submission rather than service booking. For appointment booking, restaurant reservations and beauty-service intake, whole-message extraction fits. For 50-field tax intake or KYC submission — keep the form.
 
 ## FAQ
 
@@ -213,7 +213,7 @@ The form is the right primitive when the schema is huge (50+ fields), compliance
 There is no single best tool. The five options occupy different categories: Calendly (scheduling), SimplyBook.me (booking platform), Botpress (chatbot platform), NoForm.ai (lead capture), Typelessity (form replacement). The right tool depends on category fit.
 
 **What is the difference between an AI booking widget and a scheduling tool like Calendly?**
-Calendly publishes a calendar link for slot selection. An AI booking widget like Typelessity replaces a multi-field booking form with a conversation that extracts every required field in one round-trip. Different categories.
+Calendly publishes a calendar link for slot selection. An AI booking widget like Typelessity replaces a multi-field booking form with a conversation that fills the fields a message states in one model call. Different categories.
 
 **Do I need a separate booking system if I use Typelessity?**
 Typelessity replaces the form, not the backend. It collects structured data via chat and sends the booking request by email, or as JSON to your booking system if it has an API. SimplyBook.me, by contrast, is a booking platform with its own calendar, providers and payments.
@@ -232,11 +232,13 @@ For service businesses that want a booking chat on their own site, with a DPA an
 
 ---
 
-For Typelessity's architecture, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For the chat window's languages, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For the data-protection contour, see [GDPR and an AI booking widget](/gdpr). For pricing, see [Pricing](/pricing).
+For Typelessity's architecture, see [Replacing a booking form with one sentence](/blog/single-gpt-call). For the chat window's languages, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For the data-protection contour, see [GDPR and an AI booking widget](/gdpr). For pricing, see [Pricing](/pricing).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
 
 ## What changed in this article
+
+> **Updated 2026-11-15 — what changed:** the Typelessity entry no longer gives a fixed number of model calls and no longer says that all required fields are always extracted. One model call reads each message, and an extra call can run for a list fetched from the business's system. The vendor facts and their check dates are unchanged.
 
 > **Updated 2026-10-25 — what changed:** SimplyBook.me. Its own AI Voice Booking page (checked 2026-10-24) describes a chat and voice assistant for the visitors of a site, so the line saying it had no AI chat for a site's visitors is gone; the credit price ("$8" on the pricing page, "€8" on the product page), the language count and the credit rules are added with the date. The voice line of the decision guide now names SimplyBook.me for bookings that already live in it. The same for Calendly: its AI assistant Callie, described from Calendly's own pages (checked 2026-10-25), works for the account owner by email and in a chat inside Calendly, and the sentence saying its pricing page had no AI chat is gone, because that page does list a Callie chat. The comparison with vendors is no longer repeated in llms.txt and llms-full.txt: they point here, because the facts about other vendors live in this one article.
 

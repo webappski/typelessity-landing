@@ -147,6 +147,29 @@ export const CLAIM_CLASSES: readonly ClaimClass[] = [
     mutants: ['Mock note: replace', 'Portal screenshot goes here', 'Thin template', 'the server answers 404', 'the replies are scripted in this prototype', 'see widget-states'],
     legal: 'Typelessity is an AI booking widget.',
   },
+  {
+    id: 'K15', name: 'a fixed number of model calls per turn (F-332: the code makes extra calls)',
+    // TYL-F332-CLAIMS: the code reads each message with one model call, and an extra call runs when the visitor names a choice with no exact match
+    // in a list fetched from the owner's system, when a word said earlier for a list field does not match exactly, and when a needed list comes back
+    // empty (message-handler.ts @ 77207ea: 695, 1158-1201, 1416, 1477-1498, 275, 1921). No page says «one call per turn», «a second call» or «at most two».
+    patterns: [
+      /single[- ](unified prompt|call)\b/i,
+      /\b(one|a single|single) (AI|GPT|LLM) call\b/i,
+      /\b(one|a single|single)( GPT| model| AI| extraction)? round-?trip/i,
+      /one (model|extraction) call per/i,
+      /a second (model |AI |GPT )?call/i,
+      /(at most|no more than) (two|2) (model |AI |GPT )?calls/i,
+      /(extracts|pulls|returns) every (required )?field/i,
+    ],
+    mutants: ['One AI call per turn', 'Single unified prompt', 'One GPT call extracts every field', 'one GPT round-trip per turn', 'One model call per turn', 'A second call presents the results', 'At most two model calls'],
+    legal: 'One model call reads each message. An extra call can run when the visitor names a choice that has no exact match in a list fetched from your system, or when such a list comes back empty.',
+  },
+  {
+    id: 'K16', name: 'the review shows every field (llms.txt says only: the user verifies fields with inline editing)',
+    patterns: [/(sees|reviews|checks|verifies) every (extracted )?field/i, /shows the (user|customer|visitor) every field/i],
+    mutants: ['The visitor reviews every field before sending', 'The user sees every field', 'It shows the customer every field', 'The visitor verifies every extracted field'],
+    legal: 'The visitor verifies the fields, with inline editing.',
+  },
 ];
 
 export type ClaimCounts = Record<string, number>;

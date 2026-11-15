@@ -448,7 +448,7 @@ test('dictionary: each class catches its mutants and lets its legal form through
     for (const m of c.mutants) assert.ok(countClaims(m)[c.id] > 0, `${c.id} (${c.name}) does not catch «${m}»`);
     assert.deepEqual(countClaims(c.legal), {}, `${c.id} (${c.name}) flags its own legal form «${c.legal}»`);
   }
-  assert.deepEqual(CLAIM_CLASSES.map((c) => c.id), Array.from({ length: 14 }, (_, i) => `K${i + 1}`));
+  assert.deepEqual(CLAIM_CLASSES.map((c) => c.id), Array.from({ length: 16 }, (_, i) => `K${i + 1}`));
 });
 
 test('dictionary: public/*.txt print none of the words — 0 matches, no ratchet', async () => {
@@ -460,6 +460,27 @@ test('dictionary: public/*.txt print none of the words — 0 matches, no ratchet
     if (Object.keys(found).length) offenders.push(`public/${name}: ${describeCounts(found)}`);
   }
   assert.deepEqual(offenders, [], 'a word of the dictionary is back in a public text file');
+});
+
+// TYL-F332-CLAIMS: the articles are read as sources too, not only as the built HTML: a post that carries the phrases is counted before the build.
+test('dictionary: the raw .mdx articles print none of the words of K15 and K16 — 0 matches', async () => {
+  const dir = new URL('../src/assets/content/blog/', import.meta.url);
+  const offenders: string[] = [];
+  for (const name of readdirSync(dir).filter((n) => n.endsWith('.mdx'))) {
+    const found = countClaims(await readFile(new URL(name, dir), 'utf8'));
+    const hit = Object.fromEntries(Object.entries(found).filter(([k]) => k === 'K15' || k === 'K16'));
+    if (Object.keys(hit).length) offenders.push(`blog/${name}: ${describeCounts(hit)}`);
+  }
+  assert.deepEqual(offenders, [], 'a number of model calls or «every field» is back in an article source');
+});
+
+// T3 (TYL-F332-CLAIMS): the true sentences are PRINTED, from the build (not public/), so a copy of the build with the sentence taken out goes red.
+test('T3 the extra-call sentence and the fixed 10 s of option lists are printed where the old claims stood', () => {
+  const EXTRA = 'An extra call can run when the visitor names a choice';
+  const lacking = (paths: readonly string[], needle: string) =>
+    paths.filter((p) => !(everything.get(p) ?? pages.get(p) ?? '').includes(needle));
+  assert.deepEqual(lacking(['llms-full.txt', 'faq/index.html', 'how-it-works/index.html', 'blog/single-gpt-call/index.html'], EXTRA), [], 'the extra-call sentence is missing');
+  assert.deepEqual(lacking(['llms-full.txt', 'for-ai-agents/index.html'], '(dynamicOptions): 10000, fixed'), [], 'the fixed 10 s of option lists is missing');
 });
 
 test('dictionary: the built .txt files print none of the words — 0 matches, no ratchet', () => {

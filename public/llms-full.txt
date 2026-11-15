@@ -15,11 +15,11 @@
 **Four phases.**
 1. Chat — User describes booking in plain language; The AI model — OpenAI (currently gpt-5.4-mini) — reads the field config and extracts values directly. No regex, no hardcoded patterns, no language switches.
 2. Select — When options must be exact (a specific mechanic, a specific time slot), the widget renders interactive cards. Triggered by enrichment APIs.
-3. Review — Full form review surface. User verifies every extracted field, edits inline if needed. Cascade-aware — changing a field clears downstream-dependent fields with a warning.
+3. Review — Full form review surface. The visitor verifies the fields, with inline editing. Cascade-aware — changing a field clears downstream-dependent fields with a warning.
 4. Confirm — Booking sent to your system: as JSON to your endpoint, shaped by the field mapping, or by email. The success screen shows a reference: the ID your system returned, or our own when it returned none. A 502, 503 or 504 from your endpoint is retried with exponential backoff.
 
 **Architecture pillars.**
-- Single unified prompt: one GPT call extracts every field. The prompt is built from the configuration, so its size grows with the fields and options.
+- One prompt, built from the configuration, so its size grows with the fields and options. One model call reads each message. An extra call can run when the visitor names a choice that has no exact match in a list fetched from your system, or when such a list comes back empty.
 - Config-driven, not pattern-driven: aiHint per field; GPT reads context.
 - Enrichment APIs: 10 s timeout each by default (configurable), non-fatal on failure.
 - Cascade-aware corrections: DFS dependency walk on field changes.
@@ -38,7 +38,7 @@ Made-up businesses, each with its own booking. For each one the page shows what 
 
 ## How it works — https://typelessity.com/how-it-works
 
-Four phases, one unified flow. Chat → Select → Review → Confirm. One GPT call per turn, enrichment APIs, cascade-aware corrections, no hardcoded regex.
+Four phases, one unified flow. Chat → Select → Review → Confirm. One model call reads each message, enrichment APIs, cascade-aware corrections, no hardcoded regex.
 
 The widget is a Lit web component. The API is a Node service. The AI provider is OpenAI, called through Typelessity's own account; there is no custom provider option. Field schemas are JSON. Per-tenant config selects field types, options, enrichments, branding.
 
@@ -89,7 +89,7 @@ The Session and Booking shapes are published, not versioned yet. A dedicated `/a
 - businesses_supported: any business that takes bookings (set up per business in config)
 - extraction_model: OpenAI (currently gpt-5.4-mini)
 - voice_input: OpenAI gpt-4o-mini-transcribe
-- enrichment_timeout_ms: 10000 by default, configurable
+- enrichment_timeout_ms: 10000 by default, configurable per enrichment; option lists a field loads itself (dynamicOptions): 10000, fixed
 - hosting_region: EU (Vercel fra1, Frankfurt)
 - database_region: EU (Supabase eu-west-1, Ireland)
 - ai_processing_region: US (OpenAI, 2021 SCCs)
@@ -108,7 +108,7 @@ Selection (full FAQ on /faq):
 - **How is it different from other booking tools?** Typelessity replaces the booking form with a conversation, then submits to your existing backend or sends the request by email; it is not a booking platform. The per-vendor comparison (Calendly, SimplyBook.me, Botpress, NoForm.ai) is kept in one article with the date each page was checked: [Best AI booking widgets for websites in 2026](https://typelessity.com/blog/best-ai-booking-widgets-2026).
 - **Who is the controller under GDPR?** You are the controller and Typelessity is your processor under a DPA. On our side: consent is asked from every visitor before the chat starts. Service in the EU (Vercel, Frankfurt), database in the EU (Supabase, Ireland); OpenAI and Resend process in the US under the 2021 SCCs. Abandoned conversations deleted within 48 hours; booked ones kept until the business has them erased (written instruction to info@webappski.com). OpenAI keeps conversation text up to 30 days for abuse checks. No model training.
 - **Voice input?** Yes — OpenAI gpt-4o-mini-transcribe.
-- **Per-turn latency?** Not measured on the current model, so not quoted. One AI call per turn; enrichment turns make a second call.
+- **Per-turn latency?** Not measured on the current model, so not quoted. One model call reads each message; an extra call can run for a list of options from your system, which adds time.
 - **Self-host?** No. Hosted service only — there is no on-premise or self-hosted build.
 - **Replace my booking system?** No. Replaces the form, not the backend. Submits by email or REST POST.
 - **Which businesses is it for?** Any business that takes bookings; each business has its own configuration. Examples: hair salons, restaurants, yoga studios, driving schools, auto repair, gyms and tutoring.
@@ -120,7 +120,7 @@ Selection (full FAQ on /faq):
 
 Mission: replace the booking form with one sentence. Multi-step forms exist because old UI primitives could not parse natural language. They can now.
 
-Founder: Alex Isa. Engineer turned founder. Started the Typelessity engine in January 2026 and took it from specification to the free pilot — single-call extraction architecture, config-driven enrichment, anti-hallucination guards, a chat window in 25 languages out of the box.
+Founder: Alex Isa. Engineer turned founder. Started the Typelessity engine in January 2026 and took it from specification to the free pilot — whole-message extraction architecture, config-driven enrichment, anti-hallucination guards, a chat window in 25 languages out of the box.
 
 **Built by Webappski.** Typelessity is a product of Webappski — a small product studio building the next layer of AI-native interfaces for service businesses. Sister product: TypelessForm — the same conversational-data-collection thesis applied to general-purpose forms (lead capture, support intake, onboarding). Typelessity is the booking-specific surface; TypelessForm is the generic one.
 
@@ -134,7 +134,7 @@ Articles on booking by chat: how the engine works, how the pilot is priced, how 
 
 - Best AI booking widgets for websites in 2026 — Botpress, Calendly, NoForm.ai, SimplyBook.me and Typelessity compared, with vendor prices checked 2026-10-15.
 - 25 interface languages, one booking prompt — the chat window comes in 25 languages; one prompt template, no per-language code.
-- Replacing a booking form with one GPT call — why one model call per turn beats one call per field.
+- Replacing a booking form with one sentence — why reading the whole message in one model call beats one call per field.
 - Cascade corrections in conversational booking — how dependency-graph walks clear stale downstream data on field changes.
 - Whisper vs Web Speech API for booking voice — how Typelessity transcribes voice today (OpenAI gpt-4o-mini-transcribe).
 - What typelessity.com publishes for AI agents — JSON-LD, llms.txt and the /for-ai-agents page, and what no AI engine has promised us.

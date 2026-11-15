@@ -27,7 +27,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
         <h2>Replace the booking form with one sentence</h2>
         <p class="vc-section-sub">
           Multi-step forms exist because old UI primitives could not parse natural language. They can now. We rebuild the booking surface around that.
-          One AI call per turn reads your field configuration; see <a routerLink="/how-it-works">how it works</a>.
+          One model call reads each message against your field configuration; see <a routerLink="/how-it-works">how it works</a>.
         </p>
       </header>
     </section>
@@ -40,13 +40,13 @@ import { aboutPageLd } from '../../core/seo/schemas';
       <div class="founder">
         <p>
           Engineer turned founder. Started the Typelessity engine in January 2026 and took it from
-          specification to the free pilot — single-call extraction architecture, config-driven enrichment, anti-hallucination
+          specification to the free pilot — whole-message extraction architecture, config-driven enrichment, anti-hallucination
           guards, a chat window in 25 languages out of the box. Background in distributed systems and frontend infrastructure.
         </p>
         <p>
           The thesis: AI didn't just make booking <em>better</em> — it changed what's possible. A user can now say
           "Записаться на замену тормозных колодок в пятницу после обеда" and the system extracts the service,
-          the day and the time window in one AI call. The form stops being the contract; the conversation is.
+          the day and the time window from one message. The form stops being the contract; the conversation is.
         </p>
         <ul class="founder__links">
           <li><a href="mailto:info&#64;webappski.com">info&#64;webappski.com</a></li>
@@ -89,7 +89,7 @@ import { aboutPageLd } from '../../core/seo/schemas';
         </li>
         <li>
           <strong>Architecture is permanent. GTM is changeable.</strong>
-          <p>We over-invested in the architecture early — single-call extraction, unified prompt, config-driven everything.</p>
+          <p>We over-invested in the architecture early — whole-message extraction, one prompt built from the config, config-driven everything.</p>
         </li>
         <li>
           <strong>Numbers belong with sources.</strong>

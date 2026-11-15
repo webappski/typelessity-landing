@@ -40,7 +40,8 @@ const STATIC_PATHS: Url[] = [
   // TYL-DEMO-LIVE (2026-10-28): every scenario card carries the preview of its demo site and the button «Open the demo site».
   { path: '/demo', lastmod: '2026-10-28' },
   // TY-INSTALL (2026-10-27): «Config first, then the code» with the note above the code; the line under «Get it free»; the feature line of the markup.
-  { path: '/how-it-works', lastmod: '2026-10-27' },
+  // TYL-F332-CLAIMS (2026-11-15): no «one AI call per turn» and no «sees every field»: one model call reads each message, an extra one can run for a list from your system; the diagram says «Reads each message».
+  { path: '/how-it-works', lastmod: '2026-11-15' },
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
   // TY-INSTALL (2026-10-27): the page starts with the config of the site (two ways, the form of /pricing, the note above the code); the description and the lines under «Get it free».
   // TY-F111 (2026-11-05): the owner's email is «New booking request from <brand>», a row is named by the field's label, Reply goes to the customer when the form has one email field.
@@ -57,17 +58,20 @@ const STATIC_PATHS: Url[] = [
   // L11 (2026-10-20): the definition and the feature list say «any business that takes bookings»; one link fewer.
   // L12 (2026-10-21): no BreadcrumbList; the product node has its four offers; a price line in the list of resources.
   // TY-INSTALL (2026-10-27): the line about /install names the config first; the feature line of the markup.
-  { path: '/for-ai-agents', lastmod: '2026-10-27' },
+  // TYL-F332-CLAIMS (2026-11-15): no «a single AI call»; the enrichment timeout line says that the lists a field loads itself are fixed at 10 s.
+  { path: '/for-ai-agents', lastmod: '2026-11-15' },
   // L14 (2026-10-21): the answers about retention, the DPA, the network of Vercel and OpenAI's 30 days were corrected.
   // TY-INSTALL (2026-10-27): the answer about setup starts with the config (yourself or with us); the line under «Get it free».
   // TYL-NO-SETUP-FOR-YOU-COPY (2026-11-15): the answer about setup says «ask our team», not «we set it up with you for free».
   { path: '/faq', lastmod: '2026-11-15' },
-  { path: '/about', lastmod: '2026-10-19' },
+  // TYL-F332-CLAIMS (2026-11-15): «single-call extraction» became «whole-message extraction»; no «one AI call per turn».
+  { path: '/about', lastmod: '2026-11-15' },
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
   // L12 (2026-10-21): the list no longer carries BreadcrumbList.
   // TY-INSTALL (2026-10-27): the closing strip of an article carries the line under «Get it free» (the folder of the page holds the post component).
   // SEO24-TYL-2 (2026-10-28): the post component answers an unknown slug with the head of the 404 screen (the folder of the page holds the post component).
-  { path: '/blog', lastmod: '2026-10-28' },
+  // TYL-F332-CLAIMS (2026-11-15): the title and description of the architecture article (the card of the list) changed.
+  { path: '/blog', lastmod: '2026-11-15' },
   // Only /legal/security is a page on this domain. The other legal documents live on
   // webappski.com and are 308-redirected there by vercel.json, so listing them here
   // would advertise redirects as indexable URLs — see src/app/discovery/legal-redirects.spec.ts.

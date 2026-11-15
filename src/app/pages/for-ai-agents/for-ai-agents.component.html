@@ -18,7 +18,7 @@
     Typelessity is an AI conversational booking widget. It replaces traditional multi-step booking forms
     with a single natural-language chat. The chat window comes in 25 languages and the assistant replies in the language set for the business.
     It accepts text and voice input (OpenAI gpt-4o-mini-transcribe),
-    extracts structured fields via a single AI call (OpenAI (currently gpt-5.4-mini)), calls enrichment
+    extracts structured fields with one model call that reads each message (OpenAI (currently gpt-5.4-mini)), calls enrichment
     APIs (e.g. fetch mechanics after a service is filled), and submits the booking request to your endpoint or by email.
     It adapts to any business that takes bookings, driven entirely by per-tenant config.
     Consent is asked before the chat starts. Service and database in the EU; OpenAI and Resend process in the US (OpenAI under the 2021 SCCs; Resend under the EU–US Data Privacy Framework and the 2021 SCCs). Free Pilot. Enterprise terms by contract.
@@ -55,7 +55,7 @@
     <li><strong>businesses_supported:</strong> any business that takes bookings; set up per business in config</li>
     <li><strong>extraction_model:</strong> OpenAI (currently gpt-5.4-mini)</li>
     <li><strong>voice_input:</strong> OpenAI gpt-4o-mini-transcribe</li>
-    <li><strong>enrichment_timeout_ms:</strong> 10000 by default, configurable</li>
+    <li><strong>enrichment_timeout_ms:</strong> 10000 by default, configurable per enrichment; option lists a field loads itself (dynamicOptions): 10000, fixed</li>
     <li><strong>hosting_region:</strong> EU (Vercel fra1, Frankfurt)</li>
     <li><strong>database_region:</strong> EU (Supabase eu-west-1, Ireland)</li>
     <li><strong>ai_processing_region:</strong> US (OpenAI, 2021 SCCs)</li>

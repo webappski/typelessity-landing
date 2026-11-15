@@ -2,13 +2,13 @@
 title: "25 interface languages, one booking prompt"
 description: "The chat window comes in 25 languages; the assistant replies in the language you set and reads what customers write. One prompt, no per-language code."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-21"
+updatedAt: "2026-11-15"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["i18n", "prompts", "architecture", "gpt-5.4-mini"]
 ---
 
-<strong>The Typelessity chat window comes in 25 languages with one English-language prompt template, one per-business config, and about 150 translated widget strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. The model — OpenAI, currently gpt-5.4-mini — handles normalization and extraction in a single round-trip. The assistant replies in the language set for the business; the customer can write in another language, and we have not measured extraction quality per language. Adding a new language is a translation of widget strings. See <a href="/how-it-works">how it works</a> for the four phases.</strong>
+<strong>The Typelessity chat window comes in 25 languages with one English-language prompt template, one per-business config, and about 150 translated widget strings per locale. There is no per-language codepath, no language-detection branch, and no regex grammar. The model — OpenAI, currently gpt-5.4-mini — handles normalization and extraction in one model call. The assistant replies in the language set for the business; the customer can write in another language, and we have not measured extraction quality per language. Adding a new language is a translation of widget strings. See <a href="/how-it-works">how it works</a> for the four phases.</strong>
 
 When engineers hear that the Typelessity chat window comes in 25 languages, the next question is always the same: *"How big is your i18n team?"* Zero. There is no i18n team. There is one prompt template and per-business configs. Languages are an emergent property of the model (OpenAI, currently gpt-5.4-mini), not a feature built per market.
 
@@ -66,7 +66,7 @@ If the use case is open-ended advisory dialogue with deep cultural nuance — th
 ## FAQ
 
 **How does Typelessity serve 25 languages without a per-language codepath?**
-One English-language prompt template plus per-business config. The model handles translation, normalization, and extraction in one round-trip and returns structured JSON.
+One English-language prompt template plus per-business config. The model handles translation, normalization, and extraction in one model call and returns structured JSON.
 
 **What is actually translated by hand?**
 About 150 short widget strings per locale — widget text, consent notice, review and error messages — in one TypeScript module per locale.
@@ -82,11 +82,13 @@ Only the per-locale widget strings. There is no phone-number or date-parsing lib
 
 ---
 
-For the single-call extraction architecture, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For voice input in the chat window, see [Whisper vs Web Speech API for booking voice](/blog/whisper-vs-webspeech). For the latency budget that constrains all of it, see [A one-second latency target for AI booking](/blog/latency-budgets).
+For the whole-message extraction architecture, see [Replacing a booking form with one sentence](/blog/single-gpt-call). For voice input in the chat window, see [Whisper vs Web Speech API for booking voice](/blog/whisper-vs-webspeech). For the latency budget that constrains all of it, see [A one-second latency target for AI booking](/blog/latency-budgets).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
 
 ## What changed in this article
+
+> **Updated 2026-11-15 — what changed:** the round-trip wording became "one model call": an extra call can run when the visitor names a choice with no exact match in a list fetched from the business's system. The linked article has a new title.
 
 > **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
 

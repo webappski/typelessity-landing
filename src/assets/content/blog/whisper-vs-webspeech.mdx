@@ -25,9 +25,9 @@ The Web Speech API ships in Chromium browsers and costs the site nothing at the 
 1. **Recording.** The widget records with the browser's `MediaRecorder`. The audio stays in the browser while the user speaks.
 2. **One upload.** When the user stops — or after 100 seconds — the widget sends the whole recording once to Typelessity's API. Nothing is sent while the user is still speaking.
 3. **Transcription.** The API calls OpenAI `gpt-4o-mini-transcribe` with one fixed prompt: *"Form data. Preserve email indicators as spoken words. Keep natural speech patterns."* The prompt is the same for every business and carries no names or domain terms. The widget sends no language hint, so the transcription model works out the spoken language itself.
-4. **Extraction.** The transcript enters the same extraction step as typed text — see [Replacing a booking form with one GPT call](/blog/single-gpt-call).
+4. **Extraction.** The transcript enters the same extraction step as typed text — see [Replacing a booking form with one sentence](/blog/single-gpt-call).
 
-The audio is not saved; it exists only while it is being transcribed. While transcription runs, the widget shows the same typing indicator it shows for any turn. There is no fallback to the Web Speech API, and our transcription call returns no confidence score, so the widget cannot flag an uncertain word. The review screen, where the user sees every field before confirming, is where a misheard name gets caught.
+The audio is not saved; it exists only while it is being transcribed. While transcription runs, the widget shows the same typing indicator it shows for any turn. There is no fallback to the Web Speech API, and our transcription call returns no confidence score, so the widget cannot flag an uncertain word. The review screen, where the user verifies the fields before confirming, is where a misheard name gets caught.
 
 **Bottom line:** one recording, one transcription call, one extraction path for voice and text.
 
@@ -56,7 +56,7 @@ A separate option is `whisper-large-v3-turbo` self-hosted on a GPU. Typelessity 
 
 A booking made with the wrong name produces a phone call from a confused receptionist. The cost is human time, customer trust, and the credibility of the entire conversational booking surface. A booking that takes longer to transcribe produces a slightly delayed confirmation. The cost is patience.
 
-The user-facing rule: **optimize for correctness, not speed, when the cost of a mistake is a phone call from a confused receptionist.** In Typelessity today that rule is the review step: the user sees every field before the booking is sent.
+The user-facing rule: **optimize for correctness, not speed, when the cost of a mistake is a phone call from a confused receptionist.** In Typelessity today that rule is the review step: the user verifies the fields, with inline editing, before the booking is sent.
 
 ## FAQ
 
@@ -77,11 +77,13 @@ The API now has per-result confidence and a `phrases` list in the spec. We have 
 
 ---
 
-For the extraction pipeline that consumes the transcript, see [Replacing a booking form with one GPT call](/blog/single-gpt-call). For the multilingual prompt, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For the latency target around voice input, see [A one-second latency target for AI booking](/blog/latency-budgets).
+For the extraction pipeline that consumes the transcript, see [Replacing a booking form with one sentence](/blog/single-gpt-call). For the multilingual prompt, see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt). For the latency target around voice input, see [A one-second latency target for AI booking](/blog/latency-budgets).
 
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
 
 ## What changed in this article
+
+> **Updated 2026-11-15 — what changed:** the review step is described as the user verifying the fields with inline editing, not seeing every field, and the linked article has a new title.
 
 > **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
 

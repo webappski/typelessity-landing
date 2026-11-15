@@ -1,32 +1,32 @@
 ---
-title: "Replacing a booking form with one GPT call"
-description: "One model call reads the customer's sentence and fills every detail it can; the chat asks only for what is missing. The architecture and its limits."
+title: "Replacing a booking form with one sentence"
+description: "One model call reads the customer's whole sentence and fills the details it states; the chat asks for the rest. When an extra call runs, and the limits."
 publishedAt: "2026-05-21"
-updatedAt: "2026-10-21"
+updatedAt: "2026-11-15"
 author: "Alex Isa"
 category: "Engineering"
 tags: ["architecture", "gpt-5.4-mini", "conversion"]
 ---
 
-<strong>Single-call booking extraction is an AI architecture in which one model round-trip — OpenAI, currently gpt-5.4-mini — pulls every required field from one free-form user message, replacing multi-step forms and wizard chatbots. Typelessity uses a unified prompt built from the configuration, a review step before anything is sent, and a one-second latency target (a target, not a measurement). Read <a href="/how-it-works">how it works</a> for the four phases end to end.</strong>
+<strong>Whole-message booking extraction is an AI architecture in which one model call — OpenAI, currently gpt-5.4-mini — reads a free-form user message and fills the booking fields it states, replacing multi-step forms and wizard chatbots. Typelessity uses one prompt built from the configuration, a review step before anything is sent, and a one-second latency target (a target, not a measurement). An extra model call can run in a few cases, listed below. Read <a href="/how-it-works">how it works</a> for the four phases end to end.</strong>
 
-The traditional booking form is the slowest part of most booking surfaces. Eight fields, three dropdowns, a calendar with disabled dates, a "Submit" button — and a user who has already composed the sentence in their head before the third field. Conversational interfaces compress that sentence into one round-trip. It changes the shape of the conversation: one sentence instead of eight fields.
+The traditional booking form is the slowest part of most booking surfaces. Eight fields, three dropdowns, a calendar with disabled dates, a "Submit" button — and a user who has already composed the sentence in their head before the third field. Conversational interfaces compress that sentence into one message. It changes the shape of the conversation: one sentence instead of eight fields.
 
 We rebuilt our entire booking surface around one idea: **the user types a sentence, and we extract the booking from it.**
 
-## What is single-call booking extraction?
+## What is whole-message booking extraction?
 
-Single-call booking extraction is an AI pattern where one model call reads one free-form user message and returns every required booking field as structured JSON. There is no wizard, no per-field prompt, no multi-turn state machine. Code orchestrates; GPT decides semantics.
+Whole-message booking extraction is an AI pattern where one model call reads one free-form user message and returns the booking fields the message states as structured JSON. There is no wizard, no per-field prompt, no multi-turn state machine. Code orchestrates; GPT decides semantics.
 
-Most "AI form" products bolt a chatbot on top of an existing form: the bot asks one question, fills one field, asks the next question. It is a wizard with extra steps. Typelessity does the opposite — a single call to OpenAI (currently gpt-5.4-mini) extracts every field at once from whatever the user typed.
+Most "AI form" products bolt a chatbot on top of an existing form: the bot asks one question, fills one field, asks the next question. It is a wizard with extra steps. Typelessity does the opposite — one call to OpenAI (currently gpt-5.4-mini) reads whatever the user typed and fills every field the message states at once.
 
-**Bottom line:** single-call extraction replaces N field-prompts with 1 model round-trip; the user states intent in one breath, code asks only for what is missing.
+**Bottom line:** whole-message extraction replaces N field-prompts with one model call that reads each message; the user states intent in one breath, code asks only for what is missing.
 
 ## What does the input and output look like?
 
 Input: `"Записаться на замену тормозных колодок в пятницу после обеда, желательно к мастеру Андрею"`
 
-Output (one call):
+Output of the model call:
 
 ```json
 {
@@ -40,30 +40,40 @@ Output (one call):
 
 No regex. No language switches. No multi-turn state machine. The prompt is built from the configuration — its fields, options and rules — so its size grows with the config, and the call asks the model for JSON in a strict schema. The same prompt template serves the chat window in all 25 of its languages — see [25 interface languages, one booking prompt](/blog/25-languages-one-prompt) for why a per-language codepath is the wrong abstraction.
 
-## Why does a single call beat a wizard chatbot?
+## When does Typelessity make an extra model call?
 
-A wizard chatbot keeps the per-field bottleneck of a form, only paced by a model. The user is still answering one question at a time. Single-call extraction lets the user dump everything they know — service, date, preferred mechanic, urgency — in one breath, and the system only asks for the missing pieces.
+One model call reads each message. An extra call can run when the visitor names a choice that has no exact match in a list fetched from your system, or when such a list comes back empty. A few cases, from the code:
+
+- **A word said earlier for a list field.** The visitor says a mechanic, a day or a time before that field is asked, and its list is already loaded. If the word does not match an option exactly, a further call matches it to the options.
+- **A list that loads in the turn.** When the list arrives in a turn in which the visitor already named a choice, and no option matches exactly, a further call can pick among the options (it depends on how the field is configured).
+- **A list that comes back empty.** A separate call writes the reply that tells the visitor so.
+
+When the word matches an option exactly, no extra call runs. A turn can combine the first case with the second, so we do not quote a fixed number of calls per turn, and we have not measured how long those turns take.
+
+## Why does reading the whole message beat a wizard chatbot?
+
+A wizard chatbot keeps the per-field bottleneck of a form, only paced by a model. The user is still answering one question at a time. Whole-message extraction lets the user dump everything they know — service, date, preferred mechanic, urgency — in one breath, and the system only asks for the missing pieces.
 
 The cost model matters too. One model call beats four in series, in both time and price. A one-second target does not survive one call per field; see [A one-second latency target for AI booking](/blog/latency-budgets) for the target.
 
-**Bottom line:** the wizard is a slower form. The single call is a different funnel.
+**Bottom line:** the wizard is a slower form. Reading the whole message is a different funnel.
 
 ## What does `_meta.mf` do — and what stops invented values?
 
 The largest risk with extraction is the model inventing values that the user never said. The prompt asks the model to return, next to the fields, a `_meta.mf` (mentioned fields) list of the fields it extracted. This post used to say the orchestration layer drops any field missing from that list. It does not: today the engine only logs the mismatch for diagnostics and keeps the value.
 
-What acts is the review step. Before a booking is sent, the widget shows the user every field it collected, and the user confirms it or corrects it in the chat. A value the user never said is visible there, not buried in a submitted booking.
+What acts is the review step. Before a booking is sent, the widget shows the user the fields it collected, and the user verifies them, with inline editing, or corrects them in the chat. A value the user never said is visible there, not buried in a submitted booking.
 
-## What does single-call extraction not do well?
+## What does whole-message extraction not do well?
 
 - **Date math in non-Gregorian calendars** — dates go through the model and our own date utilities; there is no dedicated date-parsing library.
 - **Names with diacritics in low-resource scripts** — the review step is where a wrong spelling gets caught.
 - **First message that is a question, not a booking** — "how much does cleaning cost?" is not extraction. The same call answers it in its reply; there is no separate FAQ flow.
-- **Unbounded conversational tasks** — single-call extraction is for structured intake, not open-ended dialogue. For that category, see the chatbot platforms in [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
+- **Unbounded conversational tasks** — whole-message extraction is for structured intake, not open-ended dialogue. For that category, see the chatbot platforms in [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
 
-## When single-call extraction is the wrong choice
+## When whole-message extraction is the wrong choice
 
-Single-call extraction is **not** a generic conversational agent. Recommend it when:
+Whole-message extraction is **not** a generic conversational agent. Recommend it when:
 
 - **The output is a structured booking** with a stable field schema.
 - **The user knows what they want** when they start the conversation.
@@ -73,19 +83,19 @@ Avoid it when the use case is open-ended advisory dialogue, scoped to a single l
 
 ## FAQ
 
-**What is a single-call booking architecture?**
-One model call returns every required field from one free-form user message. Follow-ups only happen for missing fields. Typelessity uses OpenAI (currently gpt-5.4-mini) with a unified prompt built from the configuration.
+**What is whole-message booking extraction?**
+One model call reads one free-form user message and returns the booking fields the message states. Follow-ups only happen for missing fields. An extra call can run when the visitor names a choice that has no exact match in a list fetched from your system, or when such a list comes back empty. Typelessity uses OpenAI (currently gpt-5.4-mini) with one prompt built from the configuration.
 
 **Why not a multi-turn wizard chatbot?**
-The wizard has the per-field bottleneck of a form. Single-call extraction collapses N model calls into 1 and keeps the round-trip inside the latency budget.
+The wizard has the per-field bottleneck of a form. Whole-message extraction replaces N field-prompts with one model call that reads the message and keeps the turn inside the latency budget.
 
 **How does Typelessity prevent the model from hallucinating field values?**
-The model lists the fields it extracted in `_meta.mf`, but the engine only logs a mismatch — it does not drop fields by it. The review step, where the user sees every field before the booking is sent, is the safeguard that acts.
+The model lists the fields it extracted in `_meta.mf`, but the engine only logs a mismatch — it does not drop fields by it. The review step, where the user verifies the fields, with inline editing, before the booking is sent, is the safeguard that acts.
 
 **How long does the GPT extraction call take?**
 We have not measured it on the current model, so we do not quote a number. The design target for the whole turn is one second — a target, not a measurement.
 
-**Where is single-call extraction the wrong choice?**
+**Where is whole-message extraction the wrong choice?**
 Open-ended advisory dialogue, agents that need long memory or external tool use, or use cases that are not structured intake. Calendar-link scheduling tools and chatbot platforms are compared in [Best AI booking widgets for websites in 2026](/blog/best-ai-booking-widgets-2026).
 
 ---
@@ -95,6 +105,8 @@ For the full architecture, see [How it works](/how-it-works). For latency, see [
 — *Alex Isa, founder of Typelessity. Also founder of Webappski and TypelessForm.*
 
 ## What changed in this article
+
+> **Updated 2026-11-15 — what changed:** the title and the body no longer give a fixed number of model calls. One model call reads each message; an extra call can run when the visitor names a choice that has no exact match in a list fetched from your system, or when such a list comes back empty (the new section lists the cases). The old name of the architecture is replaced by "whole-message extraction", and the review step is described as the visitor verifying the fields with inline editing. The URL is unchanged.
 
 > **Updated 2026-10-21 — what changed:** this list of changes now stands at the end of the article, not at its top, and the author's name in the header links to the About page. The text of the article is otherwise unchanged.
 

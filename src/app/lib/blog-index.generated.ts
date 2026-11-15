@@ -10,7 +10,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "AI booking widgets for beauty salons, compared",
     "description": "What a hair or beauty salon needs from online booking, how booking platforms differ from a booking chat on your own site, and what to ask each vendor.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Comparison"
   },
   {
@@ -18,7 +18,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "AI booking widget for transfer services 2026",
     "description": "What a chauffeur or airport-transfer company needs from online booking, and how dispatch platforms differ from a booking chat on its own site.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Comparison"
   },
   {
@@ -26,7 +26,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "Best AI booking widgets for websites in 2026",
     "description": "Calendly, SimplyBook.me, Botpress, NoForm.ai and Typelessity compared: what each one is for, where it fits and when it is the wrong choice.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-25",
+    "updatedAt": "2026-11-15",
     "category": "Comparison"
   },
   {
@@ -34,7 +34,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "Pricing an AI product: why our pilot is free",
     "description": "Free pilot with no time limit (50 booking requests a month), then Starter €39, Pro €149 and Enterprise €399 a month: our reasoning and its limits.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Business"
   },
   {
@@ -42,7 +42,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "A one-second latency target for AI booking",
     "description": "How Typelessity plans a one-second booking turn: model call, enrichment, render. A target, not a measurement: what is built and what is not.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Engineering"
   },
   {
@@ -74,15 +74,15 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "25 interface languages, one booking prompt",
     "description": "The chat window comes in 25 languages; the assistant replies in the language you set and reads what customers write. One prompt, no per-language code.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Engineering"
   },
   {
     "slug": "single-gpt-call",
-    "title": "Replacing a booking form with one GPT call",
-    "description": "One model call reads the customer's sentence and fills every detail it can; the chat asks only for what is missing. The architecture and its limits.",
+    "title": "Replacing a booking form with one sentence",
+    "description": "One model call reads the customer's whole sentence and fills the details it states; the chat asks for the rest. When an extra call runs, and the limits.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Engineering"
   }
 ];

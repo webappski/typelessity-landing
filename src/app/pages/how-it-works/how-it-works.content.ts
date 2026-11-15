@@ -5,7 +5,7 @@ export const HOW = {
   title: 'How Typelessity works',
   // The answer capsule: seo-lead §2.2. The condition «if your booking system has an API» stays in the same sentence.
   capsule:
-    'Four phases: chat, select, review, send. Typelessity turns one sentence from your customer into a booking request with one AI call per turn; if your booking system has an API, it asks it what is free.',
+    'Four phases: chat, select, review, send. Typelessity turns one sentence from your customer into a booking request: one model call reads each message, and an extra one can run for a list from your system. If your booking system has an API, it asks it what is free.',
 
   // The one example of the page, a literal: 20 October 2026 is a Tuesday.
   say: 'Brake pads for my RAV4 on Tuesday 20 October at 2pm, name Robert Smith',
@@ -30,7 +30,7 @@ export const HOW = {
     },
     {
       n: '03', name: 'Review', oneLine: 'Edit inline before you send.',
-      body: 'A full review card. The customer checks every extracted field and edits it inline. Cascade-aware: changing a field clears the fields that depended on it, after asking.',
+      body: 'A full review card. The customer verifies the fields, with inline editing. Cascade-aware: changing a field clears the fields that depended on it, after asking.',
       example: 'Brake pads · M. Chen · Tue · 14:00 · Robert Smith',
       extracts: ['All required fields filled', 'Email validated', 'Phone number checked'],
     },
@@ -47,7 +47,7 @@ export const HOW = {
     title: 'How the AI actually works',
     sub: 'The model decides. Code orchestrates. No hardcoding.',
     pillars: [
-      { h: 'Single unified prompt', b: 'One AI call extracts every field, detects corrections, writes the reply and matches options. The prompt is built from your configuration.' },
+      { h: 'Prompt built from your configuration', b: 'One model call reads each message, fills the fields it states, detects corrections, writes the reply and matches options. An extra call can run when the visitor names a choice that has no exact match in a list fetched from your system, or when such a list comes back empty.' },
       { h: 'Config-driven, not pattern-driven', b: 'Each field has an aiHint that tells the model what it means. The system never matches words like “airport” with regex.' },
       { h: 'Enrichment APIs', b: 'Fields can trigger calls to your system: service → mechanics, date → slots. A call times out after 10 s by default and a failure is never fatal.' },
       { h: 'Cascade-aware corrections', b: 'Change an upstream field and every dependent field is cleared, with a confirmation if the change is destructive.' },
@@ -73,7 +73,7 @@ export const HOW = {
       { h: 'GPT outage', b: 'The model call is retried once. If it still fails, the widget stays in the chat and asks for the next field directly — there is no separate form mode.' },
       { h: 'Enrichment timeout (10s)', b: 'Non-fatal. AI continues with partial data and asks the user to confirm what was extracted.' },
       { h: 'User changes upstream field mid-flow', b: 'DFS-walk over the dependency graph clears stale downstream fields. Destructive cascades show a confirmation.' },
-      { h: 'GPT hallucinates a value', b: 'Fields outside the configuration are dropped; a changed value for a filled field is treated as a correction; the visitor reviews every field before sending. _meta.mf is logged, not enforced.' },
+      { h: 'GPT hallucinates a value', b: 'Fields outside the configuration are dropped; a changed value for a filled field is treated as a correction; the visitor verifies the fields, with inline editing. _meta.mf is logged, not enforced.' },
       { h: 'Submit endpoint returns 502, 503 or 504', b: 'Retried with exponential backoff, 3 retries by default. If it still fails, the widget shows a Retry button and keeps everything the visitor entered.' },
     ],
   },
@@ -86,7 +86,7 @@ export const HOW = {
       ['User', 'Types or speaks'],
       ['Widget', 'Captures input'],
       ['API', 'Session API'],
-      ['GPT', 'Single call'],
+      ['GPT', 'Reads each message'],
       ['Enrichment', 'Optional API · 10s timeout'],
       ['Response', 'Filled fields + reply'],
     ] as const,
