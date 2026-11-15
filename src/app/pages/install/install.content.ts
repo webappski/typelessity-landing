@@ -44,7 +44,7 @@ export const INSTALL = {
     },
     {
       h: 'Paste the code from the Install step',
-      b: 'The Install step shows the exact code for your platform. Before you publish, you can try the widget as a customer.',
+      b: 'The Install step shows one block of HTML code for your site. Before you publish, you can try the widget as a customer.',
     },
     {
       h: 'Receive the requests',
@@ -54,7 +54,7 @@ export const INSTALL = {
 
   code: {
     h2: 'The code',
-    note: 'Example. The Install step in your portal shows this code for your platform. It works on your site only after your site’s config is published there: the widget finds the config by your site’s address.',
+    note: 'Example. The Install step in your portal shows this code for your site. It works on your site only after your site’s config is published there: the widget finds the config by your site’s address.',
   },
 
   where: {
