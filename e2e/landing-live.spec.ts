@@ -53,18 +53,22 @@ test('the embed code shown is the one the portal hands out', async () => {
   }
 });
 
-// TY-INSTALL (founder 26.10, 27.10): the home stat used to count the lines of the embed code («2 lines», from EMBED_SNIPPET) and so sold the install as two
-// lines. It now counts the ways to the config of the site, and the number is /install's own — the cards of #config-first — not a literal of the home page.
-// That no sentence says «two lines» without the config is held by e2e/install-config-first.spec.ts (K1).
-test('the home stat counts the ways to the config: the number is the cards of /install, and no stat counts the lines of the embed code', async () => {
+// TY-INSTALL (founder 26.10, 27.10), then 268b108 (founder 13.11): the home stat used to count the lines of the embed code («2 lines») and so sold the
+// install as two lines; then it counted the ways to the config («2 ways»). It is no longer a number: the plate says «Config first» — the owner sets the
+// config up in the Webappski portal, our team helps if asked. This holds both: the plate stands with its caption, «2 ways» is gone from the home page,
+// and no stat counts the lines of the embed code again. That no sentence says «two lines» without the config is held by e2e/install-config-first.spec.ts (K1).
+test('the home stat is «Config first» with its caption, says no «N ways», and no stat counts the lines of the embed code', async () => {
   for (const path of SURFACES) {
     const body = unescape(await read(path));
     assert.doesNotMatch(body, /\b(?:one|1) line of HTML|>\s*1 line\s*</i, `${path} still says one line of HTML`);
   }
-  const ways = [...(await read('install/index.html')).matchAll(/class="[^"]*\binstall-config__way\b/g)].length;
-  assert.ok(ways >= 2, `/install shows ${ways} ways to the config, expected at least the two the home page names`);
   const home = unescape(await read('index.html'));
-  assert.match(home, new RegExp(`<b[^>]*>\\s*${ways} ways\\s*</b>`), `the home stats must say ${ways} ways, as many as /install has`);
+  assert.match(
+    home,
+    /<b[^>]*>\s*Config first\s*<\/b>\s*<span[^>]*>\s*You set up your site’s config in the Webappski portal; our team helps if you ask\s*<\/span>/,
+    'the home page must show the «Config first» plate with its caption',
+  );
+  assert.doesNotMatch(home, /\b\d+ ways\b/i, 'the home page counts the ways to the config again («N ways»)');
   assert.doesNotMatch(home, />\s*\d+ lines\s*</i, 'a stat on the home page counts the lines of the embed code again');
 });
 

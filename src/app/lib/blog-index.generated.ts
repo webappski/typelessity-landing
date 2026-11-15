@@ -66,7 +66,7 @@ export const BLOG_INDEX: BlogIndexEntry[] = [
     "title": "Cascade corrections in conversational booking",
     "description": "When a customer changes one detail mid-booking, the details that depended on it must be cleared. How Typelessity tracks this and asks first.",
     "publishedAt": "2026-05-21",
-    "updatedAt": "2026-10-21",
+    "updatedAt": "2026-11-15",
     "category": "Engineering"
   },
   {
