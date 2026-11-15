@@ -8,27 +8,27 @@ export const INSTALL = {
   h1: 'Add Typelessity to your website',
   // seo-lead §2.3 opened with «paste two lines of HTML»; founder 26.10 moved the config in front of the code.
   capsule:
-    'Start with your site’s config in the Webappski portal: set it up yourself in simple steps, or we set it up with you for free. Then paste the code from the portal’s Install step, and receive booking requests by email or straight into your booking system. You need access to your site’s HTML, an address that should receive the requests, and your site must use HTTPS.',
+    'Start with your site’s config in the Webappski portal: set it up yourself in simple steps, and ask our team if you need a hand. Then paste the code from the portal’s Install step, and receive booking requests by email or straight into your booking system. You need access to your site’s HTML, an address that should receive the requests, and your site must use HTTPS.',
 
   configFirst: {
     h2: 'First: your site’s config (required)',
-    lead: 'The widget works on your site only after your site’s config is set up and published in the Webappski portal. Two ways to get there:',
+    lead: 'The widget works on your site only after your site’s config is set up and published in the Webappski portal. You set it up yourself; our team can help if you get stuck:',
     self: {
       h3: 'Yourself, in simple steps',
       b: 'Create a free account in the Webappski portal, choose Typelessity and go through the setup steps; the last step, Install, gives you the code.',
       cta: 'Get it free',
     },
     withUs: {
-      h3: 'With us, for free',
-      b: 'Write what your site is and how bookings work today. We set up the config with you for free: we reply by email and arrange a call.',
-      cta: 'Write to us',
+      h3: 'Need a hand setting up?',
+      b: 'Write what your site is and how bookings work today. We reply by email, and if you’d rather talk it through, we can arrange a call.',
+      cta: 'Ask our team',
     },
   },
 
   requirements: {
     h2: 'What you need',
     items: [
-      'Your site’s config in the Webappski portal: a free account, set up by you or with us.',
+      'Your site’s config in the Webappski portal: a free account, set up by you; our team can help if you get stuck.',
       'Access to the HTML of your website, to paste the code from the Install step into a page.',
       'Where the requests should go: an email address, or the address of your own endpoint (REST).',
       'A website on HTTPS. Browsers allow the microphone only on a secure page, so on plain HTTP the voice input does not work.',
@@ -101,7 +101,7 @@ export const INSTALL = {
   form: {
     kicker: 'Questions',
     h2: 'Questions before you start?',
-    sub: 'Tell us what your site is and how bookings work today. We set up your config with you for free: we reply by email and arrange a call.',
+    sub: 'Tell us what your site is and how bookings work today. We reply by email, and if you’d rather talk it through, we can arrange a call.',
   },
 
   cta: { title: 'Try it free on your website', primary: 'Get it free', secondary: 'See how it works' },

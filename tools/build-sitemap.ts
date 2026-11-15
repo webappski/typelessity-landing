@@ -33,7 +33,8 @@ const STATIC_PATHS: Url[] = [
   // L12 (2026-10-21): the promo card is wrapped in data-nosnippet, the product node prints the four prices with their month.
   // L17 (2026-10-22): the language row of the demo and its tooltip, the Webappski strip after the demo (text by the visitor's source), the fallback font Montserrat Fallback.
   // TY-INSTALL (2026-10-27): the stat «2 lines of code» became «2 ways to set up the config»; the note above the code in the band; the line under «Get it free»; the feature line of the markup says the embed comes after the config.
-  { path: '/', lastmod: '2026-10-27' },
+  // TYL-NO-SETUP-FOR-YOU-COPY (2026-11-15): the stat «2 ways to set up the config» became «Config first»: you set it up, our team helps if you ask.
+  { path: '/', lastmod: '2026-11-15' },
   // TY-DEMO (2026-10-25): new — four made-up businesses and what a booking looks like on each (what the visitor says, what the widget asks, the request the business gets).
   // TY-INSTALL (2026-10-27): the strip says to set up the config first; the line under «Get it free».
   // TYL-DEMO-LIVE (2026-10-28): every scenario card carries the preview of its demo site and the button «Open the demo site».
@@ -43,7 +44,8 @@ const STATIC_PATHS: Url[] = [
   // L14 (2026-10-21): the CSP section says that the current widget asks Google Fonts until its next release; the code blocks scroll with a cue.
   // TY-INSTALL (2026-10-27): the page starts with the config of the site (two ways, the form of /pricing, the note above the code); the description and the lines under «Get it free».
   // TY-F111 (2026-11-05): the owner's email is «New booking request from <brand>», a row is named by the field's label, Reply goes to the customer when the form has one email field.
-  { path: '/install', lastmod: '2026-11-05' },
+  // TYL-NO-SETUP-FOR-YOU-COPY (2026-11-15): no «we set it up with you for free»: you set the config up, the card says «Need a hand setting up?» / «Ask our team»; the description and the form line follow.
+  { path: '/install', lastmod: '2026-11-15' },
   // L11 (2026-10-20): the select of the question form is a short list of business types, and the SoftwareApplication markup says it adapts to any business.
   // L12 (2026-10-21): the page prints «Page last updated» with the date below; one source (pricing.content.ts) for the line and for this lastmod.
   { path: '/pricing', lastmod: PRICING_LAST_UPDATED },
@@ -58,7 +60,8 @@ const STATIC_PATHS: Url[] = [
   { path: '/for-ai-agents', lastmod: '2026-10-27' },
   // L14 (2026-10-21): the answers about retention, the DPA, the network of Vercel and OpenAI's 30 days were corrected.
   // TY-INSTALL (2026-10-27): the answer about setup starts with the config (yourself or with us); the line under «Get it free».
-  { path: '/faq', lastmod: '2026-10-27' },
+  // TYL-NO-SETUP-FOR-YOU-COPY (2026-11-15): the answer about setup says «ask our team», not «we set it up with you for free».
+  { path: '/faq', lastmod: '2026-11-15' },
   { path: '/about', lastmod: '2026-10-19' },
   // L9 (2026-10-20): the h1, the subtitle, the title and description of the list and its Blog markup changed.
   // L12 (2026-10-21): the list no longer carries BreadcrumbList.

@@ -48,7 +48,7 @@ Embed (after the site’s config is published in the Webappski portal): a `<scri
 
 ## Install — https://typelessity.com/install
 
-First your site’s config in the Webappski portal, yourself or with us for free; then the code from the Install step. Requests by email or to your system.
+First your site’s config in the Webappski portal, set up by you; then the code from the Install step. Requests by email or to your system.
 
 ---
 

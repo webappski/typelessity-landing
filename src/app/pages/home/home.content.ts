@@ -127,7 +127,7 @@ export const HOME = {
       { n: PRICING.tiers[0].price, l: `Free pilot, up to ${PILOT_REQUESTS} booking requests a month` },
       { n: String(HOW.phases.length), l: `Steps: ${HOW.phases.map((p) => p.name).join(' → ')}` },
       // TY-INSTALL (founder 27.10): the stat used to be «2 lines of code your web developer pastes»; the config of the site comes first.
-      { n: '2 ways', l: 'To set up your site’s config: yourself in the Webappski portal, or with us for free' },
+      { n: 'Config first', l: 'You set up your site’s config in the Webappski portal; our team helps if you ask' },
     ] as const,
     facts: [
       ['Replaces', 'Multi-step booking forms and dropdowns'],
