@@ -2,9 +2,9 @@
 
 **Reviewer:** Independent senior designer / DS engineer
 **Date:** 2026-05-19
-**Plan file:** `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md`
-**Reference (TF):** `/Users/dmitry-isaevski/Projects/typelessform`
-**Target:** `/Users/dmitry-isaevski/Projects/typelessity-landing`
+**Plan file:** `~/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md`
+**Reference (TF):** `~/Projects/typelessform`
+**Target:** `~/Projects/typelessity-landing`
 
 ---
 
@@ -394,27 +394,27 @@ In priority order. Each item is a concrete edit to the plan document (not a code
 ## Appendix — files cited
 
 **Plan document:**
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md` (1468 lines)
+- `~/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md` (1468 lines)
 
 **TF source (extraction audit):**
-- `/Users/dmitry-isaevski/Projects/typelessform/src/styles.scss` (146 lines)
-- `/Users/dmitry-isaevski/Projects/typelessform/src/app/app.scss` (1274 lines)
-- `/Users/dmitry-isaevski/Projects/typelessform/src/index.html`
-- `/Users/dmitry-isaevski/Projects/typelessform/public/fonts/fonts.css`
-- `/Users/dmitry-isaevski/Projects/typelessform/public/fonts/*.woff2` (8 files)
-- `/Users/dmitry-isaevski/Projects/typelessform/src/app/pages/not-found/not-found.component.scss`
-- `/Users/dmitry-isaevski/Projects/typelessform/src/app/pages/security/security.component.scss`
-- `/Users/dmitry-isaevski/Projects/typelessform/src/app/pages/blog/blog-list.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessform/src/app/cookie-consent.component.ts`
+- `~/Projects/typelessform/src/styles.scss` (146 lines)
+- `~/Projects/typelessform/src/app/app.scss` (1274 lines)
+- `~/Projects/typelessform/src/index.html`
+- `~/Projects/typelessform/public/fonts/fonts.css`
+- `~/Projects/typelessform/public/fonts/*.woff2` (8 files)
+- `~/Projects/typelessform/src/app/pages/not-found/not-found.component.scss`
+- `~/Projects/typelessform/src/app/pages/security/security.component.scss`
+- `~/Projects/typelessform/src/app/pages/blog/blog-list.component.ts`
+- `~/Projects/typelessform/src/app/cookie-consent.component.ts`
 
 **Target source (diff audit):**
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/styles/tokens.scss` (50 lines)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/styles/typography.scss` (49 lines)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/styles/reset.scss` (43 lines)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/styles.scss` (224 lines)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/index.html` (14 lines)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/components/language-switcher/language-switcher.component.scss`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/i18n/` (en/de/pl/ru translation files)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/package.json`
+- `~/Projects/typelessity-landing/src/styles/tokens.scss` (50 lines)
+- `~/Projects/typelessity-landing/src/styles/typography.scss` (49 lines)
+- `~/Projects/typelessity-landing/src/styles/reset.scss` (43 lines)
+- `~/Projects/typelessity-landing/src/styles.scss` (224 lines)
+- `~/Projects/typelessity-landing/src/index.html` (14 lines)
+- `~/Projects/typelessity-landing/src/app/components/language-switcher/language-switcher.component.scss`
+- `~/Projects/typelessity-landing/src/app/i18n/` (en/de/pl/ru translation files)
+- `~/Projects/typelessity-landing/package.json`
 
 — end of review —

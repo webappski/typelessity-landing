@@ -2,10 +2,10 @@
 
 **Reviewer:** Independent senior designer / DS engineer (round 2, no contact with author)
 **Date:** 2026-05-19
-**Plan file:** `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md` (1819 lines, v2)
-**Round-1 review:** `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.review.md`
-**Reference (TF):** `/Users/dmitry-isaevski/Projects/typelessform`
-**Target:** `/Users/dmitry-isaevski/Projects/typelessity-landing`
+**Plan file:** `~/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md` (1819 lines, v2)
+**Round-1 review:** `~/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.review.md`
+**Reference (TF):** `~/Projects/typelessform`
+**Target:** `~/Projects/typelessity-landing`
 
 ---
 
@@ -238,17 +238,17 @@ In priority order:
 ## Appendix — files cited / verified in this round
 
 **Plan + round-1 review:**
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md` (1819 lines, v2)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.review.md` (round 1)
+- `~/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.md` (1819 lines, v2)
+- `~/Projects/typelessity-landing/docs/redesign-2026-05/02-design-system-migration-plan.review.md` (round 1)
 
 **TF re-verified (primary source for fix verification):**
-- `/Users/dmitry-isaevski/Projects/typelessform/public/fonts/fonts.css` (126 lines — zero Cyrillic confirmed)
-- `/Users/dmitry-isaevski/Projects/typelessform/public/fonts/*.woff2` (8 files on disk, naming matches plan's preload hints)
-- `/Users/dmitry-isaevski/Projects/typelessform/src/app/app.scss` (step-card 401-438 verified)
+- `~/Projects/typelessform/public/fonts/fonts.css` (126 lines — zero Cyrillic confirmed)
+- `~/Projects/typelessform/public/fonts/*.woff2` (8 files on disk, naming matches plan's preload hints)
+- `~/Projects/typelessform/src/app/app.scss` (step-card 401-438 verified)
 
 **Target re-verified:**
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/core/consent/consent-banner.component.ts` (3-tier UL confirmed at lines 30-52)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/shared/icon/icon.component.ts` (`stroke="currentColor"` confirmed)
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/i18n/translations.ru.ts` (RU locale active — Cyrillic strategy required)
+- `~/Projects/typelessity-landing/src/app/core/consent/consent-banner.component.ts` (3-tier UL confirmed at lines 30-52)
+- `~/Projects/typelessity-landing/src/app/shared/icon/icon.component.ts` (`stroke="currentColor"` confirmed)
+- `~/Projects/typelessity-landing/src/app/i18n/translations.ru.ts` (RU locale active — Cyrillic strategy required)
 
 — end of review v2 —

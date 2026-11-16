@@ -2,8 +2,8 @@
 
 > Date: 2026-05-20
 > Scope: code-level audit after TypelessForm design-system migration; **not** a visual review.
-> Audited tree: `/Users/dmitry-isaevski/Projects/typelessity-landing` on `feat/tf-redesign`.
-> Reference DS: `/Users/dmitry-isaevski/Projects/typelessform` (read-only, for comparison).
+> Audited tree: `~/Projects/typelessity-landing` on `feat/tf-redesign`.
+> Reference DS: `~/Projects/typelessform` (read-only, for comparison).
 > Build verified once: `npm run build` → 68 prerendered routes, initial bundle 407.21 kB raw / 114.45 kB gz. No build warnings, no budget overruns.
 
 ---

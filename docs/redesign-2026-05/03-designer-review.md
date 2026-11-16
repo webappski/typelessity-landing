@@ -2,7 +2,7 @@
 
 **Дата ревью:** 2026-05-20
 **Ветка:** `feat/tf-redesign` (промежуточное состояние, Phase 1 partial)
-**Reference SOT:** `/Users/dmitry-isaevski/Projects/typelessform/src/{styles.scss,app/app.scss}`
+**Reference SOT:** `~/Projects/typelessform/src/{styles.scss,app/app.scss}`
 **Reviewer:** senior design-system engineer
 **Verdict (одним словом):** `needs-targeted-fixes`
 

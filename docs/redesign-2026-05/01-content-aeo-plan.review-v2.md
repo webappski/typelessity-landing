@@ -2,8 +2,8 @@
 
 **Reviewer:** Independent senior SEO/AEO/content-strategy reviewer (round-2 pass)
 **Date:** 2026-05-19
-**Document under review:** `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/01-content-aeo-plan.md` (1095 lines, v2)
-**Round-1 review:** `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/01-content-aeo-plan.review.md`
+**Document under review:** `~/Projects/typelessity-landing/docs/redesign-2026-05/01-content-aeo-plan.md` (1095 lines, v2)
+**Round-1 review:** `~/Projects/typelessity-landing/docs/redesign-2026-05/01-content-aeo-plan.review.md`
 **Method:** For every claim-of-fix in the v2 Changelog, I re-opened the cited source file or grepped, and grepped the plan document itself to detect any v1 numbers/strings that should have been deleted but weren't. Coverage section claims were checked by enumerating section headers. Statistics were re-counted via grep on priority markers.
 
 ---

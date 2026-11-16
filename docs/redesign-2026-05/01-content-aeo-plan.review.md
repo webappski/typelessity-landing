@@ -2,7 +2,7 @@
 
 **Reviewer:** Independent senior SEO/AEO/content-strategy reviewer
 **Date:** 2026-05-19
-**Document under review:** `/Users/dmitry-isaevski/Projects/typelessity-landing/docs/redesign-2026-05/01-content-aeo-plan.md` (684 lines)
+**Document under review:** `~/Projects/typelessity-landing/docs/redesign-2026-05/01-content-aeo-plan.md` (684 lines)
 **Method:** Every load-bearing factual claim was re-verified against the source files. File:line citations in this review point to what I actually opened.
 
 ---
@@ -30,29 +30,29 @@ Not SHIP. Not KILL. The plan is structurally sound, the diagnosis is in the righ
 Every claim was opened in code. Files I actually read are listed.
 
 Sources opened:
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/public/llms.txt`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/public/sitemap.xml`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/public/robots.txt`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/app.routes.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/lib/industries/index.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/lib/industries/medical-dental.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/lib/industries/industries-batch-{1,2,3}.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/lib/blog-manifest.generated.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/home/home.content.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/home/home.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/home/home.component.html`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/pricing/pricing.content.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/pricing/pricing-page.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/how-it-works/how-it-works-page.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/for-ai-agents/for-ai-agents.component.html`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/about/about-page.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/legal/legal-page.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/pages/blog/blog-post.component.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/core/seo/seo.service.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/core/seo/schemas.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/app/i18n/translations.en.ts`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/src/index.html`
-- `/Users/dmitry-isaevski/Projects/typelessity-landing/.aeo-tracker.json`
+- `~/Projects/typelessity-landing/public/llms.txt`
+- `~/Projects/typelessity-landing/public/sitemap.xml`
+- `~/Projects/typelessity-landing/public/robots.txt`
+- `~/Projects/typelessity-landing/src/app/app.routes.ts`
+- `~/Projects/typelessity-landing/src/app/lib/industries/index.ts`
+- `~/Projects/typelessity-landing/src/app/lib/industries/medical-dental.ts`
+- `~/Projects/typelessity-landing/src/app/lib/industries/industries-batch-{1,2,3}.ts`
+- `~/Projects/typelessity-landing/src/app/lib/blog-manifest.generated.ts`
+- `~/Projects/typelessity-landing/src/app/pages/home/home.content.ts`
+- `~/Projects/typelessity-landing/src/app/pages/home/home.component.ts`
+- `~/Projects/typelessity-landing/src/app/pages/home/home.component.html`
+- `~/Projects/typelessity-landing/src/app/pages/pricing/pricing.content.ts`
+- `~/Projects/typelessity-landing/src/app/pages/pricing/pricing-page.component.ts`
+- `~/Projects/typelessity-landing/src/app/pages/how-it-works/how-it-works-page.component.ts`
+- `~/Projects/typelessity-landing/src/app/pages/for-ai-agents/for-ai-agents.component.html`
+- `~/Projects/typelessity-landing/src/app/pages/about/about-page.component.ts`
+- `~/Projects/typelessity-landing/src/app/pages/legal/legal-page.component.ts`
+- `~/Projects/typelessity-landing/src/app/pages/blog/blog-post.component.ts`
+- `~/Projects/typelessity-landing/src/app/core/seo/seo.service.ts`
+- `~/Projects/typelessity-landing/src/app/core/seo/schemas.ts`
+- `~/Projects/typelessity-landing/src/app/i18n/translations.en.ts`
+- `~/Projects/typelessity-landing/src/index.html`
+- `~/Projects/typelessity-landing/.aeo-tracker.json`
 
 Status legend: ✅ confirmed · ❌ not confirmed / wrong · ⚠️ partly right / framing off / off-by-N
 

@@ -3,8 +3,8 @@
 **Date:** 2026-05-19
 **Reviewer:** Senior designer (line-by-line)
 **Status:** Plan only — no code changes.
-**Reference (source of truth):** `/Users/dmitry-isaevski/Projects/typelessform`
-**Target:** `/Users/dmitry-isaevski/Projects/typelessity-landing`
+**Reference (source of truth):** `~/Projects/typelessform`
+**Target:** `~/Projects/typelessity-landing`
 
 ---
 

@@ -54,3 +54,6 @@ Thumbs.db
 # Playwright browser E2E output
 /test-results/
 /playwright-report/
+
+# Local Claude Code settings (machine paths, personal permissions)
+.claude/settings.local.json
